@@ -19,6 +19,7 @@ import {AuctionHouse} from '../../realm/model';
 import {S3} from 'aws-sdk';
 import {LogRepository} from '../../logs/repository';
 import {AhStatsRequest} from '../models/ah-stats-request.model';
+import {RealmLogRepository} from "../../realm/repositories/realm-log.repository";
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -26,9 +27,11 @@ const PromiseThrottle: any = require('promise-throttle');
 
 export class StatsService {
   realmRepository: RealmRepository;
+  realmLogRepository: RealmLogRepository;
 
   constructor() {
     this.realmRepository = new RealmRepository();
+    this.realmLogRepository = new RealmLogRepository();
   }
 
 
@@ -522,11 +525,13 @@ export class StatsService {
     return new Date(+new Date() - 1000 * 60 * 60 * 24 * days);
   }
 
-  /*
+  /**
+  TODO: Delete?
   * Add a new column to the AH table indicating when the last delete was ran
   * Run once each 6-10 minute
   * Limit 1 order by time since asc (to get the oldest first)
-  * */
+  * @deprecated
+  */
   deleteOldPriceHistoryForRealm(conn = new DatabaseUtil(false)): Promise<any> {
     return new Promise(async (resolve, reject) => {
       const repository = new StatsRepository(conn);
@@ -606,8 +611,12 @@ export class StatsService {
           }
 
           new StatsRepository(conn).deleteOldDailyPricesForRealm(table, olderThan, period)
-            .then(() => {
+            .then(async (id) => {
               conn.end();
+              if (period === 'itemPriceHistoryPerDay') {
+                await this.realmLogRepository.deleteOldLogEntriesForId(id)
+                  .catch(console.error);
+              }
               resolve();
             })
             .catch((err) => {

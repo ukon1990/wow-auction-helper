@@ -1,8 +1,11 @@
 import {BaseRepository} from '../../repository/base.repository';
 import {AuctionHouseUpdateLog, DumpDelay} from '../model';
+import {RealmRepository} from "./realm.repository";
 
 export class RealmLogRepository extends BaseRepository<AuctionHouseUpdateLog> {
   private minuteInMS = 1000 * 60;
+  private getNDaysSinceInMs = (daysSince = 1) => +new Date() - 1000 * 60 * 60 * 24 * daysSince;
+
 
   constructor() {
     super('wah_auction_houses_update_log');
@@ -20,10 +23,34 @@ export class RealmLogRepository extends BaseRepository<AuctionHouseUpdateLog> {
     return Promise.resolve(undefined);
   }
 
+  deleteOldLogEntriesForId(id: number): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.getByIdBefore(id, this.getNDaysSinceInMs(7))
+        .then(async result => {
+          console.log(`Preparing to delete ${result.length} log entries for ${id}`);
+          let count = 0;
+          await Promise.all(
+            result.map(entry => this.delete(id, 'lastModified', entry.lastModified)
+              .then(() => {
+                count++;
+                console.log(`Successfully deleted ${id} @ ${new Date(entry.lastModified)} (${count} / ${result.length})`);
+              })
+              .catch(error => {
+                console.error(`Could not delete entry ${id} @ ${new Date(entry.lastModified)}`, error);
+              }))
+          ).catch(console.error);
+          resolve();
+        })
+        .catch(error => {
+          console.error('Could not get entries', error);
+          reject(error);
+        });
+    });
+  }
+
   getUpdateDelays(id: number): Promise<DumpDelay> {
     return new Promise<DumpDelay>((resolve, reject) => {
-      const threeDaysAgo = +new Date() - 1000 * 60 * 60 * 72;
-      this.getByIdAfter(id, threeDaysAgo)
+      this.getByIdAfter(id, this.getNDaysSinceInMs(3))
         .then((result) => {
 
           try {

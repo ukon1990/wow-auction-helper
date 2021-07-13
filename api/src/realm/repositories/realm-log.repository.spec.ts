@@ -1,7 +1,6 @@
 import {RealmLogRepository} from './realm-log.repository';
-import {AuctionService} from '../../auction/services/auction.service';
-import {GameBuildVersion} from '../../../../client/src/client/utils/game-build.util';
 import {AuthHandler} from '../../handlers/auth.handler';
+import {RealmService} from '../service';
 
 describe('RealmLogRepository', () => {
   it('getUpdateDelays', async () => {
@@ -14,8 +13,8 @@ describe('RealmLogRepository', () => {
     jest.setTimeout(999999);
     await AuthHandler.getToken();
     //  OR attribute_not_exists(#nextUpdate)
-    await new AuctionService().getLatestDumpPath(4618, 'beta', GameBuildVersion.Classic)// .updateAllHouses()
-    // await new RealmService().updateAllRealmStatuses()
+    // await new AuctionService().getLatestDumpPath(4618, 'eu', GameBuildVersion.Classic)// .updateAllHouses()
+    await new RealmService().updateAllRealmStatuses()
       .then(console.log)
       .catch(console.error);
     expect(1).toBe(2);
