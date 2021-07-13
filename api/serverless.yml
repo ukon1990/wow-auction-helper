@@ -31,13 +31,6 @@ functions:
           path: auction/log/{id}
           cors:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
-  updateLastRequestedWithRegionAndSlug:
-    tags:
-      Function: Wah-updateLastRequestedWithRegionAndSlug
-      Project: WAH
-    handler: src/realm/controller.updateLastRequested
-    memorySize: 200
-    timeout: 5
   updateLastRequested:
     tags:
       Function: Wah-updateLastRequested

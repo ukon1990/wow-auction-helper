@@ -39,9 +39,9 @@ interface CloudTrailS3Event {
 exports.updateLastRequested = (event: CloudTrailS3Event, context: Context, callback: Callback) => {
   const key = event.detail.requestParameters.key;
   const statusRegex = /status\/[a-z]{1,4}\/[0-9\-]{1,128}.json.gz/gi;
-  console.log('File event triggered for', key);
 
-  if (statusRegex.exec(key) && key.indexOf('status') === 0) {
+  if (key.indexOf('auctions') === -1 && statusRegex.exec(key) && key.indexOf('status') === 0) {
+    console.log('File event triggered for', key);
     const splitted = key.split('/');
     const [_, __, id] = splitted;
     console.log('Updating last requested for AH', id);

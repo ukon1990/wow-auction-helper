@@ -5,7 +5,7 @@
 import {DatabaseUtil} from '../utils/database.util';
 import {UpdatesService} from './service';
 
-describe('Update runner', () => {
+xdescribe('Update runner', () => {
   beforeAll(() => {
     jest.setTimeout(999999);
   });
