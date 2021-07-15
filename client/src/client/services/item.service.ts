@@ -15,13 +15,12 @@ import {
   ItemPriceEntry,
   ItemPriceEntryResponse
 } from '../modules/item/models/item-price-entry.model';
-import {RealmService} from './realm.service';
 import {BehaviorSubject} from 'rxjs';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionItemStat} from '../../../../api/src/auction/models/auction-item-stat.model';
 import {AhStatsRequest} from '../../../../api/src/auction/models/ah-stats-request.model';
-import {AuctionHouseStatus} from "../modules/auction/models/auction-house-status.model";
-import {GameBuild} from "../utils/game-build.util";
+import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
+import {GameBuild} from '../utils/game-build.util';
 
 class ItemResponse {
   timestamp: Date;
@@ -30,13 +29,12 @@ class ItemResponse {
 
 @Injectable()
 export class ItemService {
-  static missingQueue: Map<string, number> = new Map<string, number>();
   static itemSelection: EventEmitter<number> = new EventEmitter<number>();
   static list: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
   static mapped: BehaviorSubject<Map<number, Item>> = new BehaviorSubject<Map<number, Item>>(new Map<number, Item>());
   private historyMap: BehaviorSubject<Map<number, Map<string, ItemPriceEntryResponse>>> = new BehaviorSubject(new Map());
+  private priceCompareMap: BehaviorSubject<Map<string, ItemPriceEntryResponse>> = new BehaviorSubject(new Map());
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_items';
-  private sm = new SubscriptionManager();
   selectionHistory: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
   lastModified: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
@@ -140,7 +138,7 @@ export class ItemService {
       });
   }
 
-  handleItems(items: ItemResponse, shouldSave = true, isClassic = SharedService.user.gameVersion > 0): void {
+  private handleItems(items: ItemResponse, shouldSave = true, isClassic = SharedService.user.gameVersion > 0): void {
     const missingItems: number[] = [];
     SharedService.downloading.items = false;
     const list: Item[] = [];
@@ -195,7 +193,7 @@ export class ItemService {
     console.log('Items download is completed');
   }
 
-  setLocaleForSourceItems(item: any, missingItems: number[]): void {
+  private setLocaleForSourceItems(item: any, missingItems: number[]): void {
     if (SharedService.items[item.id]) {
       item.name = SharedService.items[item.id].name;
     } else {
@@ -291,6 +289,35 @@ export class ItemService {
           reject(error);
         });
     });
+  }
+
+  getComparablePrices(
+    item: AhStatsRequest,
+    realmStatus: AuctionHouseStatus,
+    realms: AuctionHouseStatus[]
+  ) {
+    const {itemId, petSpeciesId, bonusIds, ahTypeId: typeId} = item;
+    const storeId = `${itemId}-${petSpeciesId}-${
+      typeof bonusIds === 'string' ?
+        bonusIds : AuctionItemStat.bonusIdRaw(bonusIds)}-${typeId}`;
+
+    if (this.priceCompareMap.value.has(storeId)) {
+      return new Promise(resolve => resolve(this.priceCompareMap.value.get(storeId)));
+    }
+    const items: AhStatsRequest[] = realms.filter(({region, gameBuild}) =>
+      region === realmStatus.region &&
+      (
+        (realmStatus.gameBuild && gameBuild === realmStatus.gameBuild) ||
+        (!gameBuild && !realmStatus.gameBuild)
+      )
+    ).map(status => ({
+      ...item,
+      ahId: status.id,
+      ahTypeId: status.gameBuild ? SharedService.user.ahTypeId || 0 : 0
+    }));
+
+    console.log('Input', items);
+    return this._http.post(Endpoints.getLambdaUrl('item/history/compare'), items).toPromise();
   }
 
   /**

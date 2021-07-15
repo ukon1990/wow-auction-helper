@@ -179,6 +179,7 @@ export class AuctionProcessorUtil {
         if (price) {
           const hourEntry: ItemPriceEntry = {
             itemId: entry.itemId,
+            ahId: entry.ahId,
             ahTypeId: entry.ahTypeId,
             timestamp: +date,
             petSpeciesId: entry.petSpeciesId,

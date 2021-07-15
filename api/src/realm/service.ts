@@ -133,7 +133,8 @@ export class RealmService {
   private isHouseInactive(lastRequested: number) {
     const minute = 60 * 1000;
     const hour = minute * 60;
-    return lastRequested <= +new Date() - hour * 24 * 14;
+    const day = hour * 24;
+    return lastRequested <= +new Date() - day * 14;
   }
 
   updateAllRealmStatuses(): Promise<void> {
