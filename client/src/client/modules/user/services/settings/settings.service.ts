@@ -77,6 +77,7 @@ export class SettingsService {
           input: {
             realm: settings.realm,
             ahId: settings.ahId,
+            ahTypeId: settings.ahTypeId,
             region: settings.region,
             locale: settings.locale || localStorage.getItem('locale') || 'en_GB',
             customPrices: JSON.stringify(settings.customPrices || []),
@@ -258,6 +259,7 @@ export class SettingsService {
     this.removeTypeName(settings);
     Object.assign(SharedService.user, {
       locale: settings.locale,
+      ahId: settings.ahId,
       ahTypeId: settings.ahTypeId,
       faction: settings.faction,
       region: settings.region,

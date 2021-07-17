@@ -56,7 +56,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
       ahTypeId: this.getFormValueFor('ahTypeId'),
       region: this.getFormValueFor('region'),
       realm: this.getFormValueFor('realm'),
-      faction: this.getFaction()
+      faction: this.getFaction() || 0
     }, {emitEvent: false});
 
     this.sm.add(this.realmService.events.list,
@@ -224,15 +224,14 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     const {region: prevRegion, realm: prevRealm, faction: prevFaction} = this.form.value;
     const {region, realm, faction, ahTypeId} = settings;
     if (region !== prevRegion || realm !== prevRealm || faction !== prevFaction) {
-      this.form.setValue({region, realm, faction: faction || 0, ahTypeId}, {emitEvent: false});
+      this.form.setValue({region, realm, faction: this.getFaction(faction), ahTypeId}, {emitEvent: false});
     }
   }
 
-  private getFaction() {
-    const faction = this.getFormValueFor('faction');
+  private getFaction(faction = this.getFormValueFor('faction')) {
     const ahTypeId = this.getFormValueFor('ahTypeId');
     if (faction) {
-      return faction;
+      return isNaN(+faction) ? 0 : +faction;
     }
     if (ahTypeId) {
       switch (ahTypeId) {
