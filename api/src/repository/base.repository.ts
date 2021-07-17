@@ -11,7 +11,7 @@ export abstract class BaseRepository<T> {
 
   protected constructor(protected table: string) {
     AWS.config.update({
-      region: 'eu-west-1', // environment.region
+      region: process.env.AWS_REGION || 'eu-west-1', // environment.region
     });
     this.client = new DocumentClient();
   }
@@ -65,10 +65,35 @@ export abstract class BaseRepository<T> {
     });
   }
 
-  // TODO: Need both the PK and the SK to be able to delete.
-  delete(id: string | number): Promise<DeleteItemOutput> {
+  deleteOlderThan(id: string | number, lastModified?: number): Promise<DeleteItemOutput> {
     return new Promise<DeleteItemOutput>((resolve, reject) => {
-      this.client.delete({
+      const params = {
+        TableName: this.table,
+        Key: {
+          id,
+          lastModified
+        },
+        ConditionExpression: 'id = :id AND lastModified <= :lastModified',
+        ExpressionAttributeValues: {
+          ':id': id,
+          ':lastModified': lastModified
+        }
+      };
+      console.log('params', params);
+
+      this.client.delete(params, (error, data) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  }
+
+  delete(id: string | number, sortKey?: string, sortKeyValue?: number): Promise<DeleteItemOutput> {
+    return new Promise<DeleteItemOutput>((resolve, reject) => {
+      const params = {
         TableName: this.table,
         Key: {
           id
@@ -77,7 +102,14 @@ export abstract class BaseRepository<T> {
         ExpressionAttributeValues: {
           ':id': id
         }
-      }, (error, data) => {
+      };
+
+      if (sortKey && sortKeyValue) {
+        params.Key[sortKey] = sortKeyValue;
+        params.ExpressionAttributeValues[`:${sortKey}`] = sortKeyValue;
+        params.ConditionExpression = `${params.ConditionExpression} AND ${sortKey} = :${sortKey}`;
+      }
+      this.client.delete(params, (error, data) => {
         if (error) {
           reject(error);
         } else {
@@ -142,6 +174,21 @@ export abstract class BaseRepository<T> {
     return this.query({
       TableName: table,
       KeyConditionExpression: '#id = :id and #lastModified >= :lastModified',
+      ExpressionAttributeNames: {
+        '#id': 'id',
+        '#lastModified': 'lastModified'
+      },
+      ExpressionAttributeValues: {
+        ':id': id,
+        ':lastModified': lastModified,
+      }
+    });
+  }
+
+  protected getByIdBefore(id: number | string, lastModified: number, table: string = this.table): Promise<T[]> {
+    return this.query({
+      TableName: table,
+      KeyConditionExpression: '#id = :id and #lastModified < :lastModified',
       ExpressionAttributeNames: {
         '#id': 'id',
         '#lastModified': 'lastModified'

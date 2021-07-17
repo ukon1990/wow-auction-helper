@@ -4,7 +4,7 @@ import {AboutWhatIsComponent} from './components/about-what-is/about-what-is.com
 import {AboutCraftingComponent} from './components/about-crafting/about-crafting.component';
 import {AboutDataComponent} from './components/about-data/about-data.component';
 import {AboutPrivacyComponent} from './components/about-privacy/about-privacy.component';
-import {TechnologyComponent} from './components/technology/technology.component';
+import {TechnologyComponent} from './components/technology.component';
 import {ContributorsComponent} from './components/contributors/contributors.component';
 import {IssuesComponent} from './components/issues/issues.component';
 import {ChangelogComponent} from './components/changelog/changelog.component';

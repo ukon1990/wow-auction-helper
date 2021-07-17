@@ -38,22 +38,10 @@ interface CloudTrailS3Event {
  */
 exports.updateLastRequested = (event: CloudTrailS3Event, context: Context, callback: Callback) => {
   const key = event.detail.requestParameters.key;
-  const regex = /auctions\/[a-z]{1,4}\/[a-z\-]{1,128}.json.gz/gi;
   const statusRegex = /status\/[a-z]{1,4}\/[0-9\-]{1,128}.json.gz/gi;
-  console.log('File event triggered for', key);
 
-  // TODO: Replace this part as soon as it's frontend part is deactivated
-  if (regex.exec(key) && key.indexOf('status') === -1) {
-    const splitted = key.split('/');
-    const [_, region, slug] = splitted;
-    console.log('Updating last requested for AH', region, slug);
-    new RealmService().updateLastRequestedWithRegionAndSlug(
-      region,
-      slug.replace('.json.gz', '')
-    )
-      .then(res => Response.send(res, callback))
-      .catch(err => Response.error(callback, err, undefined, 401));
-    } else if (statusRegex.exec(key) && key.indexOf('status') === 0) {
+  if (key.indexOf('auctions') === -1 && statusRegex.exec(key) && key.indexOf('status') === 0) {
+    console.log('File event triggered for', key);
     const splitted = key.split('/');
     const [_, __, id] = splitted;
     console.log('Updating last requested for AH', id);
@@ -66,16 +54,3 @@ exports.updateLastRequested = (event: CloudTrailS3Event, context: Context, callb
     Response.send({message: 'Hello'}, callback);
   }
 };
-
-/*
-exports.updateLastRequested = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  const {
-    id,
-    lastRequested,
-  } = JSON.parse(event.body);
-
-  new RealmService().updateLastRequested(+id, +lastRequested)
-    .then(res => Response.send(res, callback))
-    .catch(err => Response.error(callback, err, undefined, 401));
-};
-*/

@@ -166,8 +166,8 @@ export class StatsRepository {
             OR info LIKE '%DELETE FROM ${table}%');`);
   }
 
-  deleteOldDailyPricesForRealm(table: string = 'itemPriceHistoryPerDay', olderThan: number = 7, period: string = 'MONTH') {
-    return new Promise<void>(async (resolve, reject) => {
+  deleteOldDailyPricesForRealm(table: string = 'itemPriceHistoryPerDay', olderThan: number = 7, period: string = 'MONTH'): Promise<number> {
+    return new Promise<number>(async (resolve, reject) => {
       const key = `lastHistoryDeleteEvent${table === 'itemPriceHistoryPerDay' ? 'Daily' : ''}`;
      this.realmRepository.getRealmsThatNeedsStatDeletion(key)
         .then(async ids => {
@@ -187,7 +187,7 @@ export class StatsRepository {
             AND ahId = ${entry.id};`)
               .then(async res => {
                 console.log(res);
-                resolve();
+                resolve(entry.id);
               })
               .catch(error => {
                 console.error(error);
