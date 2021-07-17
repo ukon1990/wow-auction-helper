@@ -101,7 +101,7 @@ export class AuctionsService {
      * Stats and AH data URL's will contain an object instead of a string for classic realms
      * So in these cases, we will need to use the ahTypeId to get the correct URL.
      */
-    const url = typeof realmStatus.url === 'string' ? realmStatus.url : realmStatus.url[ahTypeId];
+    const url = typeof realmStatus.url === 'string' ? realmStatus.url : realmStatus.url[ahTypeId || 2];
     const statusUrl = isStatusAvailable ? (
       typeof realmStatus.stats.url === 'string' ? realmStatus.stats.url : realmStatus.stats.url[ahTypeId]
     ) : undefined;
