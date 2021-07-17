@@ -20,6 +20,7 @@ import {SettingsService} from '../modules/user/services/settings/settings.servic
 import {UserSettings} from '../modules/user/models/settings.model';
 import {ItemStats} from '../../../../api/src/auction/models/item-stats.model';
 import {AuctionItemStat} from '../../../../api/src/auction/models/auction-item-stat.model';
+import {Report} from "../utils/report.util";
 
 @Injectable()
 export class AuctionsService {
