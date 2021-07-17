@@ -20,6 +20,7 @@ import {SettingsService} from '../modules/user/services/settings/settings.servic
 import {UserSettings} from '../modules/user/models/settings.model';
 import {ItemStats} from '../../../../api/src/auction/models/item-stats.model';
 import {AuctionItemStat} from '../../../../api/src/auction/models/auction-item-stat.model';
+import {Report} from "../utils/report.util";
 
 @Injectable()
 export class AuctionsService {
@@ -101,7 +102,7 @@ export class AuctionsService {
      * Stats and AH data URL's will contain an object instead of a string for classic realms
      * So in these cases, we will need to use the ahTypeId to get the correct URL.
      */
-    const url = typeof realmStatus.url === 'string' ? realmStatus.url : realmStatus.url[ahTypeId];
+    const url = typeof realmStatus.url === 'string' ? realmStatus.url : realmStatus.url[ahTypeId || 2];
     const statusUrl = isStatusAvailable ? (
       typeof realmStatus.stats.url === 'string' ? realmStatus.stats.url : realmStatus.stats.url[ahTypeId]
     ) : undefined;
