@@ -73,30 +73,37 @@ export class RealmService {
     region: string = SharedService.user.region,
     ahTypeId: number = SharedService.user.ahTypeId
   ) {
-    const ahTypeChanged = SharedService.user.ahTypeId !== ahTypeId;
-    const ahId = this.getAhIdForSlug(region, slug);
-    SharedService.user.region = region;
-    SharedService.user.realm = slug;
-    SharedService.user.ahTypeId = ahTypeId;
-    SharedService.user.ahId = ahId;
-
-    UserUtil.save();
     return new Promise<AuctionHouseStatus>(async (resolve, reject) => {
-      this.getStatus(
-        SharedService.user.region,
-        SharedService.user.realm,
-        ahId,
-        true,
-        ahTypeChanged
-      )
-        .then(status => {
-          this.events.realmChanged.emit(status);
-          resolve(status);
-        })
-        .catch(error => {
-          ErrorReport.sendError('RealmService.changeRealm', error);
-          reject(error);
-        });
+      try {
+
+        const ahTypeChanged = SharedService.user.ahTypeId !== ahTypeId;
+        const ahId = this.getAhIdForSlug(region, slug);
+        SharedService.user.region = region;
+        SharedService.user.realm = slug;
+        SharedService.user.ahTypeId = ahTypeId;
+        SharedService.user.ahId = ahId;
+
+        UserUtil.save();
+
+        this.getStatus(
+          SharedService.user.region,
+          SharedService.user.realm,
+          ahId,
+          true,
+          ahTypeChanged
+        )
+          .then(status => {
+            this.events.realmChanged.emit(status);
+            resolve(status);
+          })
+          .catch(error => {
+            ErrorReport.sendError('RealmService.changeRealm', error);
+            reject(error);
+          });
+      } catch (error) {
+        ErrorReport.sendError('RealmService.changeRealm', {...error, slug, region, ahTypeId});
+        resolve(this.events.realmStatus.value);
+      }
     });
   }
 
