@@ -140,6 +140,18 @@ functions:
           path: item/history
           cors:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
+  getComparablePricesFor:
+    tags:
+      Function: Wah-item-getComparablePricesFor
+      Project: WAH
+    handler: src/auction/controller.getComparablePricesFor
+    memorySize: 256
+    events:
+      - http:
+          method: post
+          path: item/history/compare
+          cors:
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   pets:
     tags:
       Function: Wah-pets

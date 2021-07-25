@@ -1,6 +1,6 @@
 {
   "name": "wah",
-  "version": "3.31.2",
+  "version": "3.32.0",
   "license": "MIT",
   "main": "handler.js",
   "scripts": {

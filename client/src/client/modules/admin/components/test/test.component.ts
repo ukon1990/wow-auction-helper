@@ -21,7 +21,7 @@ export class TestComponent implements OnInit {
       if (map && map.size > 0) {
         // Primal shadow: 22456 for statistics
         // Unyielding Girdle: 24255 for tooltip diff
-        this.auctionItem = map.get('22845');
+        this.auctionItem = map.get('24255');
         this.item = this.auctionItem.item;
       }
     });

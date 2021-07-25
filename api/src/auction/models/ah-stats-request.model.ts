@@ -1,7 +1,8 @@
 export interface AhStatsRequest {
-  ahId: number;
+  ahId?: number;
   itemId: number;
   petSpeciesId: number;
   bonusIds: number[];
   ahTypeId?: number;
+  date?: Date;
 }
