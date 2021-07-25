@@ -16,11 +16,11 @@ import {
   ItemPriceEntryResponse
 } from '../modules/item/models/item-price-entry.model';
 import {BehaviorSubject} from 'rxjs';
-import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionItemStat} from '../../../../api/src/auction/models/auction-item-stat.model';
 import {AhStatsRequest} from '../../../../api/src/auction/models/ah-stats-request.model';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
 import {GameBuild} from '../utils/game-build.util';
+import {ItemPriceCompareEntry} from '../../../../api/src/auction/models/item-price-compare-entry.model';
 
 class ItemResponse {
   timestamp: Date;
@@ -33,7 +33,7 @@ export class ItemService {
   static list: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
   static mapped: BehaviorSubject<Map<number, Item>> = new BehaviorSubject<Map<number, Item>>(new Map<number, Item>());
   private historyMap: BehaviorSubject<Map<number, Map<string, ItemPriceEntryResponse>>> = new BehaviorSubject(new Map());
-  private priceCompareMap: BehaviorSubject<Map<string, ItemPriceEntryResponse>> = new BehaviorSubject(new Map());
+  private priceCompareMap: BehaviorSubject<Map<string, ItemPriceCompareEntry[]>> = new BehaviorSubject(new Map());
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_items';
   selectionHistory: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
   lastModified: BehaviorSubject<number> = new BehaviorSubject<number>(0);
@@ -46,6 +46,7 @@ export class ItemService {
 
   clearItemHistoryMap(): void {
     this.historyMap.next(new Map());
+    this.priceCompareMap.next(new Map());
   }
 
   addToSelectionHistory(newValue: any): void {
@@ -317,7 +318,16 @@ export class ItemService {
     }));
 
     console.log('Input', items);
-    return this._http.post(Endpoints.getLambdaUrl('item/history/compare'), items).toPromise();
+    return new Promise((resolve, reject) => {
+      this._http.post(Endpoints.getLambdaUrl('item/history/compare'), items).toPromise()
+        .then((result: ItemPriceCompareEntry[]) => {
+          const map = this.priceCompareMap.value;
+          map.set(storeId, result);
+          this.priceCompareMap.next(map);
+          resolve(result);
+        })
+        .catch(reject);
+    });
   }
 
   /**

@@ -39,7 +39,7 @@
           </wah-item-detail-auctions>
         </mat-tab>
 
-        <mat-tab label="Price and quantity history" *ngIf="selected.auctionItem?.auctions">
+        <mat-tab label="History" *ngIf="selected.auctionItem?.auctions">
           <wah-item-price-history
                   [isActiveTab]="selectedTab === 1"
                   [item]="selected.item"
@@ -47,8 +47,15 @@
           </wah-item-price-history>
         </mat-tab>
 
+        <mat-tab label="Realm comparison" *ngIf="selected.auctionItem?.auctions">
+          <wah-item-price-compare *ngIf="selectedTab === 2 && selected?.item"
+                  [item]="selected.item"
+                  [auctionItem]="selected.auctionItem">
+          </wah-item-price-compare>
+        </mat-tab>
+
         <mat-tab label="Data from TSM">
-          <wah-tsm-tab *ngIf="selectedTab === 2 && selected?.item"
+          <wah-tsm-tab *ngIf="selectedTab === 3 && selected?.item"
                        [item]="selected?.item"
                        [dialogId]="dialogRef.id"
                        [auctionItem]="selected.auctionItem"></wah-tsm-tab>

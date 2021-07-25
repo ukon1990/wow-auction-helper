@@ -48,6 +48,7 @@ export class HighchartsComponent implements OnChanges, OnDestroy {
   private goldPipe = new GoldPipe();
   Highcharts: typeof Highcharts = Highcharts;
   isReady: boolean;
+  @Input() autoSetMinMax = true;
   @Input() height = '20em';
   @Input() width = '100%';
   @Input() title: string;
@@ -136,25 +137,31 @@ export class HighchartsComponent implements OnChanges, OnDestroy {
     if (series && series.currentValue) {
       this.options.series = series.currentValue;
 
-      if (Array.isArray(this.options.yAxis)) {
-        this.options.yAxis.forEach((axis, index) => {
-          let min = 0, max = 0;
-          this.options.series.forEach((s: any) => {
-            if (s.yAxis === index || !index && !s.yAxis) {
-              const minMax = NumberUtil.getUpperAndLowerThreshold(s.data);
-              if (minMax.min < axis.min || !axis.min) {
-                min = minMax.min;
-                axis.min = minMax.min;
+      if (this.autoSetMinMax) {
+        if (Array.isArray(this.options.yAxis)) {
+          this.options.yAxis.forEach((axis, index) => {
+            this.options.series.forEach((s: any) => {
+              if (s.yAxis === index || !index && !s.yAxis) {
+                const minMax = NumberUtil.getUpperAndLowerThreshold(s.data);
+                if (minMax.min < axis.min || !axis.min) {
+                  axis.min = minMax.min;
+                }
+                if (axis.max < minMax.max || !axis.max) {
+                  axis.max = minMax.max;
+                }
               }
-              if (axis.max < minMax.max || !axis.max) {
-                max = minMax.max;
-                axis.max = minMax.max;
-              }
+            });
+
+            if (axis.min === 0) {
+              delete axis.min;
+            }
+            if (axis.max === 0) {
+              delete axis.max;
             }
           });
-        });
-      } else {
+        } else {
 
+        }
       }
     }
 

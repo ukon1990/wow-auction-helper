@@ -21,6 +21,7 @@ import {LogRepository} from '../../logs/repository';
 import {AhStatsRequest} from '../models/ah-stats-request.model';
 import {RealmLogRepository} from '../../realm/repositories/realm-log.repository';
 import {AuctionItemStat} from '../models/auction-item-stat.model';
+import {ItemPriceCompareEntry} from "../models/item-price-compare-entry.model";
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -40,9 +41,7 @@ export class StatsService {
       new StatsRepository().getComparePrices(items)
         .then((res: AuctionItemStat[]) => {
           const ahTypeId = items[0].ahTypeId;
-          const map = new Map<number, {
-            price: number, quantity: number, timestamp: number
-          }>();
+          const map = new Map<number, ItemPriceCompareEntry>();
           const list = [];
           if (!res.length) {
             resolve([]);
@@ -51,6 +50,7 @@ export class StatsService {
           (AuctionProcessorUtil.processHourlyPriceData(res)[ahTypeId] || []).forEach(row => {
             if (!map.has(row.ahId)) {
               map.set(row.ahId, {
+                ahId: row.ahId,
                 price: row.min,
                 quantity: row.quantity,
                 timestamp: row.timestamp,

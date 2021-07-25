@@ -5,6 +5,7 @@ import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {RDSQueryUtil} from '../../utils/query.util';
 import {AuctionHouse} from '../../realm/model';
 import {AhStatsRequest} from '../models/ah-stats-request.model';
+import {ItemPriceEntryResponse} from "../../../../client/src/client/modules/item/models/item-price-entry.model";
 
 export class StatsRepository {
   readonly FOURTEEN_DAYS = 60 * 60 * 24 * 1000 * 14;
@@ -117,7 +118,7 @@ export class StatsRepository {
                                       );`);
   }
 
-  getComparePrices(items: AhStatsRequest[]): Promise<any> {
+  getComparePrices(items: AhStatsRequest[]): Promise<AuctionItemStat[]> {
     const now = new Date();
     const oneHourAgo = new Date(+new Date() - 60 * 60 * 1000);
     const list: AhStatsRequest[] = [];
@@ -160,8 +161,6 @@ export class StatsRepository {
                     )
                   `).join(' OR ')}
                  ) AND date = '${now.getUTCFullYear()}-${sqlFriendlyDateNum(now.getUTCMonth() + 1)}-${now.getUTCDate()}';`;
-
-    console.log(sql)
     return this.conn.query(sql);
   }
 
