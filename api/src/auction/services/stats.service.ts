@@ -21,7 +21,7 @@ import {LogRepository} from '../../logs/repository';
 import {AhStatsRequest} from '../models/ah-stats-request.model';
 import {RealmLogRepository} from '../../realm/repositories/realm-log.repository';
 import {AuctionItemStat} from '../models/auction-item-stat.model';
-import {ItemPriceCompareEntry} from "../models/item-price-compare-entry.model";
+import {ItemPriceCompareEntry} from '../models/item-price-compare-entry.model';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -74,8 +74,9 @@ export class StatsService {
   /* istanbul ignore next */
   async getPriceHistoryFor(items: AhStatsRequest[], onlyHourly = true,
                            conn: DatabaseUtil = new DatabaseUtil(false, true)): Promise<any> {
-    items.forEach(({ahId, itemId, petSpeciesId}) =>
-      console.log(`getPriceHistoryFor ahId=${ahId} item=${itemId} pet=${petSpeciesId}`));
+    console.log(`getPriceHistoryFor ${
+      items.map(({ahId, itemId, petSpeciesId}) => `ahId=${ahId} item=${itemId} pet=${petSpeciesId}`)}`
+    );
 
     if (onlyHourly) {
       return new Promise((resolve, reject) => {
