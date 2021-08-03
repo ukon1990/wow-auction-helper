@@ -19,7 +19,9 @@ import {AuctionHouse} from '../../realm/model';
 import {S3} from 'aws-sdk';
 import {LogRepository} from '../../logs/repository';
 import {AhStatsRequest} from '../models/ah-stats-request.model';
-import {RealmLogRepository} from "../../realm/repositories/realm-log.repository";
+import {RealmLogRepository} from '../../realm/repositories/realm-log.repository';
+import {AuctionItemStat} from '../models/auction-item-stat.model';
+import {ItemPriceCompareEntry} from '../models/item-price-compare-entry.model';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -34,12 +36,47 @@ export class StatsService {
     this.realmLogRepository = new RealmLogRepository();
   }
 
+  getComparablePricesFor(items: AhStatsRequest[]): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      new StatsRepository().getComparePrices(items)
+        .then((res: AuctionItemStat[]) => {
+          const ahTypeId = items[0].ahTypeId;
+          const map = new Map<number, ItemPriceCompareEntry>();
+          const list = [];
+          if (!res.length) {
+            resolve([]);
+            return;
+          }
+          (AuctionProcessorUtil.processHourlyPriceData(res)[ahTypeId] || []).forEach(row => {
+            if (!map.has(row.ahId)) {
+              map.set(row.ahId, {
+                ahId: row.ahId,
+                price: row.min,
+                quantity: row.quantity,
+                timestamp: row.timestamp,
+              });
+              list.push(map.get(row.ahId));
+            } else {
+              const realm = map.get(row.ahId);
+              if (realm.timestamp < row.timestamp) {
+                realm.price = row.min;
+                realm.quantity = row.quantity;
+                realm.timestamp = row.timestamp;
+              }
+            }
+          });
+          resolve(list);
+        })
+        .catch(reject);
+    });
+  }
 
   /* istanbul ignore next */
   async getPriceHistoryFor(items: AhStatsRequest[], onlyHourly = true,
                            conn: DatabaseUtil = new DatabaseUtil(false, true)): Promise<any> {
-    items.forEach(({ahId, itemId, petSpeciesId}) =>
-      console.log(`getPriceHistoryFor ahId=${ahId} item=${itemId} pet=${petSpeciesId}`));
+    console.log(`getPriceHistoryFor ${
+      items.map(({ahId, itemId, petSpeciesId}) => `ahId=${ahId} item=${itemId} pet=${petSpeciesId}`)}`
+    );
 
     if (onlyHourly) {
       return new Promise((resolve, reject) => {
@@ -526,12 +563,12 @@ export class StatsService {
   }
 
   /**
-  TODO: Delete?
-  * Add a new column to the AH table indicating when the last delete was ran
-  * Run once each 6-10 minute
-  * Limit 1 order by time since asc (to get the oldest first)
-  * @deprecated
-  */
+   TODO: Delete?
+   * Add a new column to the AH table indicating when the last delete was ran
+   * Run once each 6-10 minute
+   * Limit 1 order by time since asc (to get the oldest first)
+   * @deprecated
+   */
   deleteOldPriceHistoryForRealm(conn = new DatabaseUtil(false)): Promise<any> {
     return new Promise(async (resolve, reject) => {
       const repository = new StatsRepository(conn);

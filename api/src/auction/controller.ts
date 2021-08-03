@@ -5,7 +5,6 @@ import {Endpoints} from '../utils/endpoints.util';
 import {DatabaseUtil} from '../utils/database.util';
 import {StatsService} from './services/stats.service';
 import {TsmService} from './services/tsm.service';
-import {AhStatsRequest} from './models/ah-stats-request.model';
 
 /* istanbul ignore next */
 exports.deactivateInactiveHouses = (event: APIGatewayEvent, context: Context, callback: Callback) =>
@@ -44,6 +43,17 @@ exports.getPriceHistoryForItem = (event: APIGatewayEvent, context: Context, call
     })
     .catch(error => {
       conn.end();
+      Response.error(callback, error, event);
+    });
+};
+
+exports.getComparablePricesFor = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  const service = new StatsService();
+  service.getComparablePricesFor(JSON.parse(event.body))
+    .then(async history => {
+      Response.send(history, callback);
+    })
+    .catch(error => {
       Response.error(callback, error, event);
     });
 };

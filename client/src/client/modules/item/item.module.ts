@@ -31,6 +31,7 @@ import {CoreModule} from '../core/core.module';
 import {HighchartsChartModule} from 'highcharts-angular';
 import { AuctionsComponent } from './components/auctions/auctions.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
+import { ItemPriceCompareComponent } from './components/item-price-compare.component';
 
 
 @NgModule({
@@ -44,7 +45,8 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
     ContainedInTabComponent,
     AuctionsChartComponent,
     ItemPriceHistoryComponent,
-    AuctionsComponent
+    AuctionsComponent,
+    ItemPriceCompareComponent
   ],
   imports: [
     CommonModule,
@@ -72,7 +74,8 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
   ],
   exports: [
     ItemComponent,
-    ItemPriceHistoryComponent
+    ItemPriceHistoryComponent,
+    ItemPriceCompareComponent
   ]
 })
 export class ItemModule {

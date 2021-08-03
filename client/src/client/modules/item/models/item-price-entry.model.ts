@@ -5,6 +5,7 @@ export interface ItemPriceEntryResponse {
 
 export interface ItemPriceEntry {
   id?: string;
+  ahId?: number;
   ahTypeId?: number;
   quantity: number;
   // ahId: number;
