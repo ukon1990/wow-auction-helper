@@ -24,6 +24,7 @@ input CreateWahUserSettingsCharacterInput {
     slug: String!
     name: String!
     faction: Int
+    classicRecipes: [Int]
     lastModified: AWSTimestamp!
 }
 
@@ -147,6 +148,7 @@ input UpdateWahUserSettingsCharacterInput {
     slug: String!
     name: String!
     faction: Int
+    classicRecipes: [Int]
     lastModified: AWSTimestamp!
 }
 
@@ -228,6 +230,7 @@ type WahUserSettings {
 type WahUserSettingsCharacter {
     slug: String!
     name: String!
+    classicRecipes: [Int]
     lastModified: AWSTimestamp!
 }
 

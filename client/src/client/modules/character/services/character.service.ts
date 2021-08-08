@@ -143,6 +143,14 @@ export class CharacterService {
           if (this.characterHaveRecipes(character)) {
             withRecipes.push(character);
             this.setRecipesForCharacter(character, map);
+          } else if (character.classicRecipes) {
+            character.classicRecipes.forEach(id =>
+              this.addRecipe(
+                id,
+                character.name,
+                character.faction,
+                map
+              ));
           }
         }
       });
@@ -187,6 +195,14 @@ export class CharacterService {
         this.addRecipe(recipe, character.name, character.faction, userRecipeMap)));
   }
 
+  /**
+   * Adds a recipe with character name to the list of known recipes
+   * @param id
+   * @param characterName
+   * @param faction
+   * @param userRecipeMap
+   * @private
+   */
   private addRecipe(id: number, characterName: string, faction: number, userRecipeMap: Map<number, string[]>): void {
     if (!userRecipeMap.has(id)) {
       userRecipeMap.set(id, []);

@@ -4,6 +4,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 export class Character extends APICharacter {
   downloading?: boolean;
   error?: HttpErrorResponse;
+  classicRecipes?: number[];
 }
 
 export class SettingsCharacter {
@@ -11,4 +12,5 @@ export class SettingsCharacter {
   slug: string;
   name: string;
   faction: number;
+  classicRecipes?: number[];
 }
