@@ -112,9 +112,11 @@ export class RealmService {
       } else {
         this.logRepository.getUpdateDelays(id)
           .then(delay => {
-            // Setting the delay to 115 as a max, in case of newly activated realms
-            const lowestDelay = (delay.lowestDelay > 120 ? 60 : delay.lowestDelay);
-            const nextUpdate = entry.lastModified + lowestDelay * minute;
+            // Setting the delay to 119 as a max, in case of newly activated realms
+            if (delay.lowestDelay < 60 || delay.lowestDelay > 120) {
+              delay.lowestDelay = 60;
+            }
+            const nextUpdate = entry.lastModified + delay.lowestDelay * minute;
             this.repository.update(id, {
               lastModified: entry.lastModified,
               url: entry.url,

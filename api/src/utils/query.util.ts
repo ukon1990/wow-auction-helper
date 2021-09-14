@@ -1,7 +1,7 @@
 import {EmptyUtil} from '@ukon1990/js-utilities';
 import {safeifyString} from './string.util';
 import {S3} from 'aws-sdk';
-import {DynamoDbReturnValue} from "../enums/dynamo-db-return-value.enum";
+import {DynamoDbReturnValue} from '../enums/dynamo-db-return-value.enum';
 
 export class RDSQueryUtil<T> {
   static getSQLTimestamp(timestamp: S3.LastModified) {

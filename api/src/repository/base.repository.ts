@@ -3,8 +3,7 @@ import * as AWS from 'aws-sdk';
 import {AWSError} from 'aws-sdk';
 import {NoSQLQueryUtil} from '../utils/query.util';
 import {AuthorizationUtil} from '../utils/authorization.util';
-import {DashboardV2} from '../../../client/src/client/modules/dashboard/models/dashboard-v2.model';
-import {DynamoDbReturnValue} from "../enums/dynamo-db-return-value.enum";
+import {DynamoDbReturnValue} from '../enums/dynamo-db-return-value.enum';
 
 export abstract class BaseRepository<T> {
   protected client: DocumentClient;
