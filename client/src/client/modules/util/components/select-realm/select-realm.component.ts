@@ -61,6 +61,8 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
     this.sm.add(
       this.autocompleteField.valueChanges,
       (value) => this.filterRealms(value));
+
+    this.handleFormChanges();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -129,7 +131,7 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
     return Math.round(ms / 60000);
   }
 
-  private handleFormChanges(value: any) {
+  private handleFormChanges(value: any = this.form.value) {
     const result = this.setSelectedRealm(value);
 
     if (!result) {
