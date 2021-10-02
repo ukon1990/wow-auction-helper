@@ -123,8 +123,7 @@ export class AuctionComparisonComponent implements OnInit, OnDestroy {
       (!changes.buyoutDifferencePercent || item.buyoutDifferencePercent >= changes.buyoutDifferencePercent / 100);
   }
 
-  handleRealmSelection ({realmStatus, ahTypeId}: {ahTypeId: number, realmStatus: AuctionHouseStatus}, saveToParam: 'comparisonSetOne' | 'comparisonSetTwo') {
-    console.log(realmStatus);
+  handleRealmSelection ({realmStatus, ahTypeId = 0}: {ahTypeId: number, realmStatus: AuctionHouseStatus}, saveToParam: 'comparisonSetOne' | 'comparisonSetTwo') {
     this.selections[saveToParam] = realmStatus;
     this.setIsLoading(saveToParam, true);
     this.auctionService.getAuctions(realmStatus, true, ahTypeId)
