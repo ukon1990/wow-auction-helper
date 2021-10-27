@@ -423,7 +423,7 @@ export class AuctionService {
         } catch (e) {
         }
       }
-      resolve();
+      resolve('success');
     });
   }
 
