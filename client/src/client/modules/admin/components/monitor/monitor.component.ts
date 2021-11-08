@@ -17,11 +17,21 @@ import {ThemeUtil} from '../../../core/utils/theme.util';
 })
 export class MonitorComponent implements OnDestroy {
   size: TableSize[] = [];
+  tableStatSummary = {
+    totalTableSize: 0,
+    totalIndexSizeInMb: 0,
+    totalSizeInMb: 0,
+    totalFreeTableSizeInMb: 0,
+    totalAllocatedTableSize: 0,
+    totalNumberOfRows: 0,
+  };
   sizeColumns: ColumnDescription[] = [
     {key: 'name', title: 'Table', dataType: 'string'},
     {key: 'tableSizeInMb', title: 'Table size (MB)', dataType: 'number'},
     {key: 'indexSizeInMb', title: 'Index size (MB)', dataType: 'number'},
     {key: 'sizeInMb', title: 'Total size (MB)', dataType: 'number'},
+    {key: 'freeTableSizeInMb', title: 'Available storage (MB)', dataType: 'number'},
+    {key: 'allocatedTableSize', title: 'Total provisioned size (MB)', dataType: 'number'},
     {key: 'rows', title: 'Rows', dataType: 'number'},
   ];
   processes: SQLProcess[] = [];
@@ -167,7 +177,26 @@ export class MonitorComponent implements OnDestroy {
 
   private getSize() {
     this.service.getTableSize()
-      .then(size => this.size = size)
+      .then(size => {
+        const summary = {
+          totalTableSize: 0,
+          totalIndexSizeInMb: 0,
+          totalSizeInMb: 0,
+          totalFreeTableSizeInMb: 0,
+          totalAllocatedTableSize: 0,
+          totalNumberOfRows: 0,
+        };
+        size.forEach(entry => {
+          summary.totalTableSize += entry.tableSizeInMb;
+          summary.totalIndexSizeInMb += entry.indexSizeInMb;
+          summary.totalSizeInMb += entry.sizeInMb;
+          summary.totalFreeTableSizeInMb += entry.freeTableSizeInMb;
+          summary.totalAllocatedTableSize += entry.allocatedTableSize;
+          summary.totalNumberOfRows += entry.rows;
+        });
+        this.size = size;
+        this.tableStatSummary = summary;
+      })
       .catch(console.error);
   }
 

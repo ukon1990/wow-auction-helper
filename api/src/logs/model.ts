@@ -19,6 +19,8 @@ export interface TableSize {
   tableSizeInMb: number;
   indexSizeInMb: number;
   sizeInMb: number;
+  freeTableSizeInMb: number;
+  allocatedTableSize: number;
   rows: number;
 }
 
