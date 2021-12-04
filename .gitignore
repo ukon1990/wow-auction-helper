@@ -52,5 +52,7 @@ server-legacy/secrets/secrets\.js
 secrets.ts
 
 api/package-lock.json
+client/package-lock.json
+client/.angular/
 
 #client/package-lock.json
