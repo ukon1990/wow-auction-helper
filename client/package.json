@@ -26,7 +26,7 @@
     "@angular/compiler": "~12.2.14",
     "@angular/core": "~12.2.14",
     "@angular/forms": "~12.2.14",
-    "@angular/material": "^11.0.3",
+    "@angular/material": "^12.2.13",
     "@angular/platform-browser": "~12.2.14",
     "@angular/platform-browser-dynamic": "~12.2.14",
     "@angular/router": "~12.2.14",
