@@ -55,7 +55,7 @@ export class SettingsService {
     */
   }
 
-  createSettings(settings = this.settings.value) {
+  createSettings(settings = this.settings.value): Promise<void> {
     Report.debug('createSettings', settings);
     return new Promise(async (resolve, reject) => {
       if (!this.appSync.client || !this.appSync.isAuthenticated.value) {
@@ -167,10 +167,10 @@ export class SettingsService {
         ErrorReport.sendError('SettingsService.deleteSettings', error));
   }
 
-  getSettings() {
-    return new Promise<any>((resolve, reject) => {
+  getSettings(): Promise<UserSettings> {
+    return new Promise<UserSettings>((resolve, reject): Promise<void> => {
       if (!this.appSync.client || !this.appSync.isAuthenticated.value) {
-        resolve();
+        resolve(this.settings.value);
         return;
       }
 
@@ -180,7 +180,7 @@ export class SettingsService {
       })
         .then(async (res) => {
           if (!res) {
-            resolve();
+            resolve(this.settings.value);
             return;
           }
           const {data} = res;

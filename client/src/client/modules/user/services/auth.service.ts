@@ -209,7 +209,7 @@ export class AuthService {
   }
 
   logOut(): Promise<void> {
-    return new Promise<any>((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       Auth.signOut()
         .then(async (user: CognitoUser) => {
           Object.keys(localStorage)
