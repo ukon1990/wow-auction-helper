@@ -20,17 +20,17 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "~11.0.9",
+    "@angular/animations": "~12.2.14",
     "@angular/cdk": "^11.0.3",
-    "@angular/common": "~11.0.9",
-    "@angular/compiler": "~11.0.9",
-    "@angular/core": "~11.0.9",
-    "@angular/forms": "~11.0.9",
+    "@angular/common": "~12.2.14",
+    "@angular/compiler": "~12.2.14",
+    "@angular/core": "~12.2.14",
+    "@angular/forms": "~12.2.14",
     "@angular/material": "^11.0.3",
-    "@angular/platform-browser": "~11.0.9",
-    "@angular/platform-browser-dynamic": "~11.0.9",
-    "@angular/router": "~11.0.9",
-    "@angular/service-worker": "~11.0.9",
+    "@angular/platform-browser": "~12.2.14",
+    "@angular/platform-browser-dynamic": "~12.2.14",
+    "@angular/router": "~12.2.14",
+    "@angular/service-worker": "~12.2.14",
     "@aws-amplify/ui-angular": "^0.4.16",
     "@fortawesome/angular-fontawesome": "^0.8.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.32",
@@ -54,15 +54,15 @@
     "rxjs": "^6.5.5",
     "tslib": "^2.0.0",
     "words-to-numbers": "^1.5.1",
-    "zone.js": "~0.10.3"
+    "zone.js": "~0.11.4"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~13.0.4",
     "@angular-devkit/core": "^13.0.4",
     "@angular-devkit/schematics": "^13.0.4",
     "@angular/cli": "11.0.7",
-    "@angular/compiler-cli": "^11.0.9",
-    "@angular/language-service": "~11.0.9",
+    "@angular/compiler-cli": "^12.2.14",
+    "@angular/language-service": "~12.2.14",
     "@schematics/angular": "^10.0.0",
     "@types/jasmine": "~3.3.16",
     "@types/jasminewd2": "~2.0.6",
@@ -80,7 +80,7 @@
     "protractor": "~7.0.0",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
-    "typescript": "4.0.5"
+    "typescript": "4.3.5"
   },
   "browser": {
     "crypto": false
