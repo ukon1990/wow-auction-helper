@@ -265,7 +265,7 @@ export class CharacterService {
           reject(c.error);
         }
       }).catch(error => {
-        this.handleCharacterError(error, name, character.realm);
+        this.handleCharacterError(error, character.name, character.realm);
         reject(error);
       });
     });
@@ -288,7 +288,7 @@ export class CharacterService {
     return index;
   }
 
-  handleCharacterError(error: HttpErrorResponse, name: string, realm: string) {
+  handleCharacterError(error: HttpErrorResponse, name: string, realm: string): void {
     ErrorReport.sendHttpError(
       error,
       new ErrorOptions(
