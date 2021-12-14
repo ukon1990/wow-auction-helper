@@ -1,6 +1,5 @@
 import {BaseRepository} from '../../repository/base.repository';
 import {AuctionHouseUpdateLog, DumpDelay} from '../model';
-import {RealmRepository} from "./realm.repository";
 
 export class RealmLogRepository extends BaseRepository<AuctionHouseUpdateLog> {
   private minuteInMS = 1000 * 60;

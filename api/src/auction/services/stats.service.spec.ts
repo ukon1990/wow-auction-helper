@@ -102,10 +102,17 @@ describe('StatsService', () => {
       const service = new StatsService(); // Dag 7 dager siden
       const realmRepository = new RealmRepository();
 
+      await realmRepository.getAll().then(async realms => {
+        for (const realm of realms) {
+          await service.deleteOldPriceForRealm('itemPriceHistoryPerDay', 4, 'MONTH');
+          await service.deleteOldPriceForRealm('itemPriceHistoryPerHour', 15, 'DAY');
+        }
+      });
+      /*
       for (let i = 0; i < 300; i++) {
-        // await service.deleteOldPriceForRealm('itemPriceHistoryPerHour', 15, 'DAY');
-        // await service.deleteOldPriceForRealm('itemPriceHistoryPerDay', 4, 'MONTH');
-      }
+        await service.deleteOldPriceForRealm('itemPriceHistoryPerHour', 15, 'DAY');
+        await service.deleteOldPriceForRealm('itemPriceHistoryPerDay', 4, 'MONTH');
+      }*/
       const key = `lastHistoryDeleteEvent`;
       const list: AuctionHouse[] = await realmRepository.getRealmsThatNeedsStatDeletion(key);
 

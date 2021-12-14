@@ -12,7 +12,7 @@ import {BLIZZARD} from '../secrets';
 import {HttpResponse} from '../models/http-response.model';
 import {GameBuildVersion} from '../../../client/src/client/utils/game-build.util';
 import {TextUtil} from '@ukon1990/js-utilities';
-import {DynamoDbReturnValue} from "../enums/dynamo-db-return-value.enum";
+import {DynamoDbReturnValue} from '../enums/dynamo-db-return-value.enum';
 
 export class RealmService {
   private repository: RealmRepository;

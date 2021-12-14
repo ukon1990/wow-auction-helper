@@ -72,6 +72,56 @@
         [data]="processHistory"
 ></wah-data-table>
 
+<mat-list dense class="horizontal-item-list">
+  <mat-list-item>
+    <div mat-line [style]="{color: theme.accentColorCode}">
+      Table size (MB)
+    </div>
+    <div mat-line>
+      {{ tableStatSummary.totalTableSize | number }}
+    </div>
+  </mat-list-item>
+  <mat-list-item>
+    <div mat-line [style]="{color: theme.accentColorCode}">
+      Index size (MB)
+    </div>
+    <div mat-line>
+      {{ tableStatSummary.totalIndexSizeInMb | number }}
+    </div>
+  </mat-list-item>
+  <mat-list-item>
+    <div mat-line [style]="{color: theme.accentColorCode}">
+      Total size (MB)
+    </div>
+    <div mat-line>
+      {{ tableStatSummary.totalSizeInMb | number }}
+    </div>
+  </mat-list-item>
+  <mat-list-item>
+    <div mat-line [style]="{color: theme.accentColorCode}">
+      Available storage (MB)
+    </div>
+    <div mat-line>
+      {{ tableStatSummary.totalFreeTableSizeInMb | number }}
+    </div>
+  </mat-list-item>
+  <mat-list-item>
+    <div mat-line [style]="{color: theme.accentColorCode}">
+      Total allocated storage (MB)
+    </div>
+    <div mat-line>
+      {{ tableStatSummary.totalAllocatedTableSize | number }}
+    </div>
+  </mat-list-item>
+  <mat-list-item>
+    <div mat-line [style]="{color: theme.accentColorCode}">
+      Total number of rows
+    </div>
+    <div mat-line>
+      {{ tableStatSummary.totalNumberOfRows | number }}
+    </div>
+  </mat-list-item>
+</mat-list>
 <wah-data-table
         filterParameter="name"
         [columns]="sizeColumns"

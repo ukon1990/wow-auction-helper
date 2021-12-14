@@ -10,34 +10,19 @@ import {AuctionItem} from '../../models/auction-item.model';
 import {AuctionHouseStatus} from '../../models/auction-house-status.model';
 import {ItemClass} from '../../../item/models/item-class.model';
 import {ItemClassService} from '../../../item/service/item-class.service';
-import { itemQualities } from '../../../../models/item/disenchanting-list';
+import {itemQualities} from '../../../../models/item/disenchanting-list';
 import {Filters} from '../../../../utils/filtering';
-import {Modifiers} from '../../models/auction.model';
 import {GameBuild} from '../../../../utils/game-build.util';
+import {ComparisonTableDataModel} from '../../models/comparison-table-data.model';
+import {ComparisonVariableEnum} from '../../enums/comparison-variable.enum';
 
-interface TableDataModel {
-  id: string;
-  itemID: number;
-  name: string;
-  itemLevel: number;
-  bonusIds: number[];
-  modifiers: Modifiers[];
-  petSpeciesId?: number;
-  petLevel?: number;
-  petQualityId?: number;
-  quantityTotal: number;
-  otherQuantityTotal: number;
-  buyout: number;
-  otherBuyout: number;
-  buyoutDifference: number;
-  buyoutDifferencePercent: number;
-}
 
 @Component({
   selector: 'wah-auction-comparison',
   templateUrl: './auction-comparison.component.html',
 })
 export class AuctionComparisonComponent implements OnInit, OnDestroy {
+  ComparisonVariableEnum = ComparisonVariableEnum;
   selections: {[key: string]: RealmStatus} = {
     comparisonSetOne: undefined,
     comparisonSetTwo: undefined,
@@ -47,17 +32,25 @@ export class AuctionComparisonComponent implements OnInit, OnDestroy {
   comparisonSetTwo: OrganizedAuctionResult;
   isComparisonOneLoading: boolean;
   isComparisonTwoLoading: boolean;
-  tableData: TableDataModel[] = [];
-  allData: TableDataModel[] = [];
+  tableData: ComparisonTableDataModel[] = [];
+  allData: ComparisonTableDataModel[] = [];
+  private currentBuyoutColumn: ColumnDescription = {
+    key: 'buyout', title: 'Buyout', dataType: 'gold'};
+  private currentQuantityTotalColumn: ColumnDescription = {
+    key: 'quantityTotal', title: 'Stock', dataType: 'number', hideOnMobile: true};
+  private otherBuyoutColumn: ColumnDescription = {
+    key: 'otherBuyout', title: 'Other buyout', dataType: 'gold'};
+  private otherQuantityTotalColumn: ColumnDescription = {
+    key: 'otherQuantityTotal', title: 'Other Stock', dataType: 'number', hideOnMobile: true};
   columns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'itemLevel', title: 'iLvL', dataType: 'number', hideOnMobile: true},
-    {key: 'quantityTotal', title: 'Stock', dataType: 'number', hideOnMobile: true},
-    {key: 'buyout', title: 'Buyout', dataType: 'gold'},
+    this.currentQuantityTotalColumn,
+    this.currentBuyoutColumn,
     {key: 'buyoutDifference', title: 'Difference', dataType: 'gold'},
     {key: 'buyoutDifferencePercent', title: 'Difference %', dataType: 'percent'},
-    {key: 'otherBuyout', title: 'Other buyout', dataType: 'gold'},
-    {key: 'otherQuantityTotal', title: 'Other Stock', dataType: 'number', hideOnMobile: true},
+    this.otherBuyoutColumn,
+    this.otherQuantityTotalColumn,
   ];
   form: FormGroup;
   subs: Subscription = new Subscription();
@@ -78,6 +71,8 @@ export class AuctionComparisonComponent implements OnInit, OnDestroy {
       saleRate: filter && filter.saleRate !== null ? parseFloat(filter.saleRate) : null,
       avgDailySold: filter && filter.avgDailySold !== null ? parseFloat(filter.avgDailySold) : null,
       expansion: filter && filter.expansion ? filter.expansion : null,
+      quantityTotal: filter?.quantityTotal || null,
+      otherQuantityTotal: filter?.otherQuantityTotal || null,
       minItemQuality: filter && filter.minItemQuality ? filter.minItemQuality : null,
       minItemLevel: filter && filter.minItemLevel ? filter.minItemLevel : null,
       buyoutDifference: filter && filter.buyoutDifference ? filter.buyoutDifference : null,
@@ -92,7 +87,7 @@ export class AuctionComparisonComponent implements OnInit, OnDestroy {
       if (!this.delayFilter) {
         this.delayFilter = true;
         setTimeout(async () => {
-          this.filterAuctions(filter);
+          this.filterAuctions(this.form.value);
           this.delayFilter = false;
         }, 100);
       }
@@ -108,12 +103,16 @@ export class AuctionComparisonComponent implements OnInit, OnDestroy {
       .filter(i => this.isMatch(i, changes));
   }
 
-  private isMatch(item: TableDataModel, changes): boolean {
+  private isMatch(item: ComparisonTableDataModel, changes): boolean {
     return Filters.isNameMatch(item.itemID, this.form.getRawValue().name, item.petSpeciesId, item.id) &&
       Filters.isItemClassMatch(
         item.itemID, this.form.getRawValue().itemClass, changes.itemSubClass) &&
       Filters.isSaleRateMatch(item.itemID, changes.saleRate) &&
       Filters.isBelowMarketValue(item.itemID, changes.mktPrice) &&
+      Filters.isQuantityAbove(
+        item.id, changes.quantityTotal, this.comparisonSetOne?.map.get(item.id)) &&
+      Filters.isQuantityAbove(
+        item.id, changes.otherQuantityTotal, this.comparisonSetTwo?.map.get(item.id)) &&
       Filters.isDailySoldMatch(item.itemID, changes.avgDailySold) &&
       Filters.isBelowSellToVendorPrice(item.itemID, changes.onlyVendorSellable) &&
       Filters.isItemAboveQuality(item.itemID, changes.minItemQuality) &&
@@ -123,12 +122,28 @@ export class AuctionComparisonComponent implements OnInit, OnDestroy {
       (!changes.buyoutDifferencePercent || item.buyoutDifferencePercent >= changes.buyoutDifferencePercent / 100);
   }
 
-  handleRealmSelection ({realmStatus, ahTypeId = 0}: {ahTypeId: number, realmStatus: AuctionHouseStatus}, saveToParam: 'comparisonSetOne' | 'comparisonSetTwo') {
+  handleRealmSelection (
+    {realmStatus, ahTypeId = 0}: {ahTypeId: number, realmStatus: AuctionHouseStatus},
+    saveToParam: ComparisonVariableEnum
+  ) {
+    if (!realmStatus) {
+      return;
+    }
     this.selections[saveToParam] = realmStatus;
     this.setIsLoading(saveToParam, true);
     this.auctionService.getAuctions(realmStatus, true, ahTypeId)
       .then(result => {
         this[saveToParam] = result;
+        switch (saveToParam) {
+          case ComparisonVariableEnum.comparisonSetOne:
+            this.currentBuyoutColumn.title = `${realmStatus.name} buyout`;
+            this.currentQuantityTotalColumn.title = `${realmStatus.name} quantity`;
+            break;
+          case ComparisonVariableEnum.comparisonSetTwo:
+            this.otherBuyoutColumn.title = `${realmStatus.name} buyout`;
+            this.otherQuantityTotalColumn.title = `${realmStatus.name} quantity`;
+            break;
+        }
         if (this.comparisonSetOne && this.comparisonSetTwo) {
           this.compareDatasets();
         }
@@ -140,12 +155,12 @@ export class AuctionComparisonComponent implements OnInit, OnDestroy {
       });
   }
 
-  private setIsLoading(saveToParam: 'comparisonSetOne' | 'comparisonSetTwo', state: boolean) {
+  private setIsLoading(saveToParam: ComparisonVariableEnum, state: boolean) {
     switch (saveToParam) {
-      case 'comparisonSetOne':
+      case ComparisonVariableEnum.comparisonSetOne:
         this.isComparisonOneLoading = state;
         break;
-      case 'comparisonSetTwo':
+      case ComparisonVariableEnum.comparisonSetTwo:
         this.isComparisonTwoLoading = state;
         break;
     }
@@ -153,7 +168,7 @@ export class AuctionComparisonComponent implements OnInit, OnDestroy {
 
   private compareDatasets() {
     const list = [];
-    const map = new Map<string, TableDataModel>();
+    const map = new Map<string, ComparisonTableDataModel>();
     this.comparisonSetOne.list.forEach(item => {
       if (!item.buyout) {
         return;
@@ -186,8 +201,12 @@ export class AuctionComparisonComponent implements OnInit, OnDestroy {
     this.filterAuctions();
   }
 
-  private getAndAddEntryToMapIfNotExists(list: any[], map: Map<string, TableDataModel>, item: AuctionItem): TableDataModel {
-    let value: TableDataModel = map.get(item.id);
+  private getAndAddEntryToMapIfNotExists(
+    list: any[],
+    map: Map<string, ComparisonTableDataModel>,
+    item: AuctionItem
+  ): ComparisonTableDataModel {
+    let value: ComparisonTableDataModel = map.get(item.id);
     if (!map.has(item.id)) {
       value = {
         id: item.id,

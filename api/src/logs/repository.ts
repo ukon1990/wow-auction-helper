@@ -36,7 +36,9 @@ export class LogRepository {
              TABLE_ROWS                                        as 'rows',
              ROUND((DATA_LENGTH) / 1024 / 1024) AS tableSizeInMb,
              ROUND((INDEX_LENGTH) / 1024 / 1024) AS indexSizeInMb,
-             ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS sizeInMb
+             ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS sizeInMb,
+             ROUND((DATA_FREE) / 1024 / 1024) AS freeTableSizeInMb,
+             ROUND((DATA_FREE + DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS allocatedTableSize
       FROM information_schema.TABLES
       WHERE TABLE_SCHEMA = 'wah'
       ORDER BY (DATA_LENGTH + INDEX_LENGTH)
