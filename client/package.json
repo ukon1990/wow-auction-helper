@@ -46,7 +46,7 @@
     "file-saver": "^2.0.2",
     "graphql": "^15.4.0",
     "graphql-tag": "^2.11.0",
-    "highcharts": "^8.2.2",
+    "highcharts": "^9.0.0",
     "highcharts-angular": "^2.8.2",
     "logrocket": "^1.0.14",
     "luaparse": "^0.2.1",
