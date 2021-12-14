@@ -10,6 +10,7 @@ import {AuctionsService} from '../services/auctions.service';
 import {ItemClassService} from '../modules/item/service/item-class.service';
 import {ItemClass} from '../modules/item/models/item-class.model';
 import {GameBuild} from "./game-build.util";
+import {OrganizedAuctionResult} from "../modules/auction/utils/auction.util";
 
 export class Filters {
   private static auctionService: AuctionsService;
@@ -207,5 +208,27 @@ export class Filters {
 
   static isXSmallerThanOrEqualToY(x: number, y: number) {
     return EmptyUtil.isNullOrUndefined(y) || x <= y;
+  }
+
+  /**
+   * Checks if the quantity available is greater than or equal to the given value
+   * @param id - AuctionItem id
+   * @param quantity - The minimum number of auctions
+   * @param comparisonSetOne
+   */
+  static isQuantityAbove(id: string, quantity: number, auctionItem: AuctionItem) {
+    if (EmptyUtil.isNullOrUndefined(quantity) || quantity === 0) {
+      return true;
+    }
+
+    auctionItem = this.auctionService.getById(id);
+    if (!auctionItem) {
+      return false;
+    }
+
+    if (auctionItem && quantity && quantity > 0) {
+      return auctionItem.quantityTotal >= quantity;
+    }
+    return true;
   }
 }

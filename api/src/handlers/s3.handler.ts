@@ -1,6 +1,6 @@
 import {GzipUtil} from '../utils/gzip.util';
 import {AWS_DETAILS} from '../secrets';
-import {ListObjectsV2Output, ObjectList} from 'aws-sdk/clients/s3';
+import {ListObjectsV2Output, ManagedUpload, ObjectList} from 'aws-sdk/clients/s3';
 import {AuctionProcessorUtil} from '../auction/utils/auction-processor.util';
 import {StatsRepository} from '../auction/repository/stats.repository';
 
@@ -135,7 +135,7 @@ export class S3Handler {
     });
   }
 
-  private uploadGzip(path: string, buffer: Buffer, queryData: any) {
+  private uploadGzip(path: string, buffer: Buffer, queryData: { [key: string]: any }) {
     return new Promise<any>((resolve, reject) => {
       const s3 = this.getS3(),
         region = queryData.region === 'beta' ? 'us' : queryData.region;
@@ -147,7 +147,7 @@ export class S3Handler {
         Body: buffer,
         ContentEncoding: 'gzip',
         ContentType: 'application/json'
-      }, function (error, s3Response) {
+      }, function (error: Error, s3Response: ManagedUpload.SendData) {
         if (error) {
           console.error(error);
           reject(error);
