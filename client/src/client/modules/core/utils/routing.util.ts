@@ -46,7 +46,7 @@ export class RoutingUtil {
     return menuItems;
   }
 
-  private static getIsHidden({isHidden}: TitledRoute) {
+  private static getIsHidden({isHidden}: TitledRoute): boolean {
     switch (isHidden) {
       case ROUTE_HIDDEN_FLAGS.ONLY_IN_DEVELOP:
         return environment.production;
@@ -61,16 +61,25 @@ export class RoutingUtil {
     }
   }
 
-  private static getMenuItem({title, path, children, canActivate}: TitledRoute, parent?: MenuItem) {
+  private static getMenuItem({title, path, children, canActivate, isHidden}: TitledRoute, parent?: MenuItem) {
     const childMenuItems = [];
     const routerLinkFullPath: string = parent ? `${parent.routerLinkFull}/${path}` : '/' + path;
     const routeTitle = parent ? `${parent.title} | ${title}` : title;
     const menuItem: MenuItem = new MenuItem(
-      title, routeTitle, childMenuItems, path, routerLinkFullPath);
+      title,
+      routeTitle,
+      childMenuItems,
+      path,
+      routerLinkFullPath,
+      undefined,
+      isHidden === ROUTE_HIDDEN_FLAGS.ONLY_IN_DEVELOP
+    );
     if (children) {
       children.forEach(child => {
         if (child.title && !this.getIsHidden(child) && this.canActivate(child.canActivate)) { // Use Can activate also
-          childMenuItems.push(this.getMenuItem(child, menuItem));
+          const childMenuItem = this.getMenuItem(child, menuItem);
+          childMenuItem.onlyInDevelop = child.isHidden === ROUTE_HIDDEN_FLAGS.ONLY_IN_DEVELOP;
+          childMenuItems.push(childMenuItem);
         }
       });
     }

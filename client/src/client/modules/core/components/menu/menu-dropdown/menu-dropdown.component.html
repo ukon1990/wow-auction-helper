@@ -11,13 +11,13 @@
     <a *ngIf="!i.children.length; else dropdownTemplate"
             mat-menu-item
             [routerLink]="i.routerLinkFull">
-      {{ i.text }}
+      {{ i.text }} {{i.onlyInDevelop ? '(Dev)' : ''}}
     </a>
 
     <ng-template #dropdownTemplate>
       <wah-menu-dropdown [items]="i.children"
               (click)="doNotClose($event)">
-        {{ i.text }}
+        {{ i.text }} {{i.onlyInDevelop ? '(Dev)' : ''}}
       </wah-menu-dropdown>
     </ng-template>
   </ng-container>

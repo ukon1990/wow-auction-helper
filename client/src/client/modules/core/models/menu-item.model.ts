@@ -6,6 +6,7 @@ export class MenuItem {
     public children: MenuItem[] = [],
     public routerLink?: string,
     public routerLinkFull?: string,
-    public badgeContent?: Function
+    public badgeContent?: Function,
+    public onlyInDevelop?: boolean,
   ) {}
 }
