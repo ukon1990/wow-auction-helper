@@ -7,7 +7,6 @@ import {RealmStatus} from '../../../../models/realm-status.model';
 import {RealmService} from '../../../../services/realm.service';
 import {SharedService} from '../../../../services/shared.service';
 import {ahTypes} from '../../../../data/ah-types.data';
-import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-select-realm',
@@ -95,23 +94,21 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
     }
     let ahTypeId = 0;
 
-    Report.debug('setSelectedRealm', form);
     this.realms
       .forEach((status: RealmStatus) => {
         if (form.region === status.region && form.realm === status.slug) {
-          Report.debug('setSelectedRealm forEach match', !this.currentRealm || this.currentRealm.gameBuild !== status.gameBuild);
           if (!this.currentRealm || this.currentRealm.gameBuild !== status.gameBuild) {
             const factionId = SharedService.user.faction || 0;
             ahTypeId = status.gameBuild === 1 ? ahTypes[factionId || 0].id : 0;
             this.form.controls.ahTypeId.setValue(ahTypeId, {emitEvent: false});
             form.ahTypeId = ahTypeId;
           }
+          form.realmStatus = status;
           this.currentRealm = status;
           this.autocompleteField
             .setValue(this.getRealmNameAndRegion(status));
         }
       });
-    Report.debug('realmSelectionEvent inside', form);
     return {
       ...form
     };
@@ -137,7 +134,6 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
     if (!result) {
       return;
     }
-    Report.debug('realmSelectionEvent handleFormChanges', result);
     this.changes.emit(result);
   }
 
