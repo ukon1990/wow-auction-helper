@@ -10,7 +10,6 @@ import {BehaviorSubject} from 'rxjs';
 import {Item} from '../models/item/item';
 import {ItemSpells} from '../models/item/itemspells';
 import {Reagent} from '../modules/crafting/models/reagent';
-import wordsToNumbers from 'words-to-numbers';
 
 class RecipeResponse {
   timestamp: Date;
@@ -191,19 +190,22 @@ export class CraftingService {
    * @memberof Crafting
    */
   private setOnUseCraftsWithNoReagents(): void {
+    /*
+    TODO: Remove the previously used package for this is depricated (words-to-numbers)
     let tmpList = [];
     SharedService.itemsUnmapped.forEach(i =>
       tmpList = tmpList.concat(this.getItemForSpellsThatAreRecipes(i)));
-
     tmpList.forEach(recipe => {
       CraftingService.list.value.push(recipe);
       CraftingService.itemRecipeMapPerKnown.value.set(recipe.itemID, [recipe]);
     });
+    */
   }
 
   /**
    * Generating recipes from spell text and spell ID
-   *
+   * @deprecated The package words-to-numbers is depricated
+   * TODO: Remove once confirmed that I don't actually need it afterall (The result of this should be in the database instead)
    * @static
    * @param {Item} item
    * @returns {Recipe[]}
@@ -228,7 +230,7 @@ export class CraftingService {
             return;
           }
 
-          const numbers = regex.exec(wordsToNumbers(spell.Text) + ''),
+          const numbers = ['0'], // regex.exec(wordsToNumbers(spell.Text) + ''),
             quantity = numbers !== null && numbers.length > 0 && numbers[0] ? parseInt(numbers[0], 10) : 1,
             createsQuantity = numbers !== null && numbers.length > 1 && numbers[1] ? parseInt(numbers[1], 10) : 1;
 
