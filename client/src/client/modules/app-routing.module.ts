@@ -90,6 +90,13 @@ const TOOLS_ROUTE: TitledRoute = {
     {
       title: '[W.I.P] Vendors and mobs(NPCs)',
       path: 'npc',
+      /**
+       * Hidden as it is no longer worked on
+       * There are also no users who actually use this feature(as far as I am aware),
+       * so I see no valid reason to spend time on this.
+       * But Il'l keep it as a "hidden" feature for now.
+       */
+      isHidden: ROUTE_HIDDEN_FLAGS.ALWAYS,
       children: [
         {
           path: '',
