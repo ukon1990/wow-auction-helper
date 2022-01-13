@@ -4,14 +4,14 @@
           [region]="selections?.comparisonSetOne?.region"
           [realm]="selections?.comparisonSetOne?.slug"
           [minimal]="true"
-          (changes)="handleRealmSelection($event, 'comparisonSetOne')"
+          (changes)="handleRealmSelection($event, ComparisonVariableEnum.comparisonSetOne)"
   ></wah-select-realm>
   <wah-select-realm
           class="col"
           [region]="selections?.comparisonSetTwo?.region"
           [realm]="selections?.comparisonSetTwo?.slug"
           [minimal]="true"
-          (changes)="handleRealmSelection($event, 'comparisonSetTwo')"
+          (changes)="handleRealmSelection($event, ComparisonVariableEnum.comparisonSetTwo)"
   ></wah-select-realm>
 </div>
 
@@ -84,7 +84,8 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-
+  </div>
+  <div class="row">
     <mat-form-field class="col"
                     color="accent"
     >
@@ -102,6 +103,25 @@
              type="number"
              placeholder="Buyout vs other buyout %"
              formControlName="buyoutDifferencePercent"
+      >
+    </mat-form-field>
+
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <input matInput
+             type="number"
+             [placeholder]="'Min quantity @ ' + selections?.comparisonSetOne?.name"
+             formControlName="quantityTotal"
+      >
+    </mat-form-field>
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <input matInput
+             type="number"
+             [placeholder]="'Min quantity @ ' + selections?.comparisonSetTwo?.name || ''"
+             formControlName="otherQuantityTotal"
       >
     </mat-form-field>
 

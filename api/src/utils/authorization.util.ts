@@ -1,10 +1,15 @@
 import {APIGatewayEvent} from 'aws-lambda';
 import {AccessToken} from '../models/user/access-token.model';
 import {COGNITO} from '../../../client/src/client/secrets';
+import {Group} from "../enums/group.enum";
 
 export class AuthorizationUtil {
   static token: AccessToken;
   static tokenRaw: string;
+
+  static isAdmin(token: AccessToken) {
+    return token.groups.indexOf(Group.ADMIN) > -1;
+  }
 
   /**
    * TODO: Read this -> https://github.com/awslabs/aws-support-tools/tree/master/Cognito/decode-verify-jwt

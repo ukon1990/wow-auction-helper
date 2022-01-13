@@ -12,7 +12,7 @@ import {BLIZZARD} from '../secrets';
 import {HttpResponse} from '../models/http-response.model';
 import {GameBuildVersion} from '../../../client/src/client/utils/game-build.util';
 import {TextUtil} from '@ukon1990/js-utilities';
-import {DynamoDbReturnValue} from "../enums/dynamo-db-return-value.enum";
+import {DynamoDbReturnValue} from '../enums/dynamo-db-return-value.enum';
 
 export class RealmService {
   private repository: RealmRepository;
@@ -112,9 +112,11 @@ export class RealmService {
       } else {
         this.logRepository.getUpdateDelays(id)
           .then(delay => {
-            // Setting the delay to 115 as a max, in case of newly activated realms
-            const lowestDelay = (delay.lowestDelay > 120 ? 60 : delay.lowestDelay);
-            const nextUpdate = entry.lastModified + lowestDelay * minute;
+            // Setting the delay to 119 as a max, in case of newly activated realms
+            if (delay.lowestDelay < 60 || delay.lowestDelay > 120) {
+              delay.lowestDelay = 60;
+            }
+            const nextUpdate = entry.lastModified + delay.lowestDelay * minute;
             this.repository.update(id, {
               lastModified: entry.lastModified,
               url: entry.url,

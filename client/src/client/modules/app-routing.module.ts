@@ -2,8 +2,6 @@ import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {SetupComponent} from './settings/components/setup/setup.component';
 import {CraftingComponent} from './crafting/components/crafting.component';
-import {IsRegisteredService} from '../Is-registered.service';
-import {DashboardComponent} from './dashboard/components/dashboard.component';
 import {UpdateComponent} from './admin/components/update/update.component';
 import {AuctionsComponent} from './auction/components/auctions/auctions.component';
 import {TradeVendorsComponent} from './core/components/trade-vendors/trade-vendors.component';
@@ -16,7 +14,6 @@ import {AhSummaryComponent} from './dashboard/components/ah-summary/ah-summary.c
 import {ReputationsComponent} from './core/components/reputations/reputations.component';
 import {AddonComponent} from './addon/components/addon.component';
 import {ABOUT_ROUTE} from './about/about.route';
-import {ProfitSummaryComponent} from './addon/components/profit-summary/profit-summary.component';
 import {AddonDatasetComponent} from './addon/components/addon-dataset/addon-dataset.component';
 import {TitledRoute} from '../models/route/titled-route.model';
 import {TitledRoutes} from '../models/route/titled-routes.model';
