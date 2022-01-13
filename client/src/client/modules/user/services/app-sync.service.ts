@@ -23,7 +23,12 @@ export class AppSyncService {
     this.client = new AWSAppSyncClient({
       url: APP_SYNC.aws_appsync_graphqlEndpoint,
       region: APP_SYNC.aws_project_region,
-      offlineConfig: {storeCacheRootMutation: false},
+      offlineConfig: {
+        storage: {
+          // TODO: Validate if it works
+          cacheRootMutation: false
+        }
+      },
       disableOffline: true,
       auth: {
         type: AUTH_TYPE.AMAZON_COGNITO_USER_POOLS,

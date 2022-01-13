@@ -1,6 +1,4 @@
 import {ItemStats, Stat} from '../models/item-stats.model';
-import {AuctionProcessorUtil} from './auction-processor.util';
-import {AuctionItemStat} from '../models/auction-item-stat.model';
 import {ItemDailyPriceEntry, ItemPriceEntry} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
 import {DateUtil} from '@ukon1990/js-utilities';
 
