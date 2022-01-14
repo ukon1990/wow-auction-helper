@@ -1,7 +1,7 @@
 import {APIGatewayEvent} from 'aws-lambda';
 import {AccessToken} from '../models/user/access-token.model';
 import {COGNITO} from '../../../client/src/client/secrets';
-import {Group} from "../enums/group.enum";
+import {Group} from '../enums/group.enum';
 
 export class AuthorizationUtil {
   static token: AccessToken;
@@ -13,8 +13,8 @@ export class AuthorizationUtil {
 
   /**
    * TODO: Read this -> https://github.com/awslabs/aws-support-tools/tree/master/Cognito/decode-verify-jwt
+   * TODO: Use ? => https://github.com/awslabs/aws-support-tools/blob/master/Cognito/decode-verify-jwt/decode-verify-jwt.ts
    */
-
   static isValidToken({ headers }: APIGatewayEvent): AccessToken {
     if (headers && headers.Authorization) {
       const rawToken = headers.Authorization.replace('Bearer ', '');
