@@ -28,7 +28,7 @@ import {ListComponent as NpcListComponent} from './npc/components/list/list.comp
 import {MonitorComponent} from './admin/components/monitor/monitor.component';
 import {TestComponent} from './admin/components/test/test.component';
 import {AuctionComparisonComponent} from './auction/components/auction-comparison/auction-comparison.component';
-import {ProfitSummary2Component} from './addon/components/profit-summary2/profit-summary2.component';
+import {ProfitSummaryComponent} from './addon/components/profit-summary2/profit-summary.component';
 
 export const ROUTE_HIDDEN_FLAGS = {
   IS_NOT_REGISTERED: 'IS_NOT_REGISTERED',
@@ -53,7 +53,7 @@ const TOOLS_ROUTE: TitledRoute = {
         {
           title: 'Profit summary',
           path: 'summary',
-          component: ProfitSummary2Component,
+          component: ProfitSummaryComponent,
           isHidden: ROUTE_HIDDEN_FLAGS.ALWAYS
         },
         {

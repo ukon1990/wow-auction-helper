@@ -28,10 +28,10 @@ interface TableData {
 }
 
 @Component({
-  selector: 'wah-profit-summary2',
-  templateUrl: './profit-summary2.component.html',
+  selector: 'wah-profit-summary',
+  templateUrl: './profit-summary.component.html',
 })
-export class ProfitSummary2Component implements OnInit, OnDestroy {
+export class ProfitSummaryComponent implements OnInit, OnDestroy {
   realms = [];
   private readonly previousPeriodKey = 'profit_summary_display_period';
   private readonly previousPeriod: string | undefined = localStorage.getItem(this.previousPeriodKey);
