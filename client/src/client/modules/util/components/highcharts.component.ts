@@ -8,7 +8,8 @@ import {
   Tooltip,
   TooltipFormatterContextObject,
   XAxisOptions,
-  YAxisOptions
+  YAxisOptions,
+  PointOptionsObject
 } from 'highcharts';
 import addMore from 'highcharts/highcharts-more';
 import {NumberUtil} from '../utils/number.util';
@@ -230,8 +231,14 @@ export class HighchartsComponent implements OnChanges, OnDestroy {
         <span style="color: ${point.color}">${label}</span>
       `;
         if (!isNaN(point.y)) {
-          if (point.point.low && point.point.high) {
-            tip += `${formatter({value: point.point.low})} - ${formatter({value: point.point.high})}`;
+          if ((point.point as PointOptionsObject).low && (point.point as PointOptionsObject).high) {
+            tip += `${formatter({
+              value: (point.point as PointOptionsObject).low
+            })} - ${
+              formatter({
+                value: (point.point as PointOptionsObject).high
+              })
+            }`;
           } else {
             tip += formatter({value: point.y});
           }
