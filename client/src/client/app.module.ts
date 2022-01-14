@@ -44,7 +44,6 @@ import {ProfessionService} from './modules/crafting/services/profession.service'
 import {TsmService} from './modules/tsm/tsm.service';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatNativeDateModule} from '@angular/material/core';
-import {AmplifyUIAngularModule} from '@aws-amplify/ui-angular';
 import {AuthService} from './modules/user/services/auth.service';
 import {DashboardService} from './modules/dashboard/services/dashboard.service';
 import {AppSyncService} from './modules/user/services/app-sync.service';
@@ -63,7 +62,6 @@ Amplify.configure(APP_SYNC);
     AppRoutingModule,
     HttpClientModule,
     HttpClientJsonpModule,
-    AmplifyUIAngularModule,
     Angulartics2Module.forRoot(),
     ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
     BrowserAnimationsModule,

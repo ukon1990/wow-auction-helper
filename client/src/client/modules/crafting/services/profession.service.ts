@@ -47,8 +47,8 @@ export class ProfessionService {
     this.listWithRecipes.next(list);
   }
 
-  load(latestTimestamp: Date) {
-    return new Promise(async (resolve) => {
+  load(latestTimestamp: Date): Promise<void> {
+    return new Promise<void>(async (resolve) => {
       if (localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP)) {
         await this.dbService.getAllProfessions()
           .then(async (professions) => {
