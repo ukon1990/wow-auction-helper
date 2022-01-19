@@ -6,13 +6,12 @@ import {COGNITO} from '../../../secrets';
 import {ForgotPassword, Login, Register} from '../models/auth.model';
 import {BehaviorSubject} from 'rxjs';
 import {FederatedProvider} from '../enums/federated-provider.enum';
-import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AppSyncService} from './app-sync.service';
 import {SettingsService} from './settings/settings.service';
 import {MatDialog} from '@angular/material/dialog';
 import {EmptyUtil, TextUtil} from '@ukon1990/js-utilities';
 import {DatabaseService} from '../../../services/database.service';
-import {ErrorReport} from '../../../utils/error-report.util';
+import {ErrorReport} from "../../../utils/error-report.util";
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +24,7 @@ export class AuthService {
   user: BehaviorSubject<CognitoUser> = new BehaviorSubject<CognitoUser>(undefined);
   session: BehaviorSubject<CognitoUserSession> = new BehaviorSubject<CognitoUserSession>(undefined);
   authEvent = new BehaviorSubject(undefined);
+  userGroups: string[];
 
   constructor(private appSync: AppSyncService,
               private db: DatabaseService,
@@ -44,6 +44,7 @@ export class AuthService {
     });
 
     Hub.listen('auth', ({payload: {event, data}}) => {
+      console.log('Hub event', event, data);
       switch (event) {
         case 'signIn':
           this.getCurrentUser()
@@ -64,12 +65,15 @@ export class AuthService {
   init(): Promise<void> {
     return new Promise<void>(resolve => {
       this.getCurrentUser()
-        .then(async () => {
+        .then(async (currentUser) => {
           if (this.isAuthenticated) {
+            this.getAndSetUserGroups(currentUser);
             this.settingsSync.init();
             await this.settingsSync.getSettings()
               .catch(console.error);
-            const {realm, region} = this.settingsSync.settings.value || {};
+            const {
+              realm, region
+            } = this.settingsSync.settings.value || {realm: undefined, region: undefined};
             this.hasLoadedSettings.next(true);
             this.openSetupDialog(realm, region);
             resolve();
@@ -80,6 +84,18 @@ export class AuthService {
           resolve();
         });
     });
+  }
+
+  private getAndSetUserGroups(currentUser: CognitoUser) {
+    try {
+      const {
+        'cognito:groups': cognitoGroups
+      } = currentUser.getSignInUserSession().getIdToken().payload;
+
+      this.userGroups = cognitoGroups;
+    } catch (error) {
+      ErrorReport.sendError('AuthService.getAndSetUserGroups', error);
+    }
   }
 
   getCurrentUser(): Promise<CognitoUser> {

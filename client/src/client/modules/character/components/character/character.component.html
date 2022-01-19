@@ -3,7 +3,7 @@
     <div mat-card-avatar *ngIf="character.media" [style.background-image]="getAvatar()"
       [style.background-size]="'cover'"></div>
     <mat-card-title *ngIf="character.name">
-        {{ character.level }} {{ character.name }} @ {{ character.realm }}
+        {{ character.level }} <span data-private>{{ character.name }}</span> @ {{ character.realm }}
       <span *ngIf="character.downloading"> - downloading</span>
     </mat-card-title>
     <mat-card-subtitle>
