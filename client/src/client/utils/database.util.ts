@@ -186,7 +186,25 @@ export class DatabaseUtil {
       professions: this.PROFESSION_TABLE_COLUMNS,
       addons: this.ADDON,
       dashboards: this.DASHBOARD_TABLE_COLUMNS
-    }
+    },
+    {
+      auctions: 'auc',
+      auctionsClassic: 'auc',
+      tsm: 'Id',
+      items: 'id',
+      itemsClassic: 'id',
+      pets: 'speciesId',
+      recipes2: 'id',
+      recipesClassic: 'id',
+      npcsBase: 'id',
+      npcsDrops: 'id',
+      npcsSells: 'id',
+      npcsSkinns: 'id',
+      zones: 'id',
+      professions: 'id',
+      addons: this.ADDON,
+      dashboards: this.DASHBOARD_TABLE_COLUMNS
+    },
   ];
 
   setVersion(db: Dexie) {
