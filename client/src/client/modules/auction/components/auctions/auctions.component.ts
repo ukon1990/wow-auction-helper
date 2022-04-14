@@ -10,7 +10,7 @@ import {AuctionsService} from '../../../../services/auctions.service';
 import {ItemClassService} from '../../../item/service/item-class.service';
 import {ItemClass} from '../../../item/models/item-class.model';
 import {ColumnDescription} from '../../../table/models/column-description';
-import {RealmService} from "../../../../services/realm.service";
+import {RealmService} from '../../../../services/realm.service';
 
 @Component({
   selector: 'wah-auctions',
@@ -19,7 +19,7 @@ import {RealmService} from "../../../../services/realm.service";
 })
 export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, AfterContentInit {
   form: FormGroup;
-  itemClasses: ItemClass[] = ItemClassService.getForLocale();
+  itemClasses: ItemClass[] = ItemClassService.classes.value;
   itemQualities = itemQualities;
 
   columns: ColumnDescription[] = [
@@ -77,6 +77,8 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     this.isClassic = realmService.isClassic;
     const filter = JSON.parse(localStorage.getItem('query_auctions')) || undefined;
 
+    this.subs.add(ItemClassService.classes, classes => this.itemClasses = classes);
+
     this.form = formBuilder.group({
       name: filter && filter.name ? filter.name : '',
       itemClass: filter ? filter.itemClass : '-1',
@@ -91,6 +93,9 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       minItemQuality: filter && filter.minItemQuality ? filter.minItemQuality : null,
       minItemLevel: filter && filter.minItemLevel ? filter.minItemLevel : null
     });
+
+    this.subs.add(this.form.controls.itemClass.valueChanges,
+      () => this.form.controls.itemSubClass.setValue('-1'));
   }
 
   ngOnInit() {
@@ -155,16 +160,20 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       });
   }
 
-  isMatch(auctionItem: AuctionItem, changes): boolean {
-    return Filters.isNameMatch(auctionItem.itemID, this.form.getRawValue().name, auctionItem.petSpeciesId, auctionItem.id) &&
+  isMatch({
+    id,
+    itemID,
+    petSpeciesId
+          }: AuctionItem, changes = this.form.value): boolean {
+    return Filters.isNameMatch(itemID, this.form.getRawValue().name, petSpeciesId, id) &&
       Filters.isItemClassMatch(
-        auctionItem.itemID, this.form.getRawValue().itemClass, changes.itemSubClass) &&
-      Filters.isSaleRateMatch(auctionItem.itemID, changes.saleRate) &&
-      Filters.isBelowMarketValue(auctionItem.itemID, changes.mktPrice) &&
-      Filters.isDailySoldMatch(auctionItem.itemID, changes.avgDailySold) &&
-      Filters.isBelowSellToVendorPrice(auctionItem.itemID, changes.onlyVendorSellable) &&
-      Filters.isItemAboveQuality(auctionItem.itemID, changes.minItemQuality) &&
-      Filters.isAboveItemLevel(auctionItem.itemID, changes.minItemLevel) &&
-      Filters.isExpansionMatch(auctionItem.itemID, changes.expansion, this.isClassic);
+        itemID, +changes.itemClass, +changes.itemSubClass) &&
+      Filters.isSaleRateMatch(itemID, changes.saleRate) &&
+      Filters.isBelowMarketValue(itemID, changes.mktPrice) &&
+      Filters.isDailySoldMatch(itemID, changes.avgDailySold) &&
+      Filters.isBelowSellToVendorPrice(itemID, changes.onlyVendorSellable) &&
+      Filters.isItemAboveQuality(itemID, changes.minItemQuality) &&
+      Filters.isAboveItemLevel(itemID, changes.minItemLevel) &&
+      Filters.isExpansionMatch(itemID, changes.expansion, this.isClassic);
   }
 }

@@ -14,7 +14,7 @@
           All
         </mat-option>
         <mat-option *ngFor="let c of itemClasses; let i = index;"
-                    [value]="i">
+                    [value]="c.id">
           {{ c.name }}
         </mat-option>
       </mat-select>
@@ -29,7 +29,7 @@
           All
         </mat-option>
         <mat-option *ngFor="let c of itemClasses[form.value['itemClass']].subClasses; let i = index;"
-                    [value]="i"
+                    [value]="c.id"
         >
           {{ c.name }}
         </mat-option>

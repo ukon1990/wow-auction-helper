@@ -92,6 +92,7 @@
         <wah-highcharts
                 title="Hourly prices and quantity for the past 14 days"
                 [series]="hourlyChart"
+                [xAxis]="xAxisHourly"
                 [(update)]="updateDailyChart"
         >
         </wah-highcharts>
@@ -184,7 +185,7 @@
                   title="Daily prices and quantity"
                   [series]="dailyChart"
                   [(update)]="updateDailyChart"
-                  [xAxis]="xAxis"
+                  [xAxis]="xAxisDaily"
                   (chartInstance)="setChartInstance($event)"
           >
           </wah-highcharts>

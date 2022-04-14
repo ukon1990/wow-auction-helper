@@ -6,9 +6,11 @@ import {interval, Observable} from 'rxjs';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {MonitorUtil} from '../../utils/monitor.util';
-import {SeriesOptionsType, YAxisOptions} from 'highcharts';
+import {SeriesOptionsType, XAxisOptions, YAxisOptions} from 'highcharts';
 import {Theme} from '../../../core/models/theme.model';
 import {ThemeUtil} from '../../../core/utils/theme.util';
+import * as Highcharts from "highcharts";
+import {getXAxisDateLabel} from "../../../util/utils/highcharts.util";
 
 @Component({
   selector: 'wah-monitor',
@@ -106,6 +108,7 @@ export class MonitorComponent implements OnDestroy {
       }
     }
   ];
+  xAxis: XAxisOptions = getXAxisDateLabel(true);
   theme: Theme = ThemeUtil.current;
 
   constructor(private service: AdminService) {

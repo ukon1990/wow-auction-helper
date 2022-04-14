@@ -9,8 +9,7 @@ import {CraftingService} from '../services/crafting.service';
 import {AuctionsService} from '../services/auctions.service';
 import {ItemClassService} from '../modules/item/service/item-class.service';
 import {ItemClass} from '../modules/item/models/item-class.model';
-import {GameBuild} from "./game-build.util";
-import {OrganizedAuctionResult} from "../modules/auction/utils/auction.util";
+import {GameBuild} from './game-build.util';
 
 export class Filters {
   private static auctionService: AuctionsService;
@@ -108,19 +107,19 @@ export class Filters {
     if (EmptyUtil.isNullOrUndefined(itemClassIndex) || itemClassIndex === -1) {
       return true;
     }
-    const iClass: ItemClass = ItemClassService.getForLocale()[itemClassIndex];
+    const iClass: ItemClass = ItemClassService.map.value.get(itemClassIndex);
 
     return !iClass || classForId === iClass.id &&
-      this.isItemSubclassMatch(itemID, iClass.subClasses, itemSubClassIndex);
+      this.isItemSubclassMatch(itemID, iClass.map, itemSubClassIndex);
   }
 
-  private static isItemSubclassMatch(itemID: number, subClasses: ItemClass[], itemSubClassIndex: number): boolean {
+  private static isItemSubclassMatch(itemID: number, subClasses: Map<number, ItemClass>, itemSubClassIndex: number): boolean {
     const subClassForId = SharedService.items[itemID] ? SharedService.items[itemID].itemSubClass : -1;
 
     if (EmptyUtil.isNullOrUndefined(itemSubClassIndex) || itemSubClassIndex === -1) {
       return true;
     }
-    const iSubClass = subClasses[itemSubClassIndex];
+    const iSubClass = subClasses.get(itemSubClassIndex);
 
     return !iSubClass || subClassForId === iSubClass.id;
   }

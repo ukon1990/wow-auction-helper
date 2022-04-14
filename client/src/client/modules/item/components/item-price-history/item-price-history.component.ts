@@ -26,6 +26,7 @@ import {TimeUtil} from '../../../../../../../api/src/auction/utils/time.util';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {ProfessionService} from '../../../crafting/services/profession.service';
 import {Profession} from '../../../../../../../api/src/profession/model';
+import {getXAxisDateLabel} from "../../../util/utils/highcharts.util";
 
 @Component({
   selector: 'wah-item-price-history',
@@ -182,7 +183,8 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
     ...this.dailyChartPrice,
     ...this.dailyChartQuantity
   ];
-  xAxis: XAxisOptions;
+  xAxisDaily: XAxisOptions;
+  xAxisHourly: XAxisOptions;
   priceHistory: ItemPriceEntryResponse = {
     hourly: [],
     daily: []
@@ -428,17 +430,8 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
     });
     this.groupedByDateTable.data.sort((a, b) =>
       b.timestamp - a.timestamp);
-    const format = '%e. %b %y';
-    this.xAxis = {
-      type: 'datetime',
-      labels: {
-        format: '{value}',
-        formatter: ({value}) => Highcharts.dateFormat(format, +value),
-      },
-      title: {
-        text: null
-      }
-    };
+    this.xAxisDaily = getXAxisDateLabel();
+    this.xAxisHourly = getXAxisDateLabel(true);
   }
 
   private processHourlyData() {

@@ -108,6 +108,10 @@ export class RecipeV2Util {
     });
   }
 
+  /**
+   * Used for updating the recipe table
+   * with recipes from a new patch
+   */
   static async getAndMapProfessions() {
     return new Promise(async (resolve, reject) => {
       await AuthHandler.getToken();
@@ -281,4 +285,3 @@ export class RecipeV2Util {
 
 
 }
-

@@ -36,6 +36,11 @@ export class CartDialogComponent implements OnInit, OnDestroy {
       dataType: 'gold'
     },
     {
+      key: 'cost',
+      title: 'Avg cost',
+      dataType: 'gold'
+    },
+    {
       key: undefined, title: 'In cart', dataType: 'cart-recipe-count', options: {
         idName: 'id',
       }

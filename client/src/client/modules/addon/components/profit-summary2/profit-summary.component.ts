@@ -8,8 +8,10 @@ import {ItemSaleHistory, ItemSaleHistorySummary, ProfitSummaryUtil} from '../../
 import {Theme} from '../../../core/models/theme.model';
 import {ThemeUtil} from '../../../core/utils/theme.util';
 import {RowClickEvent} from '../../../table/models/row-click-event.model';
-import {SeriesOptionsType} from 'highcharts';
+import {SeriesOptionsType, XAxisOptions} from 'highcharts';
 import {Report} from '../../../../utils/report.util';
+import * as Highcharts from 'highcharts';
+import {getXAxisDateLabel} from '../../../util/utils/highcharts.util';
 
 interface TableEntry {
   id: number;
@@ -33,6 +35,7 @@ interface TableData {
 })
 export class ProfitSummaryComponent implements OnInit, OnDestroy {
   realms = [];
+  xAxis: XAxisOptions = getXAxisDateLabel(true);
   private readonly previousPeriodKey = 'profit_summary_display_period';
   private readonly previousPeriod: string | undefined = localStorage.getItem(this.previousPeriodKey);
   periodInput: FormControl = new FormControl(

@@ -36,7 +36,7 @@ export class MarketResetComponent implements OnInit {
     useHighestROIResult: true,
     newVsCurrentBuyoutPriceLimit: 400
   };
-  itemClasses: ItemClass[] = ItemClassService.getForLocale();
+  itemClasses: ItemClass[] = ItemClassService.classes.value;
   expansions = GameBuild.expansionMap;
   data = [];
   sm = new SubscriptionManager();
@@ -93,6 +93,8 @@ export class MarketResetComponent implements OnInit {
           }
         }, 500);
       });
+
+    this.sm.add(ItemClassService.classes, classes => this.itemClasses = classes);
   }
 
   private getQuery() {

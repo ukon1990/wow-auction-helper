@@ -33,7 +33,7 @@ export class RuleComponent implements AfterViewInit, OnDestroy {
   fields = ruleFields;
   conditionLocale = conditionLocale;
   expansions = GameBuild.expansionMap;
-  itemClasses: ItemClass[] = ItemClassService.getForLocale();
+  itemClasses: ItemClass[] = ItemClassService.classes.value;
   itemQualities = ItemLocale.getQualities().list;
   // Must be true, in order for sub class to be selectable
   itemClassIdSelected: number;
@@ -61,6 +61,8 @@ export class RuleComponent implements AfterViewInit, OnDestroy {
     this.sm.add(this.professionService.listWithRecipes,
       list =>
         this.professions = list);
+
+    this.sm.add(ItemClassService.classes, classes => this.itemClasses = classes);
   }
 
   ngAfterViewInit(): void {
