@@ -51,7 +51,7 @@
         >
           All
         </mat-option>
-        <mat-option *ngFor="let c of itemClasses[searchForm.value['itemClass']].subClasses"
+        <mat-option *ngFor="let c of itemClasses[searchForm.value['itemClass']].subClasses; let i = index;"
                     [value]="c.id"
         >
           {{ c.name }}

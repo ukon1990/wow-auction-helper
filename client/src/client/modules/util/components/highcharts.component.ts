@@ -9,7 +9,7 @@ import {
   TooltipFormatterContextObject,
   XAxisOptions,
   YAxisOptions,
-  PointOptionsObject
+  PointOptionsObject, PointLabelObject
 } from 'highcharts';
 import addMore from 'highcharts/highcharts-more';
 import {NumberUtil} from '../utils/number.util';
@@ -179,18 +179,25 @@ export class HighchartsComponent implements OnChanges, OnDestroy {
     this.sm.unsubscribe();
   }
 
-  private defaultTooltip(): string {
+  private defaultTooltip(tooltip?: Tooltip): string {
     const getFormatter = (point: TooltipFormatterContextObject, axis: 'yAxis' | 'xAxis' = 'yAxis'): any => {
       try {
         if (point && point.series[axis]) {
           const seriesAxis: Axis = point.series[axis];
-          const labelFormatter = seriesAxis['labelFormatter'];
+          const labelFormatter = seriesAxis['labelFormatter'] || seriesAxis.options.labels.formatter;
           if (labelFormatter) {
             return labelFormatter;
           }
-          return seriesAxis.defaultLabelFormatter;
+          return ({value}) => {
+            if (isNaN(value)) {
+              return value;
+            }
+            return NumberUtil.format(value);
+          };
         }
-      } catch (error) {}
+      } catch (error) {
+        console.error('defaultLabelFormatter', error);
+      }
       return undefined;
     };
 
@@ -224,20 +231,17 @@ export class HighchartsComponent implements OnChanges, OnDestroy {
         }
         tip += '</strongh><br />';
       }
-      points.forEach(point => {
+      points.forEach((point: TooltipFormatterContextObject) => {
         const formatter = getFormatter(point);
         const label = point.series.name;
         tip += `
         <span style="color: ${point.color}">${label}</span>
       `;
         if (!isNaN(point.y)) {
-          if ((point.point as PointOptionsObject).low && (point.point as PointOptionsObject).high) {
-            tip += `${formatter({
-              value: (point.point as PointOptionsObject).low
-            })} - ${
-              formatter({
-                value: (point.point as PointOptionsObject).high
-              })
+          const {low, high}: PointOptionsObject = point.point;
+          if (low && high) {
+            tip += `${formatter({value: low})} - ${
+              formatter({value: high})
             }`;
           } else {
             tip += formatter({value: point.y});

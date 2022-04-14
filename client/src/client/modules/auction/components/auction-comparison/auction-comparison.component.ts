@@ -54,7 +54,7 @@ export class AuctionComparisonComponent implements OnInit, OnDestroy {
   ];
   form: FormGroup;
   subs: Subscription = new Subscription();
-  itemClasses: ItemClass[] = ItemClassService.getForLocale();
+  itemClasses: ItemClass[] = ItemClassService.classes.value;
   itemQualities = itemQualities;
   delayFilter = false;
 
@@ -63,6 +63,10 @@ export class AuctionComparisonComponent implements OnInit, OnDestroy {
     private realmService: RealmService,
     private formBuilder: FormBuilder
   ) {
+
+    this.subs.add(ItemClassService.classes.subscribe(
+      classes => this.itemClasses = classes));
+
     const filter = JSON.parse(localStorage.getItem('query_compare_auctions')) || undefined;
     this.form = formBuilder.group({
       name: filter && filter.name ? filter.name : '',
@@ -82,6 +86,11 @@ export class AuctionComparisonComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.selections.comparisonSetOne = this.realmService.events.realmStatus.value;
+
+
+    this.subs.add(this.form.controls.itemClass.valueChanges.subscribe(
+      () => this.form.controls.itemSubClass.setValue('-1')));
+
     this.subs.add(this.form.valueChanges.subscribe((filter) => {
       localStorage['query_compare_auctions'] = JSON.stringify(filter);
       if (!this.delayFilter) {

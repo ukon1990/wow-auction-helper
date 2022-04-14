@@ -93,7 +93,7 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
     return new SummaryCard(
       'Items by class',
       'pie',
-      ItemClassService.getForLocale().map(c =>
+      ItemClassService.classes.value.map(c =>
         new ChartData(c.id, c.name)),
       []);
   }
@@ -194,7 +194,7 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
 
 
   setItemClassLabels(): void {
-    ItemClassService.getForLocale().forEach(c => {
+    ItemClassService.classes.value.forEach(c => {
       c.subClasses.forEach(sc => {
         const id = `${c.id}-${sc.id}`;
 

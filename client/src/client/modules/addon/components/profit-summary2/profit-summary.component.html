@@ -63,6 +63,7 @@
             class="col-md-6"
             title="Gold log"
             [series]="goldLog"
+            [xAxis]="xAxis"
             [(update)]="goldLogUpdate"
     ></wah-highcharts>
 
@@ -104,7 +105,7 @@
     <mat-card *ngIf="selectedRowData">
       <mat-card-header>
         <mat-card-title>
-          Sale and purchase history for: {{selectedRowData.name}}
+          Sale and purchase history for: {{ selectedRowData.name }}
         </mat-card-title>
       </mat-card-header>
 
@@ -112,6 +113,7 @@
         <wah-highcharts
                 class="col-md-6"
                 title="History"
+                [xAxis]="xAxis"
                 [series]="selectedSeries"
                 [(update)]="selectedRowSeriesUpdate"
         ></wah-highcharts>

@@ -42,7 +42,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
   filtered: Recipe[] = [];
   subs = new SubscriptionManager();
-  itemClasses: ItemClass[] = ItemClassService.getForLocale();
+  itemClasses: ItemClass[] = ItemClassService.classes.value;
   professions = [];
   expansions = [];
   private lastCalculationTime: number;
@@ -98,8 +98,12 @@ export class CraftingComponent implements OnInit, OnDestroy {
               private professionService: ProfessionService) {
     SharedService.events.title.next('Crafting');
     this.isClassic = realmService.isClassic;
+
     const query = localStorage.getItem('query_crafting') === null ?
       undefined : JSON.parse(localStorage.getItem('query_crafting'));
+
+    this.subs.add(ItemClassService.classes, classes => this.itemClasses = classes);
+
     this.searchForm = this._formBuilder.group({
       searchQuery: query && query.searchQuery !== undefined ? query.searchQuery : '',
       onlyKnownRecipes: this.isClassic ?
@@ -122,6 +126,9 @@ export class CraftingComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.filter();
+
+    this.subs.add(this.searchForm.controls.itemClass.valueChanges,
+      () => this.searchForm.controls.itemSubClass.setValue('-1'));
 
     this.subs.add(
       this.searchForm.valueChanges,
