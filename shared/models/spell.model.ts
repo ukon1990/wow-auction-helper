@@ -1,4 +1,4 @@
-export class Spell {
+export class SpellModel {
   id: number;
   name: string;
   icon: string;

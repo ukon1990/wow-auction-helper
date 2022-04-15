@@ -1,8 +1,7 @@
 import {environment} from '../../../client/src/environments/environment';
 import {ItemUtil} from './item.util';
-import {Item} from '../../../client/src/client/models/item/item';
-import {ItemServiceV2} from "../item/service";
-import {DatabaseUtil} from "./database.util";
+import {Item} from '@shared/models';
+import {ItemServiceV2} from '../item/service';
 
 describe('ItemUtil', () => {
   let originalEnvironment;

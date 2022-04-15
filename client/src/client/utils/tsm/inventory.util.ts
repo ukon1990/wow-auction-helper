@@ -1,4 +1,4 @@
-import {ItemInventory} from '../../models/item/item';
+import {ItemInventory} from '@shared/models';
 import {ErrorReport} from '../error-report.util';
 import {SharedService} from '../../services/shared.service';
 import {RealmStatus} from '../../models/realm-status.model';

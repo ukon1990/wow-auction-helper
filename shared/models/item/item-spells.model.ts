@@ -1,8 +1,8 @@
-import { Spell } from '../spell';
+import { SpellModel } from '..';
 
-export class ItemSpells {
+export class ItemSpellsModel {
     SpellID: number;
-    spell: Spell;
+    spell: SpellModel;
     Charges: number;
     consumable: boolean;
     Cooldown: number;

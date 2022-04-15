@@ -5,8 +5,7 @@ import {startWith, map} from 'rxjs/operators';
 import {FormControl} from '@angular/forms';
 import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util';
 import {SharedService} from '../../../../services/shared.service';
-import {Remains, RemainsSource} from '../../../../models/item/remains.model';
-import {Item} from '../../../../models/item/item';
+import {Item, Remains, RemainsSource} from '@shared/models';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {Report} from '../../../../utils/report.util';
 
@@ -70,7 +69,7 @@ export class ShuffleItemManageComponent implements OnInit {
 
   /**
    * Such efficient, such ugh
-   * @param name Item name for the query
+   * @param name ItemModel name for the query
    */
   private filter(name: string): Array<Item> {
     if (name === null) {

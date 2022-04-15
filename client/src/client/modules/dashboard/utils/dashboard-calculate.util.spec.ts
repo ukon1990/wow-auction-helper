@@ -353,7 +353,7 @@ fdescribe('DashboardCalculateUtil', () => {
       });
     });
 
-    describe('Item rules', () => {
+    describe('ItemModel rules', () => {
       it('Only include these items', () => {
         const board: DashboardV2 = getBoard([], [
           {

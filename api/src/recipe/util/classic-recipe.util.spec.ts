@@ -9,7 +9,7 @@ import {GameBuild} from '../../../../client/src/client/utils/game-build.util';
 import {RDSQueryUtil} from '../../utils/query.util';
 import {ProfessionRepository} from '../../profession/repository';
 import {DatabaseUtil} from '../../utils/database.util';
-import {ItemLocale} from '../../models/item/item-locale';
+import {ItemLocale} from '@shared/models/item/item-locale';
 
 describe('RecipeUtil', () => {
   beforeAll(() => {

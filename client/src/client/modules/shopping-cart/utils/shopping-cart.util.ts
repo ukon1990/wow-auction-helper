@@ -7,7 +7,7 @@ import {PessimisticCraftingUtil} from '../../crafting/utils/pessimistic-crafting
 import {NeededCraftingUtil} from '../../crafting/utils/needed-crafting.util';
 import {BaseCraftingUtil} from '../../crafting/utils/base-crafting.util';
 import {SharedService} from '../../../services/shared.service';
-import {Item} from '../../../models/item/item';
+import {Item} from '@shared/models';
 
 export class ShoppingCartUtil {
   public strategy: BaseCraftingUtil;

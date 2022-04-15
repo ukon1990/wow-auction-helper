@@ -4,7 +4,7 @@ import {CartRecipe, ShoppingCartV2} from '../models/shopping-cart-v2.model';
 import {Recipe} from '../../crafting/models/recipe';
 import {Auction} from '../../auction/models/auction.model';
 import {Reagent} from '../../crafting/models/reagent';
-import {Item} from '../../../models/item/item';
+import {Item} from '@shared/models';
 
 describe('ShoppingCartUtil', () => {
   const auctionMap = new Map<string, AuctionItem>();

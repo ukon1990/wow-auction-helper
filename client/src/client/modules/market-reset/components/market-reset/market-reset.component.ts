@@ -268,7 +268,7 @@ export class MarketResetComponent implements OnInit {
     this.columns.push({key: 'sumBuyout', title: 'Total cost', dataType: 'gold'});
     this.columns.push({key: 'potentialValue', title: 'Sum potential value', dataType: 'gold'});
     this.columns.push({key: 'auctionCount', title: '# Auctions', dataType: 'number'});
-    this.columns.push({key: 'itemCount', title: '# Item', dataType: 'number'});
+    this.columns.push({key: 'itemCount', title: '# ItemModel', dataType: 'number'});
     this.columns.push({key: 'breakEvenQuantity', title: 'Break-even #', dataType: 'number'});
     // TSM dependent -> this.columns.push(columnConfig.auction.avgDailySold);
     // TSM dependent -> this.columns.push(columnConfig.auction.regionSaleRate);

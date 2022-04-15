@@ -1,7 +1,6 @@
-import {Directive, ElementRef, HostListener, Input} from '@angular/core';
-import {ItemService} from '../../services/item.service';
+import {Directive, HostListener, Input} from '@angular/core';
 import {AuctionItem} from '../auction/models/auction-item.model';
-import {Item} from '../../models/item/item';
+import {Item} from '@shared/models';
 import {Auction} from '../auction/models/auction.model';
 import {Pet} from '../pet/models/pet';
 import {RealmService} from '../../services/realm.service';

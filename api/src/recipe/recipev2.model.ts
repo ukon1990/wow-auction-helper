@@ -1,4 +1,4 @@
-import {ItemLocale} from '../models/item/item-locale';
+import {ItemLocale} from '@shared/models/item/item-locale';
 import {Key} from '../models/game-data/Key.model';
 
 export interface CreatedItem {

@@ -1,6 +1,6 @@
 import {MockLoaderUtil} from '../../../mocks/mock-loader.util';
 import {SharedService} from '../../../services/shared.service';
-import {ItemInventory} from '../../../models/item/item';
+import {ItemInventory} from '@shared/models';
 import {Recipe} from '../../crafting/models/recipe';
 import {ShoppingCart} from './shopping-cart.model';
 import {CraftingService} from '../../../services/crafting.service';

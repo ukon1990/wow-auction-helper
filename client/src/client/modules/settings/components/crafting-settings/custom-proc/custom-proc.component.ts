@@ -63,7 +63,7 @@ export class CustomProcComponent implements OnInit, OnDestroy {
 
   /**
    * Such efficient, such ugh
-   * @param name Item name for the query
+   * @param name ItemModel name for the query
    */
   private filter(name: string): Array<Recipe> {
     return CraftingService.list.value.filter(i =>

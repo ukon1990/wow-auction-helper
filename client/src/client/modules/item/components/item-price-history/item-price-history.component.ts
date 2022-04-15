@@ -1,10 +1,10 @@
 import {AfterViewInit, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import * as Highcharts from 'highcharts';
 import {Chart, SeriesLineOptions, SeriesOptionsType, XAxisOptions} from 'highcharts';
-import {Item} from '../../../../models/item/item';
+import {Item} from '@shared/models';
 import {ItemService} from '../../../../services/item.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
-import {ItemDailyPriceEntry, ItemPriceEntry, ItemPriceEntryResponse} from '../../models/item-price-entry.model';
+import {ItemPriceEntry, ItemPriceEntryResponse} from '../../models/item-price-entry.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ErrorReport} from '../../../../utils/error-report.util';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';

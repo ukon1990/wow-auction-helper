@@ -1,5 +1,4 @@
-import {Remains, RemainsSource, RemainsSourceTarget} from '../models/item/remains.model';
-import {Item} from '../models/item/item';
+import {Item, Remains, RemainsSource, RemainsSourceTarget} from '@shared/models';
 import {defaultProspecting} from './default-prospecting.util';
 import {defaultMilling} from './default-milling.util';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';

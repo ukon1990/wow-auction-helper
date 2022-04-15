@@ -1,7 +1,7 @@
 import {HttpClientUtil} from './http-client.util';
 import {languages} from '../static-data/language.data';
 import {Language} from '../models/language.model';
-import {ItemLocale} from '../models/item/item-locale';
+import {ItemLocale} from '@shared/models/item/item-locale';
 import {WoWHeadUtil} from './wowhead.util';
 import {RDSQueryUtil} from './query.util';
 import {DatabaseUtil} from './database.util';
@@ -517,7 +517,7 @@ export class NPCUtil {
       this.ignoreItemIds[id] = true;
       /*
       new ItemHandler().getById(id, 'en_GB')
-        .then(() => console.log('Item added?'))
+        .then(() => console.log('ItemModel added?'))
         .catch(console.error);*/
     }
   }

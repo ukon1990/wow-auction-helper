@@ -1,10 +1,9 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {SharedService} from './shared.service';
 import {HttpClient} from '@angular/common/http';
-import {Item} from '../models/item/item';
+import {WoWHeadSoldBy, Item} from '@shared/models';
 import {Endpoints} from './endpoints';
 import {DatabaseService} from './database.service';
-import {WoWHeadSoldBy} from '../models/item/wowhead';
 import {ErrorReport} from '../utils/error-report.util';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {ItemOverrides} from '../overrides/item.overrides';
@@ -95,12 +94,12 @@ export class ItemService {
         locale: localStorage['locale']
       })
       .toPromise()
-      .then((item: Item) => {
+      .then((item: ItemModel) => {
         if (item['error']) {
           ErrorReport.sendHttpError(item['error']);
           return;
         }
-        SharedService.items[item.id] = (item as Item);
+        SharedService.items[item.id] = (item as ItemModel);
         if (SharedService.auctionItemsMap[item.id]) {
           SharedService.auctionItemsMap[item.id].name = item.name;
           SharedService.auctionItemsMap[item.id].vendorSell = item.sellPrice;
@@ -349,7 +348,7 @@ export class ItemService {
 
     setTimeout(() => {
       if (itemsToAdd[i]) {
-        SharedService.items[i] = new Item();
+        SharedService.items[i] = new ItemModel();
         this.addItem(itemsToAdd[i]);
       }
 

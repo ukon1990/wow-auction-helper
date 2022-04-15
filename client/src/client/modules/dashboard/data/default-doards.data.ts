@@ -416,7 +416,7 @@ const destroyBoards = ['milling', 'prospecting'].map((type: string): DashboardV2
   },
   columns: [
     {
-      key: 'name', title: 'Item name', dataType: 'name'
+      key: 'name', title: 'ItemModel name', dataType: 'name'
     },
     {key: 'buyout', title: 'Value', dataType: 'gold'},
     {key: `source.destroy.${type}.sourceIn.yield`, title: 'ROI', dataType: 'gold'},

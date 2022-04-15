@@ -16,7 +16,6 @@ import {ItemService} from './services/item.service';
 import {SharedService} from './services/shared.service';
 import {CraftingService} from './services/crafting.service';
 import {IsRegisteredService} from './Is-registered.service';
-import {WowdbService} from './services/wowdb.service';
 import {PetsService} from './services/pets.service';
 import {UpdateService} from './services/update.service';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -91,7 +90,6 @@ Amplify.configure(APP_SYNC);
     SharedService,
     CraftingService,
     IsRegisteredService,
-    WowdbService,
     PetsService,
     UpdateService,
     BackgroundDownloadService,

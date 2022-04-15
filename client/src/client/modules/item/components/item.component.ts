@@ -1,10 +1,9 @@
-import {AfterContentInit, AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterContentInit, AfterViewInit, Component, Inject, OnDestroy, ViewChild} from '@angular/core';
 import {MatTabChangeEvent, MatTabGroup} from '@angular/material/tabs';
 import {FormControl} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Recipe} from '../../crafting/models/recipe';
 import {ColumnDescription} from '../../table/models/column-description';
-import {WowdbService} from '../../../services/wowdb.service';
 import {ItemService} from '../../../services/item.service';
 import {SharedService} from '../../../services/shared.service';
 import {Report} from '../../../utils/report.util';
@@ -20,7 +19,7 @@ import {AuctionsService} from '../../../services/auctions.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ItemDetailsUtil} from '../utils/item-details.util';
 import {ShoppingCartService} from '../../shopping-cart/services/shopping-cart.service';
-import {Item} from '../../../models/item/item';
+import {Item} from '@shared/models';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {RealmService} from '../../../services/realm.service';
 
@@ -82,8 +81,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   ];
   private tabSubId = 'tab-subscription';
 
-  constructor(private _wowDBService: WowdbService,
-              private npcService: NpcService,
+  constructor(private npcService: NpcService,
               private realmService: RealmService,
               private zoneService: ZoneService,
               private auctionService: AuctionsService,
@@ -112,7 +110,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     this.setItemData();
     this.setRecipesForItem();
 
-    Report.send('Opened', 'Item detail view');
+    Report.send('Opened', 'ItemModel detail view');
   }
 
   ngAfterViewInit(): void {
@@ -210,10 +208,10 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     const quantity: number = +this.shoppingCartQuantityField.value;
     if (isRecipe) {
       this.shoppingCartService.addRecipeByItemId(this.selected.item.id, quantity);
-      Report.send('Added to recipe shopping cart', 'Item detail view');
+      Report.send('Added to recipe shopping cart', 'ItemModel detail view');
     } else {
       this.shoppingCartService.addItem(this.selected.item.id, quantity);
-      Report.send('Added to item shopping cart', 'Item detail view');
+      Report.send('Added to item shopping cart', 'ItemModel detail view');
     }
 
   }

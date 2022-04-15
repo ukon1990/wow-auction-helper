@@ -9,7 +9,7 @@ import {TextUtil} from '@ukon1990/js-utilities';
 import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
 import {ItemDroppedByRow} from '../../item/models/item-dropped-by-row.model';
-import {Item, ItemInventory} from '../../../models/item/item';
+import {Item, ItemInventory} from '@shared/models';
 import {millingRecipeMap, ProspectingAndMillingUtil, prospectingRecipeMap} from '../../../utils/prospect-milling.util';
 
 export abstract class BaseCraftingUtil {

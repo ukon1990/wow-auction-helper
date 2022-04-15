@@ -14,7 +14,7 @@ import {ErrorReport} from '../../../../utils/error-report.util';
 import {PageEvent} from '@angular/material/paginator';
 import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 import {ItemService} from '../../../../services/item.service';
-import { Item } from '../../../../models/item/item';
+import { Item } from '@shared/models';
 
 @Component({
   selector: 'wah-trade-vendors',

@@ -2,7 +2,7 @@ import {HttpClientUtil} from './http-client.util';
 import {WoWHeadUtil} from './wowhead.util';
 import {Currency} from '../../../client/src/client/modules/core/models/currency.model';
 import {languages} from '../static-data/language.data';
-import {ItemLocale} from '../models/item/item-locale';
+import {ItemLocale} from '@shared/models/item/item-locale';
 import {Language} from '../models/language.model';
 
 export class CurrencyUtil {

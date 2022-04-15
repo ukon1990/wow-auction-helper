@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import Dexie from 'dexie';
-import {Item} from '../models/item/item';
+import {Item} from '@shared/models';
 import {Auction} from '../modules/auction/models/auction.model';
 import {SharedService} from './shared.service';
 import {Pet} from '../modules/pet/models/pet';

@@ -3,7 +3,7 @@ import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {Theme} from '../../../core/models/theme.model';
 import {ThemeUtil} from '../../../core/utils/theme.util';
 import {GameBuild} from '../../../../utils/game-build.util';
-import {Item} from '../../../../models/item/item';
+import {Item} from '@shared/models';
 import {SharedService} from '../../../../services/shared.service';
 import {Report} from '../../../../utils/report.util';
 import {ItemLocale} from '../../../../language/item.locale';

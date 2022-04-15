@@ -1,5 +1,5 @@
 import {SharedService} from '../services/shared.service';
-import {Item} from '../models/item/item';
+import {Item} from '@shared/models';
 import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 import {Recipe} from '../modules/crafting/models/recipe';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';

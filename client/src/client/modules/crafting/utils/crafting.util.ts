@@ -1,5 +1,5 @@
 import {SharedService} from '../../../services/shared.service';
-import {Item} from '../../../models/item/item';
+import {Item} from '@shared/models';
 import {CraftingService} from '../../../services/crafting.service';
 import {Filters} from '../../../utils/filtering';
 import {PessimisticCraftingUtil} from './pessimistic-crafting.util';

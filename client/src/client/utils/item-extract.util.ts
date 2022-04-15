@@ -1,5 +1,4 @@
-import {Item} from '../models/item/item';
-import {WoWHeadDroppedBy, WoWHeadSoldBy} from '../models/item/wowhead';
+import {Item, WoWHeadDroppedBy, WoWHeadSoldBy} from '@shared/models';
 
 export class ItemExtract {
   static fromItems(items: Item[]) {

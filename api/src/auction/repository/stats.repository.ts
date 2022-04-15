@@ -5,7 +5,6 @@ import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {RDSQueryUtil} from '../../utils/query.util';
 import {AuctionHouse} from '../../realm/model';
 import {AhStatsRequest} from '../models/ah-stats-request.model';
-import {ItemPriceEntryResponse} from "../../../../client/src/client/modules/item/models/item-price-entry.model";
 
 export class StatsRepository {
   readonly FOURTEEN_DAYS = 60 * 60 * 24 * 1000 * 14;

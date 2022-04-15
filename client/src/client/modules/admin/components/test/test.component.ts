@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
-import {Item} from '../../../../models/item/item';
+import {Item} from '@shared/models';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {ItemService} from '../../../../services/item.service';
 import {ColumnDescription} from '../../../table/models/column-description';

@@ -1,8 +1,6 @@
-import {ItemSpells} from './itemspells';
-import {WoWHead} from './wowhead';
-import {ItemLocale} from '../../../../../api/src/models/item/item-locale';
-import {ItemGameData, PreviewItemSpells} from '../../../../../api/src/models/item/item-game-data.model';
-import {QualityUtil} from '../../utils/quality.util';
+import {ItemSpellsModel} from './item-spells.model';
+import {WoWHead, ItemLocale, ItemGameData, PreviewItemSpells} from '..';
+import {QualityUtil} from '../../utils';
 
 export class Item {
   id: number;
@@ -13,7 +11,7 @@ export class Item {
   itemSubClass: number;
   quality: number;
   itemSource?: WoWHead = new WoWHead();
-  itemSpells?: ItemSpells[];
+  itemSpells?: ItemSpellsModel[];
   buyPrice: number;
   buyQuantity: number;
   currencyId: number;

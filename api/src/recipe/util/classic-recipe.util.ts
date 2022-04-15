@@ -12,7 +12,7 @@ import {Reagent, Recipe} from '../model';
 import {GameBuild} from '../../../../client/src/client/utils/game-build.util';
 import { HttpClientUtil } from '../../utils/http-client.util';
 import {WoWHeadUtil} from '../../utils/wowhead.util';
-import {ItemLocale} from '../../models/item/item-locale';
+import {ItemLocale} from '@shared/models/item/item-locale';
 import {languages} from '../../static-data/language.data';
 import {ProfessionRepository} from '../../profession/repository';
 
