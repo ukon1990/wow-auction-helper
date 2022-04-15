@@ -1,6 +1,6 @@
 {
   "name": "wah-api",
-  "version": "3.212.0",
+  "version": "3.212.1",
   "license": "MIT",
   "main": "handler.js",
   "scripts": {
