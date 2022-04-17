@@ -1,23 +1,25 @@
-import {ColumnDescription} from '../../table/models/column-description';
+import {ColumnDescription, Remains} from '@shared/models';
 import {SharedService} from '../../../services/shared.service';
 import {Notification} from '../../../models/user/notification';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {Filters} from '../../../utils/filtering';
-import {Remains} from '../../../models/item/remains.model';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
 import {EventEmitter} from '@angular/core';
 import {DefaultDashboardSettings} from './default-dashboard-settings.model';
 import {CraftingUtil} from '../../crafting/utils/crafting.util';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {TradeVendorItem} from '../../../models/item/trade-vendor';
-import {TSM} from '../../auction/models/tsm.model';
+import {TSM} from '@shared/models';
 import {CraftingService} from '../../../services/crafting.service';
 import {TsmService} from '../../tsm/tsm.service';
 import {WatchlistItem} from './watchlist-item.model';
 import {WatchlistGroup} from './watchlist-group.model';
 
-export class Dashboard {
+/**
+ * @Depricated - Remove the components as well etc
+ */
+export class DEPRICATEDDashboard {
   public static fails = [];
   public static readonly TYPES = {
     MOST_AVAILABLE_ITEMS: 'DASHBOARD_AVAILABLE_ITEMS',
@@ -36,8 +38,8 @@ export class Dashboard {
     POSSIBLE_PROFIT_FROM_PETS: 'DASHBOARD_POSSIBLE_PROFIT_FROM_PETS'
   };
 
-  public static itemEvents: EventEmitter<Dashboard[]> = new EventEmitter(true);
-  public static sellerEvents: EventEmitter<Dashboard[]> = new EventEmitter(true);
+  public static itemEvents: EventEmitter<DEPRICATEDDashboard[]> = new EventEmitter(true);
+  public static sellerEvents: EventEmitter<DEPRICATEDDashboard[]> = new EventEmitter(true);
 
   idParam: string;
   title: string;
@@ -71,7 +73,7 @@ export class Dashboard {
     }
 
     switch (type) {
-      case Dashboard.TYPES.MOST_AVAILABLE_ITEMS:
+      case DEPRICATEDDashboard.TYPES.MOST_AVAILABLE_ITEMS:
         this.idParam = 'itemID';
         this.columns = [
           {key: 'name', title: 'Name', dataType: 'name'},
@@ -81,20 +83,20 @@ export class Dashboard {
         this.addAPIColumnsAtPosition(3);
         this.groupItemsByAvailability();
         break;
-      case Dashboard.TYPES.PROFITABLE_CRAFTS:
+      case DEPRICATEDDashboard.TYPES.PROFITABLE_CRAFTS:
         this.idParam = 'itemID';
         this.columns = crafterColumns;
         this.addAPIColumnsAtPosition(4);
         this.sortCraftsByRoi(false);
         break;
-      case Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS:
+      case DEPRICATEDDashboard.TYPES.PROFITABLE_KNOWN_CRAFTS:
         this.idParam = 'itemID';
         this.columns = crafterColumns;
         this.isCrafting = true;
         this.addAPIColumnsAtPosition(4);
         this.sortCraftsByRoi(true);
         break;
-      case Dashboard.TYPES.POTENTIAL_DEALS:
+      case DEPRICATEDDashboard.TYPES.POTENTIAL_DEALS:
         this.idParam = 'itemID';
         this.columns = [
           {key: 'name', title: 'Name', dataType: 'name'},
@@ -105,7 +107,7 @@ export class Dashboard {
         this.setPotentialDeals();
         break;
 
-      case Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT:
+      case DEPRICATEDDashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT:
         this.idParam = 'item';
         this.columns = [
           {key: 'name', title: 'Name', dataType: 'name'},
@@ -120,7 +122,7 @@ export class Dashboard {
         this.setCheapBidsWithLowTimeLeft();
         break;
 
-      case Dashboard.TYPES.CHEAP_BIDS:
+      case DEPRICATEDDashboard.TYPES.CHEAP_BIDS:
         this.idParam = 'item';
         this.columns = [
           {key: 'name', title: 'Name', dataType: 'name'},
@@ -135,7 +137,7 @@ export class Dashboard {
         this.setCheapBids();
         break;
 
-      case Dashboard.TYPES.WATCH_LIST:
+      case DEPRICATEDDashboard.TYPES.WATCH_LIST:
         this.idParam = 'itemID';
         this.columns = [
           {key: 'name', title: 'Name', dataType: 'name'},
@@ -150,7 +152,7 @@ export class Dashboard {
         this.setWatchListAlerts(array[0]);
         break;
 
-      case Dashboard.TYPES.WATCH_LIST_CRAFTS:
+      case DEPRICATEDDashboard.TYPES.WATCH_LIST_CRAFTS:
         this.idParam = 'itemID';
         this.columns = crafterColumns;
         this.isCrafting = true;
@@ -158,7 +160,7 @@ export class Dashboard {
         this.setWatchListCraftingAlerts();
         break;
 
-      case Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL:
+      case DEPRICATEDDashboard.TYPES.CHEAPER_THAN_VENDOR_SELL:
         this.idParam = 'itemID';
         this.columns = [
           {key: 'name', title: 'Name', dataType: 'name'},
@@ -168,7 +170,7 @@ export class Dashboard {
         this.addAPIColumnsAtPosition(3);
         this.setCheaperThanVendorSell();
         break;
-      case Dashboard.TYPES.TRADE_VENDOR_VALUES:
+      case DEPRICATEDDashboard.TYPES.TRADE_VENDOR_VALUES:
         this.idParam = 'itemID';
         this.columns = [
           {key: 'name', title: 'Name', dataType: 'name', options: {idName: 'sourceID'}},
@@ -180,7 +182,7 @@ export class Dashboard {
         ];
         this.setTradeVendorValues();
         break;
-      case Dashboard.TYPES.MILLING:
+      case DEPRICATEDDashboard.TYPES.MILLING:
         this.idParam = 'id';
         this.columns = [
           {key: 'name', title: 'Name', dataType: 'name'},
@@ -190,7 +192,7 @@ export class Dashboard {
         ];
         this.shuffles(ProspectingAndMillingUtil.mills);
         break;
-      case Dashboard.TYPES.PROSPECTING:
+      case DEPRICATEDDashboard.TYPES.PROSPECTING:
         this.idParam = 'id';
         this.columns = [
           {key: 'name', title: 'Name', dataType: 'name'},
@@ -212,7 +214,7 @@ export class Dashboard {
     SharedService.sellerDashboards.length = 0;
 
     for (let i = 0; i < 10; i++) {
-      const db = new Dashboard('', ''),
+      const db = new DEPRICATEDDashboard('', ''),
         item = new AuctionItem();
 
       db.idParam = 'itemID';
@@ -228,35 +230,35 @@ export class Dashboard {
   }
 
   public static addDashboards(): void {
-    let db: Dashboard;
+    let db: DEPRICATEDDashboard;
     SharedService.itemDashboards.length = 0;
     SharedService.sellerDashboards.length = 0;
     try {
       // Items
-      db = new Dashboard(
-        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROFITABLE_CRAFTS].title,
-        Dashboard.TYPES.PROFITABLE_CRAFTS);
+      db = new DEPRICATEDDashboard(
+        SharedService.defaultDashboardSettingsListMap[DEPRICATEDDashboard.TYPES.PROFITABLE_CRAFTS].title,
+        DEPRICATEDDashboard.TYPES.PROFITABLE_CRAFTS);
       if (db.data.length > 0 && !db.isDisabled) {
         SharedService.itemDashboards.push(db);
       }
 
-      db = new Dashboard(
-        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS].title,
-        Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS);
+      db = new DEPRICATEDDashboard(
+        SharedService.defaultDashboardSettingsListMap[DEPRICATEDDashboard.TYPES.PROFITABLE_KNOWN_CRAFTS].title,
+        DEPRICATEDDashboard.TYPES.PROFITABLE_KNOWN_CRAFTS);
       if (db.data.length > 0 && !db.isDisabled) {
         SharedService.itemDashboards.push(db);
       }
 
-      db = new Dashboard(
-        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.WATCH_LIST_CRAFTS].title,
-        Dashboard.TYPES.WATCH_LIST_CRAFTS);
+      db = new DEPRICATEDDashboard(
+        SharedService.defaultDashboardSettingsListMap[DEPRICATEDDashboard.TYPES.WATCH_LIST_CRAFTS].title,
+        DEPRICATEDDashboard.TYPES.WATCH_LIST_CRAFTS);
       if (db.data.length > 0 && !db.isDisabled) {
         SharedService.itemDashboards.push(db);
       }
 
       // The users watchlists
       SharedService.user.watchlist.groups.forEach(group => {
-        db = new Dashboard(group.name, Dashboard.TYPES.WATCH_LIST, [group]);
+        db = new DEPRICATEDDashboard(group.name, DEPRICATEDDashboard.TYPES.WATCH_LIST, [group]);
 
         if (db.data.length > 0 && !db.isDisabled) {
           SharedService.itemDashboards.push(db);
@@ -264,59 +266,59 @@ export class Dashboard {
       });
 
 
-      db = new Dashboard(
-        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.MILLING].title,
-        Dashboard.TYPES.MILLING);
+      db = new DEPRICATEDDashboard(
+        SharedService.defaultDashboardSettingsListMap[DEPRICATEDDashboard.TYPES.MILLING].title,
+        DEPRICATEDDashboard.TYPES.MILLING);
       if (db.data.length > 0 && !db.isDisabled) {
         SharedService.itemDashboards.push(db);
       }
 
-      db = new Dashboard(
-        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROSPECTING].title,
-        Dashboard.TYPES.PROSPECTING);
+      db = new DEPRICATEDDashboard(
+        SharedService.defaultDashboardSettingsListMap[DEPRICATEDDashboard.TYPES.PROSPECTING].title,
+        DEPRICATEDDashboard.TYPES.PROSPECTING);
       if (db.data.length > 0 && !db.isDisabled) {
         SharedService.itemDashboards.push(db);
       }
 
-      db = new Dashboard(
-        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.MOST_AVAILABLE_ITEMS].title,
-        Dashboard.TYPES.MOST_AVAILABLE_ITEMS);
+      db = new DEPRICATEDDashboard(
+        SharedService.defaultDashboardSettingsListMap[DEPRICATEDDashboard.TYPES.MOST_AVAILABLE_ITEMS].title,
+        DEPRICATEDDashboard.TYPES.MOST_AVAILABLE_ITEMS);
       if (db.data.length > 0 && !db.isDisabled) {
         SharedService.itemDashboards.push(db);
       }
 
       if (Filters.isUsingAPI()) {
-        db = new Dashboard(
-          SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.POTENTIAL_DEALS].title,
-          Dashboard.TYPES.POTENTIAL_DEALS);
+        db = new DEPRICATEDDashboard(
+          SharedService.defaultDashboardSettingsListMap[DEPRICATEDDashboard.TYPES.POTENTIAL_DEALS].title,
+          DEPRICATEDDashboard.TYPES.POTENTIAL_DEALS);
         if (db.data.length > 0 && !db.isDisabled) {
           SharedService.itemDashboards.push(db);
         }
       }
-      db = new Dashboard(
-        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.CHEAP_BIDS].title,
-        Dashboard.TYPES.CHEAP_BIDS);
+      db = new DEPRICATEDDashboard(
+        SharedService.defaultDashboardSettingsListMap[DEPRICATEDDashboard.TYPES.CHEAP_BIDS].title,
+        DEPRICATEDDashboard.TYPES.CHEAP_BIDS);
       if (db.data.length > 0 && !db.isDisabled) {
         SharedService.itemDashboards.push(db);
       }
 
-      db = new Dashboard(
-        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT].title,
-        Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT);
+      db = new DEPRICATEDDashboard(
+        SharedService.defaultDashboardSettingsListMap[DEPRICATEDDashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT].title,
+        DEPRICATEDDashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT);
       if (db.data.length > 0 && !db.isDisabled) {
         SharedService.itemDashboards.push(db);
       }
 
-      db = new Dashboard(
-        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL].title,
-        Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL);
+      db = new DEPRICATEDDashboard(
+        SharedService.defaultDashboardSettingsListMap[DEPRICATEDDashboard.TYPES.CHEAPER_THAN_VENDOR_SELL].title,
+        DEPRICATEDDashboard.TYPES.CHEAPER_THAN_VENDOR_SELL);
       if (db.data.length > 0 && !db.isDisabled) {
         SharedService.itemDashboards.push(db);
       }
 
-      db = new Dashboard(
-        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.TRADE_VENDOR_VALUES].title,
-        Dashboard.TYPES.TRADE_VENDOR_VALUES);
+      db = new DEPRICATEDDashboard(
+        SharedService.defaultDashboardSettingsListMap[DEPRICATEDDashboard.TYPES.TRADE_VENDOR_VALUES].title,
+        DEPRICATEDDashboard.TYPES.TRADE_VENDOR_VALUES);
       if (db.data.length > 0 && !db.isDisabled) {
         SharedService.itemDashboards.push(db);
       }
@@ -324,8 +326,8 @@ export class Dashboard {
       ErrorReport.sendError('addDashboards', error);
     }
 
-    Dashboard.itemEvents.emit(SharedService.itemDashboards);
-    Dashboard.sellerEvents.emit(SharedService.sellerDashboards);
+    DEPRICATEDDashboard.itemEvents.emit(SharedService.itemDashboards);
+    DEPRICATEDDashboard.sellerEvents.emit(SharedService.sellerDashboards);
   }
 
   private addAPIColumnsAtPosition(index: number): void {

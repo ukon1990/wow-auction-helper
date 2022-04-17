@@ -1,5 +1,5 @@
 import {AfterContentInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output} from '@angular/core';
-import {ColumnDescription} from '../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {SharedService} from '../../../../services/shared.service';
 import {FormControl} from '@angular/forms';
 import {SummaryCard} from '../../../../models/summary-card.model';
@@ -8,7 +8,7 @@ import {ErrorReport} from '../../../../utils/error-report.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ProfitSummary} from '../../models/profit-summary.model';
 import {UserProfit} from '../../models/user-profit.model';
-import {NumberUtil} from '../../../util/utils/number.util';
+import {NumberUtil} from '@shared/utils';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';
 import {ChartData} from '../../../util/models/chart.model';
 

@@ -1,5 +1,5 @@
-import {Recipe as APIRecipe} from '../../../../../../api/src/recipe/model';
 import {Reagent} from './reagent';
+import {APIRecipe} from '@shared/models';
 
 export class Recipe extends APIRecipe {
   // Added by the client

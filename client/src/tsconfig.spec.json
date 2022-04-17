@@ -3,6 +3,9 @@
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
     "baseUrl": "./",
+    "paths": {
+      "@shared/*": ["../../shared/src/*"]
+    },
     "target": "es5",
     "types": [
       "jasmine",

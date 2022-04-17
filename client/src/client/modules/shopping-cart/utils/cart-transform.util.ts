@@ -2,7 +2,7 @@ import {CartItem, CartRecipe} from '../models/shopping-cart-v2.model';
 import {CraftingService} from '../../../services/crafting.service';
 import {Recipe} from '../../crafting/models/recipe';
 import {ItemService} from '../../../services/item.service';
-import {Item} from '../../../models/item/item';
+import {Item} from '@shared/models';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {Reagent} from '../../crafting/models/reagent';
 

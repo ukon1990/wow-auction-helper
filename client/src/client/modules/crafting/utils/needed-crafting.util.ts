@@ -1,6 +1,6 @@
 import {BaseCraftingUtil} from './base-crafting.util';
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {Item} from '../../../models/item/item';
+import {Item} from '@shared/models';
 
 export class NeededCraftingUtil extends BaseCraftingUtil {
   constructor(

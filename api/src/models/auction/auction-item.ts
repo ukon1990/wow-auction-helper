@@ -1,4 +1,4 @@
-import { Auction } from './auction';
+import { Auction } from '@shared/models';
 
 export class AuctionItem {
   itemID: number;

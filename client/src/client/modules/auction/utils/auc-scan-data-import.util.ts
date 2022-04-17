@@ -1,6 +1,6 @@
 import {Report} from '../../../utils/report.util';
 import {TextUtil} from '@ukon1990/js-utilities';
-import {Auction} from '../models/auction.model';
+import {Auction} from '@shared/models';
 import {LuaUtil} from './lua.util';
 
 export class AucScanDataImportUtil {

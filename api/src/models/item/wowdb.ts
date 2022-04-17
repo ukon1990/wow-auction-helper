@@ -1,4 +1,4 @@
-import {Item} from '../../../../client/src/client/models/item/item';
+import {Item} from '@shared/models';
 
 export class WoWDBItem {
   ID: number;

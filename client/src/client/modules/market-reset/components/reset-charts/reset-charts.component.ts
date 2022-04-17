@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '
 import {ItemReset} from '../../models/item-reset.model';
 import {ChartData} from '../../../util/models/chart.model';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';
-import {NumberUtil} from '../../../util/utils/number.util';
+import {NumberUtil} from '@shared/utils';
 import {CraftingUtil} from '../../../crafting/utils/crafting.util';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {AuctionsService} from '../../../../services/auctions.service';

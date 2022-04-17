@@ -1,12 +1,8 @@
-import {Directive, ElementRef, HostListener, Input} from '@angular/core';
-import {ItemService} from '../../services/item.service';
+import {Directive, HostListener, Input} from '@angular/core';
 import {AuctionItem} from '../auction/models/auction-item.model';
-import {Item} from '../../models/item/item';
-import {Auction} from '../auction/models/auction.model';
-import {Pet} from '../pet/models/pet';
+import {Auction, ColumnDescription, Item, Pet} from '@shared/models';
 import {RealmService} from '../../services/realm.service';
 import {TableUtil} from '../table/utils/table.util';
-import {ColumnDescription} from '../table/models/column-description';
 import {SharedService} from '../../services/shared.service';
 import {Recipe} from '../crafting/models/recipe';
 import {TooltipService} from '../core/services/tooltip.service';

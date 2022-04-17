@@ -1,7 +1,7 @@
 import {AfterContentInit, Component, Input, OnChanges, OnDestroy} from '@angular/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
-import {Auction} from '../../../auction/models/auction.model';
+import {Auction} from '@shared/models';
 import {FormControl} from '@angular/forms';
 import {SeriesOptionsType, XAxisOptions} from 'highcharts';
 import {ThemeUtil} from '../../../core/utils/theme.util';

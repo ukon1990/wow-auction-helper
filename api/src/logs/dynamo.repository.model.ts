@@ -11,9 +11,9 @@ export class LogDynamoRepository extends BaseRepository<any> {
       const start = +new Date();
 
       this.put(data)
-        .then(() => {
+        .then((res) => {
           console.log(`Updated DynamoDB in ${+new Date() - start} ms`);
-          resolve();
+          resolve(res);
         })
         .catch(reject);
     });

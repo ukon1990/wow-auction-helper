@@ -3,6 +3,9 @@
   "compilerOptions": {
     "outDir": "../out-tsc/app",
     "baseUrl": "./",
+    "paths": {
+      "@shared/*": ["../../shared/src/*"]
+    },
     "types": []
   },
   "files": [

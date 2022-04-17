@@ -1,4 +1,4 @@
-import {Item} from '../../../client/src/client/models/item/item';
+import {Item} from '@shared/models';
 import {safeifyString} from '../utils/string.util';
 import {getLocale} from '../utils/locale.util';
 
@@ -26,7 +26,7 @@ export class ItemQuery {
   }
 
   /* Depricated
-  public static insert(item: Item) {
+  public static insert(item: ItemModel) {
     return `
       INSERT INTO items(\`id\`,
                         \`name\`,

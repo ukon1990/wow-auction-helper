@@ -1,5 +1,5 @@
 import {WoWHeadUtil} from '../utils/wowhead.util';
-import {ItemLocale} from '../models/item/item-locale';
+import {ItemLocale} from '@shared/models';
 import {Language} from '../models/language.model';
 
 export interface Coordinates {

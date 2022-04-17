@@ -4,15 +4,15 @@ import {
   Axis,
   AxisTypeValue,
   Chart,
+  PointOptionsObject,
   SeriesOptionsType,
   Tooltip,
   TooltipFormatterContextObject,
   XAxisOptions,
-  YAxisOptions,
-  PointOptionsObject, PointLabelObject
+  YAxisOptions
 } from 'highcharts';
 import addMore from 'highcharts/highcharts-more';
-import {NumberUtil} from '../utils/number.util';
+import {NumberUtil} from '@shared/utils';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ThemeUtil} from '../../core/utils/theme.util';
 import {GoldPipe} from '../pipes/gold.pipe';

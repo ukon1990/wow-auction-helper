@@ -14,12 +14,9 @@ import {BackgroundDownloadService} from '../../../../services/background-downloa
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionHouseStatus} from '../../../../../auction/models/auction-house-status.model';
 import {ErrorReport} from '../../../../../../utils/error-report.util';
-import {AuctionUpdateLog} from '../../../../../../../../../api/src/models/auction/auction-update-log.model';
-import {ColumnDescription} from '../../../../../table/models/column-description';
-import {RealmStatus} from '../../../../../../models/realm-status.model';
-import {Realm} from '../../../../../../../../../api/src/realm/model';
+import {ColumnDescription} from '@shared/models';
+import {AuctionUpdateLog, Realm, RealmStatus} from '@shared/models';
 import {Report} from '../../../../../../utils/report.util';
-import {SharedService} from '../../../../../../services/shared.service';
 
 interface DownloadRow {
   name: string;

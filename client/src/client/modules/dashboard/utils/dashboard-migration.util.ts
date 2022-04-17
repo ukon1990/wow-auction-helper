@@ -1,11 +1,11 @@
-import {DashboardV2} from '../models/dashboard-v2.model';
-import {ItemRule, Rule} from '../models/rule.model';
-import {ConditionEnum} from '../types/condition.enum';
-import {TargetValueEnum} from '../types/target-value.enum';
+import {Dashboard} from '@shared/models';
+import {ConditionEnum} from '@shared/enum';
+import {TargetValueEnum} from '@shared/enum';
 import {columnConfig} from '../data/columns.data';
 import {Watchlist} from '../models/watchlist.model';
 import {WatchlistGroup} from '../models/watchlist-group.model';
 import {WatchlistItem} from '../models/watchlist-item.model';
+import {ItemRule, Rule} from "@shared/models";
 
 export interface OldGroups {
   groups: {
@@ -27,8 +27,8 @@ export interface OldGroups {
 }
 
 export class DashboardMigrationUtil {
-  static migrate(groups: OldGroups): DashboardV2[] {
-    const boards: DashboardV2[] = [];
+  static migrate(groups: OldGroups): Dashboard[] {
+    const boards: Dashboard[] = [];
     const wl: Watchlist = new Watchlist(null);
     wl.restoreFrom(groups);
     wl.groups.forEach((group: WatchlistGroup) =>
@@ -36,10 +36,10 @@ export class DashboardMigrationUtil {
     return boards;
   }
 
-  private static handleWatchlistGroup(group: WatchlistGroup, boards: DashboardV2[]) {
+  private static handleWatchlistGroup(group: WatchlistGroup, boards: Dashboard[]) {
     const itemRules = new Map<number, ItemRule>();
     const ruleMap = new Map<string, Rule>();
-    const board: DashboardV2 = this.getBaseBoard(group);
+    const board: Dashboard = this.getBaseBoard(group);
 
     this.setDailySoldAndSaleRate(group, board);
     boards.push(board);
@@ -50,7 +50,7 @@ export class DashboardMigrationUtil {
     }
   }
 
-  private static handleWatchlistItem(item: WatchlistItem, itemRules: Map<number, ItemRule>, board: DashboardV2) {
+  private static handleWatchlistItem(item: WatchlistItem, itemRules: Map<number, ItemRule>, board: Dashboard) {
     const rule: Rule = this.getBaseRule(item);
     if (!itemRules.has(item.itemID)) {
       this.addNewItemRule(item, itemRules, board, rule);
@@ -59,7 +59,7 @@ export class DashboardMigrationUtil {
     }
   }
 
-  private static addNewItemRule(item: WatchlistItem, itemRules: Map<number, ItemRule>, board: DashboardV2, rule: Rule) {
+  private static addNewItemRule(item: WatchlistItem, itemRules: Map<number, ItemRule>, board: Dashboard, rule: Rule) {
     const itemRule: ItemRule = {
       itemId: item.itemID,
       rules: []
@@ -80,7 +80,7 @@ export class DashboardMigrationUtil {
     };
   }
 
-  private static getBaseBoard(group: WatchlistGroup): DashboardV2 {
+  private static getBaseBoard(group: WatchlistGroup): Dashboard {
     return {
       title: group.name,
       idParam: 'id',
@@ -99,7 +99,7 @@ export class DashboardMigrationUtil {
     };
   }
 
-  private static setDailySoldAndSaleRate(group: WatchlistGroup, board: DashboardV2) {
+  private static setDailySoldAndSaleRate(group: WatchlistGroup, board: Dashboard) {
     /* TODO: If TSM is public again
     if (group.matchDailySold) {
       board.rules.push({

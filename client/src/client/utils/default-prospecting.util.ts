@@ -1,4 +1,4 @@
-import {Remains} from '../models/item/remains.model';
+import {Remains} from '@shared/models';
 
 export const defaultProspecting: Remains[] = [
     {

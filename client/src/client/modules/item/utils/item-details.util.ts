@@ -1,9 +1,8 @@
 import {Report} from '../../../utils/report.util';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SharedService} from '../../../services/shared.service';
-import {Pet} from '../../pet/models/pet';
-import {Item} from '../../../models/item/item';
-import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
+import {Item, Pet} from '@shared/models';
+import {AuctionItemStat} from '@shared/models';
 import {Recipe} from '../../crafting/models/recipe';
 
 interface ItemSelection {
