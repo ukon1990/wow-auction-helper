@@ -1,7 +1,10 @@
 {
-  "extends": "./tsconfig.paths.json",
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["../shared/src/*"]
+    },
     "importHelpers": true,
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
@@ -12,7 +15,7 @@
     "target": "es6",
     "typeRoots": [
       "node_modules/@types"
-    ]
+    ],
   },
   "include": [
     "**/*.ts",
