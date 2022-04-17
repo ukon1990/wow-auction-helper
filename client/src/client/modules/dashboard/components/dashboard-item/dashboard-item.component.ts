@@ -1,11 +1,10 @@
 import {AfterViewInit, Component, Input, OnChanges, OnDestroy, SimpleChanges} from '@angular/core';
-import {Dashboard} from '../../models/dashboard.model';
 import {SharedService} from '../../../../services/shared.service';
 import {Report} from '../../../../utils/report.util';
 import {faCog} from '@fortawesome/free-solid-svg-icons/faCog';
 import {MatDialog} from '@angular/material/dialog';
 import {ConfigureComponent} from '../configure/configure.component';
-import {DashboardV2} from '../../models/dashboard-v2.model';
+import {Dashboard} from '@shared/models';
 import {DashboardService} from '../../services/dashboard.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {DetailsDialogComponent} from './details-dialog/details-dialog.component';
@@ -16,7 +15,7 @@ import {TextUtil} from '@ukon1990/js-utilities';
   templateUrl: './dashboard-item.component.html',
 })
 export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnChanges {
-  @Input() dashboard: DashboardV2;
+  @Input() dashboard: Dashboard;
   @Input() filterParameter: string;
   @Input() hideButtons: boolean;
   @Input() allColumns: boolean;

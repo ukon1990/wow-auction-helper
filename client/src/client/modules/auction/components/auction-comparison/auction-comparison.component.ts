@@ -5,14 +5,13 @@ import {RealmService} from '../../../../services/realm.service';
 import {RealmStatus} from '@shared/models/realm/realm-status.model';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs';
-import {ColumnDescription} from '../../../table/models/column-description';
+import {ColumnDescription, itemQualities} from '@shared/models';
 import {AuctionItem} from '../../models/auction-item.model';
 import {AuctionHouseStatus} from '../../models/auction-house-status.model';
 import {ItemClass} from '../../../item/models/item-class.model';
 import {ItemClassService} from '../../../item/service/item-class.service';
-import {itemQualities} from '@shared/models';
 import {Filters} from '../../../../utils/filtering';
-import {GameBuild} from '../../../../utils/game-build.util';
+import {GameBuild} from '@shared/utils/game-build.util';
 import {ComparisonTableDataModel} from '../../models/comparison-table-data.model';
 import {ComparisonVariableEnum} from '../../enums/comparison-variable.enum';
 

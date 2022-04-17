@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util';
-import {ColumnDescription} from '../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {Remains} from '@shared/models';
 import {SharedService} from '../../../../services/shared.service';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';

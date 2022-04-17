@@ -5,9 +5,8 @@ import {languages} from '../static-data/language.data';
  */
 
 import {ClassicRecipeUtil} from './classic-recipe.util';
-import {GameBuild} from '../../../../client/src/client/utils/game-build.util';
+import {GameBuild} from '@shared/utils/game-build.util';
 import {RDSQueryUtil} from '../../utils/query.util';
-import {ProfessionRepository} from '../../profession/repository';
 import {DatabaseUtil} from '../../utils/database.util';
 import {ItemLocale} from '@shared/models/item/item-locale';
 

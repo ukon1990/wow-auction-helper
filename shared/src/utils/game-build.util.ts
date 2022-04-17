@@ -1,5 +1,3 @@
-
-
 export class GameBuild {
   static readonly latestClassicExpansion = 1;
 

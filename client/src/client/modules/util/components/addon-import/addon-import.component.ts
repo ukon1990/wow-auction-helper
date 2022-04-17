@@ -13,7 +13,7 @@ import {AucScanDataImportUtil} from '../../../auction/utils/auc-scan-data-import
 import {LuaUtil} from '../../../auction/utils/lua.util';
 import {AuctionDBImportUtil} from '../../../auction/utils/auction-db-import.util';
 import {AuctionHouseStatus} from '../../../auction/models/auction-house-status.model';
-import {GameBuild} from '../../../../utils/game-build.util';
+import {GameBuild} from '@shared/utils/game-build.util';
 import {UserUtil} from '../../../../utils/user/user.util';
 import {GameBuildVersion} from '@shared/enum';
 

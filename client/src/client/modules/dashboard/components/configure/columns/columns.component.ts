@@ -2,13 +2,13 @@ import {AfterViewInit, Component, Input, OnDestroy} from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {ruleFields} from '../../../data/rule-fields.data';
-import {ColumnDescription} from '../../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {columnConfig} from '../../../data/columns.data';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {SortRule} from '../../../models/dashboard-v2.model';
 import {CdkDragDrop} from '@angular/cdk/drag-drop';
 import {ErrorReport} from '../../../../../utils/error-report.util';
 import {Report} from '../../../../../utils/report.util';
+import {SortRule} from "@shared/models/dashboard/sort-rule.model";
 
 @Component({
   selector: 'wah-columns',

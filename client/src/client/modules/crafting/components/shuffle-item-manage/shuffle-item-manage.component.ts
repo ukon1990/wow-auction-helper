@@ -6,7 +6,7 @@ import {FormControl} from '@angular/forms';
 import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util';
 import {SharedService} from '../../../../services/shared.service';
 import {Item, Remains, RemainsSource} from '@shared/models';
-import {ColumnDescription} from '../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {Report} from '../../../../utils/report.util';
 
 @Component({

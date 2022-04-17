@@ -1,15 +1,12 @@
-
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SharedService} from '../../../services/shared.service';
-import {TSM} from '../../auction/models/tsm.model';
+import {Currency, Item, TSM} from '@shared/models';
 import {TradeVendor, TradeVendorItem} from '../../../models/item/trade-vendor';
 import {TRADE_VENDORS} from '../../../data/trade-vendors';
-import {Currency} from '../../core/models/currency.model';
 import {currencyMap} from '../../../data/currency.data';
 import {Report} from '../../../utils/report.util';
 import {TsmService} from '../../tsm/tsm.service';
 import {AuctionsService} from '../../../services/auctions.service';
-import {Item} from '@shared/models';
 
 export interface NPCCoordinate {
   x: number;

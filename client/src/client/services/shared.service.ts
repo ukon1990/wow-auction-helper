@@ -2,10 +2,9 @@ import {EventEmitter, Injectable} from '@angular/core';
 import {User} from '../models/user/user';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {Recipe} from '../modules/crafting/models/recipe';
-import {Item} from '@shared/models';
+import {Item, Pet} from '@shared/models';
 import {Realm} from '@shared/models/realm/realm';
-import {Dashboard} from '../modules/dashboard/models/dashboard.model';
-import {Pet} from '../modules/pet/models/pet';
+import {DEPRICATEDDashboard} from '../modules/dashboard/models/dashboard.model';
 import {AuctionResponse} from '../modules/auction/models/auctions-response.model';
 import {TradeVendor, TradeVendorItemValue} from '../models/item/trade-vendor';
 import {UserAuctions} from '../modules/auction/models/user-auctions.model';
@@ -71,8 +70,8 @@ export class SharedService {
   public static realms: Map<string, Realm> = new Map<string, Realm>();
   public static userRealms: Array<Realm> = new Array<Realm>();
 
-  public static itemDashboards: Array<Dashboard> = new Array<Dashboard>();
-  public static sellerDashboards: Array<Dashboard> = new Array<Dashboard>();
+  public static itemDashboards: Array<DEPRICATEDDashboard> = new Array<DEPRICATEDDashboard>();
+  public static sellerDashboards: Array<DEPRICATEDDashboard> = new Array<DEPRICATEDDashboard>();
 
   public static notifications: Array<Notification> = new Array<Notification>();
 

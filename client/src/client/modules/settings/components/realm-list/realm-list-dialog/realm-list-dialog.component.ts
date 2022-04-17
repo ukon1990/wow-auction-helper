@@ -4,7 +4,7 @@ import {faCog} from '@fortawesome/free-solid-svg-icons/faCog';
 import {RealmService} from '../../../../../services/realm.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionUpdateLog, RealmStatus} from '@shared/models';
-import {ColumnDescription} from '../../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {DateUtil} from '@ukon1990/js-utilities';
 import {Report} from '../../../../../utils/report.util';
 

@@ -1,6 +1,4 @@
-import {Auction} from '@shared/models';
-import {ItemLocale} from '../../../../../../shared/src/models/item/item-locale';
-import {Asset} from '../../../models/asset.model';
+import {Auction, ItemLocale} from '@shared/models';
 
 export class Pet {
   speciesId: number;
@@ -15,6 +13,9 @@ export class Pet {
   isCapturable: boolean;
   isTradable: boolean;
   timestamp?: string;
-  assets: Asset[];
+  assets: {
+    key: string;
+    value: string;
+  }[];
   auctions = new Array<Auction>();
 }

@@ -4,7 +4,7 @@ import {FormControl} from '@angular/forms';
 import {SharedService} from '../../../../../services/shared.service';
 import {Item} from '@shared/models';
 import {CustomPrice, CustomPrices} from '../../../../crafting/models/custom-price';
-import {ColumnDescription} from '../../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {CraftingUtil} from '../../../../crafting/utils/crafting.util';
 import {customPricesDefault} from '../../../../crafting/models/default-custom-prices';
 import {Report} from '../../../../../utils/report.util';

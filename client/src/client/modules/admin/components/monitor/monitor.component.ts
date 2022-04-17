@@ -2,7 +2,7 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {AdminService} from '../../services/admin.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {interval, Observable} from 'rxjs';
-import {ColumnDescription} from '../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {MonitorUtil} from '../../utils/monitor.util';
 import {SeriesOptionsType, XAxisOptions, YAxisOptions} from 'highcharts';

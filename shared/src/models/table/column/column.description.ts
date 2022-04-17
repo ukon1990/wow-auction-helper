@@ -1,12 +1,4 @@
-import {ThemePalette} from '@angular/material/core';
-
-export interface RowAction {
-  icon: string;
-  tooltip: string;
-  text?: string;
-  color?: ThemePalette;
-  callback: (row: any, index: number) => void;
-}
+import {RowAction} from '@shared/models';
 
 export interface ColumnDescription {
   title: string;

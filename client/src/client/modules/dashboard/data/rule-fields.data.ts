@@ -1,6 +1,6 @@
 import {RuleFieldGroup} from '../models/rule-field.model';
 import {columnConfig} from './columns.data';
-import {TargetValueEnum} from '../types/target-value.enum';
+import {TargetValueEnum} from '@shared/enum/dashboard/target-value.enum';
 
 export const ruleFields: RuleFieldGroup[] = [
   {

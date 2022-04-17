@@ -1,11 +1,10 @@
 import {AfterViewInit, Component, EventEmitter, Inject, OnInit, Output, ViewChild} from '@angular/core';
-import {DashboardV2} from '../../models/dashboard-v2.model';
+import {Dashboard} from '@shared/models';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DashboardService} from '../../services/dashboard.service';
 import {faSave, faUndo} from '@fortawesome/free-solid-svg-icons';
 import {DashboardMigrationUtil} from '../../utils/dashboard-migration.util';
-import {MatSelectionList} from '@angular/material/list';
 import {MatStepper} from '@angular/material/stepper';
 import {Report} from '../../../../utils/report.util';
 import {ErrorReport} from '../../../../utils/error-report.util';
@@ -21,7 +20,7 @@ export class MigrationComponent implements OnInit, AfterViewInit {
   faSave = faSave;
   faTrash = faTrashAlt;
   faUndo = faUndo;
-  boards: DashboardV2[] = [];
+  boards: Dashboard[] = [];
 
 
   constructor(
@@ -50,7 +49,7 @@ export class MigrationComponent implements OnInit, AfterViewInit {
 
   migrate() {
     try {
-      const selection: DashboardV2[] = this.boards.filter(board => !board.isDisabled);
+      const selection: Dashboard[] = this.boards.filter(board => !board.isDisabled);
       this.service.saveAll(selection);
 
       // localStorage.removeItem('watchlist');

@@ -2,7 +2,7 @@ import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Out
 import {PageEvent} from '@angular/material/paginator';
 import {FormControl} from '@angular/forms';
 import {Report} from '../../../utils/report.util';
-import {ColumnDescription} from '../models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {Sorter} from '../../../models/sorter';
 import {SharedService} from '../../../services/shared.service';
 import {User} from '../../../models/user/user';

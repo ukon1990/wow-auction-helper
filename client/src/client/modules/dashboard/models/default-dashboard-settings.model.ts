@@ -1,12 +1,12 @@
-import { SharedService } from '../../../services/shared.service';
-import { Dashboard } from './dashboard.model';
+import {SharedService} from '../../../services/shared.service';
+import {DEPRICATEDDashboard} from './dashboard.model';
 import {ObjectUtil} from '@ukon1990/js-utilities';
 
 export class DefaultDashboardSettings {
   public static list = [
     new DefaultDashboardSettings(
       'Profitable crafts',
-      Dashboard.TYPES.PROFITABLE_CRAFTS,
+      DEPRICATEDDashboard.TYPES.PROFITABLE_CRAFTS,
       false,
       0.1,
       1,
@@ -15,7 +15,7 @@ export class DefaultDashboardSettings {
     ),
     new DefaultDashboardSettings(
       'Profitable known crafts',
-      Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS,
+      DEPRICATEDDashboard.TYPES.PROFITABLE_KNOWN_CRAFTS,
       false,
       0.1,
       1,
@@ -24,7 +24,7 @@ export class DefaultDashboardSettings {
     ),
     new DefaultDashboardSettings(
       'Known watchlist craft alerts',
-      Dashboard.TYPES.WATCH_LIST_CRAFTS,
+      DEPRICATEDDashboard.TYPES.WATCH_LIST_CRAFTS,
       false,
       0.1,
       1,
@@ -33,7 +33,7 @@ export class DefaultDashboardSettings {
     ),
     new DefaultDashboardSettings(
       'Profitable herbs to mill',
-      Dashboard.TYPES.MILLING,
+      DEPRICATEDDashboard.TYPES.MILLING,
       false,
       null,
       null,
@@ -42,7 +42,7 @@ export class DefaultDashboardSettings {
     ),
     new DefaultDashboardSettings(
       'Profitable ore to prospect',
-      Dashboard.TYPES.PROSPECTING,
+      DEPRICATEDDashboard.TYPES.PROSPECTING,
       false,
       null,
       null,
@@ -51,7 +51,7 @@ export class DefaultDashboardSettings {
     ),
     new DefaultDashboardSettings(
       'Items by availability',
-      Dashboard.TYPES.MOST_AVAILABLE_ITEMS,
+      DEPRICATEDDashboard.TYPES.MOST_AVAILABLE_ITEMS,
       false,
       null,
       null,
@@ -60,7 +60,7 @@ export class DefaultDashboardSettings {
     ),
     new DefaultDashboardSettings(
       'Potential deals',
-      Dashboard.TYPES.POTENTIAL_DEALS,
+      DEPRICATEDDashboard.TYPES.POTENTIAL_DEALS,
       false,
       0.3,
       1,
@@ -69,7 +69,7 @@ export class DefaultDashboardSettings {
     ),
     new DefaultDashboardSettings(
       'Potential bid deals',
-      Dashboard.TYPES.CHEAP_BIDS,
+      DEPRICATEDDashboard.TYPES.CHEAP_BIDS,
       false,
       0.3,
       1,
@@ -78,7 +78,7 @@ export class DefaultDashboardSettings {
     ),
     new DefaultDashboardSettings(
       'Potential 2 hour bid deals',
-      Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT,
+      DEPRICATEDDashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT,
       false,
       0.30,
       1,
@@ -87,7 +87,7 @@ export class DefaultDashboardSettings {
     ),
     new DefaultDashboardSettings(
       'Buyout below vendor sell price',
-      Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL,
+      DEPRICATEDDashboard.TYPES.CHEAPER_THAN_VENDOR_SELL,
       false,
       null,
       null,
@@ -96,7 +96,7 @@ export class DefaultDashboardSettings {
     ),
     new DefaultDashboardSettings(
       'Trade vendor currency in gold',
-      Dashboard.TYPES.TRADE_VENDOR_VALUES,
+      DEPRICATEDDashboard.TYPES.TRADE_VENDOR_VALUES,
       false,
       null,
       null,

@@ -4,7 +4,7 @@ import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {Item} from '@shared/models';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {ItemService} from '../../../../services/item.service';
-import {ColumnDescription} from '../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 
 @Component({
   selector: 'wah-test',

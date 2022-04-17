@@ -6,3 +6,4 @@ export * from './item-stats.model';
 export * from './item-price-entry.model';
 export * from './auction-update-log.model';
 export * from './auction-house-update-log.model';
+export * from './tsm.model';

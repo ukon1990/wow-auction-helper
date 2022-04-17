@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
 import Dexie from 'dexie';
-import {Item, Auction, Profession} from '@shared/models';
+import {Auction, Dashboard, Item, Pet, Profession} from '@shared/models';
 import {SharedService} from './shared.service';
-import {Pet} from '../modules/pet/models/pet';
 import {Recipe} from '../modules/crafting/models/recipe';
 import {environment} from '../../environments/environment';
 import {Platform} from '@angular/cdk/platform';
@@ -12,10 +11,9 @@ import {NPC} from '../modules/npc/models/npc.model';
 import {Zone} from '../modules/zone/models/zone.model';
 import {BehaviorSubject} from 'rxjs';
 import {Report} from '../utils/report.util';
-import {GameBuild} from '../utils/game-build.util';
+import {GameBuild} from '@shared/utils/game-build.util';
 import {AucScanDataImportUtil} from '../modules/auction/utils/auc-scan-data-import.util';
 import {DatabaseUtil} from '../utils/database.util';
-import {DashboardV2} from '../modules/dashboard/models/dashboard-v2.model';
 import {DropsType, NpcSplitType, NpcUtil, SellsType, SkinningType} from '../modules/npc/utils/npc.util';
 import {DateUtil} from '@ukon1990/js-utilities';
 
@@ -344,7 +342,7 @@ export class DatabaseService {
     });
   }
 
-  async addDashboards(boards: DashboardV2[]): Promise<void> {
+  async addDashboards(boards: Dashboard[]): Promise<void> {
     if (this.shouldNotUseIndexedDB()) {
       return;
     }
@@ -375,7 +373,7 @@ export class DatabaseService {
     });
   }
 
-  getDashboards(): Promise<DashboardV2[]> {
+  getDashboards(): Promise<Dashboard[]> {
     return new Promise((resolve, reject) => {
       if (this.shouldNotUseIndexedDB()) {
         return resolve([]);

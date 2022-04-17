@@ -4,8 +4,8 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SharedService} from '../../../../services/shared.service';
 import {ItemExtract} from '../../../../utils/item-extract.util';
 import {FormControl, FormGroup} from '@angular/forms';
-import {ColumnDescription} from '../../../table/models/column-description';
-import {GameBuild} from '../../../../utils/game-build.util';
+import {ColumnDescription} from '@shared/models';
+import {GameBuild} from '@shared/utils/game-build.util';
 import {NPC} from '../../../npc/models/npc.model';
 
 @Component({

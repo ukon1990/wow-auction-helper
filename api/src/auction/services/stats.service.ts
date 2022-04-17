@@ -3,7 +3,7 @@ import {DatabaseUtil} from '../../utils/database.util';
 import {EventSchema} from '../../models/s3/event-record.model';
 import {GzipUtil} from '../../utils/gzip.util';
 import {AuctionProcessorUtil} from '@shared/utils/auction/auction-processor.util';
-import {NumberUtil} from '../../../../client/src/client/modules/util/utils/number.util';
+import {NumberUtil} from '@shared/utils';
 import {StatsRepository} from '../repository/stats.repository';
 import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
 import {RealmRepository} from '../../realm/repositories/realm.repository';
@@ -354,7 +354,7 @@ export class StatsService {
     });
   }
 
-  updateAllRealmDailyData(start: number, end: number, conn = new DatabaseUtil(false), daysAgo = 1): Promise<any> {
+  updateAllRealmDailyData(start: number, end: number, conn = new DatabaseUtil(false), daysAgo = 1): Promise<void> {
     return new Promise((resolve, reject) => {
       const promiseThrottle = new PromiseThrottle({
         requestsPerSecond: 5,
@@ -364,7 +364,7 @@ export class StatsService {
       let processed = 0;
       for (let id = start; id <= end; id++) {// 242
         promises.push(promiseThrottle.add(() =>
-          new Promise((ok) => {
+          new Promise<void>((ok) => {
             this.compileDailyAuctionData(id, conn, this.getYesterday(daysAgo))
               .then(() => {
                 processed++;

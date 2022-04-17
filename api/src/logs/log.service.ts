@@ -7,10 +7,7 @@ import {S3Handler} from '../handlers/s3.handler';
 import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
 import {RDSQueryUtil} from '../utils/query.util';
 import {LogDynamoRepository} from './dynamo.repository.model';
-import generateUUID from '../../../client/src/client/utils/uuid.util';
-import {IdUtil} from '../utils/id.util';
-import {RealmService} from '../realm/service';
-import {GlobalStatus, SQLProcess, TableSize} from "@shared/models/log";
+import {GlobalStatus, SQLProcess, TableSize} from '@shared/models';
 
 const crypto = require('crypto');
 

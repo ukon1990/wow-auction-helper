@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {TradeVendor, TradeVendorItem} from '../../../../models/item/trade-vendor';
-import {ColumnDescription} from '../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {SharedService} from '../../../../services/shared.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {Filters} from '../../../../utils/filtering';

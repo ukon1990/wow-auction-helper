@@ -14,7 +14,7 @@ import {BackgroundDownloadService} from '../../../../services/background-downloa
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionHouseStatus} from '../../../../../auction/models/auction-house-status.model';
 import {ErrorReport} from '../../../../../../utils/error-report.util';
-import {ColumnDescription} from '../../../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {AuctionUpdateLog, Realm, RealmStatus} from '@shared/models';
 import {Report} from '../../../../../../utils/report.util';
 

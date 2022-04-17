@@ -1,25 +1,26 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {SharedService} from './shared.service';
 import {HttpClient} from '@angular/common/http';
-import {WoWHeadSoldBy, Item} from '@shared/models';
+import {
+  AhStatsRequest,
+  AuctionItemStat,
+  Item,
+  ItemDailyPriceEntry,
+  ItemPriceCompareEntry,
+  ItemPriceEntry,
+  ItemPriceEntryResponse,
+  WoWHeadSoldBy
+} from '@shared/models';
 import {Endpoints} from './endpoints';
 import {DatabaseService} from './database.service';
 import {ErrorReport} from '../utils/error-report.util';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {ItemOverrides} from '../overrides/item.overrides';
 import {Platform} from '@angular/cdk/platform';
 import {Report} from '../utils/report.util';
-import {
-  ItemDailyPriceEntry,
-  ItemPriceEntry,
-  ItemPriceEntryResponse,
-  AuctionItemStat,
-  AhStatsRequest,
-  ItemPriceCompareEntry,
-} from '@shared/models';
 import {BehaviorSubject} from 'rxjs';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
-import {GameBuild} from '../utils/game-build.util';
+import {GameBuild} from '@shared/utils/game-build.util';
 
 class ItemResponse {
   timestamp: Date;

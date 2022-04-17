@@ -1,7 +1,7 @@
 import {AfterContentInit, Component, Input, OnDestroy} from '@angular/core';
 import {Character} from '../../../../character/models/character.model';
 import {ReputationVendorsData} from '../../../../../data/reputation/reputations-list.data';
-import {ColumnDescription} from '../../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {SharedService} from '../../../../../services/shared.service';
 import {Recipe} from '../../../../crafting/models/recipe';
 import {ErrorOptions, ErrorReport} from '../../../../../utils/error-report.util';

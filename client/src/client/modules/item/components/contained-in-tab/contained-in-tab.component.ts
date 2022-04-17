@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ColumnDescription} from '../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {WoWHeadContainedInObject} from '@shared/models';
 import {ZoneService} from '../../../zone/service/zone.service';
 import {Zone} from '../../../zone/models/zone.model';

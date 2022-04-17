@@ -1,14 +1,13 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core';
-import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ruleFields} from '../../../../data/rule-fields.data';
-import {GameBuild} from '../../../../../../utils/game-build.util';
+import {GameBuild} from '@shared/utils/game-build.util';
 import {Profession} from '@shared/models/profession/profession.model';
-import {conditionLocale} from 'client/modules/dashboard/types/condition.enum';
+import {conditionLocale} from '@shared/enum/dashboard/condition.enum';
 import {ProfessionService} from '../../../../../crafting/services/profession.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
-import {Rule} from '../../../../models/rule.model';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {GoldPipe} from '../../../../../util/pipes/gold.pipe';
 import {ItemLocale} from '../../../../../../language/item.locale';
@@ -16,6 +15,7 @@ import {RuleFieldGroup} from '../../../../models/rule-field.model';
 import {ThemeUtil} from '../../../../../core/utils/theme.util';
 import {ItemClassService} from '../../../../../item/service/item-class.service';
 import {ItemClass} from '../../../../../item/models/item-class.model';
+import {Rule} from "@shared/models/dashboard";
 
 @Component({
   selector: 'wah-rule',

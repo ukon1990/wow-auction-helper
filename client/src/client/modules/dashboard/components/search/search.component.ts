@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {FormControl} from '@angular/forms';
-import {DashboardMinimal, DashboardV2} from '../../models/dashboard-v2.model';
+import {Dashboard} from '@shared/models';
 import {DashboardService} from '../../services/dashboard.service';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
@@ -12,6 +12,7 @@ import {faEye} from '@fortawesome/free-solid-svg-icons/faEye';
 import {faFileImport} from '@fortawesome/free-solid-svg-icons/faFileImport';
 import {faSyncAlt} from '@fortawesome/free-solid-svg-icons/faSyncAlt';
 import {Report} from '../../../../utils/report.util';
+import {DashboardMinimal} from "@shared/models/dashboard";
 
 @Component({
   selector: 'wah-search',
@@ -26,8 +27,8 @@ export class SearchComponent implements OnInit, OnDestroy {
   filteredBoards: DashboardMinimal[] = [];
   isLoading: boolean;
   sm = new SubscriptionManager();
-  myDashboards = new Map<string, DashboardV2>();
-  myCopiedDashboards = new Map<string, DashboardV2>();
+  myDashboards = new Map<string, Dashboard>();
+  myCopiedDashboards = new Map<string, Dashboard>();
   faUpdate = faSyncAlt;
 
   constructor(
@@ -109,7 +110,7 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   private mapUserBoards() {
     this.myDashboards = this.service.map.value;
-    this.myCopiedDashboards = new Map<string, DashboardV2>();
+    this.myCopiedDashboards = new Map<string, Dashboard>();
     this.service.list.value.forEach(board => {
       if (board.parentId) {
         this.myCopiedDashboards.set(board.parentId, board);

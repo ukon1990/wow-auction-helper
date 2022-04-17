@@ -1,10 +1,9 @@
 import {SharedService} from '../../../services/shared.service';
-import {Auction, ItemStats} from '@shared/models';
+import {Auction, ItemStats, Pet} from '@shared/models';
 import {AuctionItem} from '../models/auction-item.model';
 import {TradeVendors} from '../../../models/trade-vendors';
 import {AuctionPet} from '../models/auction-pet.model';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
-import {Pet} from '../../pet/models/pet';
 import {Report} from '../../../utils/report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';
 import {TsmService} from '../../tsm/tsm.service';

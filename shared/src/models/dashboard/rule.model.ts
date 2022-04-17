@@ -1,5 +1,4 @@
-import {ConditionEnum} from '../types/condition.enum';
-import {TargetValueEnum} from '../types/target-value.enum';
+import {ConditionEnum, TargetValueEnum} from "@shared/enum";
 
 export interface Rule {
   condition: ConditionEnum;
@@ -9,11 +8,4 @@ export interface Rule {
   toValue?: number | string | boolean;
   or?: Rule[];
   isAlwaysValid?: boolean; // This is just a dummy, for itemRules with no actual rules
-}
-
-export interface ItemRule {
-  itemId: number;
-  bonusIds?: number[];
-  petSpeciesId?: number;
-  rules: Rule[];
 }

@@ -7,7 +7,7 @@ import {SeriesColumnOptions, XAxisOptions} from 'highcharts';
 import {ThemeUtil} from '../../core/utils/theme.util';
 import {ItemPriceCompareEntry} from '@shared/models';
 import {ErrorReport} from '../../../utils/error-report.util';
-import {ColumnDescription} from '../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 
 @Component({
   selector: 'wah-item-price-compare',

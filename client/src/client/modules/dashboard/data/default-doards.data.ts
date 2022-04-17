@@ -1,6 +1,6 @@
-import {DashboardV2} from '../models/dashboard-v2.model';
-import {ConditionEnum} from '../types/condition.enum';
-import {TargetValueEnum} from '../types/target-value.enum';
+import {Dashboard} from '@shared/models';
+import {ConditionEnum} from '@shared/enum/dashboard/condition.enum';
+import {TargetValueEnum} from '@shared/enum/dashboard/target-value.enum';
 import {columnConfig} from './columns.data';
 import {Profession} from '@shared/models/profession/profession.model';
 
@@ -15,7 +15,7 @@ const previousTimestamps = [
 ];
 
 
-const profitableCrafts: DashboardV2 = {
+const profitableCrafts: Dashboard = {
   id: 'default-profitable-crafts',
   idIsBackendGenerated: false,
   sortOrder: 0,
@@ -60,7 +60,7 @@ const profitableCrafts: DashboardV2 = {
   lastModified: BoardModifiedDate.DECEMBER_19_2020
 };
 
-const profitableKnownCrafts: DashboardV2 = {
+const profitableKnownCrafts: Dashboard = {
   id: 'default-profitable-known-crafts',
   idIsBackendGenerated: false,
   sortOrder: 1,
@@ -105,7 +105,7 @@ const profitableKnownCrafts: DashboardV2 = {
   lastModified: BoardModifiedDate.DECEMBER_19_2020
 };
 
-const potentialDeals: DashboardV2 = {
+const potentialDeals: Dashboard = {
   id: 'default-potential-deals',
   idIsBackendGenerated: false,
   sortOrder: 2,
@@ -160,7 +160,7 @@ const potentialDeals: DashboardV2 = {
   lastModified: BoardModifiedDate.DECEMBER_19_2020
 };
 
-const potentialBidDeals: DashboardV2 = {
+const potentialBidDeals: Dashboard = {
   id: 'default-potential-bid-deals',
   idIsBackendGenerated: false,
   sortOrder: 3,
@@ -226,7 +226,7 @@ const potentialBidDeals: DashboardV2 = {
   lastModified: BoardModifiedDate.DECEMBER_19_2020
 };
 
-const potentialBidDealsWith2HOrLessLeft: DashboardV2 = {
+const potentialBidDealsWith2HOrLessLeft: Dashboard = {
   id: 'default-potential-bid-deals-with-2hours-or-less',
   idIsBackendGenerated: false,
   sortOrder: 4,
@@ -264,7 +264,7 @@ const potentialBidDealsWith2HOrLessLeft: DashboardV2 = {
   lastModified: BoardModifiedDate.JULY_24_2020
 };
 
-const buyoutBelowVendorSellPrice: DashboardV2 = {
+const buyoutBelowVendorSellPrice: Dashboard = {
   id: 'default-buyout-below-vendor-sell-price',
   idIsBackendGenerated: false,
   sortOrder: 6,
@@ -306,7 +306,7 @@ const buyoutBelowVendorSellPrice: DashboardV2 = {
   lastModified: BoardModifiedDate.JULY_24_2020
 };
 
-const tradeVendorCurrencyInGold: DashboardV2 = {
+const tradeVendorCurrencyInGold: Dashboard = {
   id: 'default-trade-vendor-currency-in-gold',
   idIsBackendGenerated: false,
   sortOrder: 6,
@@ -361,7 +361,7 @@ const tradeVendorCurrencyInGold: DashboardV2 = {
   lastModified: BoardModifiedDate.DECEMBER_19_2020
 };
 
-const getKnownProfessionBoards = (professions: Profession[]): DashboardV2[] => professions.map(p => (
+const getKnownProfessionBoards = (professions: Profession[]): Dashboard[] => professions.map(p => (
   {
     id: 'default-get-known-profession-' + p.id,
     idIsBackendGenerated: false,
@@ -403,7 +403,7 @@ const getKnownProfessionBoards = (professions: Profession[]): DashboardV2[] => p
     lastModified: BoardModifiedDate.DECEMBER_19_2020
   }));
 
-const destroyBoards = ['milling', 'prospecting'].map((type: string): DashboardV2 => ({
+const destroyBoards = ['milling', 'prospecting'].map((type: string): Dashboard => ({
   id: `default-${type}`,
   idIsBackendGenerated: false,
   sortOrder: 6,
@@ -432,7 +432,7 @@ const destroyBoards = ['milling', 'prospecting'].map((type: string): DashboardV2
   lastModified: BoardModifiedDate.DECEMBER_19_2020
 }));
 
-export const getDefaultDashboards = (professions: Profession[]): DashboardV2[] => [
+export const getDefaultDashboards = (professions: Profession[]): Dashboard[] => [
   profitableCrafts,
   profitableKnownCrafts,
   ...getKnownProfessionBoards(professions),

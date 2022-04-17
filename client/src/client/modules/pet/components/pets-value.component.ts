@@ -1,12 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SharedService} from '../../../services/shared.service';
-import {ColumnDescription} from '../../table/models/column-description';
+import {CollectedPet, ColumnDescription} from '@shared/models';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionsService} from '../../../services/auctions.service';
-import { PageEvent } from '@angular/material/paginator';
+import {PageEvent} from '@angular/material/paginator';
 import {Report} from '../../../utils/report.util';
 import {PetTableData} from '../models/pet-table-data.model';
-import {CollectedPet} from "@shared/models/character/collected-pet.model";
 
 @Component({
   selector: 'wah-my-pets',

@@ -2,7 +2,7 @@ import {DatabaseUtil} from '../utils/database.util';
 import {HttpClientUtil} from '../utils/http-client.util';
 import {S3Handler} from './s3.handler';
 import {RDSQueryUtil} from '../utils/query.util';
-import {TSM} from '../../../client/src/client/modules/auction/models/tsm.model';
+import {TSM} from '@shared/models/auction/tsm.model';
 
 export class TSMHandler {
   getAndStartAllRealmsToUpdate(key: string): Promise<boolean> {

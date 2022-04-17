@@ -9,9 +9,8 @@ import {Report} from '../../../../../utils/report.util';
 import {AuctionPet} from '../../../../auction/models/auction-pet.model';
 import {TableUtil} from '../../../utils/table.util';
 import {AuctionsService} from '../../../../../services/auctions.service';
-import {Item} from '@shared/models';
+import {Item, Pet} from '@shared/models';
 import {PetsService} from '../../../../../services/pets.service';
-import {Pet} from '../../../../pet/models/pet';
 import {Router} from '@angular/router';
 
 @Component({

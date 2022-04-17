@@ -1,4 +1,4 @@
-import {ColumnDescription} from '../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 
 export interface RuleFieldGroup {
   name: string;

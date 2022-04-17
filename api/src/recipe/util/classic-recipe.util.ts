@@ -1,21 +1,10 @@
-/*
-import {Recipe} from '../models/crafting/recipe';
-import {Reagent} from '../models/crafting/reagent';
-import {HttpClientUtil} from './http-client.util';
-import {WoWHeadUtil} from './wowhead.util';
-import {GameBuild} from '../../../client/src/client/utils/game-build.util';
-import {languages} from '../static-data/language.data';
-import {ItemLocale} from '../models/item/item-locale';
-
- */
-import {GameBuild} from '../../../../client/src/client/utils/game-build.util';
+import {GameBuild} from '@shared/utils';
+import {APIReagent, APIRecipe} from '@shared/models';
 import {HttpClientUtil} from '../../utils/http-client.util';
 import {WoWHeadUtil} from '../../utils/wowhead.util';
 import {ItemLocale} from '@shared/models/item/item-locale';
 import {languages} from '../../static-data/language.data';
 import {ProfessionRepository} from '../../profession/repository';
-import {Reagent} from "@shared/models/profession/reagent.model";
-import {APIRecipe} from "@shared/models/profession/recipe.model";
 
 export class ClassicRecipeUtil {
 
@@ -37,7 +26,7 @@ export class ClassicRecipeUtil {
     } as APIRecipe;
   }
 
-  public static convertReagents(reagents: any[]): Reagent[] {
+  public static convertReagents(reagents: any[]): APIReagent[] {
     const r = [];
     reagents.forEach(reagent => {
       r.push({
@@ -48,7 +37,9 @@ export class ClassicRecipeUtil {
     return r;
   }
 
-  static getRecipeListForPatch(patchNumber: number, gameVersion?: string, professions = GameBuild.professionsClassic): Promise<APIRecipe[]> {
+  static getRecipeListForPatch(
+    patchNumber: number, gameVersion?: string, professions = GameBuild.professionsClassic
+  ): Promise<APIRecipe[]> {
     // gameVersion ? GameBuild.professionsClassic : GameBuild.professions;
     return new Promise<any>(async (resolve, reject) => {
       const professionRepository = new ProfessionRepository();
@@ -152,8 +143,8 @@ export class ClassicRecipeUtil {
     return recipe;
   }
 
-  private static async getRecipeTooltip(id, language, recipe) {
-    await new Promise<number>((resolve, reject) => {
+  private static async getRecipeTooltip(id, language, recipe): Promise<void> {
+    await new Promise<void>((resolve, reject) => {
       new HttpClientUtil().get(
         `https://tbc.wowhead.com/tooltip/spell/${id}?locale=${language.key}`)
         .then(({body}) => {

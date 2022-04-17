@@ -1,8 +1,7 @@
 import {Report} from '../../../utils/report.util';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SharedService} from '../../../services/shared.service';
-import {Pet} from '../../pet/models/pet';
-import {Item} from '@shared/models';
+import {Item, Pet} from '@shared/models';
 import {AuctionItemStat} from '@shared/models/auction/auction-item-stat.model';
 import {Recipe} from '../../crafting/models/recipe';
 

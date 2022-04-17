@@ -7,8 +7,7 @@ import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ErrorReport} from '../../../../utils/error-report.util';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';
-import {NumberUtil} from '../../../util/utils/number.util';
-import {AuctionStatsUtil, TimeUtil} from '@shared/utils';
+import {AuctionStatsUtil, NumberUtil, TimeUtil} from '@shared/utils';
 import {ThemeUtil} from '../../../core/utils/theme.util';
 import {Theme} from '../../../core/models/theme.model';
 import {RealmService} from '../../../../services/realm.service';
@@ -19,7 +18,7 @@ import {PriceHistoryComponentUtil} from '../../utils/price-history.util';
 import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util';
 import {SharedService} from '../../../../services/shared.service';
 import {Reagent} from '../../../crafting/models/reagent';
-import {ColumnDescription} from '../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {ProfessionService} from '../../../crafting/services/profession.service';
 import {getXAxisDateLabel} from '../../../util/utils/highcharts.util';
 

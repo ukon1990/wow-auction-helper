@@ -1,24 +1,7 @@
-import {ItemRule, Rule} from './rule.model';
-import {ColumnDescription} from '../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
+import {ItemRule, Rule, SortRule} from '.';
 
-export interface SortRule {
-  field: string;
-  sortDesc?: boolean;
-}
-
-export interface DashboardMinimal {
-  id: string;
-  parentId: string;
-  title: string;
-  description: string;
-  tags: string[];
-  createdBy: string;
-  lastModified: number;
-  isImporting?: boolean;
-  isLoading?: boolean;
-}
-
-export interface DashboardV2 {
+export interface Dashboard {
   id?: string; // UUID type id?
   parentId?: string;
   idParam: string; // The name of the id param for the table -> No longer needed?
