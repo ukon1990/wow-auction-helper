@@ -3,7 +3,7 @@ import {AuctionItem} from '../../models/auction-item.model';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Filters} from '../../../../utils/filtering';
 import {GameBuild} from '../../../../utils/game-build.util';
-import {itemQualities} from '../../../../models/item/disenchanting-list';
+import {itemQualities} from '@shared/models';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SharedService} from '../../../../services/shared.service';
 import {AuctionsService} from '../../../../services/auctions.service';

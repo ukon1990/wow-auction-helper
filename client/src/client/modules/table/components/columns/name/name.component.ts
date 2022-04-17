@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {BaseComponent} from '../base.component';
-import {Profession} from '../../../../../../../../api/src/profession/model';
+import {Profession} from '@shared/models/profession/profession.model';
 import {Recipe} from '../../../../crafting/models/recipe';
 import {CraftingService} from '../../../../../services/crafting.service';
 import {SharedService} from '../../../../../services/shared.service';

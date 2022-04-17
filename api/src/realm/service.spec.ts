@@ -1,9 +1,7 @@
 import {RealmService} from './service';
-import {AuctionUpdateLog} from '../models/auction/auction-update-log.model';
 import {environment} from '../../../client/src/environments/environment';
-import {RealmRepository} from './repositories/realm.repository';
-import {GameBuildVersion} from '../../../client/src/client/utils/game-build.util';
 import {NameSpace} from '../enums/name-space.enum';
+import {AuctionUpdateLog} from "@shared/models";
 
 describe('RealmService', () => {
   const service: RealmService = new RealmService();
@@ -12,11 +10,6 @@ describe('RealmService', () => {
   afterEach(() => environment.test = true);
 
   describe('Not a test', () => {
-    xit('Migrate', async () => {
-      await service.extractRDSDataToDynamoDB()
-        .catch(console.error);
-      expect(1).toBe(2);
-    });
     it('Import new realms', async () => {
       jest.setTimeout(99999);
       // console.log('Token:', await AuthHandler.getToken());
@@ -57,4 +50,3 @@ describe('RealmService', () => {
     });
   });
 });
-

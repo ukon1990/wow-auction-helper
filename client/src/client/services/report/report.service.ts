@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Endpoints} from '../endpoints';
-// import {LogEntry} from '../../../../../api/src/models/log-entry.model';
 import {SharedService} from '../shared.service';
 
 @Injectable({

@@ -1,6 +1,6 @@
 import {DatabaseUtil} from '../utils/database.util';
 import {UpdatesRepository} from './repository';
-import {Timestamps} from './model';
+import {Timestamps} from '@shared/models/timestamps.model';
 import {S3Handler} from '../handlers/s3.handler';
 import {RecipeService} from '../recipe/service/service';
 import {LocaleUtil} from '../utils/locale.util';

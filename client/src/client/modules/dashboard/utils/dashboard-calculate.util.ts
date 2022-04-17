@@ -9,7 +9,7 @@ import { AuctionUtil } from '../../auction/utils/auction.util';
 import { Sorter } from '../../../models/sorter';
 import { ErrorReport } from '../../../utils/error-report.util';
 import { GoldPipe } from '../../util/pipes/gold.pipe';
-import { AuctionItemStat } from '../../../../../../api/src/auction/models/auction-item-stat.model';
+import { AuctionItemStat } from '@shared/models/auction/auction-item-stat.model';
 
 interface IdPaths {
   recipeId?: string;

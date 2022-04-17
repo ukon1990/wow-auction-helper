@@ -12,14 +12,14 @@ import {Report} from '../utils/report.util';
 import {
   ItemDailyPriceEntry,
   ItemPriceEntry,
-  ItemPriceEntryResponse
-} from '../modules/item/models/item-price-entry.model';
+  ItemPriceEntryResponse,
+  AuctionItemStat,
+  AhStatsRequest,
+  ItemPriceCompareEntry,
+} from '@shared/models';
 import {BehaviorSubject} from 'rxjs';
-import {AuctionItemStat} from '../../../../api/src/auction/models/auction-item-stat.model';
-import {AhStatsRequest} from '../../../../api/src/auction/models/ah-stats-request.model';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
 import {GameBuild} from '../utils/game-build.util';
-import {ItemPriceCompareEntry} from '../../../../api/src/auction/models/item-price-compare-entry.model';
 
 class ItemResponse {
   timestamp: Date;

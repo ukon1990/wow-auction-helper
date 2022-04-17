@@ -4,7 +4,7 @@ import {Notification} from '../../../models/user/notification';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {Filters} from '../../../utils/filtering';
-import {Remains} from '../../../models/item/remains.model';
+import {Remains} from '@shared/models';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
 import {EventEmitter} from '@angular/core';
 import {DefaultDashboardSettings} from './default-dashboard-settings.model';

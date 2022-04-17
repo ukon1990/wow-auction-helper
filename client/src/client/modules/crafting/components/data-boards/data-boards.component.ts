@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import {SharedService} from '../../../../services/shared.service';
 import {ColumnDescription} from '../../../table/models/column-description';
-import {Remains} from '../../../../models/item/remains.model';
+import {Remains} from '@shared/models';
 import {ItemService} from '../../../../services/item.service';
 
 @Component({

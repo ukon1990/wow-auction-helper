@@ -1,10 +1,11 @@
-import {Character, UserPets} from './model';
 import {AuthHandler} from '../handlers/auth.handler';
 import {HttpClientUtil} from '../utils/http-client.util';
 import {Endpoints} from '../utils/endpoints.util';
 import {CharacterUtil} from './util';
 import {CharacterGameDataMedia} from '../models/character/character-game-data.model';
 import {NameSpace} from '../enums/name-space.enum';
+import {UserPets} from "@shared/models/character/user-pets.model";
+import {Character} from "@shared/models";
 
 export class CharacterService {
   static get(region: string, realm: string, name: string, locale: string): Promise<Character> {
@@ -95,8 +96,8 @@ export class CharacterService {
     });
   }
 
-  private static getAndSetThumbnail(character: Character, realm: string, name: string, locale: string, region: string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
+  private static getAndSetThumbnail(character: Character, realm: string, name: string, locale: string, region: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
       new HttpClientUtil().get(
         this.getUrl(realm, name, locale, region, 'character-media'))
         .then(({body}) => {

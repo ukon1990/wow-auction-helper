@@ -1,6 +1,6 @@
-import {AfterContentInit, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ColumnDescription} from '../../../table/models/column-description';
-import {WoWHeadContainedInObject} from '../../../../models/item/wowhead';
+import {WoWHeadContainedInObject} from '@shared/models';
 import {ZoneService} from '../../../zone/service/zone.service';
 import {Zone} from '../../../zone/models/zone.model';
 

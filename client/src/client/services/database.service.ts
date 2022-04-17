@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import Dexie from 'dexie';
-import {Item} from '@shared/models';
-import {Auction} from '../modules/auction/models/auction.model';
+import {Item, Auction, Profession} from '@shared/models';
 import {SharedService} from './shared.service';
 import {Pet} from '../modules/pet/models/pet';
 import {Recipe} from '../modules/crafting/models/recipe';
@@ -15,11 +14,8 @@ import {BehaviorSubject} from 'rxjs';
 import {Report} from '../utils/report.util';
 import {GameBuild} from '../utils/game-build.util';
 import {AucScanDataImportUtil} from '../modules/auction/utils/auc-scan-data-import.util';
-import {Profession} from '../../../../api/src/profession/model';
-import {AuctionsService} from './auctions.service';
 import {DatabaseUtil} from '../utils/database.util';
 import {DashboardV2} from '../modules/dashboard/models/dashboard-v2.model';
-import {rejects} from 'assert';
 import {DropsType, NpcSplitType, NpcUtil, SellsType, SkinningType} from '../modules/npc/utils/npc.util';
 import {DateUtil} from '@ukon1990/js-utilities';
 

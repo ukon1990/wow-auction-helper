@@ -1,6 +1,6 @@
 import {BaseCraftingUtil} from './base-crafting.util';
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {Auction} from '../../auction/models/auction.model';
+import {Auction} from '@shared/models';
 import {Item} from '@shared/models';
 
 class StartPrice {

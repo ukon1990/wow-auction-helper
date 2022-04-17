@@ -1,4 +1,4 @@
-import {ItemDailyPriceEntry, ItemPriceEntry, ItemPriceEntryResponse} from '../models/item-price-entry.model';
+import {ItemDailyPriceEntry, ItemPriceEntry, ItemPriceEntryResponse} from '@shared/models/auction/item-price-entry.model';
 import {Recipe} from '../../crafting/models/recipe';
 import {AuctionsService} from '../../../services/auctions.service';
 

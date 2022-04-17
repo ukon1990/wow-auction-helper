@@ -5,7 +5,7 @@ import {ItemService} from '../../../services/item.service';
 import {RealmService} from '../../../services/realm.service';
 import {SeriesColumnOptions, XAxisOptions} from 'highcharts';
 import {ThemeUtil} from '../../core/utils/theme.util';
-import {ItemPriceCompareEntry} from '../../../../../../api/src/auction/models/item-price-compare-entry.model';
+import {ItemPriceCompareEntry} from '@shared/models';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {ColumnDescription} from '../../table/models/column-description';
 

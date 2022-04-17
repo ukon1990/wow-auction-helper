@@ -2,7 +2,7 @@ import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output} from '
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ruleFields} from '../../../../data/rule-fields.data';
 import {GameBuild} from '../../../../../../utils/game-build.util';
-import {Profession} from '../../../../../../../../../api/src/profession/model';
+import {Profession} from '@shared/models/profession/profession.model';
 import {conditionLocale} from 'client/modules/dashboard/types/condition.enum';
 import {ProfessionService} from '../../../../../crafting/services/profession.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';

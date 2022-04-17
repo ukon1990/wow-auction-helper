@@ -3,7 +3,6 @@ import {Recipev2} from '../recipev2.model';
 import {DatabaseUtil} from '../../utils/database.util';
 import {RDSQueryUtil} from '../../utils/query.util';
 import {ItemLocale} from '@shared/models/item/item-locale';
-import {Recipe} from '../model';
 import {environment} from '../../../../client/src/environments/environment';
 
 const setKeyMap = (res: any, keyMap: {} = {}) => {

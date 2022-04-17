@@ -3,7 +3,7 @@ import {Reagent} from '../../crafting/models/reagent';
 import {SharedService} from '../../../services/shared.service';
 import {Item, ItemInventory, ItemPurchase} from '@shared/models';
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {Auction} from '../../auction/models/auction.model';
+import {Auction} from '@shared/models';
 import {Report} from '../../../utils/report.util';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';

@@ -6,7 +6,7 @@ import {AuctionsService} from '../../../services/auctions.service';
 import { PageEvent } from '@angular/material/paginator';
 import {Report} from '../../../utils/report.util';
 import {PetTableData} from '../models/pet-table-data.model';
-import {CollectedPet} from '../../../../../../api/src/character/model';
+import {CollectedPet} from "@shared/models/character/collected-pet.model";
 
 @Component({
   selector: 'wah-my-pets',

@@ -1,5 +1,5 @@
-import {Auction} from '../../auction/models/auction.model';
-import {ItemLocale} from '../../../../../../shared/models/item/item-locale';
+import {Auction} from '@shared/models';
+import {ItemLocale} from '../../../../../../shared/src/models/item/item-locale';
 import {Asset} from '../../../models/asset.model';
 
 export class Pet {

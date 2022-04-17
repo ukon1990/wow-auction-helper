@@ -12,15 +12,14 @@ import {RealmHandler} from '../../handlers/realm.handler';
 import {EventRecord, EventSchema} from '../../models/s3/event-record.model';
 import {GzipUtil} from '../../utils/gzip.util';
 import {AuctionResponse} from '../../models/auction/auctions-response';
-import {AuctionTransformerUtil} from '../utils/auction-transformer.util';
 import {StatsService} from './stats.service';
 import {RealmService} from '../../realm/service';
 import {RealmRepository} from '../../realm/repositories/realm.repository';
 import {AuctionHouse} from '../../realm/model';
 import {NameSpace} from '../../enums/name-space.enum';
-import {GameBuildVersion} from '../../../../client/src/client/utils/game-build.util';
 import {HttpResponse} from '../../models/http-response.model';
 import {ObjectUtil} from '@ukon1990/js-utilities';
+import {GameBuildVersion} from '@shared/enum';
 
 export class AuctionService {
   realmRepository: RealmRepository;

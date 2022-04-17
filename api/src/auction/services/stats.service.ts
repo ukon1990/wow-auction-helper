@@ -2,26 +2,20 @@ import {S3Handler} from '../../handlers/s3.handler';
 import {DatabaseUtil} from '../../utils/database.util';
 import {EventSchema} from '../../models/s3/event-record.model';
 import {GzipUtil} from '../../utils/gzip.util';
-import {AuctionProcessorUtil} from '../utils/auction-processor.util';
+import {AuctionProcessorUtil} from '@shared/utils/auction/auction-processor.util';
 import {NumberUtil} from '../../../../client/src/client/modules/util/utils/number.util';
 import {StatsRepository} from '../repository/stats.repository';
 import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
 import {RealmRepository} from '../../realm/repositories/realm.repository';
 import {RealmService} from '../../realm/service';
-import {AuctionStatsUtil} from '../utils/auction-stats.util';
-import {ItemStats} from '../models/item-stats.model';
+import {AuctionStatsUtil} from '@shared/utils/auction/auction-stats.util';
 import {DateUtil} from '@ukon1990/js-utilities';
-import {
-  ItemDailyPriceEntry,
-  ItemPriceEntry
-} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
+import {ItemDailyPriceEntry, ItemPriceEntry} from '@shared/models/auction/item-price-entry.model';
 import {AuctionHouse} from '../../realm/model';
 import {S3} from 'aws-sdk';
 import {LogRepository} from '../../logs/repository';
-import {AhStatsRequest} from '../models/ah-stats-request.model';
 import {RealmLogRepository} from '../../realm/repositories/realm-log.repository';
-import {AuctionItemStat} from '../models/auction-item-stat.model';
-import {ItemPriceCompareEntry} from '../models/item-price-compare-entry.model';
+import {AhStatsRequest, AuctionItemStat, ItemPriceCompareEntry, ItemStats} from '@shared/models';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');

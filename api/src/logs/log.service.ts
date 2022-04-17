@@ -3,7 +3,6 @@ import {DatabaseUtil} from '../utils/database.util';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {LogRepository} from './repository';
 import {LogEntry} from '../models/log-entry.model';
-import {GlobalStatus, SQLProcess, TableSize} from './model';
 import {S3Handler} from '../handlers/s3.handler';
 import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
 import {RDSQueryUtil} from '../utils/query.util';
@@ -11,6 +10,7 @@ import {LogDynamoRepository} from './dynamo.repository.model';
 import generateUUID from '../../../client/src/client/utils/uuid.util';
 import {IdUtil} from '../utils/id.util';
 import {RealmService} from '../realm/service';
+import {GlobalStatus, SQLProcess, TableSize} from "@shared/models/log";
 
 const crypto = require('crypto');
 

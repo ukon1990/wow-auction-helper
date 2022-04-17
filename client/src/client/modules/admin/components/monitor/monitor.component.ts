@@ -1,6 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {AdminService} from '../../services/admin.service';
-import {GlobalStatus, SQLProcess, TableSize} from '../../../../../../../api/src/logs/model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {interval, Observable} from 'rxjs';
 import {ColumnDescription} from '../../../table/models/column-description';
@@ -9,8 +8,8 @@ import {MonitorUtil} from '../../utils/monitor.util';
 import {SeriesOptionsType, XAxisOptions, YAxisOptions} from 'highcharts';
 import {Theme} from '../../../core/models/theme.model';
 import {ThemeUtil} from '../../../core/utils/theme.util';
-import * as Highcharts from "highcharts";
-import {getXAxisDateLabel} from "../../../util/utils/highcharts.util";
+import {getXAxisDateLabel} from '../../../util/utils/highcharts.util';
+import {GlobalStatus, SQLProcess, TableSize} from "@shared/models/log";
 
 @Component({
   selector: 'wah-monitor',

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {SharedService} from '../../../../services/shared.service';
 import {Router} from '@angular/router';
@@ -10,7 +10,7 @@ import {SettingsService} from '../../../user/services/settings/settings.service'
 import {CharacterService} from '../../../character/services/character.service';
 import {UserSettings} from '../../../user/models/settings.model';
 import {ThemeUtil} from '../../../core/utils/theme.util';
-import {RealmStatus} from '../../../../models/realm-status.model';
+import {RealmStatus} from '@shared/models/realm/realm-status.model';
 
 declare function require(moduleName: string): any;
 

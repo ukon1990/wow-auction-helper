@@ -3,7 +3,7 @@ import {OptimisticCraftingUtil} from './optimistic-crafting.util';
 import {Recipe} from '../models/recipe';
 import {Reagent} from '../models/reagent';
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {Auction} from '../../auction/models/auction.model';
+import {Auction} from '@shared/models';
 import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
 import {NeededCraftingUtil} from './needed-crafting.util';
 import {PessimisticCraftingUtil} from './pessimistic-crafting.util';

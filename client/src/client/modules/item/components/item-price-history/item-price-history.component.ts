@@ -1,20 +1,17 @@
 import {AfterViewInit, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import * as Highcharts from 'highcharts';
 import {Chart, SeriesLineOptions, SeriesOptionsType, XAxisOptions} from 'highcharts';
-import {Item} from '@shared/models';
+import {AuctionItemStat, Item, ItemPriceEntry, ItemPriceEntryResponse, ItemStats, Profession} from '@shared/models';
 import {ItemService} from '../../../../services/item.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
-import {ItemPriceEntry, ItemPriceEntryResponse} from '../../models/item-price-entry.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ErrorReport} from '../../../../utils/error-report.util';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';
 import {NumberUtil} from '../../../util/utils/number.util';
-import {AuctionStatsUtil} from '../../../../../../../api/src/auction/utils/auction-stats.util';
-import {ItemStats} from '../../../../../../../api/src/auction/models/item-stats.model';
+import {AuctionStatsUtil, TimeUtil} from '@shared/utils';
 import {ThemeUtil} from '../../../core/utils/theme.util';
 import {Theme} from '../../../core/models/theme.model';
 import {RealmService} from '../../../../services/realm.service';
-import {AuctionItemStat} from '../../../../../../../api/src/auction/models/auction-item-stat.model';
 import {Recipe} from '../../../crafting/models/recipe';
 import {FormControl, FormGroup} from '@angular/forms';
 import {AuctionsService} from '../../../../services/auctions.service';
@@ -22,11 +19,9 @@ import {PriceHistoryComponentUtil} from '../../utils/price-history.util';
 import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util';
 import {SharedService} from '../../../../services/shared.service';
 import {Reagent} from '../../../crafting/models/reagent';
-import {TimeUtil} from '../../../../../../../api/src/auction/utils/time.util';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {ProfessionService} from '../../../crafting/services/profession.service';
-import {Profession} from '../../../../../../../api/src/profession/model';
-import {getXAxisDateLabel} from "../../../util/utils/highcharts.util";
+import {getXAxisDateLabel} from '../../../util/utils/highcharts.util';
 
 @Component({
   selector: 'wah-item-price-history',

@@ -2,7 +2,7 @@ import {AuctionItem} from '../../auction/models/auction-item.model';
 import {ItemResetBreakpoint} from './item-reset-breakpoint.model';
 import {SharedService} from '../../../services/shared.service';
 import {Item} from '@shared/models';
-import {Auction} from '../../auction/models/auction.model';
+import {Auction} from '@shared/models';
 import {CraftingUtil} from '../../crafting/utils/crafting.util';
 
 export class ItemReset {

@@ -1,4 +1,4 @@
-import {ItemLocale} from '../../../../../../shared/models/item/item-locale';
+import {ItemLocale} from '../../../../../../shared/src/models/item/item-locale';
 
 export interface Currency {
   id: number;

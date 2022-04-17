@@ -1,7 +1,7 @@
 import {ItemInventory} from '@shared/models';
 import {ErrorReport} from '../error-report.util';
 import {SharedService} from '../../services/shared.service';
-import {RealmStatus} from '../../models/realm-status.model';
+import {RealmStatus} from '@shared/models/realm/realm-status.model';
 import {AuctionsService} from '../../services/auctions.service';
 
 export class InventoryUtil {

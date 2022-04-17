@@ -9,7 +9,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {ErrorReport} from '../utils/error-report.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {BehaviorSubject} from 'rxjs';
-import {Auction} from '../modules/auction/models/auction.model';
+import {Auction} from '@shared/models';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {RealmService} from './realm.service';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
@@ -18,8 +18,8 @@ import {CharacterService} from '../modules/character/services/character.service'
 import {CraftingUtil} from '../modules/crafting/utils/crafting.util';
 import {SettingsService} from '../modules/user/services/settings/settings.service';
 import {UserSettings} from '../modules/user/models/settings.model';
-import {ItemStats} from '../../../../api/src/auction/models/item-stats.model';
-import {AuctionItemStat} from '../../../../api/src/auction/models/auction-item-stat.model';
+import {ItemStats} from '@shared/models';
+import {AuctionItemStat} from '@shared/models/auction/auction-item-stat.model';
 import {Report} from "../utils/report.util";
 
 @Injectable()

@@ -1,4 +1,4 @@
-import {RealmStatus} from '../../../models/realm-status.model';
+import {RealmStatus} from '@shared/models/realm/realm-status.model';
 
 export class AuctionHouseStatus extends RealmStatus {
   id: number;

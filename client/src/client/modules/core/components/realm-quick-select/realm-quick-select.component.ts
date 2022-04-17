@@ -8,7 +8,7 @@ import {AuctionsService} from '../../../../services/auctions.service';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {DatabaseService} from '../../../../services/database.service';
 import {Report} from '../../../../utils/report.util';
-import {RealmStatus} from '../../../../models/realm-status.model';
+import {RealmStatus} from '@shared/models/realm/realm-status.model';
 import {AuctionHouseStatus} from '../../../auction/models/auction-house-status.model';
 import {CraftingService} from '../../../../services/crafting.service';
 import {ErrorReport} from '../../../../utils/error-report.util';

@@ -1,8 +1,8 @@
-import {Auction, Modifiers} from './auction.model';
+import {Auction, Modifiers} from '@shared/models';
 import {Recipe} from '../../crafting/models/recipe';
 import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
 import {TradeVendorItemValue} from '../../../models/item/trade-vendor';
-import {ItemStats} from '../../../../../../api/src/auction/models/item-stats.model';
+import {ItemStats} from '@shared/models';
 import {Item, Remains, RemainsSourceTarget} from '@shared/models';
 
 export class AuctionItem {

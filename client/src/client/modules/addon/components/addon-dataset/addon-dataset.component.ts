@@ -107,7 +107,7 @@ export class AddonDatasetComponent implements OnDestroy, OnInit {
       name: 'auctionQuantity',
       columns: [
         {key: 'name', title: 'Name', dataType: 'name'},
-        {key: 'character', title: 'character.model.ts', dataType: 'seller'},
+        {key: 'character', title: 'character.profession.timestamps.model.ts', dataType: 'seller'},
         {key: 'value', title: 'Quantity', dataType: 'number'}
       ],
       data: [],

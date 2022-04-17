@@ -2,7 +2,7 @@ import {DashboardV2} from '../models/dashboard-v2.model';
 import {ConditionEnum} from '../types/condition.enum';
 import {TargetValueEnum} from '../types/target-value.enum';
 import {columnConfig} from './columns.data';
-import {Profession} from '../../../../../../api/src/profession/model';
+import {Profession} from '@shared/models/profession/profession.model';
 
 enum BoardModifiedDate {
   DECEMBER_27_2020 = 1609059487771,

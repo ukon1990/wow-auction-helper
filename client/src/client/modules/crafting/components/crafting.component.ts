@@ -16,7 +16,7 @@ import {ItemClassService} from '../../item/service/item-class.service';
 import {ItemClass} from '../../item/models/item-class.model';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SettingsService} from '../../user/services/settings/settings.service';
-import {ItemStats} from '../../../../../../api/src/auction/models/item-stats.model';
+import {ItemStats} from '@shared/models';
 import {RealmService} from '../../../services/realm.service';
 
 interface FormModel {

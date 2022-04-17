@@ -1,13 +1,5 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {RealmService} from '../../../../services/realm.service';
-import {RealmStatus} from '../../../../models/realm-status.model';
-import {ColumnDescription} from '../../../table/models/column-description';
-import {AuctionUpdateLog, AuctionUpdateLogEntry} from '../../../../../../../api/src/models/auction/auction-update-log.model';
-import {Report} from '../../../../utils/report.util';
-import {DateUtil} from '@ukon1990/js-utilities';
+import {Component} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {ConfigureComponent} from '../../../dashboard/components/configure/configure.component';
 import {RealmListDialogComponent} from './realm-list-dialog/realm-list-dialog.component';
 
 @Component({

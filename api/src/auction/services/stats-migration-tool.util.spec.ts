@@ -1,11 +1,8 @@
 import {DatabaseUtil} from '../../utils/database.util';
 import {environment} from '../../../../client/src/environments/environment';
-import {AuctionItemStatDays} from '../models/auction-item-stat.model';
-import {StatsService} from './stats.service';
-import {AuctionProcessorUtil} from '../utils/auction-processor.util';
-import {StatsRepository} from '../repository/stats.repository';
+import {AuctionItemStatDays} from '@shared/models';
+import {AuctionProcessorUtil} from '@shared/utils/auction/auction-processor.util';
 import {RDSQueryUtil} from '../../utils/query.util';
-import {split} from 'ts-node';
 import {RealmRepository} from '../../realm/repositories/realm.repository';
 
 /**

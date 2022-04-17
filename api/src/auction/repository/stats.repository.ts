@@ -1,10 +1,9 @@
 import {RealmRepository} from './../../realm/repositories/realm.repository';
 import {DatabaseUtil} from '../../utils/database.util';
-import {AuctionItemStat} from '../models/auction-item-stat.model';
-import {AuctionProcessorUtil} from '../utils/auction-processor.util';
+import {AhStatsRequest, AuctionItemStat} from '@shared/models';
+import {AuctionProcessorUtil} from '@shared/utils/auction/auction-processor.util';
 import {RDSQueryUtil} from '../../utils/query.util';
 import {AuctionHouse} from '../../realm/model';
-import {AhStatsRequest} from '../models/ah-stats-request.model';
 
 export class StatsRepository {
   readonly FOURTEEN_DAYS = 60 * 60 * 24 * 1000 * 14;

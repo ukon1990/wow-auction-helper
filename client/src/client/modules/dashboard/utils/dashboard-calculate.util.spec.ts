@@ -5,7 +5,7 @@ import {TargetValueEnum} from '../types/target-value.enum';
 import {DashboardCalculateUtil} from './dashboard-calculate.util';
 import {Recipe} from '../../crafting/models/recipe';
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {Auction} from '../../auction/models/auction.model';
+import {Auction} from '@shared/models';
 import {columnConfig} from '../data/columns.data';
 
 const getBoard = (rules: Rule[] = [], itemRules?: ItemRule[]) => ({

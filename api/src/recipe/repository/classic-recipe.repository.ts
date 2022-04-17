@@ -1,11 +1,12 @@
 import {Repository} from '../../core/repository';
 import {DatabaseUtil} from '../../utils/database.util';
-import {Reagent, Recipe} from '../model';
 import {RDSQueryUtil} from '../../utils/query.util';
 import {format} from 'sqlstring';
 import {Recipev2} from '../recipev2.model';
+import {Reagent} from "@shared/models/profession/reagent.model";
+import {APIRecipe} from "@shared/models/profession/recipe.model";
 
-export class ClassicRecipeRepository extends Repository<Recipe> {
+export class ClassicRecipeRepository extends Repository<APIRecipe> {
 
   constructor() {
     super('recipesClassic', 'recipesClassicName');
@@ -40,7 +41,7 @@ export class ClassicRecipeRepository extends Repository<Recipe> {
           AND name.en_GB NOT LIKE '%UNUSED%'`;
   }
 
-  delete(id: number): Promise<Recipe> {
+  delete(id: number): Promise<APIRecipe> {
     return Promise.resolve(undefined);
   }
 
@@ -53,15 +54,15 @@ export class ClassicRecipeRepository extends Repository<Recipe> {
    * @param timestamp
    * @param db
    */
-  getAllAfter(timestamp: number, locale: string, db: DatabaseUtil): Promise<Recipe[]> {
-    return new Promise<Recipe[]>((resolve, reject) => {
+  getAllAfter(timestamp: number, locale: string, db: DatabaseUtil): Promise<APIRecipe[]> {
+    return new Promise<APIRecipe[]>((resolve, reject) => {
       const unix = +new Date(timestamp);
       console.log('unix', unix);
       const date = isNaN(unix) ? 0 : Math.round(unix / 1000);
       db.query(`${this.geteBaseQuery(locale)}
           AND UNIX_TIMESTAMP(recipes.timestamp) > ${date}
           ORDER BY recipes.timestamp DESC;`)
-        .then((recipes: Recipe[]) => {
+        .then((recipes: APIRecipe[]) => {
           const map = {};
           recipes.forEach(recipe => {
             map[recipe.spellId * -1] = recipe;
@@ -93,11 +94,11 @@ export class ClassicRecipeRepository extends Repository<Recipe> {
     });
   }
 
-  getById(id: number, locale: string, db: DatabaseUtil): Promise<Recipe> {
-    return new Promise<Recipe>((resolve, reject) => {
+  getById(id: number, locale: string, db: DatabaseUtil): Promise<APIRecipe> {
+    return new Promise<APIRecipe>((resolve, reject) => {
       db.query(`${this.geteBaseQuery(locale)}
         WHERE recipes.id = ${id};`)
-        .then((recipes: Recipe[]) => {
+        .then((recipes: APIRecipe[]) => {
           if (recipes.length) {
             db.query(`
                 SELECT itemId as id,
@@ -112,7 +113,7 @@ export class ClassicRecipeRepository extends Repository<Recipe> {
                     ...reagent,
                     isOptional: !!reagent.isOptional
                   }))
-                } as Recipe);
+                } as APIRecipe);
               })
               .catch(reject);
           } else {
@@ -199,11 +200,11 @@ export class ClassicRecipeRepository extends Repository<Recipe> {
     });
   }
 
-  update(data: Recipe): Promise<Recipe> {
+  update(data: APIRecipe): Promise<APIRecipe> {
     return Promise.resolve(undefined);
   }
 
-  insert(data: Recipe): Promise<any> {
+  insert(data: APIRecipe): Promise<any> {
     return Promise.resolve(undefined);
   }
 

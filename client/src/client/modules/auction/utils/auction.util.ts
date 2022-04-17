@@ -1,5 +1,5 @@
 import {SharedService} from '../../../services/shared.service';
-import {Auction} from '../models/auction.model';
+import {Auction, ItemStats} from '@shared/models';
 import {AuctionItem} from '../models/auction-item.model';
 import {TradeVendors} from '../../../models/trade-vendors';
 import {AuctionPet} from '../models/auction-pet.model';
@@ -8,15 +8,14 @@ import {Pet} from '../../pet/models/pet';
 import {Report} from '../../../utils/report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';
 import {TsmService} from '../../tsm/tsm.service';
-import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
-import {ItemStats} from '../../../../../../api/src/auction/models/item-stats.model';
+import {AuctionItemStat} from '@shared/models/auction/auction-item-stat.model';
 import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
 import {ItemService} from '../../../services/item.service';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {Recipe} from '../../crafting/models/recipe';
-import {AuctionTransformerUtil} from "../../../../../../api/src/auction/utils/auction-transformer.util";
-import {AuctionV2} from "../../../../../../api/src/models/auction/auction-v2.model";
+import {AuctionTransformerUtil} from "@shared/utils/auction/auction-transformer.util";
+import {AuctionV2} from "@shared/models/auction/auction-v2.model";
 
 export interface OrganizedAuctionResult {
   map: Map<string, AuctionItem>;

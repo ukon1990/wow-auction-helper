@@ -1,4 +1,4 @@
-import {ProfessionAPIResponse} from './model';
+import {ProfessionAPIResponse} from '@shared/models/profession/profession.model';
 import {ProfessionRepository} from './repository';
 import {Endpoints} from '../utils/endpoints.util';
 import {AuthHandler} from '../handlers/auth.handler';
