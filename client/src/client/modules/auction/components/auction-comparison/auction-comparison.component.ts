@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {OrganizedAuctionResult} from '../../utils/auction.util';
 import {RealmService} from '../../../../services/realm.service';
-import {RealmStatus} from '@shared/models/realm/realm-status.model';
+import {RealmStatus} from '@shared/models';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {ColumnDescription, itemQualities} from '@shared/models';
@@ -11,7 +11,7 @@ import {AuctionHouseStatus} from '../../models/auction-house-status.model';
 import {ItemClass} from '../../../item/models/item-class.model';
 import {ItemClassService} from '../../../item/service/item-class.service';
 import {Filters} from '../../../../utils/filtering';
-import {GameBuild} from '@shared/utils/game-build.util';
+import {GameBuild} from '@shared/utils';
 import {ComparisonTableDataModel} from '../../models/comparison-table-data.model';
 import {ComparisonVariableEnum} from '../../enums/comparison-variable.enum';
 

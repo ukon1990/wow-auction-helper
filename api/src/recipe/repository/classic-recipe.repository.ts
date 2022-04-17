@@ -3,8 +3,7 @@ import {DatabaseUtil} from '../../utils/database.util';
 import {RDSQueryUtil} from '../../utils/query.util';
 import {format} from 'sqlstring';
 import {Recipev2} from '../recipev2.model';
-import {Reagent} from "@shared/models/profession/reagent.model";
-import {APIRecipe} from "@shared/models/profession/recipe.model";
+import {APIReagent, APIRecipe} from '@shared/models';
 
 export class ClassicRecipeRepository extends Repository<APIRecipe> {
 
@@ -109,7 +108,7 @@ export class ClassicRecipeRepository extends Repository<APIRecipe> {
               .then(reagents => {
                 resolve({
                   ...recipes[0],
-                  reagents: reagents.map((reagent: Reagent) => ({
+                  reagents: reagents.map((reagent: APIReagent) => ({
                     ...reagent,
                     isOptional: !!reagent.isOptional
                   }))

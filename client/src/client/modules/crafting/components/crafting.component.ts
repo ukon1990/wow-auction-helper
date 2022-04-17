@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Recipe} from '../models/recipe';
-import {GameBuild} from '@shared/utils/game-build.util';
+import {GameBuild} from '@shared/utils';
 import {ColumnDescription, ItemStats} from '@shared/models';
 import {SharedService} from '../../../services/shared.service';
 import {Filters} from '../../../utils/filtering';

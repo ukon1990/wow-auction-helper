@@ -12,7 +12,7 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {RowClickEvent} from '../models/row-click-event.model';
 import {ProfessionService} from '../../crafting/services/profession.service';
-import {Profession} from '@shared/models/profession/profession.model';
+import {Profession} from '@shared/models';
 import {faCartPlus, faExternalLinkSquareAlt, faEye, faTrashAlt} from '@fortawesome/free-solid-svg-icons';
 import {AuctionsService} from '../../../services/auctions.service';
 import {ItemLocale} from '../../../language/item.locale';

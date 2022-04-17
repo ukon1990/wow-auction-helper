@@ -1,7 +1,7 @@
 import {Recipe} from '../modules/crafting/models/recipe';
 import {SharedService} from '../services/shared.service';
 import {Item} from '@shared/models';
-import {Profession} from '@shared/models/profession/profession.model';
+import {Profession} from '@shared/models';
 import {TsmService} from '../modules/tsm/tsm.service';
 
 export class SummaryUtil {

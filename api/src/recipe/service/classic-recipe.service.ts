@@ -1,7 +1,7 @@
 import {RecipeAPIResponse} from '../model';
 import {DatabaseUtil} from '../../utils/database.util';
 import {ClassicRecipeRepository} from '../repository/classic-recipe.repository';
-import {APIRecipe} from "@shared/models/profession/recipe.model";
+import {APIRecipe} from '@shared/models';
 
 export class ClassicRecipeService {
   private static repository = new ClassicRecipeRepository();

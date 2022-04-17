@@ -10,7 +10,7 @@ import {SettingsService} from '../../../user/services/settings/settings.service'
 import {CharacterService} from '../../../character/services/character.service';
 import {UserSettings} from '../../../user/models/settings.model';
 import {ThemeUtil} from '../../../core/utils/theme.util';
-import {RealmStatus} from '@shared/models/realm/realm-status.model';
+import {RealmStatus} from '@shared/models';
 
 declare function require(moduleName: string): any;
 

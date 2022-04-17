@@ -1,14 +1,14 @@
 import {ColumnDescription, Dashboard} from '@shared/models';
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {TargetValueEnum} from '@shared/enum/dashboard/target-value.enum';
-import {ConditionEnum} from '@shared/enum/dashboard/condition.enum';
+import {TargetValueEnum} from '@shared/enum';
+import {ConditionEnum} from '@shared/enum';
 import {EmptyUtil, TextUtil} from '@ukon1990/js-utilities';
 import {AuctionUtil} from '../../auction/utils/auction.util';
 import {Sorter} from '../../../models/sorter';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
-import {AuctionItemStat} from '@shared/models/auction/auction-item-stat.model';
-import {ItemRule, Rule} from "@shared/models/dashboard";
+import {AuctionItemStat} from '@shared/models';
+import {ItemRule, Rule} from "@shared/models";
 
 interface IdPaths {
   recipeId?: string;

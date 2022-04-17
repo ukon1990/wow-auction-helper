@@ -1,8 +1,8 @@
 import {Dashboard} from '@shared/models';
-import {ConditionEnum} from '@shared/enum/dashboard/condition.enum';
-import {TargetValueEnum} from '@shared/enum/dashboard/target-value.enum';
+import {ConditionEnum} from '@shared/enum';
+import {TargetValueEnum} from '@shared/enum';
 import {columnConfig} from './columns.data';
-import {Profession} from '@shared/models/profession/profession.model';
+import {Profession} from '@shared/models';
 
 enum BoardModifiedDate {
   DECEMBER_27_2020 = 1609059487771,

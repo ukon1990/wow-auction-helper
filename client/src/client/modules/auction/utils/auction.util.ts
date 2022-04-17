@@ -7,14 +7,14 @@ import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
 import {Report} from '../../../utils/report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';
 import {TsmService} from '../../tsm/tsm.service';
-import {AuctionItemStat} from '@shared/models/auction/auction-item-stat.model';
+import {AuctionItemStat} from '@shared/models';
 import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
 import {ItemService} from '../../../services/item.service';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {Recipe} from '../../crafting/models/recipe';
-import {AuctionTransformerUtil} from "@shared/utils/auction/auction-transformer.util";
-import {AuctionV2} from "@shared/models/auction/auction-v2.model";
+import {AuctionTransformerUtil} from '@shared/utils';
+import {AuctionV2} from '@shared/models';
 
 export interface OrganizedAuctionResult {
   map: Map<string, AuctionItem>;

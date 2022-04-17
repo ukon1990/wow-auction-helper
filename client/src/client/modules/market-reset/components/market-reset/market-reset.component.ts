@@ -11,7 +11,7 @@ import {EmptyUtil} from '@ukon1990/js-utilities';
 import {Report} from '../../../../utils/report.util';
 import {RowClickEvent} from '../../../table/models/row-click-event.model';
 import {AuctionsService} from '../../../../services/auctions.service';
-import {GameBuild} from '@shared/utils/game-build.util';
+import {GameBuild} from '@shared/utils';
 import {ItemClass} from '../../../item/models/item-class.model';
 import {ItemClassService} from '../../../item/service/item-class.service';
 import {RealmService} from '../../../../services/realm.service';

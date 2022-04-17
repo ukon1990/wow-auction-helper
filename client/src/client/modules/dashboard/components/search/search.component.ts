@@ -12,7 +12,7 @@ import {faEye} from '@fortawesome/free-solid-svg-icons/faEye';
 import {faFileImport} from '@fortawesome/free-solid-svg-icons/faFileImport';
 import {faSyncAlt} from '@fortawesome/free-solid-svg-icons/faSyncAlt';
 import {Report} from '../../../../utils/report.util';
-import {DashboardMinimal} from "@shared/models/dashboard";
+import {DashboardMinimal} from "@shared/models";
 
 @Component({
   selector: 'wah-search',

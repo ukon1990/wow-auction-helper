@@ -1,9 +1,9 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ruleFields} from '../../../../data/rule-fields.data';
-import {GameBuild} from '@shared/utils/game-build.util';
-import {Profession} from '@shared/models/profession/profession.model';
-import {conditionLocale} from '@shared/enum/dashboard/condition.enum';
+import {GameBuild} from '@shared/utils';
+import {Profession} from '@shared/models';
+import {conditionLocale} from '@shared/enum';
 import {ProfessionService} from '../../../../../crafting/services/profession.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
@@ -15,7 +15,7 @@ import {RuleFieldGroup} from '../../../../models/rule-field.model';
 import {ThemeUtil} from '../../../../../core/utils/theme.util';
 import {ItemClassService} from '../../../../../item/service/item-class.service';
 import {ItemClass} from '../../../../../item/models/item-class.model';
-import {Rule} from "@shared/models/dashboard";
+import {Rule} from "@shared/models";
 
 @Component({
   selector: 'wah-rule',

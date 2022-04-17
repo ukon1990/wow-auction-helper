@@ -1,8 +1,7 @@
 import {GameBuild} from '@shared/utils';
-import {APIReagent, APIRecipe} from '@shared/models';
+import {APIReagent, APIRecipe, ItemLocale} from '@shared/models';
 import {HttpClientUtil} from '../../utils/http-client.util';
 import {WoWHeadUtil} from '../../utils/wowhead.util';
-import {ItemLocale} from '@shared/models/item/item-locale';
 import {languages} from '../../static-data/language.data';
 import {ProfessionRepository} from '../../profession/repository';
 

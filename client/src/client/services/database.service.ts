@@ -11,7 +11,7 @@ import {NPC} from '../modules/npc/models/npc.model';
 import {Zone} from '../modules/zone/models/zone.model';
 import {BehaviorSubject} from 'rxjs';
 import {Report} from '../utils/report.util';
-import {GameBuild} from '@shared/utils/game-build.util';
+import {GameBuild} from '@shared/utils';
 import {AucScanDataImportUtil} from '../modules/auction/utils/auc-scan-data-import.util';
 import {DatabaseUtil} from '../utils/database.util';
 import {DropsType, NpcSplitType, NpcUtil, SellsType, SkinningType} from '../modules/npc/utils/npc.util';

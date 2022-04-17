@@ -12,7 +12,7 @@ import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
-import {RealmStatus} from '@shared/models/realm/realm-status.model';
+import {RealmStatus} from '@shared/models';
 import {RealmService} from '../../../../services/realm.service';
 import {SharedService} from '../../../../services/shared.service';
 import {ahTypes} from '../../../../data/ah-types.data';

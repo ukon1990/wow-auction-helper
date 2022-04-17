@@ -1,11 +1,11 @@
 import {Auction, Dashboard} from '@shared/models';
-import {ConditionEnum} from '@shared/enum/dashboard/condition.enum';
-import {TargetValueEnum} from '@shared/enum/dashboard/target-value.enum';
+import {ConditionEnum} from '@shared/enum';
+import {TargetValueEnum} from '@shared/enum';
 import {DashboardCalculateUtil} from './dashboard-calculate.util';
 import {Recipe} from '../../crafting/models/recipe';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {columnConfig} from '../data/columns.data';
-import {ItemRule, Rule} from "@shared/models/dashboard";
+import {ItemRule, Rule} from "@shared/models";
 
 const getBoard = (rules: Rule[] = [], itemRules?: ItemRule[]) => ({
   id: 'asd-dsa',

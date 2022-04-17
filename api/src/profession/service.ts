@@ -1,9 +1,8 @@
-import {ProfessionAPIResponse} from '@shared/models/profession/profession.model';
+import {ItemLocale, ProfessionAPIResponse} from '@shared/models';
 import {ProfessionRepository} from './repository';
 import {Endpoints} from '../utils/endpoints.util';
 import {AuthHandler} from '../handlers/auth.handler';
 import {HttpClientUtil} from '../utils/http-client.util';
-import {ItemLocale} from '@shared/models/item/item-locale';
 import {NameSpace} from '../enums/name-space.enum';
 
 export class ProfessionService {

@@ -2,7 +2,7 @@ import {AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit} from '@an
 import {AuctionItem} from '../../models/auction-item.model';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Filters} from '../../../../utils/filtering';
-import {GameBuild} from '@shared/utils/game-build.util';
+import {GameBuild} from '@shared/utils';
 import {ColumnDescription, itemQualities} from '@shared/models';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SharedService} from '../../../../services/shared.service';

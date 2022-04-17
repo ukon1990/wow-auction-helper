@@ -10,7 +10,7 @@ import {SharedService} from '../../../services/shared.service';
 import {ErrorOptions, ErrorReport} from '../../../utils/error-report.util';
 import {Character} from '../models/character.model';
 import {Report} from '../../../utils/report.util';
-import {Realm} from '@shared/models/realm/realm';
+import {Realm} from '@shared/models';
 import {DashboardService} from '../../dashboard/services/dashboard.service';
 import {ProfessionService} from '../../crafting/services/profession.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';

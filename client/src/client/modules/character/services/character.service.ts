@@ -15,7 +15,7 @@ import {Report} from '../../../utils/report.util';
 import {SettingsService} from '../../user/services/settings/settings.service';
 import {UserSettings} from '../../user/models/settings.model';
 import {AppSyncService} from '../../user/services/app-sync.service';
-import {CharacterProfession} from "@shared/models/character/character-profession.model";
+import {CharacterProfession} from "@shared/models";
 
 @Injectable()
 export class CharacterService {

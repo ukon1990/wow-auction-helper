@@ -1,11 +1,11 @@
 import {Dashboard} from '@shared/models';
-import {ConditionEnum} from '@shared/enum/dashboard/condition.enum';
-import {TargetValueEnum} from '@shared/enum/dashboard/target-value.enum';
+import {ConditionEnum} from '@shared/enum';
+import {TargetValueEnum} from '@shared/enum';
 import {columnConfig} from '../data/columns.data';
 import {Watchlist} from '../models/watchlist.model';
 import {WatchlistGroup} from '../models/watchlist-group.model';
 import {WatchlistItem} from '../models/watchlist-item.model';
-import {ItemRule, Rule} from "@shared/models/dashboard";
+import {ItemRule, Rule} from "@shared/models";
 
 export interface OldGroups {
   groups: {

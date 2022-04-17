@@ -2,20 +2,24 @@ import {S3Handler} from '../../handlers/s3.handler';
 import {DatabaseUtil} from '../../utils/database.util';
 import {EventSchema} from '../../models/s3/event-record.model';
 import {GzipUtil} from '../../utils/gzip.util';
-import {AuctionProcessorUtil} from '@shared/utils/auction/auction-processor.util';
-import {NumberUtil} from '@shared/utils';
+import {AuctionProcessorUtil, AuctionStatsUtil, NumberUtil} from '@shared/utils';
 import {StatsRepository} from '../repository/stats.repository';
 import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
 import {RealmRepository} from '../../realm/repositories/realm.repository';
 import {RealmService} from '../../realm/service';
-import {AuctionStatsUtil} from '@shared/utils/auction/auction-stats.util';
 import {DateUtil} from '@ukon1990/js-utilities';
-import {ItemDailyPriceEntry, ItemPriceEntry} from '@shared/models/auction/item-price-entry.model';
+import {
+  AhStatsRequest,
+  AuctionItemStat,
+  ItemDailyPriceEntry,
+  ItemPriceCompareEntry,
+  ItemPriceEntry,
+  ItemStats
+} from '@shared/models';
 import {AuctionHouse} from '../../realm/model';
 import {S3} from 'aws-sdk';
 import {LogRepository} from '../../logs/repository';
 import {RealmLogRepository} from '../../realm/repositories/realm-log.repository';
-import {AhStatsRequest, AuctionItemStat, ItemPriceCompareEntry, ItemStats} from '@shared/models';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -563,7 +567,7 @@ export class StatsService {
    * Limit 1 order by time since asc (to get the oldest first)
    * @deprecated
    */
-  deleteOldPriceHistoryForRealm(conn = new DatabaseUtil(false)): Promise<any> {
+  deleteOldPriceHistoryForRealm(conn = new DatabaseUtil(false)): Promise<void> {
     return new Promise(async (resolve, reject) => {
       const repository = new StatsRepository(conn);
       const [status]: { activeQueries: number }[] = await repository.getActiveQueries()

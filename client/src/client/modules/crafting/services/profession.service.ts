@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {BehaviorSubject, Subscription} from 'rxjs';
-import {Profession} from '@shared/models/profession/profession.model';
+import {Profession} from '@shared/models';
 import {SharedService} from '../../../services/shared.service';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {DatabaseService} from '../../../services/database.service';

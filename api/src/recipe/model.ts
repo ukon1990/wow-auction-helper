@@ -1,4 +1,4 @@
-import {APIRecipe} from "@shared/models/profession/recipe.model";
+import {APIRecipe} from '@shared/models';
 
 export interface RecipeAPIResponse {
   timestamp: number;

@@ -4,7 +4,7 @@ import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {ObjectUtil} from '@ukon1990/js-utilities';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ruleFields} from '../../data/rule-fields.data';
-import {Profession} from '@shared/models/profession/profession.model';
+import {Profession} from '@shared/models';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Dashboard} from '@shared/models';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';

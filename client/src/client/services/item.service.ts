@@ -20,7 +20,7 @@ import {Platform} from '@angular/cdk/platform';
 import {Report} from '../utils/report.util';
 import {BehaviorSubject} from 'rxjs';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
-import {GameBuild} from '@shared/utils/game-build.util';
+import {GameBuild} from '@shared/utils';
 
 class ItemResponse {
   timestamp: Date;

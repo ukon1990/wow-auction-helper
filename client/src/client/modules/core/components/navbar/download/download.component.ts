@@ -7,7 +7,7 @@ import {PetsService} from '../../../../../services/pets.service';
 import {DatabaseService} from '../../../../../services/database.service';
 import {RealmService} from '../../../../../services/realm.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {RealmStatus} from '@shared/models/realm/realm-status.model';
+import {RealmStatus} from '@shared/models';
 import {BackgroundDownloadService} from '../../../services/background-download.service';
 import {ThemeUtil} from '../../../utils/theme.util';
 import {NpcService} from '../../../../npc/services/npc.service';

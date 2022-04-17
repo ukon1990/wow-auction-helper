@@ -1,5 +1,4 @@
-import {Reputation} from '@shared/models';
-import {Key} from '@shared/models/character/key.model';
+import {Key, Reputation} from '@shared/models';
 
 export interface Self {
   href: string;

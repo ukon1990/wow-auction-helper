@@ -6,7 +6,7 @@ import {NpcService} from '../../services/npc.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {Zone} from '../../../zone/models/zone.model';
-import {GameBuild} from '@shared/utils/game-build.util';
+import {GameBuild} from '@shared/utils';
 
 @Component({
   selector: 'wah-details',

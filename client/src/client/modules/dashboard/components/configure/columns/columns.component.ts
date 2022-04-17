@@ -8,7 +8,7 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {CdkDragDrop} from '@angular/cdk/drag-drop';
 import {ErrorReport} from '../../../../../utils/error-report.util';
 import {Report} from '../../../../../utils/report.util';
-import {SortRule} from "@shared/models/dashboard/sort-rule.model";
+import {SortRule} from "@shared/models";
 
 @Component({
   selector: 'wah-columns',

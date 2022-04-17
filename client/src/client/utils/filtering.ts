@@ -8,7 +8,7 @@ import {CraftingService} from '../services/crafting.service';
 import {AuctionsService} from '../services/auctions.service';
 import {ItemClassService} from '../modules/item/service/item-class.service';
 import {ItemClass} from '../modules/item/models/item-class.model';
-import {GameBuild} from '@shared/utils/game-build.util';
+import {GameBuild} from '@shared/utils';
 
 export class Filters {
   private static auctionService: AuctionsService;

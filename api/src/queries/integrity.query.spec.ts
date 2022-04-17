@@ -1,6 +1,5 @@
-import {Item, Pet} from '@shared/models';
+import {Item, ItemLocale, Pet} from '@shared/models';
 import {QueryIntegrity} from './integrity.query';
-import {ItemLocale} from '@shared/models/item/item-locale';
 import {PetUtil} from '../utils/pet.util';
 import {ItemHandler} from '../handlers/item.handler';
 

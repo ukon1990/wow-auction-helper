@@ -3,7 +3,7 @@ import {User} from '../models/user/user';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {Recipe} from '../modules/crafting/models/recipe';
 import {Item, Pet} from '@shared/models';
-import {Realm} from '@shared/models/realm/realm';
+import {Realm} from '@shared/models';
 import {DEPRICATEDDashboard} from '../modules/dashboard/models/dashboard.model';
 import {AuctionResponse} from '../modules/auction/models/auctions-response.model';
 import {TradeVendor, TradeVendorItemValue} from '../models/item/trade-vendor';

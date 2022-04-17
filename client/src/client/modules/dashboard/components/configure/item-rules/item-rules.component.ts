@@ -6,7 +6,7 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ItemService} from '../../../../../services/item.service';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {SharedService} from '../../../../../services/shared.service';
-import {ItemRule} from "@shared/models/dashboard";
+import {ItemRule} from "@shared/models";
 
 @Component({
   selector: 'wah-item-rules',

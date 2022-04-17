@@ -19,7 +19,7 @@ import {CraftingUtil} from '../modules/crafting/utils/crafting.util';
 import {SettingsService} from '../modules/user/services/settings/settings.service';
 import {UserSettings} from '../modules/user/models/settings.model';
 import {ItemStats} from '@shared/models';
-import {AuctionItemStat} from '@shared/models/auction/auction-item-stat.model';
+import {AuctionItemStat} from '@shared/models';
 import {Report} from "../utils/report.util";
 
 @Injectable()

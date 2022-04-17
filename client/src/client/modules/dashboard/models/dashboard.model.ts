@@ -10,7 +10,7 @@ import {DefaultDashboardSettings} from './default-dashboard-settings.model';
 import {CraftingUtil} from '../../crafting/utils/crafting.util';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {TradeVendorItem} from '../../../models/item/trade-vendor';
-import {TSM} from '@shared/models/auction/tsm.model';
+import {TSM} from '@shared/models';
 import {CraftingService} from '../../../services/crafting.service';
 import {TsmService} from '../../tsm/tsm.service';
 import {WatchlistItem} from './watchlist-item.model';

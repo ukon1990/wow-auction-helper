@@ -10,12 +10,12 @@ import {CraftingService} from '../../../../../services/crafting.service';
 import {Report} from '../../../../../utils/report.util';
 import {UserUtil} from 'client/utils/user/user.util';
 import {AuctionsService} from '../../../../../services/auctions.service';
-import {Profession} from '@shared/models/profession/profession.model';
+import {Profession} from '@shared/models';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ProfessionService} from '../../../../crafting/services/profession.service';
 import {ReputationVendor} from '../../../../../models/reputation.model';
 import {BackgroundDownloadService} from '../../../services/background-download.service';
-import {CharacterProfession} from "@shared/models/character/character-profession.model";
+import {CharacterProfession} from "@shared/models";
 
 @Component({
   selector: 'wah-character-reputation',

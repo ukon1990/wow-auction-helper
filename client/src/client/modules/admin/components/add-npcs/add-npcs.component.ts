@@ -5,7 +5,7 @@ import {SharedService} from '../../../../services/shared.service';
 import {ItemExtract} from '../../../../utils/item-extract.util';
 import {FormControl, FormGroup} from '@angular/forms';
 import {ColumnDescription} from '@shared/models';
-import {GameBuild} from '@shared/utils/game-build.util';
+import {GameBuild} from '@shared/utils';
 import {NPC} from '../../../npc/models/npc.model';
 
 @Component({

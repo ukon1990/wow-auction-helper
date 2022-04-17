@@ -20,7 +20,7 @@ import {Endpoints} from '../../../services/endpoints';
 import {HttpClient} from '@angular/common/http';
 import {SettingsService} from '../../user/services/settings/settings.service';
 import {DashboardAppsyncUtil} from '../utils/dashboard-appsync.util';
-import {DashboardMinimal} from "@shared/models/dashboard";
+import {DashboardMinimal} from "@shared/models";
 
 @Injectable({
   providedIn: 'root'

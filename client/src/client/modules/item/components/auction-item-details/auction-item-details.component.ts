@@ -2,7 +2,7 @@ import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {Theme} from '../../../core/models/theme.model';
 import {ThemeUtil} from '../../../core/utils/theme.util';
-import {GameBuild} from '@shared/utils/game-build.util';
+import {GameBuild} from '@shared/utils';
 import {Item} from '@shared/models';
 import {SharedService} from '../../../../services/shared.service';
 import {Report} from '../../../../utils/report.util';
