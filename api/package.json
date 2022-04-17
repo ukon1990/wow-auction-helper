@@ -5,6 +5,7 @@
   "main": "handler.js",
   "scripts": {
     "start": "sls offline start --useSeparateProcesses",
+    "package": "sls package",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:watchAll": "jest --watchAll",
