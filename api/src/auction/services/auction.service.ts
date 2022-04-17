@@ -130,7 +130,7 @@ export class AuctionService {
       .catch(console.error);
     console.log('Starting AH updates');
 
-    return new Promise(async (resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       if (!BLIZZARD.ACCESS_TOKEN) {
         reject('Blizzard Auth API is down');
         return;
@@ -141,7 +141,7 @@ export class AuctionService {
           console.log(`Updating ${houses.length} houses.`);
           let updated = 0;
           Promise.all(houses.map(house =>
-            new Promise((success) => {
+            new Promise<void>((success) => {
               this.updateHouse(house)
                 .then(hadUpdate => {
                   if (hadUpdate) {
@@ -269,9 +269,9 @@ export class AuctionService {
     });
   }
 
-  private async updateAllStatuses(region: string, conn: DatabaseUtil) {
+  private async updateAllStatuses(region: string, conn: DatabaseUtil): Promise<void> {
     const start = +new Date();
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       new RealmHandler().getAllRealms(conn)
         .then((realms) => {
           new S3Handler().save(realms, `auctions/${region}/status.json.gz`, {url: '', region})

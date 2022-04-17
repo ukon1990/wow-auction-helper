@@ -38,7 +38,7 @@ export class TSMHandler {
         .then(async (rows: { id, slug, region, lastModified }[]) => {
           if (!rows.length) {
             console.log('There are no realms that need updating');
-            resolve();
+            resolve(false);
             return;
           }
           try {
@@ -46,7 +46,7 @@ export class TSMHandler {
           } catch (e) {
             console.error('getAndStartAllRealmsToUpdate', e);
           }
-          resolve();
+          resolve(true);
         })
         .catch(reject);
     });

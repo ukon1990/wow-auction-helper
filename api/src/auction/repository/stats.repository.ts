@@ -247,7 +247,7 @@ export class StatsRepository {
                 reject(error);
               });
           } else {
-            resolve();
+            resolve(0);
           }
         })
         .catch(error => {

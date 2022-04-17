@@ -348,7 +348,7 @@ export class NPCUtil {
       languages
         .forEach(lang => promises.push(
           promiseThrottle.add(() => {
-            return new Promise<ItemLocale>((res, rej) => {
+            return new Promise<void>((res, rej) => {
               new HttpClientUtil().get(
                 `https://www.wowhead.com/tooltip/npc/${id}?locale=${lang.key}`, true)
                 .then(({body}) => {
@@ -434,7 +434,7 @@ export class NPCUtil {
     return new Promise<NPC>(async (resolve, reject) => {
       // Need to add the zone if it is missing
       if (!npc.zoneId) {
-        resolve();
+        resolve(undefined);
         return;
       }
       await ZoneUtil.getById(npc.zoneId, undefined, conn)

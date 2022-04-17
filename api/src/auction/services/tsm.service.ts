@@ -82,7 +82,7 @@ export class TsmService {
               .catch(reject);
           } else {
             console.log(`Fauly realm dump count is ${faultyItemsCount} / ${(body as TSM[]).length}`);
-            resolve();
+            resolve(undefined);
           }
         });
     });

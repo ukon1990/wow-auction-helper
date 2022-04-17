@@ -63,7 +63,7 @@ describe('AuctionHandler', () => {
     const date = '2020-02-05'; // 02-04
     for (let id = 1; id <= 260; id++) {// 242
       promises.push(promiseThrottle.add(() =>
-        new Promise((resolve) => {
+        new Promise<void>((resolve) => {
           new StatsService().compileDailyAuctionData(id, conn, new Date(date))
             .then(() => {
               processed++;
@@ -100,7 +100,7 @@ describe('AuctionHandler', () => {
     expect(str).toBeTruthy();
   });
 
-  it('Adding stuff to db', async () => {
+  xit('Adding stuff to db', async () => {
     jest.setTimeout(1000000000);
     const promiseThrottle = new PromiseThrottle({
       requestsPerSecond: 30, // 5
@@ -138,7 +138,7 @@ describe('AuctionHandler', () => {
               totalLength += filteredFiles.length;
               for (const file of filteredFiles) {
                 promises.push(promiseThrottle.add(() =>
-                  new Promise((resolve) => {
+                  new Promise<void>((resolve) => {
                     const splitted = file.Key.split('/');
                     const [auctions, region1, ahId, fileName] = splitted;
                     const date = new Date(+fileName

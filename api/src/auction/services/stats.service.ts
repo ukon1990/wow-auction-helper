@@ -711,7 +711,7 @@ export class StatsService {
 
     return new Promise((resolve, reject) => {
       Promise.all([
-        new Promise((success, fail) => {
+        new Promise<void>((success, fail) => {
           repo.getRealmPriceHistoryDailyPastDays(house.id, 8)
             .then(rows => {
               const downloadAndQueryTime = +new Date() - start;
@@ -725,7 +725,7 @@ export class StatsService {
               fail(error);
             });
         }),
-        new Promise((success, fail) => {
+        new Promise<void>((success, fail) => {
           repo.getAllStatsForRealmDate(house)
             .then(rows => {
               hourlyData = AuctionProcessorUtil.processHourlyPriceData(rows);
@@ -829,7 +829,7 @@ export class StatsService {
 
           Promise.all(
             Object.keys(results)
-              .map(ahTypeId => new Promise((success, failed) => {
+              .map(ahTypeId => new Promise<void>((success, failed) => {
                 if (results[ahTypeId].length) {
                   new S3Handler().save({
                     lastModified: +new Date(),

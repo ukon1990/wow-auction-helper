@@ -1,6 +1,5 @@
 import {APIGatewayEvent} from 'aws-lambda';
 import {DatabaseUtil} from '../utils/database.util';
-import {TextUtil} from '@ukon1990/js-utilities';
 import {LogRepository} from './repository';
 import {LogEntry} from '../models/log-entry.model';
 import {S3Handler} from '../handlers/s3.handler';
@@ -54,7 +53,7 @@ export class LogService {
           const list = [];
           await Promise.all(
             objects.Contents.map(object =>
-              new Promise<any>((res, rej) => {
+              new Promise<void>((res, rej) => {
                 s3.getAndDecompress(objects.Name, object.Key)
                   .then(async (entry: any) => {
                     list.push({
