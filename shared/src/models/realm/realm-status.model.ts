@@ -1,4 +1,4 @@
-import {GameBuildVersion} from "@shared/enum";
+import {GameBuildVersion} from "../../enum";
 import {Realm} from "..";
 
 export class RealmStatus {

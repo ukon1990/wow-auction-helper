@@ -2,7 +2,7 @@ import {HttpClientUtil} from '../utils/http-client.util';
 import {Endpoints} from '../utils/endpoints.util';
 import {CharacterGameData, Faction} from '../models/character/character-game-data.model';
 import {CharacterReputationsGameData} from '../models/character/character-reputations-game-data.model';
-import {Character, CharacterProfession, CollectedPet, UserPets} from '@shared/models';
+import {Character, CharacterProfession, CollectedPet, UserPets} from '../shared/models';
 
 
 export class CharacterUtil {

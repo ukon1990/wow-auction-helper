@@ -1,8 +1,8 @@
-import { NPC } from './model';
+import {NPC} from './model';
 import {languages} from '../static-data/language.data';
 import {Language} from '../models/language.model';
 import {HttpClientUtil} from '../utils/http-client.util';
-import { Item } from '@shared/models';
+import {Item} from '../shared/models';
 
 const PromiseThrottle: any = require('promise-throttle');
 

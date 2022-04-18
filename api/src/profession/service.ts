@@ -1,4 +1,4 @@
-import {ItemLocale, ProfessionAPIResponse} from '@shared/models';
+import {ItemLocale, ProfessionAPIResponse} from '../shared/models';
 import {ProfessionRepository} from './repository';
 import {Endpoints} from '../utils/endpoints.util';
 import {AuthHandler} from '../handlers/auth.handler';

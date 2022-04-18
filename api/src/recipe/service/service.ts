@@ -3,7 +3,7 @@ import {DatabaseUtil} from '../../utils/database.util';
 import {Recipev2} from '../recipev2.model';
 import {RecipeRepository} from '../repository/repository';
 import {RecipeV2Util} from '../util/recipev2.util';
-import {APIRecipe} from '@shared/models';
+import {APIRecipe} from '../../shared/models';
 
 export class RecipeService {
   private static repository = new RecipeRepository();

@@ -1,7 +1,7 @@
 import {BaseRepository} from '../../repository/base.repository';
 import {AWSError} from 'aws-sdk';
 import {AuctionHouse} from '../model';
-import {RealmStatus} from '@shared/models';
+import {RealmStatus} from '../../shared/models';
 import {RealmLogRepository} from './realm-log.repository';
 
 export class RealmRepository extends BaseRepository<AuctionHouse> {

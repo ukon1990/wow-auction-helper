@@ -1,9 +1,8 @@
 import {environment} from '../../../../client/src/environments/environment';
 import {StatsService} from './stats.service';
 import {DatabaseUtil} from '../../utils/database.util';
-import {AuctionStatsUtil} from '@shared/utils';
-import {ItemStats} from '@shared/models';
-import {AuctionProcessorUtil} from '@shared/utils';
+import {AuctionProcessorUtil, AuctionStatsUtil} from '../../shared/utils';
+import {ItemStats} from '../../shared/models';
 import {AuctionHouse} from '../../realm/model';
 import {S3Handler} from '../../handlers/s3.handler';
 import {RealmRepository} from '../../realm/repositories/realm.repository';

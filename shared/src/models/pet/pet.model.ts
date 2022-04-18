@@ -1,4 +1,4 @@
-import {Auction, ItemLocale} from '@shared/models';
+import {Auction, ItemLocale} from '../../models';
 
 export class Pet {
   speciesId: number;

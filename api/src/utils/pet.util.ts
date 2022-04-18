@@ -1,5 +1,5 @@
 import {Endpoints} from './endpoints.util';
-import {Pet} from '@shared/models';
+import {Pet} from '../shared/models';
 import {HttpClientUtil} from './http-client.util';
 import {AuthHandler} from '../handlers/auth.handler';
 import {GameMediaUtil} from './game-media.util';

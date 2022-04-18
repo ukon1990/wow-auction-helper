@@ -1,6 +1,6 @@
 import {environment} from '../../../client/src/environments/environment';
 import {ItemUtil} from './item.util';
-import {Item} from '@shared/models';
+import {Item} from '../shared/models';
 import {ItemServiceV2} from '../item/service';
 
 describe('ItemUtil', () => {

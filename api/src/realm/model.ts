@@ -1,5 +1,5 @@
-import {GameBuildVersion} from '@shared/enum';
-import {Realm} from '@shared/models';
+import {GameBuildVersion} from '../shared/enum';
+import {Realm} from '../shared/models';
 
 
 export interface AuctionHouse {

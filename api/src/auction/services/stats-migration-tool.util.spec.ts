@@ -1,7 +1,7 @@
 import {DatabaseUtil} from '../../utils/database.util';
 import {environment} from '../../../../client/src/environments/environment';
-import {AuctionItemStatDays} from '@shared/models';
-import {AuctionProcessorUtil} from '@shared/utils';
+import {AuctionItemStatDays} from '../../shared/models';
+import {AuctionProcessorUtil} from '../../shared/utils';
 import {RDSQueryUtil} from '../../utils/query.util';
 import {RealmRepository} from '../../realm/repositories/realm.repository';
 

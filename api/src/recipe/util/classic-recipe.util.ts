@@ -1,5 +1,5 @@
-import {GameBuild} from '@shared/utils';
-import {APIReagent, APIRecipe, ItemLocale} from '@shared/models';
+import {GameBuild} from '../../shared/utils';
+import {APIReagent, APIRecipe, ItemLocale} from '../../shared/models';
 import {HttpClientUtil} from '../../utils/http-client.util';
 import {WoWHeadUtil} from '../../utils/wowhead.util';
 import {languages} from '../../static-data/language.data';

@@ -1,4 +1,4 @@
-import {Item} from '@shared/models';
+import {Item} from '../../shared/models';
 
 export class WoWDBItem {
   ID: number;

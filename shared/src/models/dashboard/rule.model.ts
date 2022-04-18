@@ -1,4 +1,4 @@
-import {ConditionEnum, TargetValueEnum} from "@shared/enum";
+import {ConditionEnum, TargetValueEnum} from "../../enum";
 
 export interface Rule {
   condition: ConditionEnum;

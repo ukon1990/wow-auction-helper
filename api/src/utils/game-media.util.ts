@@ -1,4 +1,4 @@
-import {MediaGameData} from '@shared/models';
+import {MediaGameData} from '../shared/models';
 import {HttpClientUtil} from './http-client.util';
 import {BLIZZARD} from '../secrets';
 

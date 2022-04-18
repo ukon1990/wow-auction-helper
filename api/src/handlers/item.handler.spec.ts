@@ -1,6 +1,6 @@
 import {environment} from '../../../client/src/environments/environment';
 import {ItemHandler} from './item.handler';
-import {Item} from '@shared/models';
+import {Item} from '../shared/models';
 import {DatabaseUtil} from '../utils/database.util';
 import {RDSItemRepository} from '../item/repository';
 
