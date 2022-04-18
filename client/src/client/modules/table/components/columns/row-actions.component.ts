@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {ColumnDescription} from '../../models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {PageEvent} from '@angular/material/paginator';
 import {BaseComponent} from './base.component';
 

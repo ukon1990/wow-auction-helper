@@ -2,14 +2,13 @@ import {AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit} from '@an
 import {AuctionItem} from '../../models/auction-item.model';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Filters} from '../../../../utils/filtering';
-import {GameBuild} from '../../../../utils/game-build.util';
-import {itemQualities} from '../../../../models/item/disenchanting-list';
+import {GameBuild} from '@shared/utils';
+import {ColumnDescription, itemQualities} from '@shared/models';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SharedService} from '../../../../services/shared.service';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {ItemClassService} from '../../../item/service/item-class.service';
 import {ItemClass} from '../../../item/models/item-class.model';
-import {ColumnDescription} from '../../../table/models/column-description';
 import {RealmService} from '../../../../services/realm.service';
 
 @Component({

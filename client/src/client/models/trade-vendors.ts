@@ -1,9 +1,8 @@
 import {SharedService} from '../services/shared.service';
-import {Item} from './item/item';
+import {Item} from '@shared/models';
 import {TRADE_VENDORS} from '../data/trade-vendors';
 import {TradeVendor, TradeVendorItem} from './item/trade-vendor';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
-import {AuctionsService} from '../services/auctions.service';
 import {ObjectUtil} from '@ukon1990/js-utilities';
 
 export class TradeVendors {

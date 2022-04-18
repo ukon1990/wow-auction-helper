@@ -1,14 +1,15 @@
-import {Recipe, RecipeAPIResponse} from '../model';
+import {RecipeAPIResponse} from '../model';
 import {DatabaseUtil} from '../../utils/database.util';
 import {Recipev2} from '../recipev2.model';
 import {RecipeRepository} from '../repository/repository';
 import {RecipeV2Util} from '../util/recipev2.util';
+import {APIRecipe} from '../../shared/models';
 
 export class RecipeService {
   private static repository = new RecipeRepository();
 
   static getById(id: any, locale: any, db?: DatabaseUtil) {
-    return new Promise<Recipe>(async (resolve, reject) => {
+    return new Promise<APIRecipe>(async (resolve, reject) => {
       const closeConnection = db === undefined;
       if (!db) {
         db = new DatabaseUtil(false);
@@ -32,7 +33,7 @@ export class RecipeService {
   static getAllAfter(timestamp: number, locale: string, db: DatabaseUtil): Promise<RecipeAPIResponse> {
     return new Promise((resolve, reject) => {
       this.repository.getAllAfter(timestamp, locale, db)
-        .then((recipes: Recipe[]) => resolve({
+        .then((recipes: APIRecipe[]) => resolve({
           timestamp: recipes[0] ? recipes[0].timestamp : timestamp,
           recipes: recipes.map(recipe => {
             delete recipe.timestamp;
@@ -43,8 +44,8 @@ export class RecipeService {
     });
   }
 
-  static getAndInsert(id: number, db: DatabaseUtil): Promise<Recipev2> {
-    return new Promise<Recipev2>((resolve, reject) => {
+  static getAndInsert(id: number, db: DatabaseUtil): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
       this.getById(id, 'en_GB', db)
         .then(async existingRecipe => {
           await RecipeV2Util.getRecipeFromAPI(id)
@@ -70,7 +71,7 @@ export class RecipeService {
               .then((recipe: Recipev2) => {
                 console.log('Found a new recipe', id, recipe.name.en_GB);
                 this.repository.insertData(recipe, db)
-                  .then(() => resolve(recipe))
+                  .then(() => resolve())
                   .catch(reject);
               })
               .catch(reject);

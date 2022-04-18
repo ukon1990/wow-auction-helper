@@ -1,4 +1,4 @@
-import {Currency} from '../modules/core/models/currency.model';
+import {Currency} from '@shared/models';
 
 export const currency: Currency[] = [
   {

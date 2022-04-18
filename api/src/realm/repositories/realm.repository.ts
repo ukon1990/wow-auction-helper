@@ -1,7 +1,7 @@
 import {BaseRepository} from '../../repository/base.repository';
 import {AWSError} from 'aws-sdk';
 import {AuctionHouse} from '../model';
-import {RealmStatus} from '../../../../client/src/client/models/realm-status.model';
+import {RealmStatus} from '../../shared/models';
 import {RealmLogRepository} from './realm-log.repository';
 
 export class RealmRepository extends BaseRepository<AuctionHouse> {
@@ -150,6 +150,8 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
     url?: string | {[key: string]: string};
     size?: number;
     nextUpdate?: number;
+    lastHistoryDeleteEvent?: number;
+    lastHistoryDeleteEventDaily?: number;
   }) {
     return new Promise<void>((resolve, reject) => {
       this.updateEntry(id, {
@@ -157,7 +159,9 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
       }, false)
         .then(() => {
           console.log(`Successfully updated ${id} with ${
-            new Date(entry.lastModified).toUTCString()}`);
+            new Date(
+              entry.lastModified || entry.lastHistoryDeleteEvent || entry.lastHistoryDeleteEventDaily
+            ).toUTCString()}`);
           resolve();
         })
         .catch(error => {

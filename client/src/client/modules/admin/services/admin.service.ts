@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {GlobalStatus, SQLProcess, TableSize} from '../../../../../../api/src/logs/model';
+import {GlobalStatus, SQLProcess, TableSize} from "@shared/models";
 
 @Injectable()
 export class AdminService {

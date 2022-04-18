@@ -12,15 +12,14 @@ import {RealmHandler} from '../../handlers/realm.handler';
 import {EventRecord, EventSchema} from '../../models/s3/event-record.model';
 import {GzipUtil} from '../../utils/gzip.util';
 import {AuctionResponse} from '../../models/auction/auctions-response';
-import {AuctionTransformerUtil} from '../utils/auction-transformer.util';
 import {StatsService} from './stats.service';
 import {RealmService} from '../../realm/service';
 import {RealmRepository} from '../../realm/repositories/realm.repository';
 import {AuctionHouse} from '../../realm/model';
 import {NameSpace} from '../../enums/name-space.enum';
-import {GameBuildVersion} from '../../../../client/src/client/utils/game-build.util';
 import {HttpResponse} from '../../models/http-response.model';
 import {ObjectUtil} from '@ukon1990/js-utilities';
+import {GameBuildVersion} from '../../shared/enum';
 
 export class AuctionService {
   realmRepository: RealmRepository;
@@ -131,7 +130,7 @@ export class AuctionService {
       .catch(console.error);
     console.log('Starting AH updates');
 
-    return new Promise(async (resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       if (!BLIZZARD.ACCESS_TOKEN) {
         reject('Blizzard Auth API is down');
         return;
@@ -142,7 +141,7 @@ export class AuctionService {
           console.log(`Updating ${houses.length} houses.`);
           let updated = 0;
           Promise.all(houses.map(house =>
-            new Promise((success) => {
+            new Promise<void>((success) => {
               this.updateHouse(house)
                 .then(hadUpdate => {
                   if (hadUpdate) {
@@ -270,9 +269,9 @@ export class AuctionService {
     });
   }
 
-  private async updateAllStatuses(region: string, conn: DatabaseUtil) {
+  private async updateAllStatuses(region: string, conn: DatabaseUtil): Promise<void> {
     const start = +new Date();
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       new RealmHandler().getAllRealms(conn)
         .then((realms) => {
           new S3Handler().save(realms, `auctions/${region}/status.json.gz`, {url: '', region})

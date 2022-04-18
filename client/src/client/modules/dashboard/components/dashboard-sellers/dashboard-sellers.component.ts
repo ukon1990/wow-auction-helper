@@ -1,8 +1,7 @@
-import { Component, AfterViewInit, OnDestroy } from '@angular/core';
-import { Title } from '@angular/platform-browser';
-import { Subscription } from 'rxjs';
+import {AfterViewInit, Component, OnDestroy} from '@angular/core';
+import {Subscription} from 'rxjs';
 import {SharedService} from '../../../../services/shared.service';
-import {Dashboard} from '../../models/dashboard.model';
+import {DEPRICATEDDashboard} from '../../models/dashboard.model';
 
 @Component({
   selector: 'wah-dashboard-sellers',
@@ -11,14 +10,14 @@ import {Dashboard} from '../../models/dashboard.model';
 })
 export class DashboardSellersComponent implements AfterViewInit, OnDestroy {
 
-  dashboards: Dashboard[] = SharedService.sellerDashboards;
+  dashboards: DEPRICATEDDashboard[] = SharedService.sellerDashboards;
   subscription: Subscription;
 
   constructor() {
   }
 
   ngAfterViewInit(): void {
-    this.subscription = Dashboard.sellerEvents.subscribe((dashboards: Dashboard[]) => {
+    this.subscription = DEPRICATEDDashboard.sellerEvents.subscribe((dashboards: DEPRICATEDDashboard[]) => {
       this.dashboards = dashboards;
     });
   }

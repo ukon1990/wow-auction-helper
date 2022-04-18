@@ -4,22 +4,18 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {DatabaseService} from '../../../../services/database.service';
 import {RealmService} from '../../../../services/realm.service';
-import {PetsService} from '../../../../services/pets.service';
 import {SharedService} from '../../../../services/shared.service';
-import {User} from '../../../../models/user/user';
 import {Report} from '../../../../utils/report.util';
-import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {TSMCSV, TsmLuaUtil} from '../../../../utils/tsm/tsm-lua.util';
 import {ErrorReport} from '../../../../utils/error-report.util';
-import {RealmStatus} from '../../../../models/realm-status.model';
 import {AucScanDataImportUtil} from '../../../auction/utils/auc-scan-data-import.util';
 import {LuaUtil} from '../../../auction/utils/lua.util';
 import {AuctionDBImportUtil} from '../../../auction/utils/auction-db-import.util';
-import {AuctionUtil} from '../../../auction/utils/auction.util';
 import {AuctionHouseStatus} from '../../../auction/models/auction-house-status.model';
-import {GameBuild, GameBuildVersion} from '../../../../utils/game-build.util';
+import {GameBuild} from '@shared/utils';
 import {UserUtil} from '../../../../utils/user/user.util';
+import {GameBuildVersion} from '@shared/enum';
 
 @Component({
   selector: 'wah-addon-import',

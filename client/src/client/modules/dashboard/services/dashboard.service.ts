@@ -1,6 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {DashboardMinimal, DashboardV2} from '../models/dashboard-v2.model';
+import {Dashboard} from '@shared/models';
 import {DashboardCalculateUtil} from '../utils/dashboard-calculate.util';
 import {AuctionsService} from '../../../services/auctions.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
@@ -14,13 +14,13 @@ import {Report} from '../../../utils/report.util';
 import {moveItemInArray} from '@angular/cdk/drag-drop';
 import {ProfessionService} from '../../crafting/services/profession.service';
 import {CraftingUtil} from '../../crafting/utils/crafting.util';
-import {TsmService} from '../../tsm/tsm.service';
 import {BackgroundDownloadService} from '../../core/services/background-download.service';
 import {AuthService} from '../../user/services/auth.service';
 import {Endpoints} from '../../../services/endpoints';
 import {HttpClient} from '@angular/common/http';
 import {SettingsService} from '../../user/services/settings/settings.service';
 import {DashboardAppsyncUtil} from '../utils/dashboard-appsync.util';
+import {DashboardMinimal} from "@shared/models";
 
 @Injectable({
   providedIn: 'root'
@@ -28,9 +28,9 @@ import {DashboardAppsyncUtil} from '../utils/dashboard-appsync.util';
 export class DashboardService {
   calculatedBoardEvent: EventEmitter<string> = new EventEmitter<string>();
   allBoardsCalculatedEvent: BehaviorSubject<number | boolean> = new BehaviorSubject<number | boolean>(false);
-  list: BehaviorSubject<DashboardV2[]> = new BehaviorSubject<DashboardV2[]>([]);
-  map: BehaviorSubject<Map<string, DashboardV2>> = new BehaviorSubject<Map<string, DashboardV2>>(new Map<string, DashboardV2>());
-  defaultMap: BehaviorSubject<Map<string, DashboardV2>> = new BehaviorSubject<Map<string, DashboardV2>>(new Map<string, DashboardV2>());
+  list: BehaviorSubject<Dashboard[]> = new BehaviorSubject<Dashboard[]>([]);
+  map: BehaviorSubject<Map<string, Dashboard>> = new BehaviorSubject<Map<string, Dashboard>>(new Map<string, Dashboard>());
+  defaultMap: BehaviorSubject<Map<string, Dashboard>> = new BehaviorSubject<Map<string, Dashboard>>(new Map<string, Dashboard>());
 
   private sm = new SubscriptionManager();
   private isInitiated: boolean;
@@ -113,15 +113,15 @@ export class DashboardService {
     });
   }
 
-  getCopyById(id: string): Promise<DashboardV2> {
+  getCopyById(id: string): Promise<Dashboard> {
     return this.http.get(Endpoints.getLambdaUrl('dashboard/copy/' + id))
-      .toPromise() as Promise<DashboardV2>;
+      .toPromise() as Promise<Dashboard>;
   }
 
-  importPublicBoard(id: string, existing: DashboardV2): Promise<void> {
+  importPublicBoard(id: string, existing: Dashboard): Promise<void> {
     return new Promise((resolve) => {
       this.getCopyById(id)
-        .then((board: DashboardV2) => {
+        .then((board: Dashboard) => {
           this.save({
             ...board,
             id: existing ? existing.id : board.id
@@ -136,14 +136,14 @@ export class DashboardService {
     });
   }
 
-  saveToPublicDataset(board: DashboardV2): Promise<DashboardV2> {
-    return new Promise<DashboardV2>((resolve, reject) => {
+  saveToPublicDataset(board: Dashboard): Promise<Dashboard> {
+    return new Promise<Dashboard>((resolve, reject) => {
       this.http.post(Endpoints.getLambdaUrl('dashboard'), {
         ...board,
         isDisabled: false // In case the user has a disabled board that they are updating which also is public
       })
         .toPromise()
-        .then((res: DashboardV2) => {
+        .then((res: Dashboard) => {
           if (res.id) {
             res.isDisabled = board.isDisabled;
             this.save(res)
@@ -157,7 +157,7 @@ export class DashboardService {
     });
   }
 
-  deletePublicEntry(board: DashboardV2, deleteLocal = false): Promise<void> {
+  deletePublicEntry(board: Dashboard, deleteLocal = false): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.http.delete(Endpoints.getLambdaUrl('dashboard/' + board.id))
         .toPromise()
@@ -190,13 +190,13 @@ export class DashboardService {
 
   private async restore(): Promise<void> {
     const defaultBoards = getDefaultDashboards(this.professionService.listWithRecipes.value);
-    const dashboards: DashboardV2[] = [];
-    const restoredMap: Map<string, DashboardV2> = new Map();
-    const defaultMap: Map<string, DashboardV2> = new Map();
-    const restoredDefaultMap: Map<string, DashboardV2> = new Map();
-    const fromOnlineStorage: DashboardV2[] = this.settingsService.dashboards.value;
+    const dashboards: Dashboard[] = [];
+    const restoredMap: Map<string, Dashboard> = new Map();
+    const defaultMap: Map<string, Dashboard> = new Map();
+    const restoredDefaultMap: Map<string, Dashboard> = new Map();
+    const fromOnlineStorage: Dashboard[] = this.settingsService.dashboards.value;
 
-    const handleModifiedBoards = (boards: DashboardV2[]) => {
+    const handleModifiedBoards = (boards: Dashboard[]) => {
       boards.forEach(board => {
         dashboards.push(board);
         restoredMap.set(board.id, board);
@@ -221,7 +221,7 @@ export class DashboardService {
       defaultMap.set(board.id, board);
       const parent = restoredMap.get(board.parentId);
       if (!restoredMap.has(board.id)) {
-        dashboards.push(ObjectUtil.clone(board) as DashboardV2);
+        dashboards.push(ObjectUtil.clone(board) as Dashboard);
       }
     });
 
@@ -234,12 +234,12 @@ export class DashboardService {
   }
 
 
-  reset(dashboard: DashboardV2): void {
+  reset(dashboard: Dashboard): void {
     const defaultBoards = getDefaultDashboards(this.professionService.list.value);
     for (let i = 0; i < defaultBoards.length; i++) {
       if (dashboard.id === defaultBoards[i].id) {
         this.map.value.set(dashboard.id, defaultBoards[i]);
-        const list: DashboardV2[] = [];
+        const list: Dashboard[] = [];
         this.map.value.forEach(board => list.push(board));
         this.list.next(list);
         DashboardCalculateUtil.calculate(
@@ -250,7 +250,7 @@ export class DashboardService {
     }
   }
 
-  saveAll(boards: DashboardV2[], calculatePrice: boolean = true, saveToAppSync = true): void {
+  saveAll(boards: Dashboard[], calculatePrice: boolean = true, saveToAppSync = true): void {
     boards.forEach(board => this.save(board, calculatePrice, false));
 
     if (saveToAppSync) {
@@ -258,7 +258,7 @@ export class DashboardService {
     }
   }
 
-  async save(board: DashboardV2, calculatePrice: boolean = true, saveToAppSync = true): Promise<void> {
+  async save(board: Dashboard, calculatePrice: boolean = true, saveToAppSync = true): Promise<void> {
     if (!board.id) {
       board.id = generateUUID();
       board.idIsBackendGenerated = false;
@@ -302,7 +302,7 @@ export class DashboardService {
     }
   }
 
-  delete(board: DashboardV2): void {
+  delete(board: Dashboard): void {
     const list = this.list.value.filter(b => b.id !== board.id);
     this.db.removeDashboard(board.id)
       .catch(error =>
@@ -315,9 +315,9 @@ export class DashboardService {
   }
 
   move(previousIndex: number, currentIndex: number) {
-    const list: DashboardV2[] = [...this.list.value];
-    const board: DashboardV2 = list[previousIndex];
-    const targetBoard: DashboardV2 = list[currentIndex];
+    const list: Dashboard[] = [...this.list.value];
+    const board: Dashboard = list[previousIndex];
+    const targetBoard: Dashboard = list[currentIndex];
 
     try {
       if (previousIndex === undefined || currentIndex === undefined) {

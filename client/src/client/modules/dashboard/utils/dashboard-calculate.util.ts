@@ -1,15 +1,14 @@
-import { DashboardV2 } from '../models/dashboard-v2.model';
-import { AuctionItem } from '../../auction/models/auction-item.model';
-import { ItemRule, Rule } from '../models/rule.model';
-import { ColumnDescription } from '../../table/models/column-description';
-import { TargetValueEnum } from '../types/target-value.enum';
-import { ConditionEnum } from '../types/condition.enum';
-import { EmptyUtil, TextUtil } from '@ukon1990/js-utilities';
-import { AuctionUtil } from '../../auction/utils/auction.util';
-import { Sorter } from '../../../models/sorter';
-import { ErrorReport } from '../../../utils/error-report.util';
-import { GoldPipe } from '../../util/pipes/gold.pipe';
-import { AuctionItemStat } from '../../../../../../api/src/auction/models/auction-item-stat.model';
+import {ColumnDescription, Dashboard} from '@shared/models';
+import {AuctionItem} from '../../auction/models/auction-item.model';
+import {TargetValueEnum} from '@shared/enum';
+import {ConditionEnum} from '@shared/enum';
+import {EmptyUtil, TextUtil} from '@ukon1990/js-utilities';
+import {AuctionUtil} from '../../auction/utils/auction.util';
+import {Sorter} from '../../../models/sorter';
+import {ErrorReport} from '../../../utils/error-report.util';
+import {GoldPipe} from '../../util/pipes/gold.pipe';
+import {AuctionItemStat} from '@shared/models';
+import {ItemRule, Rule} from "@shared/models";
 
 interface IdPaths {
   recipeId?: string;
@@ -20,7 +19,7 @@ interface IdPaths {
 
 export class DashboardCalculateUtil {
 
-  static calculate(board: DashboardV2, items: Map<string, AuctionItem>): DashboardV2 {
+  static calculate(board: Dashboard, items: Map<string, AuctionItem>): Dashboard {
     if (board.isDisabled) {
       board.data = [];
       return board;
@@ -49,7 +48,7 @@ export class DashboardCalculateUtil {
     return board;
   }
 
-  private static getIdParameterForName(board: DashboardV2, name: string) {
+  private static getIdParameterForName(board: Dashboard, name: string) {
     let recipeIdKey;
     board.columns.forEach(column => {
       if (!recipeIdKey && TextUtil.contains(column.key, name)) {
@@ -75,7 +74,7 @@ export class DashboardCalculateUtil {
     return recipeIdKey;
   }
 
-  private static assignAndSortDataToBoard(dataMap: Map<string, [any]>, board: DashboardV2) {
+  private static assignAndSortDataToBoard(dataMap: Map<string, [any]>, board: Dashboard) {
     let data = [];
     dataMap.forEach(item =>
       data = [...data, ...item]);
@@ -89,8 +88,8 @@ export class DashboardCalculateUtil {
     board.data = data;
   }
 
-  private static addOnlyIncludedInItemRules(board: DashboardV2, items: Map<string, AuctionItem>, dataMap: Map<string, any>,
-    paths: IdPaths) {
+  private static addOnlyIncludedInItemRules(board: Dashboard, items: Map<string, AuctionItem>, dataMap: Map<string, any>,
+                                            paths: IdPaths) {
     if (board.itemRules && board.itemRules.length) {
       board.itemRules.forEach((itemRule: ItemRule) => {
         const id = this.getId(undefined, itemRule);
@@ -128,7 +127,7 @@ export class DashboardCalculateUtil {
   }
 
   private static addMatchingBoardRules(
-    board: DashboardV2,
+    board: Dashboard,
     items: Map<string, AuctionItem>,
     dataMap: Map<string, any>,
     paths: IdPaths
@@ -157,7 +156,7 @@ export class DashboardCalculateUtil {
     }
   }
 
-  private static addMatchingForIterableFields(iterableKeyRules: Rule[], item: AuctionItem, board: DashboardV2,
+  private static addMatchingForIterableFields(iterableKeyRules: Rule[], item: AuctionItem, board: Dashboard,
     dataMap: Map<string, any>, id: string, paths: IdPaths, printLog: boolean = false) {
     const list = [];
     let arr: any[];
@@ -239,7 +238,7 @@ export class DashboardCalculateUtil {
         rule.toField.indexOf('[') > -1);
   }
 
-  private static addMatchingItemRules(board: DashboardV2, dataMap: Map<string, any>, items: Map<string, AuctionItem>) {
+  private static addMatchingItemRules(board: Dashboard, dataMap: Map<string, any>, items: Map<string, AuctionItem>) {
     if (board.itemRules && board.itemRules.length) {
       board.itemRules.forEach((item: ItemRule) => {
         const id = this.getId(undefined, item);

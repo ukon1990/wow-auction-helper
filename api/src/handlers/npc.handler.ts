@@ -1,6 +1,6 @@
 import {DroppedItem, NPC, NPCUtil, VendorItem} from '../utils/npc.util';
 import {DatabaseUtil} from '../utils/database.util';
-import {ItemLocale} from '../models/item/item-locale';
+import {ItemLocale} from '../shared/models';
 import {ApiResponse} from '../models/api-response.model';
 import {NPCQuery} from '../queries/npc.query';
 import {RDSQueryUtil} from '../utils/query.util';

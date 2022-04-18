@@ -1,10 +1,11 @@
 {
   "name": "wah-api",
-  "version": "3.212.0",
+  "version": "3.212.2",
   "license": "MIT",
   "main": "handler.js",
   "scripts": {
     "start": "sls offline start --useSeparateProcesses",
+    "package": "sls package",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:watchAll": "jest --watchAll",

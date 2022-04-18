@@ -1,7 +1,7 @@
 import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
-import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Rule} from '../../../models/rule.model';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
+import {Rule} from "@shared/models";
 
 @Component({
   selector: 'wah-rules',

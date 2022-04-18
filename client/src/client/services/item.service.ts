@@ -1,26 +1,26 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {SharedService} from './shared.service';
 import {HttpClient} from '@angular/common/http';
-import {Item} from '../models/item/item';
+import {
+  AhStatsRequest,
+  AuctionItemStat,
+  Item,
+  ItemDailyPriceEntry,
+  ItemPriceCompareEntry,
+  ItemPriceEntry,
+  ItemPriceEntryResponse,
+  WoWHeadSoldBy
+} from '@shared/models';
 import {Endpoints} from './endpoints';
 import {DatabaseService} from './database.service';
-import {WoWHeadSoldBy} from '../models/item/wowhead';
 import {ErrorReport} from '../utils/error-report.util';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {ItemOverrides} from '../overrides/item.overrides';
 import {Platform} from '@angular/cdk/platform';
 import {Report} from '../utils/report.util';
-import {
-  ItemDailyPriceEntry,
-  ItemPriceEntry,
-  ItemPriceEntryResponse
-} from '../modules/item/models/item-price-entry.model';
 import {BehaviorSubject} from 'rxjs';
-import {AuctionItemStat} from '../../../../api/src/auction/models/auction-item-stat.model';
-import {AhStatsRequest} from '../../../../api/src/auction/models/ah-stats-request.model';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
-import {GameBuild} from '../utils/game-build.util';
-import {ItemPriceCompareEntry} from '../../../../api/src/auction/models/item-price-compare-entry.model';
+import {GameBuild} from '@shared/utils';
 
 class ItemResponse {
   timestamp: Date;
@@ -95,12 +95,12 @@ export class ItemService {
         locale: localStorage['locale']
       })
       .toPromise()
-      .then((item: Item) => {
+      .then((item: ItemModel) => {
         if (item['error']) {
           ErrorReport.sendHttpError(item['error']);
           return;
         }
-        SharedService.items[item.id] = (item as Item);
+        SharedService.items[item.id] = (item as ItemModel);
         if (SharedService.auctionItemsMap[item.id]) {
           SharedService.auctionItemsMap[item.id].name = item.name;
           SharedService.auctionItemsMap[item.id].vendorSell = item.sellPrice;
@@ -349,7 +349,7 @@ export class ItemService {
 
     setTimeout(() => {
       if (itemsToAdd[i]) {
-        SharedService.items[i] = new Item();
+        SharedService.items[i] = new ItemModel();
         this.addItem(itemsToAdd[i]);
       }
 

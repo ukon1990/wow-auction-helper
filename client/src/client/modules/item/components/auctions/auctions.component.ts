@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
-import {ColumnDescription} from '../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 
 @Component({
   selector: 'wah-item-detail-auctions',

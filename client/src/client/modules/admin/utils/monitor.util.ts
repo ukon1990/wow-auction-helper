@@ -1,6 +1,6 @@
-import {GlobalStatus} from '../../../../../../api/src/logs/model';
 import {ChartData} from '../../util/models/chart.model';
 import {SeriesOptionsType} from 'highcharts';
+import {GlobalStatus} from "@shared/models";
 
 export class MonitorUtil {
   static getDataset(statuses: GlobalStatus[], series: SeriesOptionsType[]): void {

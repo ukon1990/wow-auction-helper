@@ -2,7 +2,7 @@ import {RealmRepository} from '../../realm/repositories/realm.repository';
 import {AuctionHouse} from '../../realm/model';
 import {HttpClientUtil} from '../../utils/http-client.util';
 import {S3Handler} from '../../handlers/s3.handler';
-import {TSM} from '../../../../client/src/client/modules/auction/models/tsm.model';
+import {TSM} from '../../shared/models';
 
 export class TsmService {
   private repository: RealmRepository = new RealmRepository();
@@ -82,7 +82,7 @@ export class TsmService {
               .catch(reject);
           } else {
             console.log(`Fauly realm dump count is ${faultyItemsCount} / ${(body as TSM[]).length}`);
-            resolve();
+            resolve(undefined);
           }
         });
     });

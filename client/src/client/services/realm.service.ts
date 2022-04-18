@@ -2,20 +2,20 @@ import {EventEmitter, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Endpoints} from './endpoints';
 import {SharedService} from './shared.service';
-import {Realm} from '../models/realm';
+import {Realm} from '@shared/models';
 import {ErrorReport} from '../utils/error-report.util';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ArrayUtil, DateUtil} from '@ukon1990/js-utilities';
 import {BehaviorSubject, interval, Observable} from 'rxjs';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
-import {AuctionUpdateLog} from '../../../../api/src/models/auction/auction-update-log.model';
-import {RealmStatus} from '../models/realm-status.model';
+import {RealmStatus} from '@shared/models';
 import {UserUtil} from '../utils/user/user.util';
 import {environment} from '../../environments/environment';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SettingsService} from '../modules/user/services/settings/settings.service';
 import {CraftingService} from './crafting.service';
 import {ItemService} from './item.service';
+import {AuctionUpdateLog} from "@shared/models";
 
 @Injectable()
 export class RealmService {

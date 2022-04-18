@@ -1,8 +1,7 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {ColumnDescription} from '../../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {SummaryCard} from '../../../../../models/summary-card.model';
-import {NumberUtil} from '../../../../util/utils/number.util';
-import {GoldPipe} from '../../../../util/pipes/gold.pipe';
+import {NumberUtil} from '@shared/utils';
 import {ChartData} from '../../../../util/models/chart.model';
 import {ChartData as SummaryCardData} from '../../../../../models/chart-data.model';
 

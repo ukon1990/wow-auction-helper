@@ -1,7 +1,7 @@
 import {ItemServiceV2} from './service';
 import {environment} from '../../../client/src/environments/environment';
 import {NameSpace} from '../enums/name-space.enum';
-import {Item} from '../../../client/src/client/models/item/item';
+import {Item} from '../shared/models';
 
 describe('ItemService', () => {
   xit('Update', async () => {

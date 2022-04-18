@@ -1,7 +1,7 @@
 import {ItemReset} from './item-reset.model';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SharedService} from '../../../services/shared.service';
-import {Item} from '../../../models/item/item';
+import {Item} from '@shared/models';
 
 describe('ItemReset', () => {
   it('setIcon', () => {

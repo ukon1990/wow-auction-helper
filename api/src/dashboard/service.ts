@@ -1,4 +1,4 @@
-import {DashboardMinimal, DashboardV2} from '../../../client/src/client/modules/dashboard/models/dashboard-v2.model';
+import {Dashboard} from '../shared/models';
 import {DashboardRepository} from './repository';
 import {AccessToken} from '../models/user/access-token.model';
 import {v4} from 'uuid';
@@ -10,11 +10,11 @@ export class DashboardService {
     this.repository = new DashboardRepository();
   }
 
-  getById(id: string): Promise<DashboardV2> {
+  getById(id: string): Promise<Dashboard> {
     return this.repository.getById(id);
   }
 
-  save(board: DashboardV2): Promise<any> {
+  save(board: Dashboard): Promise<any> {
     if (!board.id) {
       board.id = v4();
     }
@@ -51,9 +51,9 @@ export class DashboardService {
     });
   }
 
-  getCopyById(id, token: AccessToken = this.user): Promise<DashboardV2> {
+  getCopyById(id, token: AccessToken = this.user): Promise<Dashboard> {
     console.log(`${token ? token.username : 'Anonymous'} copied ${id}`);
-    return new Promise<DashboardV2>(((resolve, reject) => {
+    return new Promise<Dashboard>(((resolve, reject) => {
       this.getById(id)
         .then(board => {
           resolve({
@@ -92,8 +92,8 @@ export class DashboardService {
     });
   }
 
-  getAll(): Promise<DashboardV2[]> {
-    return new Promise<DashboardV2[]>((resolve, reject) => {
+  getAll(): Promise<Dashboard[]> {
+    return new Promise<Dashboard[]>((resolve, reject) => {
       this.repository.getAll()
         .then((boards) => resolve(
           boards.sort((a, b) =>

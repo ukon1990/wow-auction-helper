@@ -1,4 +1,4 @@
-import {GameBuildVersion} from '../../../../client/src/client/utils/game-build.util';
+import {GameBuildVersion} from '../../shared/enum';
 
 export interface AHDumpResponse {
     url: string;

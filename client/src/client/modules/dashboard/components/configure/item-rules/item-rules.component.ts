@@ -1,12 +1,12 @@
 import {AfterViewInit, Component, Input, OnDestroy} from '@angular/core';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
-import {ItemRule} from '../../../models/rule.model';
-import {Item} from '../../../../../models/item/item';
+import {Item} from '@shared/models';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ItemService} from '../../../../../services/item.service';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {SharedService} from '../../../../../services/shared.service';
+import {ItemRule} from "@shared/models";
 
 @Component({
   selector: 'wah-item-rules',

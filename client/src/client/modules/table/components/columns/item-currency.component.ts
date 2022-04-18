@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ColumnDescription} from '../../models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {BaseComponent} from './base.component';
 import {currencyMap} from '../../../../data/currency.data';
 

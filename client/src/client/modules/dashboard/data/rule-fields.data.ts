@@ -1,6 +1,6 @@
 import {RuleFieldGroup} from '../models/rule-field.model';
 import {columnConfig} from './columns.data';
-import {TargetValueEnum} from '../types/target-value.enum';
+import {TargetValueEnum} from '@shared/enum';
 
 export const ruleFields: RuleFieldGroup[] = [
   {
@@ -8,7 +8,7 @@ export const ruleFields: RuleFieldGroup[] = [
     options: [
       {
         key: 'name',
-        name: 'Item name',
+        name: 'ItemModel name',
         column: columnConfig.item.name,
         defaultType: TargetValueEnum.TEXT
       },
@@ -26,12 +26,12 @@ export const ruleFields: RuleFieldGroup[] = [
       },
       {
         key: 'item.itemClass',
-        name: 'Item class',
+        name: 'ItemModel class',
         defaultType: TargetValueEnum.NUMBER
       },
       {
         key: 'item.itemSubClass',
-        name: 'Item sub class',
+        name: 'ItemModel sub class',
         defaultType: TargetValueEnum.NUMBER
       },
       {
@@ -42,7 +42,7 @@ export const ruleFields: RuleFieldGroup[] = [
       },
       {
         key: 'itemLevel',
-        name: 'Item level',
+        name: 'ItemModel level',
         column: columnConfig.item.itemLevel,
         defaultType: TargetValueEnum.NUMBER
       },
@@ -65,7 +65,7 @@ export const ruleFields: RuleFieldGroup[] = [
       },
       {
         key: columnConfig.item.shoppingCartInput.key,
-        name: 'Item shopping cart input',
+        name: 'ItemModel shopping cart input',
         column: columnConfig.item.shoppingCartInput,
         defaultType: TargetValueEnum.NUMBER
       },

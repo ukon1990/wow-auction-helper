@@ -1,8 +1,6 @@
-import {Pet} from '../../../client/src/client/modules/pet/models/pet';
+import {Item, ItemLocale, Pet} from '../shared/models';
 import {QueryIntegrity} from './integrity.query';
-import {ItemLocale} from '../models/item/item-locale';
 import {PetUtil} from '../utils/pet.util';
-import {Item} from '../../../client/src/client/models/item/item';
 import {ItemHandler} from '../handlers/item.handler';
 
 describe('QueryIntegrity', () => {

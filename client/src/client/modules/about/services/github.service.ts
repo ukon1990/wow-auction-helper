@@ -7,7 +7,6 @@ import {ChangeLog} from '../models/github/commit/changelog.model';
 import {GithubTag} from '../models/github/commit/github-tag.model';
 import {GithubIssueBody} from '../models/github/issues/github-issue-body.model';
 import {BehaviorSubject} from 'rxjs';
-import {Item} from '../../../models/item/item';
 import {TextUtil} from '@ukon1990/js-utilities';
 
 @Injectable({

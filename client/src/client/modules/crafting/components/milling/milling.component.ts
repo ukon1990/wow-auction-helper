@@ -1,14 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util';
-import {ColumnDescription} from '../../../table/models/column-description';
-import {Remains} from '../../../../models/item/remains.model';
+import {ColumnDescription} from '@shared/models';
+import {Remains} from '@shared/models';
 import {SharedService} from '../../../../services/shared.service';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Filters} from '../../../../utils/filtering';
 import {EmptyUtil} from '@ukon1990/js-utilities';
-import {Item} from '../../../../models/item/item';
-import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {AuctionsService} from '../../../../services/auctions.service';
 
 

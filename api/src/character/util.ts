@@ -1,12 +1,11 @@
-import {Character, CharacterProfession, CollectedPet, UserPets} from './model';
 import {HttpClientUtil} from '../utils/http-client.util';
 import {Endpoints} from '../utils/endpoints.util';
 import {CharacterGameData, Faction} from '../models/character/character-game-data.model';
 import {CharacterReputationsGameData} from '../models/character/character-reputations-game-data.model';
+import {Character, CharacterProfession, CollectedPet, UserPets} from '../shared/models';
 
 
 export class CharacterUtil {
-
   static getCreatureDisplay(creatureDisplay:  {id: number}): Promise<string> {
     return new Promise((resolve) => {
       if (!creatureDisplay || !creatureDisplay.id) {

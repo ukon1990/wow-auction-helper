@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {ColumnDescription} from '../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {ItemSoldByRow} from '../../models/item-sold-by-row.model';
 
 @Component({

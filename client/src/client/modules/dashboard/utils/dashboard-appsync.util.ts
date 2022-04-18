@@ -1,7 +1,7 @@
-import {DashboardV2} from '../models/dashboard-v2.model';
+import {Dashboard} from '@shared/models';
 
 export class DashboardAppsyncUtil {
-  static reduce(boards: DashboardV2[]): any[] {
+  static reduce(boards: Dashboard[]): any[] {
     return boards.map(board => {
       const copy = {
         ...board,
@@ -17,7 +17,7 @@ export class DashboardAppsyncUtil {
     });
   }
 
-  static unParseJSON(boards: any[]): DashboardV2[] {
+  static unParseJSON(boards: any[]): Dashboard[] {
     return boards.map(board => ({
       ...board,
       columns: board.columns.map(column => {

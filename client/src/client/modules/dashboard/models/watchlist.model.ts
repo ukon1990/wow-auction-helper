@@ -1,7 +1,7 @@
 import {Recipe} from '../../crafting/models/recipe';
 import {SharedService} from '../../../services/shared.service';
 import {defaultWatchlist} from '../data/default-watchlist.data';
-import {Dashboard} from './dashboard.model';
+import {DEPRICATEDDashboard} from './dashboard.model';
 import {WatchlistItem} from './watchlist-item.model';
 import {WatchlistGroup} from './watchlist-group.model';
 import {AuctionsService} from '../../../services/auctions.service';
@@ -247,7 +247,7 @@ export class Watchlist {
   save(): void {
     localStorage[this.storageName] = JSON.stringify(
       { groups: this.groups });
-    Dashboard.addDashboards();
+    DEPRICATEDDashboard.addDashboards();
   }
 
   mapOldVersionToNew(item: any): WatchlistItem {

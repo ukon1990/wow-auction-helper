@@ -1,7 +1,7 @@
 import {APIGatewayEvent} from 'aws-lambda';
 import {AccessToken} from '../models/user/access-token.model';
-import {COGNITO} from '../../../client/src/client/secrets';
 import {Group} from '../enums/group.enum';
+import { COGNITO } from '../secrets';
 
 export class AuthorizationUtil {
   static token: AccessToken;

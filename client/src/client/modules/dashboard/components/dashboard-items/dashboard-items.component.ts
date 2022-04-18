@@ -1,7 +1,7 @@
-import {AfterContentInit, AfterViewInit, Component, Input, OnDestroy} from '@angular/core';
+import {AfterContentInit, Component, OnDestroy} from '@angular/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {DashboardService} from '../../services/dashboard.service';
-import {DashboardV2} from '../../models/dashboard-v2.model';
+import {Dashboard} from '@shared/models';
 import {FormControl, FormGroup} from '@angular/forms';
 import {ConfigureComponent} from '../configure/configure.component';
 import {MatDialog} from '@angular/material/dialog';
@@ -12,7 +12,7 @@ import {CharacterService} from '../../../character/services/character.service';
 import {Report} from '../../../../utils/report.util';
 import {ErrorReport} from '../../../../utils/error-report.util';
 import {SearchComponent} from '../search/search.component';
-import { faFileImport } from '@fortawesome/free-solid-svg-icons/faFileImport';
+import {faFileImport} from '@fortawesome/free-solid-svg-icons/faFileImport';
 import {faPlus} from '@fortawesome/free-solid-svg-icons/faPlus';
 import {PageEvent} from '@angular/material/paginator';
 import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
@@ -29,8 +29,8 @@ export class DashboardItemsComponent implements OnDestroy, AfterContentInit {
     search: new FormControl()
   });
   isClassic = true;
-  dashboards: DashboardV2[] = [];
-  filteredBoards: DashboardV2[] = [];
+  dashboards: Dashboard[] = [];
+  filteredBoards: Dashboard[] = [];
   itemsPerPage = 8;
   pageRows: Array<number> = [4, 8, 12, 24, 36];
   pageEvent: PageEvent = { pageIndex: 0, pageSize: this.itemsPerPage, length: 0 };
@@ -61,7 +61,7 @@ export class DashboardItemsComponent implements OnDestroy, AfterContentInit {
   }
 
   ngAfterContentInit() {
-    this.sm.add(this.service.list, (boards: DashboardV2[]) => {
+    this.sm.add(this.service.list, (boards: Dashboard[]) => {
       this.dashboards = [...boards];
       this.filter();
     });
@@ -94,7 +94,7 @@ export class DashboardItemsComponent implements OnDestroy, AfterContentInit {
     });
   }
 
-  drop({previousIndex, currentIndex}: CdkDragDrop<DashboardV2, any>) {
+  drop({previousIndex, currentIndex}: CdkDragDrop<Dashboard, any>) {
     try {
       Report.send(
         'Rearranged board',

@@ -1,11 +1,11 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {DashboardV2} from '../../../models/dashboard-v2.model';
+import {Dashboard} from '@shared/models';
 import {ConfigureComponent} from '../../configure/configure.component';
-import { faCog } from '@fortawesome/free-solid-svg-icons/faCog';
+import {faCog} from '@fortawesome/free-solid-svg-icons/faCog';
 
 interface Data {
-  dashboard: DashboardV2;
+  dashboard: Dashboard;
   filterParameter: string;
 }
 

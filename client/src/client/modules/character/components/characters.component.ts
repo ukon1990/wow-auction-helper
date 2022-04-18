@@ -9,14 +9,12 @@ import {AuctionsService} from '../../../services/auctions.service';
 import {SharedService} from '../../../services/shared.service';
 import {ErrorOptions, ErrorReport} from '../../../utils/error-report.util';
 import {Character} from '../models/character.model';
-import {AuctionUtil} from '../../auction/utils/auction.util';
 import {Report} from '../../../utils/report.util';
-import {Realm} from '../../../models/realm';
+import {Realm} from '@shared/models';
 import {DashboardService} from '../../dashboard/services/dashboard.service';
 import {ProfessionService} from '../../crafting/services/profession.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {TextUtil} from '@ukon1990/js-utilities';
-import {CraftingUtil} from '../../crafting/utils/crafting.util';
 import {SettingsService} from '../../user/services/settings/settings.service';
 
 @Component({

@@ -1,15 +1,8 @@
-/*
-import {RecipeUtil} from './recipe.util';
-import {S3Handler} from '../handlers/s3.handler';
-import {languages} from '../static-data/language.data';
- */
-
 import {ClassicRecipeUtil} from './classic-recipe.util';
-import {GameBuild} from '../../../../client/src/client/utils/game-build.util';
+import {GameBuild} from '../../shared/utils';
 import {RDSQueryUtil} from '../../utils/query.util';
-import {ProfessionRepository} from '../../profession/repository';
 import {DatabaseUtil} from '../../utils/database.util';
-import {ItemLocale} from '../../models/item/item-locale';
+import {ItemLocale} from '../../shared/models';
 
 describe('RecipeUtil', () => {
   beforeAll(() => {

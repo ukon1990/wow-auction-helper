@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Item} from '../../../../models/item/item';
+import {Item} from '@shared/models';
 import {SharedService} from '../../../../services/shared.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {Report} from '../../../../utils/report.util';
@@ -22,7 +22,7 @@ export class TsmTabComponent implements OnInit {
     if (this.auctionItem) {
       Report.debug(
         'TsmTabComponent',
-        'Item detail view',
+        'ItemModel detail view',
         `TSM tab for ${this.auctionItem.itemID} - ${this.auctionItem.name}`);
     }
     this.factionId = SharedService.user.faction;

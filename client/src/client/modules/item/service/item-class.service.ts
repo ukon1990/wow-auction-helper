@@ -19,7 +19,7 @@ export class ItemClassService {
     this.subscriptions.add(settings.settings.subscribe(
       setting => ItemClassService.setForLocale(setting.locale)));
     this.subscriptions.add(ItemClassService.itemClassesLocales.subscribe(
-      setting => ItemClassService.setForLocale(settings.settings.value?.locale)));
+      setting => ItemClassService.setForLocale(settings.settings.value.locale)));
   }
 
   private static setForLocale(locale: string = localStorage.getItem('locale') || 'en_GB'): void {

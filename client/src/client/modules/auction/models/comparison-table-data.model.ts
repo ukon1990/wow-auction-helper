@@ -1,4 +1,4 @@
-import {Modifiers} from './auction.model';
+import {Modifiers} from '@shared/models';
 
 export interface ComparisonTableDataModel {
   id: string;

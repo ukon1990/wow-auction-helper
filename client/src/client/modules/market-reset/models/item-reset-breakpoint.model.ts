@@ -1,4 +1,4 @@
-import {Auction} from '../../auction/models/auction.model';
+import {Auction} from '@shared/models';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
 

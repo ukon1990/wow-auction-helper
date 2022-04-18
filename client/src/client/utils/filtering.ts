@@ -1,15 +1,14 @@
 import {SharedService} from '../services/shared.service';
-import {Item} from '../models/item/item';
+import {Item, Pet} from '@shared/models';
 import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 import {Recipe} from '../modules/crafting/models/recipe';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
-import {Pet} from '../modules/pet/models/pet';
 import {CraftingService} from '../services/crafting.service';
 import {AuctionsService} from '../services/auctions.service';
 import {ItemClassService} from '../modules/item/service/item-class.service';
 import {ItemClass} from '../modules/item/models/item-class.model';
-import {GameBuild} from './game-build.util';
+import {GameBuild} from '@shared/utils';
 
 export class Filters {
   private static auctionService: AuctionsService;
