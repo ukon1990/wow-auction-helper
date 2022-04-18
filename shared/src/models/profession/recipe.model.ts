@@ -1,4 +1,4 @@
-import {APIReagent, ModifiedSlot} from "@shared/models";
+import {APIReagent, ModifiedSlot} from "../../models";
 
 export class APIRecipe {
   id: number;

@@ -1,8 +1,8 @@
 import {ClassicRecipeUtil} from './classic-recipe.util';
-import {GameBuild} from '@shared/utils';
+import {GameBuild} from '../../shared/utils';
 import {RDSQueryUtil} from '../../utils/query.util';
 import {DatabaseUtil} from '../../utils/database.util';
-import {ItemLocale} from '@shared/models';
+import {ItemLocale} from '../../shared/models';
 
 describe('RecipeUtil', () => {
   beforeAll(() => {

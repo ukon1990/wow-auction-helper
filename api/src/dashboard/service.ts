@@ -1,4 +1,4 @@
-import {Dashboard} from '@shared/models';
+import {Dashboard} from '../shared/models';
 import {DashboardRepository} from './repository';
 import {AccessToken} from '../models/user/access-token.model';
 import {v4} from 'uuid';

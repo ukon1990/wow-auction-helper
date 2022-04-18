@@ -1,5 +1,5 @@
 import {BaseRepository} from '../repository/base.repository';
-import {Dashboard} from '@shared/models';
+import {Dashboard} from '../shared/models';
 
 export class DashboardRepository extends BaseRepository<Dashboard> {
   constructor() {

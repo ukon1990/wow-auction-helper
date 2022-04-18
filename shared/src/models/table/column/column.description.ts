@@ -1,4 +1,4 @@
-import {RowAction} from '@shared/models';
+import {RowAction} from '../../../models';
 
 export interface ColumnDescription {
   title: string;

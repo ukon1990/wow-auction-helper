@@ -1,4 +1,4 @@
-import {ItemLocale} from '@shared/models';
+import {ItemLocale} from '../../models';
 
 export interface Currency {
   id: number;

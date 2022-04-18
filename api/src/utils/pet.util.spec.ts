@@ -1,5 +1,5 @@
 import {PetUtil} from './pet.util';
-import {Pet} from '@shared/models';
+import {Pet} from '../shared/models';
 
 describe('PetUtil', () => {
   describe('getPet', () => {

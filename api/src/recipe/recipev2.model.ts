@@ -1,4 +1,4 @@
-import {ItemLocale, Key} from '@shared/models';
+import {ItemLocale, Key} from '../shared/models';
 
 export interface CreatedItem {
     id: number;

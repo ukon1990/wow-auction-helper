@@ -2,7 +2,7 @@ import {RealmRepository} from '../../realm/repositories/realm.repository';
 import {AuctionHouse} from '../../realm/model';
 import {HttpClientUtil} from '../../utils/http-client.util';
 import {S3Handler} from '../../handlers/s3.handler';
-import {TSM} from '@shared/models';
+import {TSM} from '../../shared/models';
 
 export class TsmService {
   private repository: RealmRepository = new RealmRepository();

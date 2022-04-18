@@ -3,7 +3,7 @@ import {DatabaseUtil} from '../../utils/database.util';
 import {RDSQueryUtil} from '../../utils/query.util';
 import {format} from 'sqlstring';
 import {Recipev2} from '../recipev2.model';
-import {APIReagent, APIRecipe} from '@shared/models';
+import {APIReagent, APIRecipe} from '../../shared/models';
 
 export class ClassicRecipeRepository extends Repository<APIRecipe> {
 

@@ -1,5 +1,5 @@
 import {Repository} from '../core/repository';
-import {Profession} from '@shared/models';
+import {Profession} from '../shared/models';
 import {DatabaseUtil} from '../utils/database.util';
 
 export class ProfessionRepository extends Repository<Profession> {

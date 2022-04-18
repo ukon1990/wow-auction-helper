@@ -1,7 +1,7 @@
 import {RealmService} from './service';
 import {environment} from '../../../client/src/environments/environment';
 import {NameSpace} from '../enums/name-space.enum';
-import {AuctionUpdateLog} from "@shared/models";
+import {AuctionUpdateLog} from '../shared/models';
 
 describe('RealmService', () => {
   const service: RealmService = new RealmService();

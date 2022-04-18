@@ -1,4 +1,4 @@
-import {ColumnDescription} from '@shared/models';
+import {ColumnDescription} from '../../models';
 import {ItemRule, Rule, SortRule} from '.';
 
 export interface Dashboard {

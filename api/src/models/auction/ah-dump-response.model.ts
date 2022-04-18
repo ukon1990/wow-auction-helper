@@ -1,4 +1,4 @@
-import { GameBuildVersion } from '@shared/enum';
+import {GameBuildVersion} from '../../shared/enum';
 
 export interface AHDumpResponse {
     url: string;

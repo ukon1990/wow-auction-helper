@@ -1,4 +1,4 @@
-import {Item} from '@shared/models';
+import {Item} from '../shared/models';
 import {safeifyString} from '../utils/string.util';
 import {getLocale} from '../utils/locale.util';
 

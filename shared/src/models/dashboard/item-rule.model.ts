@@ -1,4 +1,4 @@
-import {Rule} from "@shared/models";
+import {Rule} from "../../models";
 
 export interface ItemRule {
   itemId: number;

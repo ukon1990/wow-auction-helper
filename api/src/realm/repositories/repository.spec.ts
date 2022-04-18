@@ -1,5 +1,5 @@
 import {RealmRepository} from './realm.repository';
-import {RealmStatus} from '@shared/models';
+import {RealmStatus} from '../../shared/models';
 import {AuctionHouse} from '../model';
 import {RealmService} from '../service';
 import {BaseRepository} from '../../repository/base.repository';

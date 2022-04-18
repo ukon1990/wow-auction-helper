@@ -1,4 +1,4 @@
-import {AuctionHouseUpdateLog} from "@shared/models";
+import {AuctionHouseUpdateLog} from "../../models";
 
 export class AuctionUpdateLog {
   public minTime = 0;

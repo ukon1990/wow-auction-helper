@@ -1,4 +1,4 @@
-import {Auction, Modifiers} from '@shared/models';
+import {Auction, Modifiers} from '../../models';
 
 class Bonus {
   bonusListId: number;

@@ -107,9 +107,31 @@ exports.updateRealmTrends = (event: APIGatewayEvent, context: Context, callback:
     .catch(error => Response.error(callback, error, event, 500));
 };
 
-exports.deleteOldPriceForRealm = (event: {table: string, olderThan: number, period: string}, context: Context, callback: Callback) => {
-  const {table, olderThan, period} = event;
-  new StatsService().deleteOldPriceForRealm(table, olderThan, period)
+
+/**
+ * Deletes the hourly data
+ */
+exports.deleteOldPriceForRealmHourly =
+  (event: {table: string, olderThan: number, period: string}, context: Context, callback: Callback) => {
+  new StatsService().deleteOldPriceForRealm(
+    'itemPriceHistoryPerHour',
+    15,
+    'DAY'
+  )
+    .then(result => Response.send(result, callback))
+    .catch(error => Response.error(callback, error, undefined, 500));
+};
+
+/**
+ * Deletes the auction stats that are grouped by day
+ */
+exports.deleteOldPriceForRealmDaily =
+  (event: {table: string, olderThan: number, period: string}, context: Context, callback: Callback) => {
+  new StatsService().deleteOldPriceForRealm(
+    'itemPriceHistoryPerDay',
+    4,
+    'MONTH'
+  )
     .then(result => Response.send(result, callback))
     .catch(error => Response.error(callback, error, undefined, 500));
 };

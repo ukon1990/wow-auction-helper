@@ -2,7 +2,7 @@ import {DatabaseUtil} from '../utils/database.util';
 import {PetQuery} from '../queries/pet.query';
 import {LocaleUtil} from '../utils/locale.util';
 import {PetUtil} from '../utils/pet.util';
-import {Pet} from '@shared/models';
+import {Pet} from '../shared/models';
 import {ApiResponse} from '../models/api-response.model';
 import {QueryIntegrity} from '../queries/integrity.query';
 

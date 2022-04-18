@@ -1,4 +1,4 @@
-import {ItemDailyPriceEntry, ItemPriceEntry, ItemStats, Stat} from '@shared/models';
+import {ItemDailyPriceEntry, ItemPriceEntry, ItemStats, Stat} from '../../models';
 import {DateUtil} from '@ukon1990/js-utilities';
 
 export class AuctionStatsUtil {
