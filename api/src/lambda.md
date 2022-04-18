@@ -35,6 +35,11 @@ export const DATABASE_CREDENTIALS = {
   },
 };
 
+export const COGNITO = {
+  POOL_ID: your_cognito_pool_id,
+  CLIENT_ID: your_cognito_client_id,
+};
+
 
 /*
 Keep in mind that it is bad practice doing this. You should use a role with the correct policy.

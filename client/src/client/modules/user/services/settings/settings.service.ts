@@ -10,7 +10,7 @@ import {GetSettings} from './setting.queries';
 import {SharedService} from '../../../../services/shared.service';
 import {CartItem, CartRecipe} from '../../../shopping-cart/models/shopping-cart-v2.model';
 import {Report} from '../../../../utils/report.util';
-import {DashboardV2} from '../../../dashboard/models/dashboard-v2.model';
+import {Dashboard} from '@shared/models';
 import {DashboardAppsyncUtil} from '../../../dashboard/utils/dashboard-appsync.util';
 import {ErrorReport} from '../../../../utils/error-report.util';
 import {DatabaseService} from '../../../../services/database.service';
@@ -26,7 +26,7 @@ export class SettingsService {
   settings = new BehaviorSubject<UserSettings>(new UserSettings());
   realmChange = new BehaviorSubject<{ realm: string, region: string }>(undefined);
   cartChange = new BehaviorSubject<{ recipes: CartRecipe[], items: CartItem[] }>(undefined);
-  dashboards = new BehaviorSubject<DashboardV2[]>([]);
+  dashboards = new BehaviorSubject<Dashboard[]>([]);
   private sm = new SubscriptionManager();
 
   constructor(private appSync: AppSyncService,
@@ -66,7 +66,7 @@ export class SettingsService {
         reject();
         return;
       }
-      let dashboards: DashboardV2[];
+      let dashboards: Dashboard[];
       await this.db.getDashboards()
         .then(boards => dashboards = boards)
         .catch(console.error);

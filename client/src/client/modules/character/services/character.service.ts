@@ -11,11 +11,11 @@ import {RealmService} from '../../../services/realm.service';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {AuctionHouseStatus} from '../../auction/models/auction-house-status.model';
 import {CraftingService} from '../../../services/crafting.service';
-import {CharacterProfession} from '../../../../../../api/src/character/model';
 import {Report} from '../../../utils/report.util';
 import {SettingsService} from '../../user/services/settings/settings.service';
 import {UserSettings} from '../../user/models/settings.model';
 import {AppSyncService} from '../../user/services/app-sync.service';
+import {CharacterProfession} from "@shared/models";
 
 @Injectable()
 export class CharacterService {

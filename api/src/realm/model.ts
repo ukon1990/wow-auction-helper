@@ -1,20 +1,6 @@
-import {GameBuildVersion} from '../../../client/src/client/utils/game-build.util';
+import {GameBuildVersion} from '@shared/enum';
+import {Realm} from '@shared/models';
 
-export interface Realm {
-  id: number;
-  slug: string;
-  name: string;
-  timezone: string;
-  locale: string;
-}
-
-export interface AuctionHouseUpdateLog {
-  id: number;
-  lastModified: number;
-  size: number;
-  timeSincePreviousDump: number;
-  url: string;
-}
 
 export interface AuctionHouse {
   id: number;

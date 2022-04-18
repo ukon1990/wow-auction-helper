@@ -2,8 +2,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Recipe} from '../models/recipe';
-import {GameBuild} from '../../../utils/game-build.util';
-import {ColumnDescription} from '../../table/models/column-description';
+import {GameBuild} from '@shared/utils';
+import {ColumnDescription, ItemStats} from '@shared/models';
 import {SharedService} from '../../../services/shared.service';
 import {Filters} from '../../../utils/filtering';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
@@ -16,7 +16,6 @@ import {ItemClassService} from '../../item/service/item-class.service';
 import {ItemClass} from '../../item/models/item-class.model';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SettingsService} from '../../user/services/settings/settings.service';
-import {ItemStats} from '../../../../../../api/src/auction/models/item-stats.model';
 import {RealmService} from '../../../services/realm.service';
 
 interface FormModel {

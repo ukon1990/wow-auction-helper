@@ -1,18 +1,14 @@
-import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 
 import {FormControl} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';
-import {SharedService} from '../../../../services/shared.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
-import {CraftingUtil} from '../../../crafting/utils/crafting.util';
 import {Report} from '../../../../utils/report.util';
 import {ItemReset} from '../../models/item-reset.model';
-import {ColumnDescription} from '../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {ItemResetBreakpoint} from '../../models/item-reset-breakpoint.model';
 import {RowClickEvent} from '../../../table/models/row-click-event.model';
-import {ChartData} from '../../../util/models/chart.model';
-import {NumberUtil} from '../../../util/utils/number.util';
 
 @Component({
   selector: 'wah-reset-calc',

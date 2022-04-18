@@ -4,9 +4,9 @@ import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {ObjectUtil} from '@ukon1990/js-utilities';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ruleFields} from '../../data/rule-fields.data';
-import {Profession} from '../../../../../../../api/src/profession/model';
+import {Profession} from '@shared/models';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {DashboardV2} from '../../models/dashboard-v2.model';
+import {Dashboard} from '@shared/models';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DashboardCalculateUtil} from '../../utils/dashboard-calculate.util';
 import {AuctionsService} from '../../../../services/auctions.service';
@@ -16,7 +16,6 @@ import {DashboardService} from '../../services/dashboard.service';
 import {Report} from '../../../../utils/report.util';
 import {ProfessionService} from '../../../crafting/services/profession.service';
 import {AuthService} from '../../../user/services/auth.service';
-import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete/autocomplete';
 
 @Component({
   selector: 'wah-configure',
@@ -28,7 +27,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   isAuthenticated: boolean;
   fields = ruleFields;
   professions: Profession[] = [];
-  tmpBoard: DashboardV2;
+  tmpBoard: Dashboard;
   isDefaultBoard: boolean;
 
   faSave = faSave;
@@ -83,7 +82,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   constructor(
     private authService: AuthService,
     public dialogRef: MatDialogRef<ConfigureComponent>,
-    @Inject(MAT_DIALOG_DATA) public dashboard: DashboardV2 | any,
+    @Inject(MAT_DIALOG_DATA) public dashboard: Dashboard | any,
     private auctionService: AuctionsService,
     public service: DashboardService,
     private professionService: ProfessionService) {
@@ -116,7 +115,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private populateForm(board: DashboardV2) {
+  private populateForm(board: Dashboard) {
     if (!board) {
       // this.addDefaultColumns();
       return;
@@ -140,13 +139,13 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     this.form.controls.isPublic.setValue(board.isPublic, {emitEvent: false});
   }
 
-  onEvent(board: DashboardV2 = this.form.getRawValue()) {
+  onEvent(board: Dashboard = this.form.getRawValue()) {
     this.tmpBoard = DashboardCalculateUtil.calculate(board, this.auctionService.mapped.value);
     this.hasChanges = true;
   }
 
   onSave(): void {
-    const board: DashboardV2 = this.form.getRawValue();
+    const board: Dashboard = this.form.getRawValue();
     if (this.dashboard && this.dashboard.id) {
       Report.send('Saved existing board', 'Dashboard.ConfigureComponent');
     } else {
@@ -169,7 +168,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
 
   onDiscard(): void {
     if (this.isDefaultBoard && this.dashboard) {
-      const original: DashboardV2 = this.getDefaultBoard();
+      const original: Dashboard = this.getDefaultBoard();
       ObjectUtil.overwrite(original, this.dashboard);
     }
     this.populateForm(this.dashboard);
@@ -178,13 +177,13 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     this.dialogRef.close();
   }
 
-  private getDefaultBoard(): DashboardV2 {
+  private getDefaultBoard(): Dashboard {
     return getDefaultDashboards(this.professionService.list.value)
       .filter(board => board.id === this.dashboard.id)[0];
   }
 
   onDelete() {
-    const board: DashboardV2 = this.dashboard;
+    const board: Dashboard = this.dashboard;
     if (board.isPublic && this.isAuthenticated) {
       this.service.deletePublicEntry(board, true)
         .catch(console.error);

@@ -3,7 +3,7 @@ import {ItemService} from '../../../../../services/item.service';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {SharedService} from '../../../../../services/shared.service';
 import {NpcService} from '../../../../npc/services/npc.service';
-import {Item} from '../../../../../models/item/item';
+import {Item} from '@shared/models';
 import {CraftingService} from '../../../../../services/crafting.service';
 
 @Component({

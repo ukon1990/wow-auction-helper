@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {ItemDroppedByRow} from '../../models/item-dropped-by-row.model';
-import {ColumnDescription} from '../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 
 @Component({
   selector: 'wah-dropped-by-tab',

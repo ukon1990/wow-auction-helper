@@ -1,7 +1,6 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import {split} from 'ts-node';
+import {Pipe, PipeTransform} from '@angular/core';
 import {TextUtil} from '@ukon1990/js-utilities';
-import {NumberUtil} from '../utils/number.util';
+import {NumberUtil} from '@shared/utils';
 
 @Pipe({
   name: 'gold'

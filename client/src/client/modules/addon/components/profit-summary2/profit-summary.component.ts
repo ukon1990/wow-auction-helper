@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {TSMCSV, TsmLuaUtil} from '../../../../utils/tsm/tsm-lua.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {ColumnDescription} from '../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {SharedService} from '../../../../services/shared.service';
 import {ItemSaleHistory, ItemSaleHistorySummary, ProfitSummaryUtil} from '../../utils/profit-summary.util';
 import {Theme} from '../../../core/models/theme.model';

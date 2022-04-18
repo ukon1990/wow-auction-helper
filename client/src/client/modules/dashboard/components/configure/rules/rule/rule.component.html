@@ -90,7 +90,7 @@
 
         <ng-template #itemClassSelectTemplate>
           <ng-container *ngIf="mainFieldType.isItemClass; else itemSubClassSelectTemplate">
-            <mat-select placeholder="Item class"
+            <mat-select placeholder="ItemModel class"
                         formControlName="toValue">
               <mat-option *ngFor="let itemClass of itemClasses"
                           [value]="itemClass.id"
@@ -103,7 +103,7 @@
 
         <ng-template #itemSubClassSelectTemplate>
           <ng-container *ngIf="mainFieldType.isItemSubClass; else qualityTemplate">
-            <mat-select placeholder="Item sub class" *ngIf="itemSubClasses"
+            <mat-select placeholder="ItemModel sub class" *ngIf="itemSubClasses"
                         formControlName="toValue">
               <mat-option *ngFor="let subClass of itemSubClasses"
                           [value]="subClass.id"
@@ -116,7 +116,7 @@
 
         <ng-template #qualityTemplate>
           <ng-container *ngIf="mainFieldType.isQuality; else valueTypeBasedTemplate">
-            <mat-select placeholder="Item quality"
+            <mat-select placeholder="ItemModel quality"
                         formControlName="toValue">
               <mat-option *ngFor="let quality of itemQualities"
                           [value]="quality.id"

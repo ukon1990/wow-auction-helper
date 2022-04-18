@@ -1,6 +1,6 @@
 import {environment} from '../../../client/src/environments/environment';
 import {ItemHandler} from './item.handler';
-import {Item} from '../../../client/src/client/models/item/item';
+import {Item} from '@shared/models';
 import {DatabaseUtil} from '../utils/database.util';
 import {RDSItemRepository} from '../item/repository';
 
@@ -19,7 +19,7 @@ describe('ItemHandler', () => {
   it('Can get complete item', async () => {
     jest.setTimeout(10000);
     const item: Item = await new ItemHandler().getFreshItem(109118, 'en_GB');
-    console.log('Item data', item);
+    console.log('ItemModel data', item);
     expect(item.itemSource.droppedBy.length).toBe(8);
     expect(item.expansionId).toBe(5);
     expect(item.patch).toBe('6.0.1.18125');

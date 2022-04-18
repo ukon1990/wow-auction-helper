@@ -7,8 +7,7 @@ import {DatabaseService} from './database.service';
 import {ErrorReport} from '../utils/error-report.util';
 import {Platform} from '@angular/cdk/platform';
 import {BehaviorSubject} from 'rxjs';
-import {Item} from '../models/item/item';
-import {ItemSpells} from '../models/item/itemspells';
+import {Item, ItemSpells} from '@shared/models';
 import {Reagent} from '../modules/crafting/models/reagent';
 
 class RecipeResponse {

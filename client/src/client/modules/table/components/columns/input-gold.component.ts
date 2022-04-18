@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ColumnDescription} from '../../models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {TableUtil} from '../../utils/table.util';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';
 import {BaseComponent} from './base.component';

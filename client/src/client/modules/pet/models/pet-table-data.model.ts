@@ -1,6 +1,6 @@
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {CollectedPet} from '../../../../../../api/src/character/model';
-import {QualityUtil} from '../../../utils/quality.util';
+import {CollectedPet} from '@shared/models';
+import {QualityUtil} from '@shared/utils';
 
 export class PetTableData {
   public itemID = 82800;

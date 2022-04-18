@@ -1,5 +1,5 @@
 import { SharedService } from '../../../services/shared.service';
-import { Item } from '../../../models/item/item';
+import { Item } from '@shared/models';
 
 export class CustomPrice {
   itemID: number;

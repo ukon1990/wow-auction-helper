@@ -1,4 +1,4 @@
-import {DashboardV2} from '../models/dashboard-v2.model';
+import {Dashboard} from '@shared/models';
 import {DashboardMigrationUtil, OldGroups} from './dashboard-migration.util';
 
 describe('DashboardMigrationUtil', () => {
@@ -204,7 +204,7 @@ describe('DashboardMigrationUtil', () => {
       }
     ]
   };
-  let result: DashboardV2[] = [];
+  let result: Dashboard[] = [];
 
   beforeAll(() => {
     result = DashboardMigrationUtil.migrate(exampleSource);

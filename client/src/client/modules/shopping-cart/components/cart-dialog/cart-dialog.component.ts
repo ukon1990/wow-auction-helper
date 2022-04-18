@@ -3,7 +3,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {ShoppingCartService} from '../../services/shopping-cart.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {CartItem, CartRecipe, ShoppingCartV2} from '../../models/shopping-cart-v2.model';
-import {ColumnDescription} from '../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {BackgroundDownloadService} from '../../../core/services/background-download.service';
 import {CartTransformUtil} from '../../utils/cart-transform.util';
 import {AuctionsService} from '../../../../services/auctions.service';

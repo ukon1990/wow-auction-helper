@@ -3,7 +3,7 @@ import {FormBuilder, FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import {SharedService} from '../../../../../services/shared.service';
-import {ColumnDescription} from '../../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {CraftingUtil} from '../../../../crafting/utils/crafting.util';
 import {CustomProc} from '../../../../crafting/models/custom-proc.model';
 import {Recipe} from '../../../../crafting/models/recipe';
@@ -63,7 +63,7 @@ export class CustomProcComponent implements OnInit, OnDestroy {
 
   /**
    * Such efficient, such ugh
-   * @param name Item name for the query
+   * @param name ItemModel name for the query
    */
   private filter(name: string): Array<Recipe> {
     return CraftingService.list.value.filter(i =>

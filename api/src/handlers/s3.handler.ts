@@ -1,8 +1,6 @@
 import {GzipUtil} from '../utils/gzip.util';
 import {AWS_DETAILS} from '../secrets';
 import {ListObjectsV2Output, ManagedUpload, ObjectList} from 'aws-sdk/clients/s3';
-import {AuctionProcessorUtil} from '../auction/utils/auction-processor.util';
-import {StatsRepository} from '../auction/repository/stats.repository';
 
 const AWS = require('aws-sdk');
 
