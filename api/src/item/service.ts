@@ -1,7 +1,7 @@
 import {RDSItemRepository} from './repository';
 import {DatabaseUtil} from '../utils/database.util';
 import {BLIZZARD, isOffline} from '../secrets';
-import {Item} from '@shared/models';
+import {Item} from '../shared/models';
 import {ItemQuery} from '../queries/item.query';
 import {ItemUtil} from '../utils/item.util';
 import {QueryIntegrity} from '../queries/integrity.query';

@@ -1,4 +1,4 @@
-import {TimeZone} from '@shared/enum';
+import {TimeZone} from '../enum';
 
 export class TimeUtil {
 

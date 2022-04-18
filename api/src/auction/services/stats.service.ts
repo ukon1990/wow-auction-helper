@@ -2,7 +2,7 @@ import {S3Handler} from '../../handlers/s3.handler';
 import {DatabaseUtil} from '../../utils/database.util';
 import {EventSchema} from '../../models/s3/event-record.model';
 import {GzipUtil} from '../../utils/gzip.util';
-import {AuctionProcessorUtil, AuctionStatsUtil, NumberUtil} from '@shared/utils';
+import {AuctionProcessorUtil, AuctionStatsUtil, NumberUtil} from '../../shared/utils';
 import {StatsRepository} from '../repository/stats.repository';
 import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
 import {RealmRepository} from '../../realm/repositories/realm.repository';
@@ -15,7 +15,7 @@ import {
   ItemPriceCompareEntry,
   ItemPriceEntry,
   ItemStats
-} from '@shared/models';
+} from '../../shared/models';
 import {AuctionHouse} from '../../realm/model';
 import {S3} from 'aws-sdk';
 import {LogRepository} from '../../logs/repository';

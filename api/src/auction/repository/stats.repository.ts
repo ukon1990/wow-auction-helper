@@ -1,7 +1,7 @@
 import {RealmRepository} from './../../realm/repositories/realm.repository';
 import {DatabaseUtil} from '../../utils/database.util';
-import {AhStatsRequest, AuctionItemStat} from '@shared/models';
-import {AuctionProcessorUtil} from '@shared/utils';
+import {AhStatsRequest, AuctionItemStat} from '../../shared/models';
+import {AuctionProcessorUtil} from '../../shared/utils';
 import {RDSQueryUtil} from '../../utils/query.util';
 import {AuctionHouse} from '../../realm/model';
 

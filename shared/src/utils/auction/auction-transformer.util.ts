@@ -1,4 +1,4 @@
-import {Auction, AuctionV2} from '@shared/models';
+import {Auction, AuctionV2} from '../../models';
 
 export class AuctionTransformerUtil {
   static transform(auction: AuctionV2 | Auction) {

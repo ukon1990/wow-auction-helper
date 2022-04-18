@@ -4,7 +4,7 @@ import {Endpoints} from '../utils/endpoints.util';
 import {CharacterUtil} from './util';
 import {CharacterGameDataMedia} from '../models/character/character-game-data.model';
 import {NameSpace} from '../enums/name-space.enum';
-import {Character, UserPets} from '@shared/models';
+import {Character, UserPets} from '../shared/models';
 
 export class CharacterService {
   static get(region: string, realm: string, name: string, locale: string): Promise<Character> {

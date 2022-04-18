@@ -4,8 +4,7 @@ import {WoWDBItem} from '../models/item/wowdb';
 import {ItemUtil} from '../utils/item.util';
 import {WoWHeadUtil} from '../utils/wowhead.util';
 import {LocaleUtil} from '../utils/locale.util';
-import {WoWHead} from '@shared/models';
-import {Item} from '@shared/models';
+import {Item, WoWHead} from '../shared/models';
 import {QueryIntegrity} from '../queries/integrity.query';
 import {RDSQueryUtil} from '../utils/query.util';
 

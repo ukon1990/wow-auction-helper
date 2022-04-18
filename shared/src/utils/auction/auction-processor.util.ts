@@ -2,7 +2,7 @@
   The intention with this class
   Is to gather price statistics for the lowest, highest and avg prices
 */
-import {Auction, AuctionItemStat, ItemDailyPriceEntry, ItemPriceEntry} from '@shared/models';
+import {Auction, AuctionItemStat, ItemDailyPriceEntry, ItemPriceEntry} from '../../models';
 import {AuctionTransformerUtil} from './auction-transformer.util';
 
 export class AuctionProcessorUtil {

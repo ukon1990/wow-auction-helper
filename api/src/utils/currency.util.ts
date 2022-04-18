@@ -1,6 +1,6 @@
 import {HttpClientUtil} from './http-client.util';
 import {WoWHeadUtil} from './wowhead.util';
-import {Currency, ItemLocale} from '@shared/models';
+import {Currency, ItemLocale} from '../shared/models';
 import {languages} from '../static-data/language.data';
 import {Language} from '../models/language.model';
 

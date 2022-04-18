@@ -19,7 +19,7 @@ import {AuctionHouse} from '../../realm/model';
 import {NameSpace} from '../../enums/name-space.enum';
 import {HttpResponse} from '../../models/http-response.model';
 import {ObjectUtil} from '@ukon1990/js-utilities';
-import {GameBuildVersion} from '@shared/enum';
+import {GameBuildVersion} from '../../shared/enum';
 
 export class AuctionService {
   realmRepository: RealmRepository;
