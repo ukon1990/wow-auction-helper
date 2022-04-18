@@ -1,4 +1,4 @@
-import {Auction} from './auction.model';
+import {Auction} from '@shared/models';
 import {Character} from '../../character/models/character.model';
 import {AuctionItem} from './auction-item.model';
 import {UserAuctionCharacter} from './user-auction-character.model';

@@ -1,11 +1,10 @@
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {faCog} from '@fortawesome/free-solid-svg-icons/faCog';
 import {RealmService} from '../../../../../services/realm.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {AuctionUpdateLog} from '../../../../../../../../api/src/models/auction/auction-update-log.model';
-import {RealmStatus} from '../../../../../models/realm-status.model';
-import {ColumnDescription} from '../../../../table/models/column-description';
+import {AuctionUpdateLog, RealmStatus} from '@shared/models';
+import {ColumnDescription} from '@shared/models';
 import {DateUtil} from '@ukon1990/js-utilities';
 import {Report} from '../../../../../utils/report.util';
 

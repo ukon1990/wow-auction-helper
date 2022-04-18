@@ -1,7 +1,7 @@
 import {HttpClientUtil} from './http-client.util';
 import {languages} from '../static-data/language.data';
 import {Language} from '../models/language.model';
-import {ItemLocale} from '../models/item/item-locale';
+import {ItemLocale} from '../shared/models';
 import {WoWHeadUtil} from './wowhead.util';
 import {RDSQueryUtil} from './query.util';
 import {DatabaseUtil} from './database.util';
@@ -348,7 +348,7 @@ export class NPCUtil {
       languages
         .forEach(lang => promises.push(
           promiseThrottle.add(() => {
-            return new Promise<ItemLocale>((res, rej) => {
+            return new Promise<void>((res, rej) => {
               new HttpClientUtil().get(
                 `https://www.wowhead.com/tooltip/npc/${id}?locale=${lang.key}`, true)
                 .then(({body}) => {
@@ -434,7 +434,7 @@ export class NPCUtil {
     return new Promise<NPC>(async (resolve, reject) => {
       // Need to add the zone if it is missing
       if (!npc.zoneId) {
-        resolve();
+        resolve(undefined);
         return;
       }
       await ZoneUtil.getById(npc.zoneId, undefined, conn)
@@ -517,7 +517,7 @@ export class NPCUtil {
       this.ignoreItemIds[id] = true;
       /*
       new ItemHandler().getById(id, 'en_GB')
-        .then(() => console.log('Item added?'))
+        .then(() => console.log('ItemModel added?'))
         .catch(console.error);*/
     }
   }

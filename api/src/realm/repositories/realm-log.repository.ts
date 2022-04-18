@@ -1,5 +1,6 @@
 import {BaseRepository} from '../../repository/base.repository';
-import {AuctionHouseUpdateLog, DumpDelay} from '../model';
+import {DumpDelay} from '../model';
+import {AuctionHouseUpdateLog} from '@shared/models';
 
 export class RealmLogRepository extends BaseRepository<AuctionHouseUpdateLog> {
   private minuteInMS = 1000 * 60;

@@ -1,8 +1,9 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
-/server-legacy/dist
-/server-legacy/src/public
+/dist
+/tmp
+shared/out-tsc
 tmp
 public
 dist
@@ -51,7 +52,7 @@ server-legacy/secrets/secrets\.js
 .env
 secrets.ts
 
+shared/package-lock.json
 api/package-lock.json
 client/package-lock.json
 client/.angular/
-

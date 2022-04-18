@@ -1,12 +1,11 @@
-import {DashboardV2} from '../models/dashboard-v2.model';
-import {ItemRule, Rule} from '../models/rule.model';
-import {ConditionEnum} from '../types/condition.enum';
-import {TargetValueEnum} from '../types/target-value.enum';
+import {Auction, Dashboard} from '@shared/models';
+import {ConditionEnum} from '@shared/enum';
+import {TargetValueEnum} from '@shared/enum';
 import {DashboardCalculateUtil} from './dashboard-calculate.util';
 import {Recipe} from '../../crafting/models/recipe';
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {Auction} from '../../auction/models/auction.model';
 import {columnConfig} from '../data/columns.data';
+import {ItemRule, Rule} from "@shared/models";
 
 const getBoard = (rules: Rule[] = [], itemRules?: ItemRule[]) => ({
   id: 'asd-dsa',
@@ -27,7 +26,7 @@ const getBoard = (rules: Rule[] = [], itemRules?: ItemRule[]) => ({
   rules,
   itemRules,
   data: []
-} as DashboardV2);
+} as Dashboard);
 
 fdescribe('DashboardCalculateUtil', () => {
   const recipe1 = new Recipe();
@@ -79,7 +78,7 @@ fdescribe('DashboardCalculateUtil', () => {
   describe('calculate', () => {
     describe('Board rules', () => {
       it('Basic', () => {
-        const board: DashboardV2 = DashboardCalculateUtil.calculate(
+        const board: Dashboard = DashboardCalculateUtil.calculate(
           getBoard([
             {
               condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
@@ -94,7 +93,7 @@ fdescribe('DashboardCalculateUtil', () => {
       });
 
       it('Buyout vs Market value', () => {
-        const board: DashboardV2 = DashboardCalculateUtil.calculate(
+        const board: Dashboard = DashboardCalculateUtil.calculate(
           getBoard([
             {
               condition: ConditionEnum.LESS_THAN_OR_EQUAL_TO,
@@ -110,7 +109,7 @@ fdescribe('DashboardCalculateUtil', () => {
       });
 
       it('Name contains', () => {
-        const board: DashboardV2 = DashboardCalculateUtil.calculate(
+        const board: Dashboard = DashboardCalculateUtil.calculate(
           getBoard([
             {
               condition: ConditionEnum.CONTAINS,
@@ -124,7 +123,7 @@ fdescribe('DashboardCalculateUtil', () => {
       });
 
       it('Name is', () => {
-        const board: DashboardV2 = DashboardCalculateUtil.calculate(
+        const board: Dashboard = DashboardCalculateUtil.calculate(
           getBoard([
             {
               condition: ConditionEnum.EQUAL_TO,
@@ -139,7 +138,7 @@ fdescribe('DashboardCalculateUtil', () => {
 
 
       it('Can handle saleRate percent', () => {
-        const board: DashboardV2 = DashboardCalculateUtil.calculate(
+        const board: Dashboard = DashboardCalculateUtil.calculate(
           getBoard([
             {
               condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
@@ -154,7 +153,7 @@ fdescribe('DashboardCalculateUtil', () => {
 
       describe('Crafting', () => {
         fit('ROI > value', () => {
-          const board: DashboardV2 = getBoard([
+          const board: Dashboard = getBoard([
             {
               condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
               targetValueType: TargetValueEnum.PERCENT,
@@ -172,7 +171,7 @@ fdescribe('DashboardCalculateUtil', () => {
 
         it('Can handle multiple ranks', () => {
 
-          const board: DashboardV2 = getBoard([
+          const board: Dashboard = getBoard([
             {
               condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
               targetValueType: TargetValueEnum.PERCENT,
@@ -282,7 +281,7 @@ fdescribe('DashboardCalculateUtil', () => {
         });
 
         it('Profession and ROI > value', () => {
-          const board: DashboardV2 =
+          const board: Dashboard =
             getBoard([
               {
                 condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
@@ -307,7 +306,7 @@ fdescribe('DashboardCalculateUtil', () => {
       });
 
       it('Where toField is null', () => {
-        const board: DashboardV2 = getBoard([
+        const board: Dashboard = getBoard([
           {
             condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
             targetValueType: TargetValueEnum.NUMBER,
@@ -323,7 +322,7 @@ fdescribe('DashboardCalculateUtil', () => {
       });
 
       it('Where toField is gold', () => {
-        const board: DashboardV2 = getBoard([
+        const board: Dashboard = getBoard([
           {
             condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
             targetValueType: TargetValueEnum.GOLD,
@@ -338,7 +337,7 @@ fdescribe('DashboardCalculateUtil', () => {
       });
 
       it('Where toField is gold with 0c', () => {
-        const board: DashboardV2 = getBoard([
+        const board: Dashboard = getBoard([
           {
             condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
             targetValueType: TargetValueEnum.GOLD,
@@ -353,9 +352,9 @@ fdescribe('DashboardCalculateUtil', () => {
       });
     });
 
-    describe('Item rules', () => {
+    describe('ItemModel rules', () => {
       it('Only include these items', () => {
-        const board: DashboardV2 = getBoard([], [
+        const board: Dashboard = getBoard([], [
           {
             itemId: 1,
             rules: [{
@@ -375,7 +374,7 @@ fdescribe('DashboardCalculateUtil', () => {
       });
 
       it('With board rules', () => {
-        const board: DashboardV2 = getBoard([], [
+        const board: Dashboard = getBoard([], [
           {
             itemId: 1,
             rules: [{
@@ -405,7 +404,7 @@ fdescribe('DashboardCalculateUtil', () => {
       }
     ];
     it('Can sort ascending', () => {
-      const board: DashboardV2 = getBoard(rules);
+      const board: Dashboard = getBoard(rules);
       board.sortRule = {
         field: 'buyout',
         sortDesc: false
@@ -417,7 +416,7 @@ fdescribe('DashboardCalculateUtil', () => {
     });
 
     it('Can sort descending', () => {
-      const board: DashboardV2 = getBoard(rules);
+      const board: Dashboard = getBoard(rules);
       board.sortRule = {
         field: 'buyout',
         sortDesc: true
@@ -431,7 +430,7 @@ fdescribe('DashboardCalculateUtil', () => {
 
   describe('Can do math on fields', () => {
     it('Can add', () => {
-      const board: DashboardV2 = getBoard([
+      const board: Dashboard = getBoard([
         {
           condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
           targetValueType: TargetValueEnum.GOLD,
@@ -454,7 +453,7 @@ fdescribe('DashboardCalculateUtil', () => {
     });
 
     it('Can divide', () => {
-      const board: DashboardV2 = getBoard([{
+      const board: Dashboard = getBoard([{
         condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
         targetValueType: TargetValueEnum.PERCENT,
         field: columnConfig.recipe.knownROIPercent.key,
@@ -471,7 +470,7 @@ fdescribe('DashboardCalculateUtil', () => {
     });
 
     it('Can subtract', () => {
-      const board: DashboardV2 = getBoard([
+      const board: Dashboard = getBoard([
         {
           condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
           targetValueType: TargetValueEnum.GOLD,
@@ -512,7 +511,7 @@ fdescribe('DashboardCalculateUtil', () => {
 
   describe('Can loop over array fields', () => {
     it('Left side', () => {
-      const board: DashboardV2 = getBoard([
+      const board: Dashboard = getBoard([
         {
           condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
           targetValueType: TargetValueEnum.NUMBER,
@@ -536,7 +535,7 @@ fdescribe('DashboardCalculateUtil', () => {
     });
 
     it('Right side', () => {
-      const board: DashboardV2 = getBoard([
+      const board: Dashboard = getBoard([
         {
           condition: ConditionEnum.EQUAL_TO,
           targetValueType: TargetValueEnum.NUMBER,
@@ -563,7 +562,7 @@ fdescribe('DashboardCalculateUtil', () => {
   xdescribe('Can combine item and recipe name', () => {
     it('Should not combine transmutes', () => {
       // TODO: Remember take non english locales into consideration
-      const board: DashboardV2 = getBoard([
+      const board: Dashboard = getBoard([
         {
           condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
           targetValueType: TargetValueEnum.NUMBER,
@@ -590,7 +589,7 @@ fdescribe('DashboardCalculateUtil', () => {
     });
 
     it('Should combine bonus id items', () => {
-      const board: DashboardV2 = getBoard([
+      const board: Dashboard = getBoard([
         {
           condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
           targetValueType: TargetValueEnum.NUMBER,

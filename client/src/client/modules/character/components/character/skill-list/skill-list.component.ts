@@ -1,8 +1,8 @@
 import {Component, Input, OnChanges, OnDestroy, SimpleChanges} from '@angular/core';
-import {CharacterProfession} from '../../../../../../../../api/src/character/model';
 import {ProfessionService} from '../../../../crafting/services/profession.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {Profession} from '../../../../../../../../api/src/profession/model';
+import {Profession} from '@shared/models';
+import {CharacterProfession} from "@shared/models";
 
 @Component({
   selector: 'wah-skill-list',

@@ -1,4 +1,4 @@
-import {ItemLocale} from '../models/item/item-locale';
+import {ItemLocale} from '../shared/models/';
 import {HttpClientUtil} from './http-client.util';
 import {languages} from '../static-data/language.data';
 import {RDSQueryUtil} from './query.util';

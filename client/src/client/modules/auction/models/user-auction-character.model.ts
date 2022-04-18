@@ -1,5 +1,5 @@
 import {Character} from '../../character/models/character.model';
-import {Auction} from './auction.model';
+import {Auction} from '@shared/models';
 
 export class UserAuctionCharacter {
   realm: string;

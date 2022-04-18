@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ColumnDescription} from '../../models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {faEye} from '@fortawesome/free-solid-svg-icons';
 import {CustomPrices} from '../../../crafting/models/custom-price';

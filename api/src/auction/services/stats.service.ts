@@ -2,26 +2,24 @@ import {S3Handler} from '../../handlers/s3.handler';
 import {DatabaseUtil} from '../../utils/database.util';
 import {EventSchema} from '../../models/s3/event-record.model';
 import {GzipUtil} from '../../utils/gzip.util';
-import {AuctionProcessorUtil} from '../utils/auction-processor.util';
-import {NumberUtil} from '../../../../client/src/client/modules/util/utils/number.util';
+import {AuctionProcessorUtil, AuctionStatsUtil, NumberUtil} from '../../shared/utils';
 import {StatsRepository} from '../repository/stats.repository';
 import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
 import {RealmRepository} from '../../realm/repositories/realm.repository';
 import {RealmService} from '../../realm/service';
-import {AuctionStatsUtil} from '../utils/auction-stats.util';
-import {ItemStats} from '../models/item-stats.model';
 import {DateUtil} from '@ukon1990/js-utilities';
 import {
+  AhStatsRequest,
+  AuctionItemStat,
   ItemDailyPriceEntry,
-  ItemPriceEntry
-} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
+  ItemPriceCompareEntry,
+  ItemPriceEntry,
+  ItemStats
+} from '../../shared/models';
 import {AuctionHouse} from '../../realm/model';
 import {S3} from 'aws-sdk';
 import {LogRepository} from '../../logs/repository';
-import {AhStatsRequest} from '../models/ah-stats-request.model';
 import {RealmLogRepository} from '../../realm/repositories/realm-log.repository';
-import {AuctionItemStat} from '../models/auction-item-stat.model';
-import {ItemPriceCompareEntry} from '../models/item-price-compare-entry.model';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -360,7 +358,7 @@ export class StatsService {
     });
   }
 
-  updateAllRealmDailyData(start: number, end: number, conn = new DatabaseUtil(false), daysAgo = 1): Promise<any> {
+  updateAllRealmDailyData(start: number, end: number, conn = new DatabaseUtil(false), daysAgo = 1): Promise<void> {
     return new Promise((resolve, reject) => {
       const promiseThrottle = new PromiseThrottle({
         requestsPerSecond: 5,
@@ -370,7 +368,7 @@ export class StatsService {
       let processed = 0;
       for (let id = start; id <= end; id++) {// 242
         promises.push(promiseThrottle.add(() =>
-          new Promise((ok) => {
+          new Promise<void>((ok) => {
             this.compileDailyAuctionData(id, conn, this.getYesterday(daysAgo))
               .then(() => {
                 processed++;
@@ -569,7 +567,7 @@ export class StatsService {
    * Limit 1 order by time since asc (to get the oldest first)
    * @deprecated
    */
-  deleteOldPriceHistoryForRealm(conn = new DatabaseUtil(false)): Promise<any> {
+  deleteOldPriceHistoryForRealm(conn = new DatabaseUtil(false)): Promise<void> {
     return new Promise(async (resolve, reject) => {
       const repository = new StatsRepository(conn);
       const [status]: { activeQueries: number }[] = await repository.getActiveQueries()
@@ -713,7 +711,7 @@ export class StatsService {
 
     return new Promise((resolve, reject) => {
       Promise.all([
-        new Promise((success, fail) => {
+        new Promise<void>((success, fail) => {
           repo.getRealmPriceHistoryDailyPastDays(house.id, 8)
             .then(rows => {
               const downloadAndQueryTime = +new Date() - start;
@@ -727,7 +725,7 @@ export class StatsService {
               fail(error);
             });
         }),
-        new Promise((success, fail) => {
+        new Promise<void>((success, fail) => {
           repo.getAllStatsForRealmDate(house)
             .then(rows => {
               hourlyData = AuctionProcessorUtil.processHourlyPriceData(rows);
@@ -831,7 +829,7 @@ export class StatsService {
 
           Promise.all(
             Object.keys(results)
-              .map(ahTypeId => new Promise((success, failed) => {
+              .map(ahTypeId => new Promise<void>((success, failed) => {
                 if (results[ahTypeId].length) {
                   new S3Handler().save({
                     lastModified: +new Date(),

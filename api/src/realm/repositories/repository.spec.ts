@@ -1,10 +1,15 @@
 import {RealmRepository} from './realm.repository';
-import {RealmStatus} from '../../../../client/src/client/models/realm-status.model';
+import {RealmStatus} from '@shared/models';
 import {AuctionHouse} from '../model';
 import {RealmService} from '../service';
 import {BaseRepository} from '../../repository/base.repository';
-import { User } from '../../../../client/src/client/models/user/user';
 
+// import {User} from '../../../../client/src/client/models/user/user';
+interface User {
+  id?: number;
+  region: string;
+  realm: string;
+}
 interface DBUser extends User {
   lastModified: number;
 }

@@ -1,18 +1,12 @@
-import {APIGatewayEvent, Callback} from 'aws-lambda';
 import {DatabaseUtil} from '../utils/database.util';
 import {ItemQuery} from '../queries/item.query';
-import {Response} from '../utils/response.util';
 import {WoWDBItem} from '../models/item/wowdb';
 import {ItemUtil} from '../utils/item.util';
 import {WoWHeadUtil} from '../utils/wowhead.util';
 import {LocaleUtil} from '../utils/locale.util';
-import {WoWHead} from '../models/item/wowhead';
-import {Item} from '../../../client/src/client/models/item/item';
+import {Item, WoWHead} from '../shared/models';
 import {QueryIntegrity} from '../queries/integrity.query';
 import {RDSQueryUtil} from '../utils/query.util';
-import {NpcHandler} from './npc.handler';
-import {AuctionProcessorUtil} from '../auction/utils/auction-processor.util';
-import {AuctionItemStat} from '../auction/models/auction-item-stat.model';
 
 export class ItemHandler {
   constructor(
@@ -83,7 +77,7 @@ export class ItemHandler {
         this.table,
         this.localeTable
       );
-      console.log('Item fetch', sql);
+      console.log('ItemModel fetch', sql);
       conn.query(sql)
         .then((rows: any[]) => {
           const ts = rows[0] ? rows[0].timestamp : new Date().toJSON();

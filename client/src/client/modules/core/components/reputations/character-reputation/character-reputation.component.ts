@@ -1,7 +1,7 @@
 import {AfterContentInit, Component, Input, OnDestroy} from '@angular/core';
 import {Character} from '../../../../character/models/character.model';
 import {ReputationVendorsData} from '../../../../../data/reputation/reputations-list.data';
-import {ColumnDescription} from '../../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {SharedService} from '../../../../../services/shared.service';
 import {Recipe} from '../../../../crafting/models/recipe';
 import {ErrorOptions, ErrorReport} from '../../../../../utils/error-report.util';
@@ -10,12 +10,12 @@ import {CraftingService} from '../../../../../services/crafting.service';
 import {Report} from '../../../../../utils/report.util';
 import {UserUtil} from 'client/utils/user/user.util';
 import {AuctionsService} from '../../../../../services/auctions.service';
-import {CharacterProfession} from '../../../../../../../../api/src/character/model';
-import {Profession} from '../../../../../../../../api/src/profession/model';
+import {Profession} from '@shared/models';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ProfessionService} from '../../../../crafting/services/profession.service';
 import {ReputationVendor} from '../../../../../models/reputation.model';
 import {BackgroundDownloadService} from '../../../services/background-download.service';
+import {CharacterProfession} from "@shared/models";
 
 @Component({
   selector: 'wah-character-reputation',

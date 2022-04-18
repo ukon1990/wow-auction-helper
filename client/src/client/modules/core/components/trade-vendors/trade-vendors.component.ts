@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {TradeVendor, TradeVendorItem} from '../../../../models/item/trade-vendor';
-import {ColumnDescription} from '../../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 import {SharedService} from '../../../../services/shared.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {Filters} from '../../../../utils/filtering';
@@ -14,7 +14,7 @@ import {ErrorReport} from '../../../../utils/error-report.util';
 import {PageEvent} from '@angular/material/paginator';
 import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 import {ItemService} from '../../../../services/item.service';
-import { Item } from '../../../../models/item/item';
+import { Item } from '@shared/models';
 
 @Component({
   selector: 'wah-trade-vendors',

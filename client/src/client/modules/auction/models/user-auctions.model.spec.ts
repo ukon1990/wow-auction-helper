@@ -1,6 +1,6 @@
 import {UserAuctions} from './user-auctions.model';
 import {Character} from '../../character/models/character.model';
-import {Auction} from './auction.model';
+import {Auction} from '@shared/models';
 import {AuctionItem} from './auction-item.model';
 
 describe('UserAuctions', () => {

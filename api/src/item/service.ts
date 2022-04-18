@@ -1,8 +1,7 @@
 import {RDSItemRepository} from './repository';
 import {DatabaseUtil} from '../utils/database.util';
 import {BLIZZARD, isOffline} from '../secrets';
-import {ItemHandler} from '../handlers/item.handler';
-import {Item} from '../../../client/src/client/models/item/item';
+import {Item} from '../shared/models';
 import {ItemQuery} from '../queries/item.query';
 import {ItemUtil} from '../utils/item.util';
 import {QueryIntegrity} from '../queries/integrity.query';
@@ -181,7 +180,7 @@ export class ItemServiceV2 {
   getAllRelevant(timestamp: Date, locale: string, conn: DatabaseUtil) {
     return new Promise((resolve, reject) => {
       const sql = ItemQuery.getAllItemsAfterAndOrderByTimestamp(locale, timestamp);
-      console.log('Item fetch', sql);
+      console.log('ItemModel fetch', sql);
       conn.query(sql)
         .then((rows: any[]) => {
           const ts = rows[0] ? rows[0].timestamp : new Date().toJSON();

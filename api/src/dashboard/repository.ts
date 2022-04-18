@@ -1,24 +1,24 @@
 import {BaseRepository} from '../repository/base.repository';
-import {DashboardV2} from '../../../client/src/client/modules/dashboard/models/dashboard-v2.model';
+import {Dashboard} from '@shared/models';
 
-export class DashboardRepository extends BaseRepository<DashboardV2> {
+export class DashboardRepository extends BaseRepository<Dashboard> {
   constructor() {
     super('wah_dashboards');
   }
 
-  add(data: DashboardV2): Promise<DashboardV2> {
+  add(data: Dashboard): Promise<Dashboard> {
     return Promise.resolve(undefined);
   }
 
-  getAllAfterTimestamp(timestamp: number): Promise<DashboardV2[]> {
+  getAllAfterTimestamp(timestamp: number): Promise<Dashboard[]> {
     return Promise.resolve([]);
   }
 
-  getById(id: string | number): Promise<DashboardV2> {
+  getById(id: string | number): Promise<Dashboard> {
     return this.getOne(id);
   }
 
-  getAll(): Promise<DashboardV2[]> {
+  getAll(): Promise<Dashboard[]> {
     return this.scan({
       TableName: this.table,
       ProjectionExpression: 'id, title, description, tags, createdBy, lastModified',

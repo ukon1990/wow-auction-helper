@@ -3,11 +3,7 @@ import {ProspectingAndMillingUtil} from '../prospect-milling.util';
 import {CustomPrices} from '../../modules/crafting/models/custom-price';
 import {CustomProcUtil} from '../../modules/crafting/utils/custom-proc.util';
 import {NotificationSettings} from '../../models/user/notification';
-import {Character} from '../../modules/character/models/character.model';
-import {CharacterProfession} from '../../../../../api/src/character/model';
 import {User} from '../../models/user/user';
-import {Recipe} from '../../modules/crafting/models/recipe';
-import {CraftingService} from '../../services/crafting.service';
 
 export class UserUtil {
   /**

@@ -1,8 +1,7 @@
-import {Item} from '../../../client/src/client/models/item/item';
+import {Item, ItemGameData} from '../shared/models';
 import {AuthHandler} from '../handlers/auth.handler';
 import {HttpClientUtil} from './http-client.util';
 import {Endpoints} from './endpoints.util';
-import {ItemGameData} from '../models/item/item-game-data.model';
 import {WoWDBItem} from '../models/item/wowdb';
 import {GameMediaUtil} from './game-media.util';
 import {WoWHeadUtil} from './wowhead.util';
@@ -112,4 +111,3 @@ export class ItemUtil {
     });
   }
 }
-

@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {BaseComponent} from '../base.component';
-import {Profession} from '../../../../../../../../api/src/profession/model';
+import {Profession} from '@shared/models';
 import {Recipe} from '../../../../crafting/models/recipe';
 import {CraftingService} from '../../../../../services/crafting.service';
 import {SharedService} from '../../../../../services/shared.service';
@@ -9,10 +9,8 @@ import {Report} from '../../../../../utils/report.util';
 import {AuctionPet} from '../../../../auction/models/auction-pet.model';
 import {TableUtil} from '../../../utils/table.util';
 import {AuctionsService} from '../../../../../services/auctions.service';
-import {AuctionItem} from '../../../../auction/models/auction-item.model';
-import {Item} from '../../../../../models/item/item';
+import {Item, Pet} from '@shared/models';
 import {PetsService} from '../../../../../services/pets.service';
-import {Pet} from '../../../../pet/models/pet';
 import {Router} from '@angular/router';
 
 @Component({

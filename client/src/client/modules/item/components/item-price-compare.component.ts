@@ -1,13 +1,13 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {Item} from '../../../models/item/item';
+import {Item} from '@shared/models';
 import {ItemService} from '../../../services/item.service';
 import {RealmService} from '../../../services/realm.service';
-import {SeriesColumnOptions, XAxisOptions, YAxisOptions} from 'highcharts';
+import {SeriesColumnOptions, XAxisOptions} from 'highcharts';
 import {ThemeUtil} from '../../core/utils/theme.util';
-import {ItemPriceCompareEntry} from '../../../../../../api/src/auction/models/item-price-compare-entry.model';
+import {ItemPriceCompareEntry} from '@shared/models';
 import {ErrorReport} from '../../../utils/error-report.util';
-import {ColumnDescription} from '../../table/models/column-description';
+import {ColumnDescription} from '@shared/models';
 
 @Component({
   selector: 'wah-item-price-compare',

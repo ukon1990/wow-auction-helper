@@ -1,4 +1,4 @@
-import {ColumnDescription} from '../models/column-description';
+import {ColumnDescription} from '@shared/models';
 
 export class TableUtil {
   static onInputChange(row, column: ColumnDescription, value): void {

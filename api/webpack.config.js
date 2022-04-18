@@ -14,6 +14,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
   },
+  externals: [],
   output: {
     libraryTarget: 'commonjs',
     path: path.join(__dirname, '.webpack'),

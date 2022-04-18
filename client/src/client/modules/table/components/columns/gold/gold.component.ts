@@ -3,7 +3,7 @@ import {BaseComponent} from '../base.component';
 import {AuctionItem} from '../../../../auction/models/auction-item.model';
 import {AuctionsService} from '../../../../../services/auctions.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {Auction} from '../../../../auction/models/auction.model';
+import {Auction} from '@shared/models';
 
 @Component({
   selector: 'wah-gold',

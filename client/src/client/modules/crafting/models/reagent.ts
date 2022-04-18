@@ -1,5 +1,5 @@
 import {Recipe} from './recipe';
-import {Reagent as APIReagent} from '../../../../../../api/src/recipe/model';
+import {APIReagent} from '@shared/models';
 
 export interface ReagentSource {
   id?: number;

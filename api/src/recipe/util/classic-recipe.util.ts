@@ -1,18 +1,7 @@
-/*
-import {Recipe} from '../models/crafting/recipe';
-import {Reagent} from '../models/crafting/reagent';
-import {HttpClientUtil} from './http-client.util';
-import {WoWHeadUtil} from './wowhead.util';
-import {GameBuild} from '../../../client/src/client/utils/game-build.util';
-import {languages} from '../static-data/language.data';
-import {ItemLocale} from '../models/item/item-locale';
-
- */
-import {Reagent, Recipe} from '../model';
-import {GameBuild} from '../../../../client/src/client/utils/game-build.util';
-import { HttpClientUtil } from '../../utils/http-client.util';
+import {GameBuild} from '@shared/utils';
+import {APIReagent, APIRecipe, ItemLocale} from '@shared/models';
+import {HttpClientUtil} from '../../utils/http-client.util';
 import {WoWHeadUtil} from '../../utils/wowhead.util';
-import {ItemLocale} from '../../models/item/item-locale';
 import {languages} from '../../static-data/language.data';
 import {ProfessionRepository} from '../../profession/repository';
 
@@ -22,7 +11,7 @@ export class ClassicRecipeUtil {
     return realm.replace(/[']/g, '').replace(/[.*+?^${}()|[\]\\ ]/g, '-').toLowerCase();
   }
 
-  public static convert(wowDB): Recipe {
+  public static convert(wowDB): APIRecipe {
     const basePoints = wowDB.Effects[0].BasePoints;
     return {
       id: wowDB.ID * -1,
@@ -33,10 +22,10 @@ export class ClassicRecipeUtil {
       minCount: basePoints > 0 ? basePoints : 1,
       maxCount: basePoints > 0 ? basePoints : 1,
       reagents: this.convertReagents(wowDB.Reagents)
-    } as Recipe;
+    } as APIRecipe;
   }
 
-  public static convertReagents(reagents: any[]): Reagent[] {
+  public static convertReagents(reagents: any[]): APIReagent[] {
     const r = [];
     reagents.forEach(reagent => {
       r.push({
@@ -47,7 +36,9 @@ export class ClassicRecipeUtil {
     return r;
   }
 
-  static getRecipeListForPatch(patchNumber: number, gameVersion?: string, professions = GameBuild.professionsClassic): Promise<Recipe[]> {
+  static getRecipeListForPatch(
+    patchNumber: number, gameVersion?: string, professions = GameBuild.professionsClassic
+  ): Promise<APIRecipe[]> {
     // gameVersion ? GameBuild.professionsClassic : GameBuild.professions;
     return new Promise<any>(async (resolve, reject) => {
       const professionRepository = new ProfessionRepository();
@@ -77,8 +68,8 @@ export class ClassicRecipeUtil {
     profession: string,
     gameVersion?: string,
     professionToIdMap?: { [key: string]: number }
-  ): Promise<Recipe[]> {
-    return new Promise<Recipe[]>((resolve, reject) => {
+  ): Promise<APIRecipe[]> {
+    return new Promise<APIRecipe[]>((resolve, reject) => {
       const urlName = this.getUrlName(this.slugifyString(profession), gameVersion);
       const url = profession === 'None' ? 'https://tbc.wowhead.com/spells?filter=20:25;1:3;0:0#50' : this.getUrl(urlName);
       new HttpClientUtil().get(url, false)
@@ -117,7 +108,7 @@ export class ClassicRecipeUtil {
   }
 
   private static async mapResultToRecipe(list, professionId: number, gameVersion?: string) {
-    const recipes: Recipe[] = [];
+    const recipes: APIRecipe[] = [];
     for (const recipe of list) {
       const {id, creates, name, reagents} = recipe;
       await this.setRankAndNameForRecipe(id, recipe);
@@ -137,7 +128,7 @@ export class ClassicRecipeUtil {
           id: +reagent[0],
           quantity: +reagent[1]
         }))
-      } as Recipe);
+      } as APIRecipe);
       console.log(recipes[recipes.length - 1]);
     }
     return recipes;
@@ -151,8 +142,8 @@ export class ClassicRecipeUtil {
     return recipe;
   }
 
-  private static async getRecipeTooltip(id, language, recipe) {
-    await new Promise<number>((resolve, reject) => {
+  private static async getRecipeTooltip(id, language, recipe): Promise<void> {
+    await new Promise<void>((resolve, reject) => {
       new HttpClientUtil().get(
         `https://tbc.wowhead.com/tooltip/spell/${id}?locale=${language.key}`)
         .then(({body}) => {
