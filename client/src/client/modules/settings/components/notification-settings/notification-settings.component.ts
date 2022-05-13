@@ -1,11 +1,9 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {FormControl} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {SharedService} from '../../../../services/shared.service';
-import {User} from '../../../../models/user/user';
-import {Notifications} from '../../../../models/user/notification';
+import {Notifications, NotificationSettings} from '../../../../models/user/notification';
 import {TextUtil} from '@ukon1990/js-utilities';
-import {Report} from '../../../../utils/report.util';
 import {UserUtil} from '../../../../utils/user/user.util';
 
 @Component({
@@ -19,7 +17,8 @@ export class NotificationSettingsComponent implements OnInit, OnDestroy {
   formChanges: Subscription;
 
   constructor() {
-    const notifications = SharedService.user.notifications.getString();
+    console.log('SharedService.user.notifications', SharedService.user.notifications);
+    const notifications = SharedService.user?.notifications?.getString() || 'disableNotifications';
 
     this.notificationsForm = new FormControl(notifications);
   }
@@ -27,6 +26,9 @@ export class NotificationSettingsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.formChanges = this.notificationsForm.valueChanges
       .subscribe((change) => {
+        if (!SharedService.user.notifications) {
+          SharedService.user.notifications = new NotificationSettings();
+        }
         SharedService.user.notifications.setString(change);
         UserUtil.save();
       });

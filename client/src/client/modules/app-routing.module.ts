@@ -21,7 +21,6 @@ import {SettingsComponent} from './settings/components/settings.component';
 import {GeneralSettingsComponent} from './settings/components/general-settings/general-settings.component';
 import {CraftingSettingsComponent} from './settings/components/crafting-settings/crafting-settings.component';
 import {CharactersComponent} from './character/components/characters.component';
-import {NotificationSettingsComponent} from './settings/components/notification-settings/notification-settings.component';
 import {AddNpcsComponent} from './admin/components/add-npcs/add-npcs.component';
 import {DetailsComponent as NpcDetailsComponent} from './npc/components/details/details.component';
 import {ListComponent as NpcListComponent} from './npc/components/list/list.component';
@@ -149,9 +148,10 @@ const SETTINGS_ROUTE: TitledRoute = {
     {
       title: 'Characters', path: 'characters', component: CharactersComponent
     },
-    {
+    /*{
       title: 'Notifications', path: 'notifications', component: NotificationSettingsComponent
-    }]
+    }*/
+  ]
 };
 
 const ADMIN_ROUTE: TitledRoute = {
