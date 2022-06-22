@@ -10,7 +10,8 @@ exports.getAll = (event: APIGatewayEvent, context: Context, callback: Callback) 
     .catch(error => Response.error(callback, error));
 };
 
-exports.save = (event: APIGatewayEvent, context: Context, callback: Callback) => {  const token = AuthorizationUtil.isValidToken(event);
+exports.save = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  const token = AuthorizationUtil.isValidToken(event);
   if (!token) {
     Response.error(callback, {code: 401, message: 'Not authorized'}, event, 401);
   } else {
@@ -28,7 +29,8 @@ exports.copy = (event: APIGatewayEvent, context: Context, callback: Callback) =>
     .catch(error => Response.error(callback, error));
 };
 
-exports.delete = (event: APIGatewayEvent, context: Context, callback: Callback) => {  const token = AuthorizationUtil.isValidToken(event);
+exports.delete = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  const token = AuthorizationUtil.isValidToken(event);
   if (!token) {
     Response.error(callback, {code: 401, message: 'Not authorized'}, event, 401);
   } else {

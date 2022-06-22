@@ -4,8 +4,9 @@ import {Response} from '../utils/response.util';
 
 exports.findMissingItemsAndImport = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   const clientId = event['clientId'],
-    clientSecret = event['clientSecret'];
-  new ItemServiceV2().findMissingItemsAndImport(clientId, clientSecret)
+    clientSecret = event['clientSecret'],
+    isClassic = event['isClassic'] || false;
+  new ItemServiceV2(isClassic).findMissingItemsAndImport(clientId, clientSecret)
     .then(() => Response.send({}, callback))
     .catch(error => Response.error(callback, error, event, 500));
 };
