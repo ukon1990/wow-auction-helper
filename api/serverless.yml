@@ -19,6 +19,13 @@ provider:
     lambda: true
 
 functions:
+  syncS3WithTheDatabase:
+    tags:
+      Function: Wah-syncS3WithTheDatabase
+      Project: WAH
+    handler: src/updates/controller.syncS3WithTheDatabase
+    memorySize: 1024
+    timeout: 600
   auctionUpdateLogForRealm:
     tags:
       Function: Wah-auctionUpdateLogForRealm
