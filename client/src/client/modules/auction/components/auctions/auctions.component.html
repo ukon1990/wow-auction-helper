@@ -2,13 +2,13 @@
   <div class="row">
 
     <mat-form-field class="col">
-      <input matInput placeholder="ItemModel name" formControlName="name">
+      <input matInput placeholder="Item name" formControlName="name">
     </mat-form-field>
     <mat-form-field class="col"
                     color="accent"
     >
       <mat-select [disableOptionCentering]="true"
-                  placeholder="ItemModel class"
+                  placeholder="Item class"
                   formControlName="itemClass">
         <mat-option [value]="-1">
           All
@@ -24,7 +24,7 @@
                     class="col"
                     color="accent"
     >
-      <mat-select [disableOptionCentering]="true" placeholder="ItemModel sub class" formControlName="itemSubClass">
+      <mat-select [disableOptionCentering]="true" placeholder="Item sub class" formControlName="itemSubClass">
         <mat-option [value]="-1">
           All
         </mat-option>
