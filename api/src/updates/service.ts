@@ -26,31 +26,26 @@ export class UpdatesService {
     return list;
   }
 
-  static init(): Promise<void> {
+  static syncS3WithTheDatabase(): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
-      if (process.env.IS_OFFLINE || process.env.IS_LOCAL) {
-        await Promise.all([
-          this.getAndSetNpc(),
-          this.getAndSetZones(),
-          this.getAndSetRecipes(),
-          this.getAndSetItems(),
-          this.getAndSetPets(),
-          this.getAndSetProfessions()
-        ])
-          .catch((error) => {
-            reject(error);
-          });
-        await this.getAndSetTimestamps()
-          .catch(console.error);
-
-        console.log('DONE!');
-        resolve();
-      } else {
-        reject({
-          status: 401,
-          message: 'You do not have permission to perform this task'
+      await Promise.all([
+        this.getAndSetNpc(),
+        this.getAndSetZones(),
+        this.getAndSetRecipes(),
+        this.getAndSetClassicRecipes(),
+        this.getAndSetItems(),
+        this.getAndSetClassicItems(),
+        this.getAndSetPets(),
+        this.getAndSetProfessions()
+      ])
+        .catch((error) => {
+          reject(error);
         });
-      }
+      await this.getAndSetTimestamps()
+        .catch(console.error);
+
+      console.log('DONE!');
+      resolve();
     });
   }
 

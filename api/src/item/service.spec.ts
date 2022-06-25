@@ -20,7 +20,7 @@ describe('ItemService', () => {
     jest.setTimeout(9999999);
     environment.test = false; // 13302 -> Does not follow the model?
 
-    const service = new ItemServiceV2(false);
+    const service = new ItemServiceV2(true);
     await service.findMissingItemsAndImport()
       .catch(console.error);
 
