@@ -9,6 +9,7 @@ export * from './table';
 export * from './dashboard';
 export * from './pet';
 export * from './currency';
+export * from './message.model';
 // export * from './user';
 
 export * from './timestamps.model';
