@@ -141,3 +141,26 @@ exports.updateNextRealmsDailyPrices = (event: APIGatewayEvent, context: Context,
     .then(result => Response.send(result, callback))
     .catch(error => Response.error(callback, error, undefined, 500));
 };
+
+exports.migrate = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  if (process.env.IS_OFFLINE) {
+    Promise.all([
+      /*
+        UpdatesService.getAndSetRecipes(),
+        UpdatesService.getAndSetClassicRecipes(),
+        UpdatesService.getAndSetItems(),
+        UpdatesService.getAndSetClassicItems(),
+        UpdatesService.getAndSetNpc(),
+        UpdatesService.getAndSetZones(),
+        UpdatesService.getAndSetProfessions(),
+        UpdatesService.getAndSetItemClasses(),
+        UpdatesService.getAndSetTimestamps(),
+      */
+      // new StatsMigrationToolUtil().migrateTables()
+    ])
+      .then(result => Response.send(result, callback))
+      .catch(error => Response.error(callback, error, undefined, 500));
+  } else {
+    Response.error(callback, {message: 'Not authorized'}, undefined, 401);
+  }
+};

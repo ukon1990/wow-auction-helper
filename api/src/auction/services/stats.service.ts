@@ -20,6 +20,7 @@ import {AuctionHouse} from '../../realm/model';
 import {S3} from 'aws-sdk';
 import {LogRepository} from '../../logs/repository';
 import {RealmLogRepository} from '../../realm/repositories/realm-log.repository';
+import {DATABASE_CREDENTIALS} from "../../secrets";
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -181,12 +182,25 @@ export class StatsService {
     return new Promise<void>((resolve, reject) => {
       let completed = 0, total = 0, avgQueryTime;
       const s3 = new S3Handler(),
-        conn = new DatabaseUtil(false);
+        conn = new DatabaseUtil(false),
+        oldConn = new DatabaseUtil(
+          false, false, {
+            database: 'wah',
+            host: 'wah.cmbixekxehi7.eu-west-1.rds.amazonaws.com',
+            user: DATABASE_CREDENTIALS.ADMIN.user,
+            password: DATABASE_CREDENTIALS.ADMIN.password,
+          });
 
-      s3.list('wah-data-eu', 'statistics/inserts/', 180)// default: 50
+      s3.list('wah-data-eu', 'statistics/inserts/hourly/', 180)// default: 50
         .then(async (objects: ListObjectsV2Output) => {
           const files = this.getFilteredAndSortedInsertStatements(objects);
           total = files.length;
+
+          if (total === 0) {
+            console.log('Nothing to process');
+            resolve();
+            return;
+          }
           const isTableLocked = await this.getIsTableLocked(conn, 'itemPriceHistoryPerHour');
 
           if (total > 0 && !isTableLocked) {
@@ -194,11 +208,14 @@ export class StatsService {
             await new RealmService().updateAllRealmStatuses()
               .catch(console.error);
 
-            conn.enqueueHandshake()
+            Promise.all([
+              conn.enqueueHandshake(),
+              oldConn.enqueueHandshake()
+            ])
               .then(async () => {
                 for (const object of files) {
                   const __ret = await this.insertAndDeleteStatsInsertFile(
-                    insertStatsStart, conn, s3, objects, object, completed, avgQueryTime);
+                    insertStatsStart, conn, s3, objects, object, completed, avgQueryTime, oldConn);
 
                   completed = __ret.completed;
                   avgQueryTime = __ret.avgQueryTime;
@@ -207,6 +224,7 @@ export class StatsService {
                   objects.Contents.length
                 }) in ${+new Date() - insertStatsStart} ms with an avg of ${avgQueryTime} ms`);
                 conn.end();
+                oldConn.end();
                 resolve();
               })
               .catch(error => {
@@ -233,9 +251,14 @@ export class StatsService {
   }
 
   private async insertAndDeleteStatsInsertFile(
-    insertStatsStart: number, conn: DatabaseUtil,
-    s3: S3Handler, objects: S3.ListObjectsV2Output, object: S3.Object,
-    completed: number, avgQueryTime
+    insertStatsStart: number,
+    conn: DatabaseUtil,
+    s3: S3Handler,
+    objects: S3.ListObjectsV2Output,
+    object: S3.Object,
+    completed: number,
+    avgQueryTime,
+    oldConn: DatabaseUtil, // TODO: Remove
   ) {
     if ((+new Date() - insertStatsStart) / 1000 < 50) {
       const [status]: { activeQueries: number }[] = await new StatsRepository(conn).getActiveQueries()
@@ -246,7 +269,10 @@ export class StatsService {
           .then(async (query: string) => {
             if (query) {
               const insertStart = +new Date();
-              await conn.query(query)
+              await Promise.all([
+                conn.query(query),
+                oldConn.query(query),
+              ])
                 .then(async () => {
                   const [region, ahId] = object.Key.split('/')[2].split('-');
                   await Promise.all([
@@ -254,7 +280,9 @@ export class StatsService {
                       .catch(console.error),
                     this.realmRepository.updateEntry(+ahId, {
                       lastStatsInsert: +new Date(),
-                    }).catch(console.error)
+                    }).catch(dynamoError => {
+                      console.error('Error for', {ahId, file: object.Key}, dynamoError);
+                    })
                   ])
                     .catch(console.error);
                   completed++;
@@ -284,17 +312,7 @@ export class StatsService {
           return +timestamp;
         };
         return getTimestamp(b) - getTimestamp(a);
-      }); /* TODO: Put back if splitting into smaller chunks did not help
-      .filter(file => {
-        const [_, ahId, timestamp] = file.Key.split('/')[2].split('-');
-        const date = new Date(timestamp);
-        const id = `${ahId}-${date.getUTCDate()}-${date.getUTCMonth()}-${date.getUTCFullYear()}`;
-        if (!realmMap.has(id)) {
-          realmMap.set(id, file);
-          return true;
-        }
-        return false;
-      });*/
+      });
   }
 
   private async getIsTableLocked(conn: DatabaseUtil, tableName: string) {
@@ -337,7 +355,7 @@ export class StatsService {
                   queries.map((query, index) =>
                     s3.save(
                       query,
-                      `statistics/inserts/${region}-${ahId}-${ahTypeId}-${fileName}-part-${index}.sql.gz`,
+                      `statistics/inserts/hourly/${region}-${ahId}-${ahTypeId}-${fileName}-part-${index}.sql.gz`,
                       {region: 'eu'}
                     ))
                 )
@@ -419,10 +437,10 @@ export class StatsService {
           console.log('Preparing to process: ', this.getYesterday());
           this.realmRepository.getRealmsThatNeedsDailyPriceUpdate()
             .then(async realms => {
-              for (const {id} of realms.slice(0, 4)) {
+              for (const {id, region} of realms.slice(0, 4)) {
                 if (DateUtil.timeSince(startTime, 's') < 40) {
                   const queryStart = +new Date();
-                  await this.compileDailyAuctionData(id, conn, this.getYesterday(1))
+                  await this.compileDailyAuctionData(id, conn, this.getYesterday(1), region)
                     .then(() => {
                       this.realmRepository.updateEntry(id, {
                         lastDailyPriceUpdate: +new Date(),
@@ -477,10 +495,10 @@ export class StatsService {
               const max = 38; // 260 er den høyeste id'n
               const filteredAndSorted = realms.sort((a, b) => b.id - a.id);
               // .filter(entry => entry.id >= max - 40 && entry.id < max);
-              for (const {id} of filteredAndSorted) {
+              for (const {id, region} of filteredAndSorted) {
                 if (!hasHadError) {
                   const queryStart = +new Date();
-                  await this.compileDailyAuctionData(id, conn, this.getYesterday(daysAgo))
+                  await this.compileDailyAuctionData(id, conn, this.getYesterday(daysAgo), region)
                     .then(() => {
                       completed++;
                       console.log(`Done with ${id} in ${+new Date() - queryStart} ms - ${
@@ -516,8 +534,9 @@ export class StatsService {
     });
   }
 
-  compileDailyAuctionData(id: number, conn = new DatabaseUtil(false), date = this.getYesterday()): Promise<void> {
+  compileDailyAuctionData(id: number, conn = new DatabaseUtil(false), date = this.getYesterday(), region: string = 'eu'): Promise<void> {
     console.log('Updating daily price data');
+    const s3 = new S3Handler();
     const dayOfMonth = AuctionProcessorUtil.getDateNumber(date.getUTCDate());
     return new Promise<void>((resolve, reject) => {
       new StatsRepository(conn).getHourlyStatsForRealmAtDate(id, date, dayOfMonth)
@@ -539,8 +558,18 @@ export class StatsService {
           const repo = new StatsRepository(conn);
           const promises = [];
           ahListMap.forEach(ahList => {
-            AuctionProcessorUtil.splitEntries(ahList).map(entries =>
-              repo.multiInsertOrUpdateDailyPrices(entries, dayOfMonth));
+            AuctionProcessorUtil.splitEntries(ahList)
+              .forEach((entries, index) => {
+                const first: AuctionItemStat = ahList[0];
+                const ahTypeId = first ? first.ahTypeId : '';
+                const query = repo.multiInsertOrUpdateDailyPrices(entries, dayOfMonth);
+                const timestamp = new Date().toJSON().replace(/[:]/gi, '_');
+                promises.push(s3.save(
+                  query,
+                  `statistics/inserts/daily/${region}-${id}-${ahTypeId || '0'}-${timestamp}-part-${index}.sql.gz`,
+                  {region: 'eu'}
+                ));
+              });
           });
           Promise.all(promises)
             .then(() => {

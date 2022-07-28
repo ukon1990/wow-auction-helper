@@ -9,9 +9,16 @@ export abstract class BaseRepository<T> {
   protected client: DocumentClient;
 
   protected constructor(protected table: string) {
+    const isOffline = process.env.IS_OFFLINE;
+    const defaultRegion = 'eu-west-1';
+    const region = isOffline || !process.env.AWS_REGION ? defaultRegion : process.env.AWS_REGION; // environment.region;
     AWS.config.update({
-      region: process.env.AWS_REGION || 'eu-west-1', // environment.region
+      region
     });
+
+    if (isOffline) {
+      console.log('Region: ', region, 'Table:', table);
+    }
     this.client = new DocumentClient();
   }
 
