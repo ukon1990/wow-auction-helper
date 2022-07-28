@@ -1,6 +1,6 @@
 import * as mysql from 'mysql';
-import {DATABASE_CREDENTIALS} from '../secrets';
 import {Connection, MysqlError} from 'mysql';
+import {DATABASE_CREDENTIALS} from '../secrets';
 import {environment} from '../../../client/src/environments/environment';
 
 interface Credentials {
@@ -14,12 +14,13 @@ interface Credentials {
 export class DatabaseUtil {
   private readonly connection: Connection;
   private isConnectionActive = false;
+  private credentials: Credentials;
 
   constructor(private autoTerminate: boolean = true, isReadOnly = false, credentialsOverride?: Connection) {
-    const credentials: Credentials = credentialsOverride ||
+    this.credentials = credentialsOverride ||
       (isReadOnly ? DATABASE_CREDENTIALS.READ : DATABASE_CREDENTIALS.ADMIN);
     if (!environment.test) {
-      this.connection = mysql.createConnection(credentials);
+      this.connection = mysql.createConnection(this.credentials);
     }
   }
 
@@ -90,6 +91,9 @@ export class DatabaseUtil {
   private connect(connection: Connection = this.connection): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       connection.connect((error) => {
+        if (process.env.IS_OFFLINE) {
+          console.log('Credentials:', this.credentials);
+        }
         if (error) {
           this.isConnectionActive = false;
           const msg = 'Could not connect to the database';

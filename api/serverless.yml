@@ -14,9 +14,9 @@ provider:
   versionFunctions: false
   #tags:
     #Project: WAH
-  tracing:
-    apiGateway: true
-    lambda: true
+  #tracing:
+    #apiGateway: true
+    #lambda: true
 
 functions:
   syncS3WithTheDatabase:

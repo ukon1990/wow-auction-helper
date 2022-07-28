@@ -78,18 +78,18 @@ export class StatsRepository {
                                     AuctionProcessorUtil.getDateNumber(date.getUTCMonth() + 1)}-${dayOfMonth}'`);
   }
 
-  multiInsertOrUpdateDailyPrices(list: AuctionItemStat[], day: string): Promise<any> {
+  multiInsertOrUpdateDailyPrices(list: AuctionItemStat[], day: string): string {
     const insert = new RDSQueryUtil('itemPriceHistoryPerDay')
       .multiInsert(list)
       .replace(';', '');
-    return this.conn.query(`${insert} ON DUPLICATE KEY UPDATE
+    return `${insert} ON DUPLICATE KEY UPDATE
       min${day} = VALUES(min${day}),
       minHour${day} = VALUES(minHour${day}),
       avg${day} = VALUES(avg${day}),
       max${day} = VALUES(max${day}),
       minQuantity${day} = VALUES(minQuantity${day}),
       avgQuantity${day} = VALUES(avgQuantity${day}),
-      maxQuantity${day} = VALUES(maxQuantity${day});`);
+      maxQuantity${day} = VALUES(maxQuantity${day});`;
   }
 
   getPriceHistoryHourly(items: AhStatsRequest[]): any {
