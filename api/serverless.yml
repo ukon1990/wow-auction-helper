@@ -154,6 +154,18 @@ functions:
           path: item/history
           cors:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
+  migrate:
+    tags:
+      Function: Wah-item-history
+      Project: WAH
+    handler: src/auction/controller.migrate
+    memorySize: 256
+    events:
+      - http:
+          method: get
+          path: migrate
+          cors:
+            origin: 'http://localhost:4200'
   getComparablePricesFor:
     tags:
       Function: Wah-item-getComparablePricesFor

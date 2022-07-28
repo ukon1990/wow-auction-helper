@@ -3,52 +3,44 @@ export class UpdatesRepository {
     return `
         SELECT *
         FROM (
-                 SELECT timestamp as recipes
+                 SELECT MAX(timestamp) as recipes
                  FROM recipes
                  ORDER BY timestamp DESC
-                 LIMIT 1
              ) recipes,
              (
-                 SELECT timestamp as recipesClassic
+                 SELECT MAX(timestamp) as recipesClassic
                  FROM recipesClassic
                  ORDER BY timestamp DESC
-                 LIMIT 1
              ) recipesClassic,
              (
-                 SELECT timestamp as items
+                 SELECT MAX(timestamp) as items
                  FROM items
                  ORDER BY timestamp DESC
-                 LIMIT 1
              ) items,
              (
-                 SELECT timestamp as itemsClassic
+                 SELECT MAX(timestamp) as itemsClassic
                  FROM itemsClassic
                  ORDER BY timestamp DESC
-                 LIMIT 1
              ) itemsClassic,
              (
-                 SELECT timestamp as npcs
+                 SELECT MAX(timestamp) as npcs
                  FROM npc
                  ORDER BY timestamp DESC
-                 LIMIT 1
              ) npcs,
              (
-                 SELECT timestamp as pets
+                 SELECT MAX(timestamp) as pets
                  FROM pets
                  ORDER BY timestamp DESC
-                 LIMIT 1
              ) pets,
              (
-                 SELECT timestamp as zones
+                 SELECT MAX(timestamp) as zones
                  FROM zone
                  ORDER BY timestamp DESC
-                 LIMIT 1
              ) zones,
              (
-                 SELECT timestamp as professions
+                 SELECT MAX(timestamp) as professions
                  FROM professions
                  ORDER BY timestamp DESC
-                 LIMIT 1
              ) professions;`;
   }
 }

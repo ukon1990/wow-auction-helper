@@ -5,6 +5,15 @@ import {RDSQueryUtil} from '../../utils/query.util';
 import {RealmRepository} from '../../realm/repositories/realm.repository';
 import {DATABASE_CREDENTIALS} from '../../secrets';
 
+
+class Migrate {
+  constructor(
+    public table: string,
+    public querySuffix: string = '',
+    public multiInsert: boolean = true,
+  ) {
+  }
+}
 /**
  * This file is basically used as a script to import data from the local DB to the one in AWS.
  */
@@ -80,10 +89,7 @@ export class StatsMigrationToolUtil {
 
   migrate(ahId: number, year: number, month: number, day: number): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      Promise.all([
-        this.source.enqueueHandshake(),
-        this.target.enqueueHandshake()
-      ])
+      this.enqueueHandshakes()
         .then(() => {
           this.getAllForRealmAndDate(ahId, year, month, day)
           // this.getAllForRealmAndMonth(ahId, year, month)
@@ -96,6 +102,117 @@ export class StatsMigrationToolUtil {
         })
         .catch(reject);
     });
+  }
+
+  migrateTables(tables: Migrate[] = [
+    /*
+    new Migrate('professions'),
+    new Migrate('professionsDescription'),
+    new Migrate('professionsName'),
+    new Migrate('professionSkillTiers'),
+    new Migrate('professionSkillTiersName'),
+
+    new Migrate('recipes'),
+    new Migrate('recipesName'),
+    new Migrate('recipesClassic'),
+    new Migrate('recipesClassicName'),
+    new Migrate('recipesBonusId'),
+    new Migrate('recipesDescription'),
+    new Migrate('recipesModifiedCraftingSlot'),
+    new Migrate('reagents'),
+    new Migrate('reagentsClassic'),
+
+    new Migrate('pets'),
+    new Migrate(`pet_name_locale`),
+
+    new Migrate('npc'),
+    new Migrate(`npcCoordinates`),
+    new Migrate(`npcDrops`),
+    new Migrate(`npcName`),
+    new Migrate(`npcSells`),
+    new Migrate(`npcSkins`),
+    new Migrate(`npcTag`),
+
+    new Migrate('itemsClassic', 'order by id desc', false),
+    new Migrate('itemClassic_name_locale')
+     */
+    new Migrate('items', 'order by id desc', false),
+    new Migrate('item_name_locale'),
+  ]): Promise<any[]> {
+    return new Promise<any[]>((resolve) => {
+      if (process.env.IS_OFFLINE) {
+        this.enqueueHandshakes()
+          .then(async () => {
+            let rowsToInsert = [];
+            const queries = [];
+            for (const {table, querySuffix, multiInsert} of tables) {
+              console.log('Starting to process', table);
+              const util = new RDSQueryUtil(table, false);
+              const existingIds = [];
+              let hasHadError = false;
+
+              await this.target.query(`select id from ${table}`)
+                .then(ids => ids.forEach(({id}) => existingIds.push(id)));
+              const notExistsIn = existingIds.length ? ` where id not in (${existingIds.join(',')})` : '';
+              const querySuffixHasWhere = (querySuffix || '').indexOf('where ') > -1;
+              const where = querySuffixHasWhere ? querySuffix : notExistsIn;
+              await this.source.query(`
+                    select *
+                    from ${table}
+                    ${where} ${querySuffixHasWhere ? '' : querySuffix}
+              `)
+                .then(rows => {
+                  rowsToInsert = rows;
+                  console.log('Rows to insert: ', rows.length);
+                })
+                .catch(error => {
+                  console.log('Could not get data:', error);
+                });
+              let count = 0;
+              for (const part of AuctionProcessorUtil.splitEntries(rowsToInsert)) {
+                if (multiInsert) {
+                  const query = util.multiInsertOrUpdate(part, false);
+                  queries.push(query);
+                  await this.target.query(query)
+                    .catch(error => {
+                      console.error('Could not insert', error);
+                      hasHadError = true;
+                    });
+                } else {
+                  for (const row of part) {
+                    if (!hasHadError) {
+                      count++;
+                      console.log(`Progress: ${
+                        Math.round((count / rowsToInsert.length) * 100)}% (${
+                        count} of ${rowsToInsert.length}) - ${table}`);
+                      const query = util.insertOrUpdate(row, false);
+                      queries.push(query);
+                      await this.target.query(query)
+                        .catch(error => {
+                          console.error('Could not insert', query, error);
+                          hasHadError = true;
+                        });
+                    }
+                  }
+                }
+              }
+            }
+
+            this.source.end();
+            this.target.end();
+            resolve(queries);
+          });
+      } else {
+        resolve([]);
+      }
+    });
+  }
+
+  private enqueueHandshakes() {
+    return Promise.all([
+      this.source.enqueueHandshake(),
+      this.target.enqueueHandshake()
+    ]);
   }
 
   async performMigrationForAllRealms() {
