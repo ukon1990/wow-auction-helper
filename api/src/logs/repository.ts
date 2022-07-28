@@ -11,21 +11,20 @@ export class LogRepository {
     );`;
 
   static showOpenTables = `show open tables;`;
-
+// query_id                         as queryId,
+//  tid,
+//  stage,
+//  max_stage                        as maxStage,
+//  progress,
+//  ROUND(memory_used / 1024 / 1024) as memoryUsed,
+//  examined_rows                    as examinedRows
   static processList = `
       SELECT id,
-             query_id                         as queryId,
-             tid,
              command,
              state,
              time,
-             time_ms                          as timeMs,
-             info,
-             stage,
-             max_stage                        as maxStage,
-             progress,
-             ROUND(memory_used / 1024 / 1024) as memoryUsed,
-             examined_rows                    as examinedRows
+             time / 1000                          as timeMs,
+             info
       FROM information_schema.processlist
       WHERE info IS NOT NULL
         AND info NOT LIKE '%SHOW GLOBAL STATUS%'
