@@ -10,6 +10,7 @@ import {ItemClassService} from '../modules/item/service/item-class.service';
 import {ItemClass} from '../modules/item/models/item-class.model';
 import {GameBuild} from '@shared/utils';
 
+
 export class Filters {
   private static auctionService: AuctionsService;
 
@@ -30,6 +31,9 @@ export class Filters {
   }
 
   public static isBelowMarketValue(itemID: number, marketValuePercent: number): boolean {
+    if (!marketValuePercent) {
+      return true;
+    }
     const auctionItem: AuctionItem = this.auctionService.getById(itemID);
     if (Filters.isUsingAPI() && auctionItem) {
       if (EmptyUtil.isNullOrUndefined(marketValuePercent) || marketValuePercent === 0) {

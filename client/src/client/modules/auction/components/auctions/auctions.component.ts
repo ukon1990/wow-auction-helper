@@ -10,6 +10,8 @@ import {AuctionsService} from '../../../../services/auctions.service';
 import {ItemClassService} from '../../../item/service/item-class.service';
 import {ItemClass} from '../../../item/models/item-class.model';
 import {RealmService} from '../../../../services/realm.service';
+import {Report} from "../../../../utils/report.util";
+import {TextUtil} from "@ukon1990/js-utilities";
 
 @Component({
   selector: 'wah-auctions',
@@ -157,22 +159,35 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
           priceTrend24: i.stats ? i.stats.past24Hours.price.trend : 0,
         };
       });
+    Report.debug('this.tableData', this.tableData);
   }
 
   isMatch({
     id,
     itemID,
-    petSpeciesId
-          }: AuctionItem, changes = this.form.value): boolean {
-    return Filters.isNameMatch(itemID, this.form.getRawValue().name, petSpeciesId, id) &&
-      Filters.isItemClassMatch(
-        itemID, +changes.itemClass, +changes.itemSubClass) &&
-      Filters.isSaleRateMatch(itemID, changes.saleRate) &&
-      Filters.isBelowMarketValue(itemID, changes.mktPrice) &&
-      Filters.isDailySoldMatch(itemID, changes.avgDailySold) &&
-      Filters.isBelowSellToVendorPrice(itemID, changes.onlyVendorSellable) &&
-      Filters.isItemAboveQuality(itemID, changes.minItemQuality) &&
-      Filters.isAboveItemLevel(itemID, changes.minItemLevel) &&
-      Filters.isExpansionMatch(itemID, changes.expansion, this.isClassic);
+    petSpeciesId,
+    name,
+    }: AuctionItem,
+    {
+      name: searchName,
+      itemClass,
+      itemSubClass,
+      mktPrice,
+      onlyVendorSellable,
+      minItemQuality,
+      minItemLevel,
+      expansion,
+    } = this.form.value
+  ): boolean {
+    return TextUtil.contains(name, searchName) &&
+      Filters.isItemClassMatch(itemID, +itemClass, +itemSubClass) &&
+      Filters.isBelowMarketValue(itemID, mktPrice) &&
+      Filters.isBelowSellToVendorPrice(itemID, onlyVendorSellable) &&
+      Filters.isItemAboveQuality(itemID, minItemQuality) &&
+      Filters.isAboveItemLevel(itemID, minItemLevel) &&
+      Filters.isExpansionMatch(itemID, expansion, this.isClassic);
+
+    // Filters.isSaleRateMatch(itemID, changes.saleRate) &&
+    // Filters.isDailySoldMatch(itemID, avgDailySold) &&
   }
 }
