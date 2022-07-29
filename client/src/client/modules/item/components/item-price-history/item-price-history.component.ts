@@ -1,7 +1,15 @@
 import {AfterViewInit, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import * as Highcharts from 'highcharts';
 import {Chart, SeriesLineOptions, SeriesOptionsType, XAxisOptions} from 'highcharts';
-import {AuctionItemStat, Item, ItemPriceEntry, ItemPriceEntryResponse, ItemStats, Profession} from '@shared/models';
+import {
+  AuctionItemStat,
+  ColumnDescription,
+  Item,
+  ItemPriceEntry,
+  ItemPriceEntryResponse,
+  ItemStats,
+  Profession
+} from '@shared/models';
 import {ItemService} from '../../../../services/item.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
@@ -18,7 +26,6 @@ import {PriceHistoryComponentUtil} from '../../utils/price-history.util';
 import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util';
 import {SharedService} from '../../../../services/shared.service';
 import {Reagent} from '../../../crafting/models/reagent';
-import {ColumnDescription} from '@shared/models';
 import {ProfessionService} from '../../../crafting/services/profession.service';
 import {getXAxisDateLabel} from '../../../util/utils/highcharts.util';
 
@@ -425,7 +432,6 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
     this.groupedByDateTable.data.sort((a, b) =>
       b.timestamp - a.timestamp);
     this.xAxisDaily = getXAxisDateLabel();
-    this.xAxisHourly = getXAxisDateLabel(true);
   }
 
   private processHourlyData() {
@@ -439,6 +445,7 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
     this.populateDailyChartData(dates);
     this.fourteenDayByHourTable.data.sort((a, b) =>
       b.timestamp - a.timestamp);
+    this.xAxisHourly = getXAxisDateLabel(true);
   }
 
   private populateDailyChartData(dates: any[]) {
