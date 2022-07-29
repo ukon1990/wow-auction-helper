@@ -20,7 +20,6 @@ import {AuctionHouse} from '../../realm/model';
 import {S3} from 'aws-sdk';
 import {LogRepository} from '../../logs/repository';
 import {RealmLogRepository} from '../../realm/repositories/realm-log.repository';
-import {DATABASE_CREDENTIALS} from "../../secrets";
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -182,14 +181,16 @@ export class StatsService {
     return new Promise<void>((resolve, reject) => {
       let completed = 0, total = 0, avgQueryTime;
       const s3 = new S3Handler(),
-        conn = new DatabaseUtil(false),
+        conn = new DatabaseUtil(false);
+      /*,
         oldConn = new DatabaseUtil(
           false, false, {
             database: 'wah',
-            host: 'wah.cmbixekxehi7.eu-west-1.rds.amazonaws.com',
+            host: DATABASE_CREDENTIALS.ADMIN.user,
             user: DATABASE_CREDENTIALS.ADMIN.user,
             password: DATABASE_CREDENTIALS.ADMIN.password,
           });
+          */
 
       s3.list('wah-data-eu', 'statistics/inserts/hourly/', 180)// default: 50
         .then(async (objects: ListObjectsV2Output) => {
@@ -210,12 +211,12 @@ export class StatsService {
 
             Promise.all([
               conn.enqueueHandshake(),
-              oldConn.enqueueHandshake()
+              // oldConn.enqueueHandshake()
             ])
               .then(async () => {
                 for (const object of files) {
                   const __ret = await this.insertAndDeleteStatsInsertFile(
-                    insertStatsStart, conn, s3, objects, object, completed, avgQueryTime, oldConn);
+                    insertStatsStart, conn, s3, objects, object, completed, avgQueryTime); // oldConn
 
                   completed = __ret.completed;
                   avgQueryTime = __ret.avgQueryTime;
@@ -224,7 +225,7 @@ export class StatsService {
                   objects.Contents.length
                 }) in ${+new Date() - insertStatsStart} ms with an avg of ${avgQueryTime} ms`);
                 conn.end();
-                oldConn.end();
+                // oldConn.end();
                 resolve();
               })
               .catch(error => {
@@ -257,8 +258,7 @@ export class StatsService {
     objects: S3.ListObjectsV2Output,
     object: S3.Object,
     completed: number,
-    avgQueryTime,
-    oldConn: DatabaseUtil, // TODO: Remove
+    avgQueryTime
   ) {
     if ((+new Date() - insertStatsStart) / 1000 < 50) {
       const [status]: { activeQueries: number }[] = await new StatsRepository(conn).getActiveQueries()
@@ -269,12 +269,9 @@ export class StatsService {
           .then(async (query: string) => {
             if (query) {
               const insertStart = +new Date();
-              await Promise.all([
-                conn.query(query),
-                oldConn.query(query),
-              ])
+              await conn.query(query)
                 .then(async () => {
-                  const [region, ahId] = object.Key.split('/')[2].split('-');
+                  const [region, ahId] = object.Key.split('/')[3].split('-');
                   await Promise.all([
                     s3.deleteObject(objects.Name, object.Key)
                       .catch(console.error),

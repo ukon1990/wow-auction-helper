@@ -126,7 +126,7 @@ export class MonitorComponent implements OnDestroy {
   }
 
   private getId(process: SQLProcess): string {
-    return `${process.id}-${process.command}${process.tid}`;
+    return `${process.id}-${process.queryId}${process.tid}`;
   }
 
   private processQueriesResult(queries: SQLProcess[]) {
