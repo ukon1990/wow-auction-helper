@@ -28,6 +28,7 @@ import {SharedService} from '../../../../services/shared.service';
 import {Reagent} from '../../../crafting/models/reagent';
 import {ProfessionService} from '../../../crafting/services/profession.service';
 import {getXAxisDateLabel} from '../../../util/utils/highcharts.util';
+import {DateUtil} from "@ukon1990/js-utilities";
 
 @Component({
   selector: 'wah-item-price-history',
@@ -222,6 +223,7 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
     roi: unknown[]
   };
   professions: {[key: string]: Profession} = {};
+  numberOfDays = 0;
 
   constructor(
     private service: ItemService,
@@ -426,6 +428,9 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
   private processDailyData() {
     this.priceHistory.daily = this.priceHistory.daily.sort((a, b) =>
       a.timestamp - b.timestamp);
+    const firstDay = this.priceHistory.daily[0].timestamp;
+    const lastDay = this.priceHistory.daily[this.priceHistory.daily.length - 1].timestamp;
+    this.numberOfDays = DateUtil.getDifferenceInDays(firstDay, lastDay);
     this.priceHistory.daily.forEach((entry) => {
       this.calculateDailyValues(entry);
     });
