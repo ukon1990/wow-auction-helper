@@ -208,10 +208,6 @@ export class AuctionUtil {
         } else {
           AuctionUtil.updateAuctionItem(a, id, map);
         }
-
-        if (a.item === 186371) {
-          console.log('asd', id, a.item, map.get(id));
-        }
       } else {
         // TODO: Look into this, to avoid "non bonus" duplicates
         if (!map.has(a.item + '')) {

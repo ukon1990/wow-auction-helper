@@ -15,10 +15,8 @@ export const getXAxisDateLabel = (includeHours: boolean = false): XAxisOptions =
   type: 'datetime',
   labels: {
     format: '{value}',
-    formatter: ({value}) => {
-      console.log('getXAxisDateLabel.value', value);
-      return includeHours ? new Date(value).toLocaleString() : new Date(value).toLocaleDateString();
-    },
+    formatter: ({value}) =>
+      includeHours ? new Date(value).toLocaleString() : new Date(value).toLocaleDateString(),
   },
   title: {
     text: null

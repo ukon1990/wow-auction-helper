@@ -192,7 +192,7 @@ export class StatsService {
           });
           */
 
-      s3.list('wah-data-eu', 'statistics/inserts/hourly/', 180)// default: 50
+      s3.list('wah-data-eu', 'statistics/inserts/', 180)// default: 50
         .then(async (objects: ListObjectsV2Output) => {
           const files = this.getFilteredAndSortedInsertStatements(objects);
           total = files.length;

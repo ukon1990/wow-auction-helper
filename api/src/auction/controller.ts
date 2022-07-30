@@ -5,7 +5,6 @@ import {Endpoints} from '../utils/endpoints.util';
 import {DatabaseUtil} from '../utils/database.util';
 import {StatsService} from './services/stats.service';
 import {TsmService} from './services/tsm.service';
-import {StatsMigrationToolUtil} from "./services/stats-migration-tool.util";
 
 /* istanbul ignore next */
 exports.deactivateInactiveHouses = (event: APIGatewayEvent, context: Context, callback: Callback) =>
@@ -157,8 +156,9 @@ exports.migrate = (event: APIGatewayEvent, context: Context, callback: Callback)
         UpdatesService.getAndSetItemClasses(),
         UpdatesService.getAndSetTimestamps(),
       */
-      new StatsMigrationToolUtil().migrateTables(),
+      // new StatsMigrationToolUtil().migrateTables(),
       // new StatsMigrationToolUtil().performMigrationForAllRealms(),
+      // new StatsService().updateRealmTrends(),
     ])
       .then(result => Response.send(result, callback))
       .catch(error => Response.error(callback, error, undefined, 500));

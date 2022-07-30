@@ -36,7 +36,8 @@ export class StatsMigrationToolUtil {
   private readonly table: string;
 
   constructor() {
-    this.table = 'itemPriceHistoryPerHour';
+    // this.table = 'itemPriceHistoryPerHour';
+    this.table = 'itemPriceHistoryPerDay';
     this.target = new DatabaseUtil(false, false, {
       database: DATABASE_CREDENTIALS.READ.database,
       host: DATABASE_CREDENTIALS.READ.host,
@@ -45,9 +46,9 @@ export class StatsMigrationToolUtil {
     });
     this.source = new DatabaseUtil(false, false, {
       database: 'wah',
-      host: DATABASE_CREDENTIALS.OLD.host,
-      user: DATABASE_CREDENTIALS.OLD.user,
-      password: DATABASE_CREDENTIALS.OLD.password
+      host: DATABASE_CREDENTIALS.LOCALHOST.host,
+      user: DATABASE_CREDENTIALS.LOCALHOST.user,
+      password: DATABASE_CREDENTIALS.LOCALHOST.password
     });
     this.util = new RDSQueryUtil(this.table);
   }
@@ -104,12 +105,12 @@ export class StatsMigrationToolUtil {
     });
   }
 
-  migrate(ahId: number, year: number, month: number, day: number): Promise<void> {
+  migrate(ahId: number, year: number, month: number, day: number = 15): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.enqueueHandshakes()
         .then(() => {
-          this.getAllForRealmAndDate(ahId, year, month, day)
-          // this.getAllForRealmAndMonth(ahId, year, month)
+          // this.getAllForRealmAndDate(ahId, year, month, day)
+          this.getAllForRealmAndMonth(ahId, year, month)
             .then(result => {
               this.cleanAndInsertData(result, year, month, day)
                 .then(() => resolve())
@@ -247,17 +248,20 @@ export class StatsMigrationToolUtil {
   async performMigrationForAllRealms() {
     const realmRepo = new RealmRepository();
     const ahs = await realmRepo.getAll();
-    const startDay = 14;
-    const endDay = 29;
+    const startDay = 7;
+    const endDay = 7;
     const numberOfDays = endDay - startDay;
     let completed = 0;
     let completedAhs = 0;
-    const list = ahs.filter(a => a.id > -1).sort((a, b) => a.id - b.id);
-    const totalNumberOfAhDaysToImport = numberOfDays * list.length;
+    const list = ahs.filter(a => a.id > 13)
+      .sort((a, b) => a.id - b.id)
+      .slice(0, 4);
+    const totalNumberOfAhDaysToImport = (numberOfDays || 1) * list.length;
     for (const ah of list) {
       completedAhs++;
       for (let day = startDay; day <= endDay; day++) {
-        await this.migrate(ah.id, 2022, 7, day);
+        // await this.migrate(ah.id, 2022, 7, day);
+        await this.migrate(ah.id, 2022, day);
 
         completed++;
         console.log(`Processing id=${ah.id} -  ${

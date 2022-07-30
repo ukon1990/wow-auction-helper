@@ -43,7 +43,7 @@ export class LogRepository {
       FROM information_schema.TABLES
       WHERE TABLE_SCHEMA = 'wah'
       ORDER BY (DATA_LENGTH + INDEX_LENGTH)
-          DESC;`;
+      DESC;`;
 
   static userEvent(entry: LogEntry): string {
     return `INSERT INTO \`wah\`.\`event_log\` (
