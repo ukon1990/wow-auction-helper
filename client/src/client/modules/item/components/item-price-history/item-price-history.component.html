@@ -108,11 +108,11 @@
 
 
     <ng-container *ngIf="groupedByDateTable.data.length > 0">
-      <h6>Daily changes for the past 3 months or less</h6>
+      <h6>Daily changes for the past {{numberOfDays}} days</h6>
       <mat-list dense class="horizontal-item-list mb-3" *ngIf="statsDaily">
         <mat-list-item>
           <div mat-line [style]="{color: theme.accentColorCode}">
-            Past 7 days
+            Past {{numberOfDays < 7 ? numberOfDays : 7}} days
           </div>
           <div mat-line>
             <span [style]="{color: theme.primaryColorCode}">Avg change</span>
@@ -127,9 +127,9 @@
             {{ statsDaily.past7Days.quantity.avg | number }}
           </div>
         </mat-list-item>
-        <mat-list-item>
+        <mat-list-item *ngIf="numberOfDays >= 14">
           <div mat-line [style]="{color: theme.accentColorCode}">
-            Past 14 days
+            Past {{numberOfDays < 14 ? numberOfDays : 14}} days
           </div>
           <div mat-line>
             <span [style]="{color: theme.primaryColorCode}">Avg change</span>
@@ -144,9 +144,9 @@
             {{ statsDaily.past14Days.quantity.avg | number }}
           </div>
         </mat-list-item>
-        <mat-list-item>
+        <mat-list-item *ngIf="numberOfDays >= 20">
           <div mat-line [style]="{color: theme.accentColorCode}">
-            Past month
+            Past {{numberOfDays > 20 && numberOfDays <= 30 ? numberOfDays : 30}} days
           </div>
           <div mat-line>
             <span [style]="{color: theme.primaryColorCode}">Avg change</span>
@@ -161,9 +161,9 @@
             {{ statsDaily.past30Days.quantity.avg | number }}
           </div>
         </mat-list-item>
-        <mat-list-item>
+        <mat-list-item *ngIf="numberOfDays >= 60">
           <div mat-line [style]="{color: theme.accentColorCode}">
-            Past 3 months
+            Past {{numberOfDays}} days
           </div>
           <div mat-line>
             <span [style]="{color: theme.primaryColorCode}">Avg change</span>

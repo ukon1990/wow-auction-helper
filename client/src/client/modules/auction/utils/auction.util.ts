@@ -1,5 +1,5 @@
 import {SharedService} from '../../../services/shared.service';
-import {Auction, ItemStats, Pet} from '@shared/models';
+import {Auction, AuctionItemStat, AuctionV2, ItemStats, Pet} from '@shared/models';
 import {AuctionItem} from '../models/auction-item.model';
 import {TradeVendors} from '../../../models/trade-vendors';
 import {AuctionPet} from '../models/auction-pet.model';
@@ -7,14 +7,12 @@ import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
 import {Report} from '../../../utils/report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';
 import {TsmService} from '../../tsm/tsm.service';
-import {AuctionItemStat} from '@shared/models';
 import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
 import {ItemService} from '../../../services/item.service';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {Recipe} from '../../crafting/models/recipe';
 import {AuctionTransformerUtil} from '@shared/utils';
-import {AuctionV2} from '@shared/models';
 
 export interface OrganizedAuctionResult {
   map: Map<string, AuctionItem>;
@@ -169,7 +167,6 @@ export class AuctionUtil {
     a: Auction, map: Map<string, AuctionItem>, list: AuctionItem[],
     stats: Map<string, ItemStats>, mapVariations: Map<number, AuctionItem[]>
   ) {
-    const id = a.item + AuctionItemStat.bonusId(a.bonusLists, false);
     /**
      * Maybe implement this one instead in the future.
      AuctionItemStat.getId(
@@ -193,22 +190,33 @@ export class AuctionUtil {
       if (!mapVariations.has(a.item)) {
         mapVariations.set(a.item, []);
       }
-      if (a.bonusLists) {
+      if (a.bonusLists?.length || a.modifiers?.length) {
+        const id = AuctionItemStat.getId(
+          a.item,
+          a.petSpeciesId,
+          a.bonusLists?.map(b => b.bonusListId),
+          []
+          /* a.modifiers:
+           I haven't found any information on what the modifiers actually do.
+           There are many that seem to have the same tooltip etc in-game.
+           */
+        );
+
         if (!map.has(id)) {
           this.addNewAuctionItem(a, true, id, map, list, stats);
           mapVariations.get(a.item).push(map.get(id));
         } else {
           AuctionUtil.updateAuctionItem(a, id, map);
         }
-      }
-      // TODO: Look into this, to avoid "non bonus" duplicates
-      if (!map.has(a.item + '')) {
-        this.addNewAuctionItem(a, true, '' + a.item, map, list, stats);
-        mapVariations.get(a.item).push(map.get(a.item + ''));
       } else {
-        AuctionUtil.updateAuctionItem(a, '' + a.item, map);
+        // TODO: Look into this, to avoid "non bonus" duplicates
+        if (!map.has(a.item + '')) {
+          this.addNewAuctionItem(a, true, '' + a.item, map, list, stats);
+          mapVariations.get(a.item).push(map.get(a.item + ''));
+        } else {
+          AuctionUtil.updateAuctionItem(a, '' + a.item, map);
+        }
       }
-
     }
   }
 

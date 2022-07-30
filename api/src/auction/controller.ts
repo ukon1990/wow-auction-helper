@@ -156,7 +156,9 @@ exports.migrate = (event: APIGatewayEvent, context: Context, callback: Callback)
         UpdatesService.getAndSetItemClasses(),
         UpdatesService.getAndSetTimestamps(),
       */
-      // new StatsMigrationToolUtil().migrateTables()
+      // new StatsMigrationToolUtil().migrateTables(),
+      // new StatsMigrationToolUtil().performMigrationForAllRealms(),
+      // new StatsService().updateRealmTrends(),
     ])
       .then(result => Response.send(result, callback))
       .catch(error => Response.error(callback, error, undefined, 500));

@@ -1,4 +1,3 @@
-import * as Highcharts from 'highcharts';
 import {XAxisOptions} from 'highcharts';
 
 /**

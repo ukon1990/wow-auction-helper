@@ -5,26 +5,28 @@ export class LogRepository {
   static globalStatus = `
     SHOW GLOBAL STATUS
     WHERE Variable_name IN (
-    'Max_used_connections',
-    'Threads_connected',
-    'Uptime'
-    );`;
+      'Max_used_connections',
+      'Threads_connected',
+      'Uptime'
+    );
+    `;
 
   static showOpenTables = `show open tables;`;
-// query_id                         as queryId,
-//  tid,
-//  stage,
-//  max_stage                        as maxStage,
-//  progress,
-//  ROUND(memory_used / 1024 / 1024) as memoryUsed,
-//  examined_rows                    as examinedRows
+
   static processList = `
-      SELECT id,
-             command,
-             state,
-             time,
-             time / 1000                          as timeMs,
-             info
+      SELECT  id,
+              query_id                         as queryId,
+              tid,
+              command,
+              state,
+              time,
+              time_ms                          as timeMs,
+              info,
+              stage,
+              max_stage                        as maxStage,
+              progress,
+              ROUND(memory_used / 1024 / 1024) as memoryUsed,
+              examined_rows                    as examinedRows
       FROM information_schema.processlist
       WHERE info IS NOT NULL
         AND info NOT LIKE '%SHOW GLOBAL STATUS%'
@@ -41,7 +43,7 @@ export class LogRepository {
       FROM information_schema.TABLES
       WHERE TABLE_SCHEMA = 'wah'
       ORDER BY (DATA_LENGTH + INDEX_LENGTH)
-          DESC;`;
+      DESC;`;
 
   static userEvent(entry: LogEntry): string {
     return `INSERT INTO \`wah\`.\`event_log\` (

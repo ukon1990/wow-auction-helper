@@ -11,7 +11,19 @@ class Migrate {
     public table: string,
     public querySuffix: string = '',
     public multiInsert: boolean = true,
+    public hasIdColumn: boolean = true,
+    public idColumnName: string = 'id',
   ) {
+  }
+
+  setHasIdColumn(hasIdColumn: boolean): this {
+    this.hasIdColumn = hasIdColumn;
+    return this;
+  }
+
+  setIdColumnName(idColumnName: string): this {
+    this.idColumnName = idColumnName;
+    return this;
   }
 }
 /**
@@ -24,13 +36,19 @@ export class StatsMigrationToolUtil {
   private readonly table: string;
 
   constructor() {
-    this.table = 'itemPriceHistoryPerHour';
-    this.target = new DatabaseUtil(false);
+    // this.table = 'itemPriceHistoryPerHour';
+    this.table = 'itemPriceHistoryPerDay';
+    this.target = new DatabaseUtil(false, false, {
+      database: DATABASE_CREDENTIALS.READ.database,
+      host: DATABASE_CREDENTIALS.READ.host,
+      user: DATABASE_CREDENTIALS.READ.user,
+      password: DATABASE_CREDENTIALS.READ.password
+    });
     this.source = new DatabaseUtil(false, false, {
       database: 'wah',
-      host: DATABASE_CREDENTIALS.OLD.host,
-      user: DATABASE_CREDENTIALS.ADMIN.user,
-      password: DATABASE_CREDENTIALS.ADMIN.password
+      host: DATABASE_CREDENTIALS.LOCALHOST.host,
+      user: DATABASE_CREDENTIALS.LOCALHOST.user,
+      password: DATABASE_CREDENTIALS.LOCALHOST.password
     });
     this.util = new RDSQueryUtil(this.table);
   }
@@ -87,12 +105,12 @@ export class StatsMigrationToolUtil {
     });
   }
 
-  migrate(ahId: number, year: number, month: number, day: number): Promise<void> {
+  migrate(ahId: number, year: number, month: number, day: number = 15): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.enqueueHandshakes()
         .then(() => {
-          this.getAllForRealmAndDate(ahId, year, month, day)
-          // this.getAllForRealmAndMonth(ahId, year, month)
+          // this.getAllForRealmAndDate(ahId, year, month, day)
+          this.getAllForRealmAndMonth(ahId, year, month)
             .then(result => {
               this.cleanAndInsertData(result, year, month, day)
                 .then(() => resolve())
@@ -106,24 +124,28 @@ export class StatsMigrationToolUtil {
 
   migrateTables(tables: Migrate[] = [
     /*
+    new Migrate('zone', 'order by id desc', false),
+    new Migrate('zoneName', 'order by id desc', false),
+
     new Migrate('professions'),
     new Migrate('professionsDescription'),
     new Migrate('professionsName'),
     new Migrate('professionSkillTiers'),
     new Migrate('professionSkillTiersName'),
 
+
     new Migrate('recipes'),
     new Migrate('recipesName'),
     new Migrate('recipesClassic'),
     new Migrate('recipesClassicName'),
-    new Migrate('recipesBonusId'),
+    new Migrate('recipesBonusId').setHasIdColumn(false),
     new Migrate('recipesDescription'),
     new Migrate('recipesModifiedCraftingSlot'),
-    new Migrate('reagents'),
-    new Migrate('reagentsClassic'),
+    new Migrate('reagents').setHasIdColumn(false),
+    new Migrate('reagentsClassic').setHasIdColumn(false),
 
-    new Migrate('pets'),
-    new Migrate(`pet_name_locale`),
+    new Migrate('pets').setIdColumnName('speciesId'),
+    new Migrate(`pet_name_locale`).setIdColumnName('speciesId'),
 
     new Migrate('npc'),
     new Migrate(`npcCoordinates`),
@@ -134,8 +156,14 @@ export class StatsMigrationToolUtil {
     new Migrate(`npcTag`),
 
     new Migrate('itemsClassic', 'order by id desc', false),
-    new Migrate('itemClassic_name_locale')
+    new Migrate('itemClassic_name_locale'),
+
+    new Migrate('items', 'order by id desc', false),
+    new Migrate('item_name_locale'),
      */
+    new Migrate('itemsClassic', 'order by id desc', false),
+    new Migrate('itemClassic_name_locale'),
+
     new Migrate('items', 'order by id desc', false),
     new Migrate('item_name_locale'),
   ]): Promise<any[]> {
@@ -145,15 +173,17 @@ export class StatsMigrationToolUtil {
           .then(async () => {
             let rowsToInsert = [];
             const queries = [];
-            for (const {table, querySuffix, multiInsert} of tables) {
+            for (const {idColumnName, table, querySuffix, multiInsert, hasIdColumn} of tables) {
               console.log('Starting to process', table);
               const util = new RDSQueryUtil(table, false);
               const existingIds = [];
               let hasHadError = false;
 
-              await this.target.query(`select id from ${table}`)
-                .then(ids => ids.forEach(({id}) => existingIds.push(id)));
-              const notExistsIn = existingIds.length ? ` where id not in (${existingIds.join(',')})` : '';
+              if (hasIdColumn) {
+                await this.target.query(`select ${idColumnName} from ${table}`)
+                  .then(ids => ids.forEach(({id}) => existingIds.push(id)));
+              }
+              const notExistsIn = hasIdColumn && existingIds.length ? ` where ${idColumnName} not in (${existingIds.join(',')})` : '';
               const querySuffixHasWhere = (querySuffix || '').indexOf('where ') > -1;
               const where = querySuffixHasWhere ? querySuffix : notExistsIn;
               await this.source.query(`
@@ -218,14 +248,27 @@ export class StatsMigrationToolUtil {
   async performMigrationForAllRealms() {
     const realmRepo = new RealmRepository();
     const ahs = await realmRepo.getAll();
+    const startDay = 7;
+    const endDay = 7;
+    const numberOfDays = endDay - startDay;
     let completed = 0;
-    const list = ahs.filter(a => a.id > 21).sort((a, b) => a.id - b.id);
+    let completedAhs = 0;
+    const list = ahs.filter(a => a.id > 13)
+      .sort((a, b) => a.id - b.id)
+      .slice(0, 4);
+    const totalNumberOfAhDaysToImport = (numberOfDays || 1) * list.length;
     for (const ah of list) {
-      for (let day = 1; day < 31; day++) {
-        await this.migrate(ah.id, 2022, 7, day);
+      completedAhs++;
+      for (let day = startDay; day <= endDay; day++) {
+        // await this.migrate(ah.id, 2022, 7, day);
+        await this.migrate(ah.id, 2022, day);
+
+        completed++;
+        console.log(`Processing id=${ah.id} -  ${
+          completedAhs} of ${list.length} @ day ${day} - (${
+          Math.round((completed / totalNumberOfAhDaysToImport * 100 + Number.EPSILON) * 100) / 100
+        }%)`);
       }
-      completed++;
-      console.log(`Processing id=${ah.id} -  ${completed} of ${list.length} (${Math.round(completed / list.length * 100)}%)`);
     }
     this.end();
   }
