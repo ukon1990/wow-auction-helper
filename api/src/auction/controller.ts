@@ -129,7 +129,7 @@ exports.deleteOldPriceForRealmDaily =
   (event: {table: string, olderThan: number, period: string}, context: Context, callback: Callback) => {
   new StatsService().deleteOldPriceForRealm(
     'itemPriceHistoryPerDay',
-    4,
+    2,
     'MONTH'
   )
     .then(result => Response.send(result, callback))
