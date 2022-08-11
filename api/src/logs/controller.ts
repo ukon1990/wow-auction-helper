@@ -25,7 +25,9 @@ exports.getLog = (event: APIGatewayEvent, context: Context, callback: Callback) 
 };
 
 exports.getCurrentQueries = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  if (!process.env.IS_OFFLINE) {
+  // const isAdmin = new AuthService(event.headers).isAdmin();
+  // console.log(new AuthService(event.headers))
+  if (false) {
     Response.error(callback, new Error('Not authorized'), event, 401);
     return;
   }

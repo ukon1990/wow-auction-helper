@@ -363,3 +363,11 @@ functions:
           path: dashboard
           cors:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
+  # Admin
+  adminOptimizeTable:
+    memorySize: 128
+    timeout: 5 #600
+    handler: src/admin/controller.optimizeTable
+    tags:
+      Function: Wah-adminOptimizeTable
+      Project: WAH

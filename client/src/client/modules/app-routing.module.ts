@@ -28,12 +28,14 @@ import {MonitorComponent} from './admin/components/monitor/monitor.component';
 import {TestComponent} from './admin/components/test/test.component';
 import {AuctionComparisonComponent} from './auction/components/auction-comparison/auction-comparison.component';
 import {ProfitSummaryComponent} from './addon/components/profit-summary2/profit-summary.component';
+import {AdminCanActivateGuard} from "./admin/admin-can-activate.guard";
 
 export const ROUTE_HIDDEN_FLAGS = {
   IS_NOT_REGISTERED: 'IS_NOT_REGISTERED',
   IS_REGISTERED: 'IS_REGISTERED',
   ONLY_IN_DEVELOP: 'ONLY_IN_DEVELOP',
-  ALWAYS: 'ALWAYS'
+  ALWAYS: 'ALWAYS',
+  ADMIN_ONLY: 'ADMIN_ONLY',
 };
 const TOOLS_ROUTE: TitledRoute = {
   path: 'tools',
@@ -157,25 +159,29 @@ const SETTINGS_ROUTE: TitledRoute = {
 const ADMIN_ROUTE: TitledRoute = {
   title: 'Admin',
   path: 'admin',
-  isHidden: ROUTE_HIDDEN_FLAGS.ONLY_IN_DEVELOP,
-  // canActivate: [IsRegisteredService],
+  isHidden: ROUTE_HIDDEN_FLAGS.ADMIN_ONLY,
+  canActivate: [AdminCanActivateGuard],
   children: [
     {
       title: 'Monitor',
       component: MonitorComponent,
+      isHidden: ROUTE_HIDDEN_FLAGS.ADMIN_ONLY,
       path: 'monitor'
     }, {
       title: 'Testing',
       component: TestComponent,
+      isHidden: ROUTE_HIDDEN_FLAGS.ADMIN_ONLY,
       path: 'test',
     }, {
       title: 'Update and add items',
       component: UpdateComponent,
+      isHidden: ROUTE_HIDDEN_FLAGS.ADMIN_ONLY,
       path: 'update-or-add'
     },
     {
       title: 'Add NPCs',
       component: AddNpcsComponent,
+      isHidden: ROUTE_HIDDEN_FLAGS.ADMIN_ONLY,
       path: 'add-npcs'
     }
   ]
@@ -226,7 +232,8 @@ export const appRoutes: TitledRoutes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(appRoutes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [AdminCanActivateGuard]
 })
 export class AppRoutingModule {
 }
