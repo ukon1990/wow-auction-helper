@@ -1,7 +1,7 @@
 import {Endpoints} from './endpoints.util';
 import {Pet} from '../shared/models';
 import {HttpClientUtil} from './http-client.util';
-import {AuthHandler} from '../handlers/auth.handler';
+import {AuthHandler} from '../functions/handlers/auth.handler';
 import {GameMediaUtil} from './game-media.util';
 
 export class PetUtil {

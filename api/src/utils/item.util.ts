@@ -1,5 +1,5 @@
 import {Item, ItemGameData} from '../shared/models';
-import {AuthHandler} from '../handlers/auth.handler';
+import {AuthHandler} from '../functions/handlers/auth.handler';
 import {HttpClientUtil} from './http-client.util';
 import {Endpoints} from './endpoints.util';
 import {WoWDBItem} from '../models/item/wowdb';
