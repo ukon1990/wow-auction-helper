@@ -1,42 +1,62 @@
-import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
 import {DashboardService} from './service';
-import {Response} from '../../utils/response.util';
 import {AuthorizationUtil} from '../../utils/authorization.util';
+import {middyfy} from '@libs/lambda';
+import {formatErrorResponse, formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from '@libs/api-gateway';
 
-exports.getAll = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+export const getAll = middyfy(async (event): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
   const token = AuthorizationUtil.isValidToken(event);
-  new DashboardService(token).getAll()
-    .then(res => Response.send(res, callback))
-    .catch(error => Response.error(callback, error));
-};
+  const service = new DashboardService(token);
+  let response;
 
-exports.save = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  await service.getAll()
+    .then((boards) => response = formatJSONResponse(
+      boards.filter(board => board.rules.length || board.itemRules.length) as any)
+    )
+    .catch(err => response = formatErrorResponse(err.code, err.message, err));
+
+  return response;
+});
+
+export const save = middyfy(async (event): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
   const token = AuthorizationUtil.isValidToken(event);
+  const service = new DashboardService(token);
+  let response;
   if (!token) {
-    Response.error(callback, {code: 401, message: 'Not authorized'}, event, 401);
+    response = formatErrorResponse(401, 'Not authorized');
   } else {
-    new DashboardService(token).save(JSON.parse(event.body))
-      .then(res => Response.send(res, callback))
-      .catch(error => Response.error(callback, error));
+    await service.save(JSON.parse(event.body))
+      .then((board) => response = formatJSONResponse(board as any))
+      .catch(err => response = formatErrorResponse(err.code, err.message, err));
   }
-};
 
-exports.copy = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  return response;
+});
+
+export const copy = middyfy(async (event): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
   const token = AuthorizationUtil.isValidToken(event);
   const id = event.pathParameters.id;
-  new DashboardService(token).getCopyById(id, token)
-    .then(res => Response.send(res, callback))
-    .catch(error => Response.error(callback, error));
-};
+  const service = new DashboardService(token);
+  let response;
 
-exports.delete = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  await service.getCopyById(id, token)
+    .then((board) => response = formatJSONResponse(board as any))
+    .catch(err => response = formatErrorResponse(err.code, err.message, err));
+
+  return response;
+});
+
+export const deleteDashboard = middyfy(async (event): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
   const token = AuthorizationUtil.isValidToken(event);
+  const service = new DashboardService(token);
+  let response;
   if (!token) {
-    Response.error(callback, {code: 401, message: 'Not authorized'}, event, 401);
+    response = formatErrorResponse(401, 'Not authorized');
   } else {
     const id = event.pathParameters.id;
-    new DashboardService(token).delete(id)
-      .then(res => Response.send(res, callback))
-      .catch(error => Response.error(callback, error));
+    await service.delete(id)
+      .then((board) => response = formatJSONResponse(board as any))
+      .catch(err => response = formatErrorResponse(err.code, err.message, err));
   }
-};
+
+  return response;
+});

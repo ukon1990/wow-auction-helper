@@ -2,40 +2,46 @@ import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
 import {Response} from '../../utils/response.util';
 import {DatabaseUtil} from '../../utils/database.util';
 import {LogService} from './log.service';
+import {middyfy} from "@libs/lambda";
+import {formatErrorResponse, formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "@libs/api-gateway";
+import {AuthService} from "../../shared/services/auth.service";
 
 const connection = new DatabaseUtil(false, false);
 
-/* istanbul ignore next */
-exports.clientEvent = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  context.callbackWaitsForEmptyEventLoop = false;
-  Response.send({success: true, userId: null}, callback);
-  // new LogService(event, callback, connection).clientEvent();
-};
+export const getCurrentQueries = middyfy(async (event): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
+  const isAdmin = await new AuthService(event.headers).isAdmin();
 
-/* istanbul ignore next */
-exports.clientDelete = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  context.callbackWaitsForEmptyEventLoop = false;
-  new LogService(event, connection).deleteClient()
-    .then(entry => Response.send({success: true, userId: entry.userId}, callback))
-    .catch(error => Response.error(callback, error, event));
-};
+  const service = new LogService(event, connection);
+  let response;
 
-exports.getLog = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  new LogService(event, connection).getLog();
-};
-
-exports.getCurrentQueries = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  // const isAdmin = new AuthService(event.headers).isAdmin();
-  // console.log(new AuthService(event.headers))
-  if (false) {
-    Response.error(callback, new Error('Not authorized'), event, 401);
-    return;
+  if (!isAdmin) {
+    response = formatErrorResponse(401, 'Not authorized');
+  } else {
+    await service.getCurrentQueries()
+      .then((data) => response = formatJSONResponse(data as any))
+      .catch(err => response = formatErrorResponse(err.code, err.message, err));
   }
-  context.callbackWaitsForEmptyEventLoop = false;
-  new LogService(event, connection).getCurrentQueries()
-    .then((data) => Response.send(data, callback))
-    .catch(err => Response.error(callback, err));
-};
+
+  return response;
+});
+
+export const getTableSize = middyfy(async (event): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
+  const isAdmin = await new AuthService(event.headers).isAdmin();
+  // console.log(new AuthService(event.headers))
+
+  const service = new LogService(event, connection);
+  let response;
+
+  if (!isAdmin) {
+    response = formatErrorResponse(401, 'Not authorized');
+  } else {
+    await service.getCurrentQueries()
+      .then((data) => response = formatJSONResponse(data as any))
+      .catch(err => response = formatErrorResponse(err.code, err.message, err));
+  }
+
+  return response;
+});
 
 exports.getTableSize = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   if (!process.env.IS_OFFLINE) {
