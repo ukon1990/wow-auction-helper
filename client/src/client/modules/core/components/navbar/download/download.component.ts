@@ -26,12 +26,14 @@ import {DownloadDialogComponent} from './dialog/dialog.component';
 export class DownloadComponent {
   theme = ThemeUtil.current;
   timeSinceUpdate = 0;
+  timeSinceRegionalUpdate = 0;
   downloadProgress = '';
   subs = new SubscriptionManager();
   faExclamationCircle = faExclamationCircle;
   faDownload = faDownload;
 
   private realmStatus: RealmStatus;
+  private regionalStatus: RealmStatus;
 
   constructor(
     public dialog: MatDialog,
@@ -49,12 +51,21 @@ export class DownloadComponent {
 
     this.subs.add(
       this._realmService.events.realmStatus,
-      (status) => this.setRealmStatus(status));
+      (status) => this.realmStatus = status);
+
+    this.subs.add(
+      this._realmService.events.regionalStatus,
+      (status) => this.regionalStatus = status);
 
     this.subs.add(
       this._realmService.events.timeSince,
       time =>
         this.timeSinceUpdate = time);
+
+    this.subs.add(
+      this._realmService.events.timeSinceRegional,
+      time =>
+        this.timeSinceRegionalUpdate = time);
   }
 
   toggle(): void {

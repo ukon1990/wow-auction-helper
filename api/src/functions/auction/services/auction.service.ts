@@ -29,9 +29,16 @@ export class AuctionService {
 
   getLatestDumpPath(id: number, region: string, gameBuild: GameBuildVersion = GameBuildVersion.Retail): Promise<AHDumpResponse> {
     const isClassic = gameBuild === GameBuildVersion.Classic;
+    const isCommodity = id < 0;
+    let path;
+    if (isCommodity) {
+      path = 'auctions/commodities';
+    } else {
+      path = `connected-realm/${id}/auctions${isClassic ? '/index' : ''}`;
+    }
     return new Promise<AHDumpResponse>((resolve, reject) => {
       const url = new Endpoints().getPath(
-        `connected-realm/${id}/auctions${isClassic ? '/index' : ''}`,
+        path,
         region,
         isClassic ? NameSpace.DYNAMIC_CLASSIC : NameSpace.DYNAMIC_RETAIL
       );
@@ -85,7 +92,7 @@ export class AuctionService {
               }
             } else {
               const data = body;
-              if (data && data.auctions.length) {
+              if (data && (data.auctions || []).length) {
                 result.push({data, ahTypeId});
               }
             }

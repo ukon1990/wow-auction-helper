@@ -1,8 +1,7 @@
 import {Report} from '../../../utils/report.util';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SharedService} from '../../../services/shared.service';
-import {Item, Pet} from '@shared/models';
-import {AuctionItemStat} from '@shared/models';
+import {AuctionItemStat, Item, Pet} from '@shared/models';
 import {Recipe} from '../../crafting/models/recipe';
 
 interface ItemSelection {
@@ -13,7 +12,7 @@ interface ItemSelection {
 
 export class ItemDetailsUtil {
   static getSelection(item: any, auctions: Map<string, AuctionItem>, variations: Map<number, AuctionItem[]>): ItemSelection {
-
+    Report.debug('Selection is', item, auctions);
     if (item instanceof Recipe || item.craftedItemId) {
       Report.debug('selected recipe');
       return this.handleRecipe(item, variations);
@@ -22,8 +21,11 @@ export class ItemDetailsUtil {
       return this.handleAuctionItem(item);
     } else if (item.id && item.bonusIds) {
       Report.debug('selected id + bonusIds');
-      const id = item.id + AuctionItemStat.bonusIdRaw(item.bonusIds, false);
+      // const id = item.id + AuctionItemStat.bonusIdRaw(item.bonusIds, false);
+      const id = Number.isNaN(item.id) ? // If it is an AuctionItem type id, then it won't nessecarily be a number
+        item.id : AuctionItemStat.getId(item.id, item.petSpeciesId, item.bonusIds, []);
       const auctionItem: AuctionItem = auctions.get(id) || auctions.get(item.id + '');
+      console.log('ItemDetailsUtil.getSelection', id, auctionItem, auctions);
       if (auctionItem) {
         return this.handleAuctionItem(auctionItem);
       }

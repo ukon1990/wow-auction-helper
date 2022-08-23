@@ -141,11 +141,16 @@ export class RealmService {
   updateAllRealmStatuses(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.repository.getAllRealmsSeparated()
-        .then(realms => {
+        .then(({realms, regional}) => {
           Promise.all(['eu', 'us', 'tw', 'kr']
             .map(region =>
-              new S3Handler().save(realms, `status/${region}/all.json.gz`, {url: '', region})
-                .catch(console.error))
+              Promise.all([
+                new S3Handler().save(realms, `status/${region}/all.json.gz`, {url: '', region})
+                  .catch(console.error),
+                new S3Handler().save(regional[region], `status/${region}/regional.json.gz`, {url: '', region})
+                  .catch(console.error),
+              ])
+            )
           ).then(() => resolve())
             .catch(reject);
         })

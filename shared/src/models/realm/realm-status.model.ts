@@ -27,6 +27,7 @@ export class RealmStatus {
     lastModified: number;
   };
   ahTypeIsChanged?: boolean;
+  isRegional?: boolean;
 
   constructor(slug?: string, lastModified?: number) {
     if (slug) {
