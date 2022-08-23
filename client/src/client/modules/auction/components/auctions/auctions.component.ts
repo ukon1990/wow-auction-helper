@@ -180,7 +180,7 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     } = this.form.value
   ): boolean {
     return TextUtil.contains(name, searchName) &&
-      Filters.isItemClassMatch(itemID, +itemClass, +itemSubClass) &&
+      Filters.isItemClassMatch(itemID, +(itemClass === null ? -1 : itemClass), +(itemSubClass === null ? -1 : itemSubClass)) &&
       Filters.isBelowMarketValue(itemID, mktPrice) &&
       Filters.isBelowSellToVendorPrice(itemID, onlyVendorSellable) &&
       Filters.isItemAboveQuality(itemID, minItemQuality) &&

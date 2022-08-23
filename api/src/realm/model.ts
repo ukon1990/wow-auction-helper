@@ -34,6 +34,7 @@ export interface AuctionHouse {
     url: string;
     lastModified: number;
   };
+  isRegional?: boolean;
 }
 
 export interface DumpDelay {
