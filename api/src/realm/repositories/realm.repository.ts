@@ -23,7 +23,7 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
   private connectRealmsFromHouses(houses: AuctionHouse[]) {
     const realms: RealmStatus[] = [];
     houses
-      .filter(house => house.url)
+      .filter(house => house.url && !house.isRegional)
       .forEach(house =>
       house.realms.forEach(realm => {
         realms.push({
@@ -79,13 +79,27 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
     });
   }
 
-  getAllRealmsSeparated(): Promise<RealmStatus[]> {
-    return new Promise<RealmStatus[]>((resolve, reject) => {
+  getAllRealmsSeparated(): Promise<{realms: RealmStatus[], regional: {[key: string]: AuctionHouse} }> {
+    return new Promise<{realms: RealmStatus[], regional: {[key: string]: AuctionHouse} }>((resolve, reject) => {
       this.getAllAfterTimestamp(0)
         .then(houses => {
           const realms = this.connectRealmsFromHouses(houses);
-          resolve(realms.filter(r => r.url).sort((a, b) =>
-            a.slug.localeCompare(b.slug)));
+          const regional: {[key: string]: AuctionHouse} = {
+            eu: undefined,
+            us: undefined,
+            tw: undefined,
+            kr: undefined,
+          };
+          houses.forEach(house => {
+            if (house.isRegional) {
+              regional[house.region] = house;
+            }
+          });
+          resolve({
+            realms: realms.filter(r => r.url).sort((a, b) =>
+              a.slug.localeCompare(b.slug)),
+            regional,
+          });
         })
         .catch(reject);
     });

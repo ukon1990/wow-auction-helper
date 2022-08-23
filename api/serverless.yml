@@ -55,8 +55,8 @@ functions:
       Function: Wah-auctionsDownloadAndSave
       Project: WAH
     handler: src/auction/controller.auctionsDownloadAndSave
-    memorySize: 320 # Original value 400
-    timeout: 30
+    memorySize: 320 # Original value 320
+    timeout: 50
   auctionsUpdateStaticS3Data:
     tags:
       Function: Wah-auctionsUpdateStaticS3Data
@@ -186,20 +186,20 @@ functions:
     memorySize: 128
   getProfessions:
     tags:
-      FunctionName: Wah-getProfessions
+      Function: Wah-getProfessions
       Project: WAH
     memorySize: 128
     handler: src/profession/controller.getProfessions
   getAllRecipesAfter:
     tags:
-      FunctionName: Wah-getAllRecipesAfter
+      Function: Wah-getAllRecipesAfter
       Project: WAH
     memorySize: 128
     handler: src/recipe/controller.getAfter
 
   getRecipeById:
     tags:
-      FunctionName: Wah-getRecipeById
+      Function: Wah-getRecipeById
       Project: WAH
     memorySize: 128
     handler: src/recipe/controller.getById
@@ -231,7 +231,7 @@ functions:
     timeout: 30
   character:
     tags:
-      FunctionName: Wah-character
+      Function: Wah-character
       Project: WAH
     handler: src/character/controller.getCharacter
     memorySize: 128

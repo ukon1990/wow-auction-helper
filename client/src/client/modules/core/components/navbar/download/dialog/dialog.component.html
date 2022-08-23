@@ -28,23 +28,28 @@
       </mat-tab-group>
     </div>
     <div class="col-md-6">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>
-            The past week update times
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
+      <mat-tab-group>
+        <mat-tab label="Realm">
           <p>
             This is the update log, for your auction house.
           </p>
-          <wah-data-table *ngIf="!logIsLoading; else loadingTemplate"
+          <wah-data-table *ngIf="!logIsLoading && log; else loadingTemplate"
                           [columns]="logColumns"
                           [data]="log.entries"
                           [numOfRows]="10"
           ></wah-data-table>
-        </mat-card-content>
-      </mat-card>
+        </mat-tab>
+        <mat-tab label="Region">
+          <p>
+            This is the update log, for your region.
+          </p>
+          <wah-data-table *ngIf="!regionalLogIsLoading && log; else loadingTemplate"
+                          [columns]="logColumns"
+                          [data]="regionalLog.entries"
+                          [numOfRows]="10"
+          ></wah-data-table>
+        </mat-tab>
+      </mat-tab-group>
     </div>
   </div>
 </mat-dialog-content>

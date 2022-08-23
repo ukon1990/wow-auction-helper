@@ -35,6 +35,7 @@ export class BackgroundDownloadService {
     pets: localStorage['timestamp_pets'],
     recipes: localStorage['timestamp_recipes'],
     auctions: localStorage['timestamp_auctions'],
+    regionalAuctions: localStorage['timestamp_regionalAuctions'],
     tsm: localStorage['timestamp_tsm'],
     npc: localStorage.getItem('timestamp_npcs'),
     zone: localStorage.getItem('timestamp_zone'),
@@ -81,6 +82,7 @@ export class BackgroundDownloadService {
       this.timestamps.pets = localStorage['timestamp_pets'];
       this.timestamps.recipes = localStorage['timestamp_recipes'];
       this.timestamps.auctions = localStorage['timestamp_auctions'];
+      this.timestamps.regionalAuctions = localStorage['timestamp_regionalAuctions'];
       this.timestamps.tsm = localStorage['timestamp_tsm'];
       this.timestamps.npc = localStorage.getItem('timestamp_npcs');
       this.timestamps.zone = localStorage.getItem('timestamp_zone');
@@ -122,10 +124,6 @@ export class BackgroundDownloadService {
 
   private async initiateAuctionOrganizingAndTSM() {
     this.auctionsService.isReady = true;
-    /* TODO: TSM Dependent
-    await this.tsmService.load(this.realmService.events.realmStatus.value)
-      .catch(console.error);
-    */
     await this.auctionsService.organize()
       .then(() => console.log('Organized'))
       .catch(console.error);
@@ -142,6 +140,8 @@ export class BackgroundDownloadService {
     try {
       await this.realmService.getRealms();
       await this.realmService.getStatus();
+      // After, so that we can get the realm type for the auction service
+      await this.realmService.getRegionalStatus();
     } catch (error) {
       ErrorReport.sendError('BackgroundDownloadService.init', error);
     }
@@ -159,9 +159,7 @@ export class BackgroundDownloadService {
         const recipeTimestamp = this.realmService.isClassic ? timestamps.recipesClassic : timestamps.recipes;
         const itemTimestamp = this.realmService.isClassic ? timestamps.itemsClassic : timestamps.items;
 
-        const promises: Promise<any>[] = [/* TODO: Remove?
-          this.tsmService.load(this.realmService.events.realmStatus.value)
-            .catch(console.error),*/
+        const promises: Promise<any>[] = [
           this.itemClassService.getAll()
             .catch(console.error),
           this.professionService.load(timestamps.professions),

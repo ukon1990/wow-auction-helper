@@ -16,11 +16,19 @@
       <fa-icon [icon]="faExclamationCircle"></fa-icon>
     </div>
     <div matTooltip="The est time to the next update is based on the update intervals, for the past 72h.">
-      <span class="d-none d-sm-inline">Last update was </span>{{ timeSinceUpdate }} minutes ago
-      <small *ngIf="realmStatus">(~{{ realmStatus?.lowestDelay - timeSinceUpdate }} min left)</small><br/>
+      <span class="d-none d-sm-inline">Realm: </span>{{ timeSinceUpdate }} minutes ago
+      <small *ngIf="realmStatus">(~{{ realmStatus?.lowestDelay - timeSinceUpdate }} min left)</small>
+      <br/>
+
       <small class="sub-text-small">
-        Avg delay: {{ realmStatus?.avgDelay | number }} - Max delay: {{ realmStatus?.highestDelay | number }}
+        <span class="d-none d-sm-inline">Region: </span>{{ timeSinceRegionalUpdate }} minutes ago
+        <small *ngIf="regionalStatus">(~{{ regionalStatus?.lowestDelay - timeSinceRegionalUpdate }} min left)</small>
       </small>
+      <!--
+     <small class="sub-text-small">
+      Avg delay: {{ realmStatus?.avgDelay | number }} - Max delay: {{ realmStatus?.highestDelay | number }}
+      </small>
+      -->
     </div>
   </ng-template>
 </button>

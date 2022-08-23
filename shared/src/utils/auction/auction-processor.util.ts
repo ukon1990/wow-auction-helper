@@ -4,6 +4,7 @@
 */
 import {Auction, AuctionItemStat, ItemDailyPriceEntry, ItemPriceEntry} from '../../models';
 import {AuctionTransformerUtil} from './auction-transformer.util';
+import {DateUtil} from "@ukon1990/js-utilities";
 
 export class AuctionProcessorUtil {
   static process(auctions: Auction[], lastModified: number, ahId: number, ahTypeId: number): {
@@ -202,6 +203,7 @@ export class AuctionProcessorUtil {
   static processDailyPriceData(result, callback?: (hour: ItemDailyPriceEntry) => void): {[key: number]: ItemDailyPriceEntry[]} {
     const list: {[key: number]: ItemDailyPriceEntry[]} = {};
     result.forEach(entry => {
+
       for (let i = 1, maxDays = 31; i <= maxDays; i++) {
         const date: Date = new Date(+entry.date);
         date.setUTCDate(i);
@@ -209,31 +211,34 @@ export class AuctionProcessorUtil {
         date.setUTCMinutes(1);
         date.setUTCSeconds(1);
         date.setUTCMilliseconds(1);
-        const day = i < 10 ? '0' + i : i,
-          min = entry[`min${day}`];
-        if (min) {
-          const timeEntry: ItemDailyPriceEntry = {
-            timestamp: +date,
-            itemId: entry.itemId,
-            ahTypeId: entry.ahTypeId,
-            petSpeciesId: entry.petSpeciesId,
-            bonusIds: entry.bonusIds,
-            min,
-            minHour: entry[`minHour${day}`],
-            minQuantity: entry[`minQuantity${day}`],
-            avg: entry[`avg${day}`],
-            avgQuantity: entry[`avgQuantity${day}`],
-            max: entry[`max${day}`],
-            maxQuantity: entry[`maxQuantity${day}`]
-          };
 
-          if (callback) {
-            callback(timeEntry);
-          } else {
-            if (!list[timeEntry.ahTypeId]) {
-              list[timeEntry.ahTypeId] = [];
+        if (DateUtil.getDifferenceInDays(new Date(+date), +new Date()) < 31) {
+          const day = i < 10 ? '0' + i : i,
+            min = entry[`min${day}`];
+          if (min) {
+            const timeEntry: ItemDailyPriceEntry = {
+              timestamp: +date,
+              itemId: entry.itemId,
+              ahTypeId: entry.ahTypeId,
+              petSpeciesId: entry.petSpeciesId,
+              bonusIds: entry.bonusIds,
+              min,
+              minHour: entry[`minHour${day}`],
+              minQuantity: entry[`minQuantity${day}`],
+              avg: entry[`avg${day}`],
+              avgQuantity: entry[`avgQuantity${day}`],
+              max: entry[`max${day}`],
+              maxQuantity: entry[`maxQuantity${day}`]
+            };
+
+            if (callback) {
+              callback(timeEntry);
+            } else {
+              if (!list[timeEntry.ahTypeId]) {
+                list[timeEntry.ahTypeId] = [];
+              }
+              list[timeEntry.ahTypeId].push(timeEntry);
             }
-            list[timeEntry.ahTypeId].push(timeEntry);
           }
         }
       }

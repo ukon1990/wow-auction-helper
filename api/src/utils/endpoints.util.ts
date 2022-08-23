@@ -1,6 +1,6 @@
 import {BLIZZARD} from '../secrets';
 import {APIGatewayEvent} from 'aws-lambda';
-import {NameSpace} from "../enums/name-space.enum";
+import {NameSpace} from '../enums/name-space.enum';
 
 export class Endpoints {
   static STAGE: string;
