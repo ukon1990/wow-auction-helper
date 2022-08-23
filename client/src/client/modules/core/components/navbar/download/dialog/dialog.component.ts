@@ -14,8 +14,7 @@ import {BackgroundDownloadService} from '../../../../services/background-downloa
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionHouseStatus} from '../../../../../auction/models/auction-house-status.model';
 import {ErrorReport} from '../../../../../../utils/error-report.util';
-import {ColumnDescription} from '@shared/models';
-import {AuctionUpdateLog, Realm, RealmStatus} from '@shared/models';
+import {AuctionUpdateLog, ColumnDescription, Realm, RealmStatus} from '@shared/models';
 import {Report} from '../../../../../../utils/report.util';
 
 interface DownloadRow {
@@ -33,7 +32,9 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
   private sm = new SubscriptionManager();
   status: AuctionHouseStatus;
   log: AuctionUpdateLog;
+  regionalLog: AuctionUpdateLog;
   logIsLoading: boolean;
+  regionalLogIsLoading: boolean;
   logColumns: ColumnDescription[] = [
     {
       key: 'lastModified',
@@ -105,12 +106,13 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<DownloadDialogComponent>) {
     this.timestamps = service.timestamps;
+    console.log('Initial service value', service.timestamps)
 
     this.sm.add(realmService.events.realmStatus, (status: AuctionHouseStatus) => {
       this.status = status;
       this.setConnectedRealms();
       this.logIsLoading = true;
-      this.realmService.getLogForRealmWithId(this.status.id)
+      this.realmService.getLogForRealmWithId(status.id)
         .then(log => {
           this.log = log;
           this.logIsLoading = false;
@@ -118,6 +120,18 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
         .catch(error => {
           ErrorReport.sendHttpError(error);
           this.logIsLoading = false;
+        });
+    });
+    this.sm.add(realmService.events.regionalStatus, (status: AuctionHouseStatus) => {
+      this.regionalLogIsLoading = false;
+      this.realmService.getLogForRealmWithId(status.id)
+        .then(log => {
+          this.regionalLog = log;
+          this.regionalLogIsLoading = false;
+        })
+        .catch(error => {
+          ErrorReport.sendHttpError(error);
+          this.regionalLogIsLoading = false;
         });
     });
     this.sm.add(realmService.events.map, map => {
@@ -141,8 +155,10 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
 
   private setDownloadRows(isDownloading: string = this.isDownloading) {
     this.setTimestamps();
+    console.log('stuff', this.timestamps);
     this.downloadRows = [
-      {name: 'Auctions', lastModified: this.timestamps.auctions},
+      {name: 'Realm auctions', lastModified: this.timestamps.auctions},
+      {name: 'Region auctions', lastModified: this.timestamps.regionalAuctions},
       {name: 'TSM', lastModified: this.timestamps.tsm},
       {name: 'Items', lastModified: this.timestamps.items},
       {name: 'Pets', lastModified: this.timestamps.pets},
@@ -174,12 +190,12 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
       pets: this.getValue('timestamp_pets'),
       recipes: this.getValue('timestamp_recipes'),
       auctions: this.getValue('timestamp_auctions'),
+      regionalAuctions: this.getValue('timestamp_regionalAuctions'),
       tsm: this.getValue('timestamp_tsm'),
       npc: this.getValue('timestamp_npcs'),
       zone: this.getValue('timestamp_zone'),
       professions: this.getValue('timestamp_professions')
     };
-    console.log('Timestamps', this.timestamps);
   }
 
   getValue(key: string): any {
@@ -203,7 +219,11 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
           .catch(console.error);
         break;
       case 'auctions':
-        await this.downloadAuctions()
+        await this.downloadAuctions(false)
+          .catch(console.error);
+        break;
+      case 'region auctions':
+        await this.downloadAuctions(true)
           .catch(console.error);
         break;
       case 'items':
@@ -235,9 +255,14 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
     this.setDownloadRows();
   }
 
-  private async downloadAuctions() {
-    await this.realmService.getStatus();
-    await this.auctionsService.getAuctions();
+  private async downloadAuctions(isRegional?: boolean) {
+    if (isRegional) {
+      await this.realmService.getRegionalStatus();
+      await this.auctionsService.getRegionalAuctions();
+    } else {
+      await this.realmService.getStatus();
+      await this.auctionsService.getAuctions();
+    }
   }
 
   private async downloadTSM() {

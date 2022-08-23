@@ -9,6 +9,7 @@ export class AuctionHouseStatus extends RealmStatus {
   url: string;
   tsmUrl: string;
   lastModified: number;
+  gameBuild: number;
   // isUpdating: number;
   // isActive: number;
   // autoUpdate: number;

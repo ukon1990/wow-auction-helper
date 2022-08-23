@@ -8,8 +8,8 @@ import {Notifications} from '../models/user/notification';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ErrorReport} from '../utils/error-report.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {BehaviorSubject} from 'rxjs';
-import {Auction} from '@shared/models';
+import {BehaviorSubject, firstValueFrom} from 'rxjs';
+import {Auction, AuctionItemStat, ItemStats} from '@shared/models';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {RealmService} from './realm.service';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
@@ -18,9 +18,6 @@ import {CharacterService} from '../modules/character/services/character.service'
 import {CraftingUtil} from '../modules/crafting/utils/crafting.util';
 import {SettingsService} from '../modules/user/services/settings/settings.service';
 import {UserSettings} from '../modules/user/models/settings.model';
-import {ItemStats} from '@shared/models';
-import {AuctionItemStat} from '@shared/models';
-import {Report} from "../utils/report.util";
 
 @Injectable()
 export class AuctionsService {
@@ -28,6 +25,7 @@ export class AuctionsService {
   mapped: BehaviorSubject<Map<string, AuctionItem>> = new BehaviorSubject<Map<string, AuctionItem>>(new Map<string, AuctionItem>());
   mappedVariations: BehaviorSubject<Map<number, AuctionItem[]>> = new BehaviorSubject(new Map<number, AuctionItem[]>());
   auctions: BehaviorSubject<Auction[]> = new BehaviorSubject<Auction[]>([]);
+  regionalAuctions: BehaviorSubject<Auction[]> = new BehaviorSubject<Auction[]>([]);
   stats: BehaviorSubject<Map<string, ItemStats>> = new BehaviorSubject(new Map<string, ItemStats>());
   statsVariations: BehaviorSubject<Map<number, ItemStats[]>> = new BehaviorSubject(new Map<number, ItemStats[]>());
   events = {
@@ -52,6 +50,11 @@ export class AuctionsService {
       this.realmService.events.realmStatus,
       (status: AuctionHouseStatus) =>
         this.getLatestData(status));
+
+    this.subs.add(
+      this.realmService.events.regionalStatus,
+      (status: AuctionHouseStatus) =>
+        this.getRegionalAuctions(status));
 
     this.subs.add(
       this.realmService.events.realmChanged,
@@ -157,18 +160,17 @@ export class AuctionsService {
           console.log('Auction download is completed');
           localStorage['timestamp_auctions'] = realmStatus.lastModified;
           let organizedResults: OrganizedAuctionResult;
-          // if (!this.doNotOrganize && !realmStatus.isInitialLoad) {
-          await this.organize(auctions, isForComparisons)
+
+          await this.organize([...auctions, ...this.regionalAuctions.value], isForComparisons)
             .then(result => organizedResults = result)
             .catch(error => ErrorReport.sendError('getAuctions', error));
-          // }
 
           this.openSnackbar(`Auction download is completed`);
 
           this.handleNotifications();
-          if (!isForComparisons) {
-            this.auctions.next(auctions);
-          }
+
+          this.updateRawAuctionList(isForComparisons, realmStatus, auctions);
+
           SharedService.downloading.auctions = false;
           this.events.isDownloading.next(false);
           resolve(organizedResults);
@@ -189,6 +191,35 @@ export class AuctionsService {
           reject(error);
         });
     });
+  }
+
+  /**
+   * Updating the regional auction data
+   * @param status
+   */
+  getRegionalAuctions(status: AuctionHouseStatus = this.realmService.events.regionalStatus.value) {
+    if (!status || status.gameBuild) {
+      // If a realm has a game build defined, then it is a classic realm
+      return;
+    }
+
+    firstValueFrom(
+      this.http.get(status.url)
+    ).then(async ({auctions}: {auctions: Auction[]}) => {
+      this.regionalAuctions.next(auctions);
+      localStorage['timestamp_regionalAuctions'] = status.lastModified;
+      await this.organize([...auctions, ...this.auctions.value]);
+    }).catch(console.error);
+  }
+
+  private updateRawAuctionList(isForComparisons: boolean, realmStatus: AuctionHouseStatus, auctions) {
+    if (!isForComparisons) {
+      if (!realmStatus.isRegional) {
+        this.auctions.next(auctions);
+      } else {
+        this.regionalAuctions.next(auctions);
+      }
+    }
   }
 
   private openSnackbar(message: string): void {
@@ -233,7 +264,10 @@ export class AuctionsService {
     }
   }
 
-  organize(auctions: Auction[] = this.auctions.value, doNotTriggerEvents?: boolean): Promise<OrganizedAuctionResult> {
+  organize(
+    auctions: Auction[] = [...this.auctions.value, ...this.regionalAuctions.value],
+    doNotTriggerEvents?: boolean
+  ): Promise<OrganizedAuctionResult> {
     return new Promise((resolve, reject) => {
       if (!this.isReady || !auctions.length) {
         resolve(undefined);

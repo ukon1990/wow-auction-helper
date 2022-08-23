@@ -2,20 +2,18 @@ import {EventEmitter, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Endpoints} from './endpoints';
 import {SharedService} from './shared.service';
-import {Realm} from '@shared/models';
+import {AuctionUpdateLog, Realm, RealmStatus} from '@shared/models';
 import {ErrorReport} from '../utils/error-report.util';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ArrayUtil, DateUtil} from '@ukon1990/js-utilities';
-import {BehaviorSubject, interval, Observable} from 'rxjs';
+import {BehaviorSubject, firstValueFrom, interval, Observable} from 'rxjs';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
-import {RealmStatus} from '@shared/models';
 import {UserUtil} from '../utils/user/user.util';
 import {environment} from '../../environments/environment';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SettingsService} from '../modules/user/services/settings/settings.service';
 import {CraftingService} from './crafting.service';
 import {ItemService} from './item.service';
-import {AuctionUpdateLog} from "@shared/models";
 
 @Injectable()
 export class RealmService {
@@ -27,7 +25,9 @@ export class RealmService {
   isClassic = false;
   events = {
     timeSince: new BehaviorSubject(0),
+    timeSinceRegional: new BehaviorSubject(0),
     realmStatus: new BehaviorSubject<AuctionHouseStatus>(undefined),
+    regionalStatus: new BehaviorSubject<AuctionHouseStatus>(undefined),
     list: new BehaviorSubject<AuctionHouseStatus[]>([]),
     map: new BehaviorSubject<Map<number, RealmStatus>>(new Map<number, RealmStatus>()),
     realmChanged: new EventEmitter<AuctionHouseStatus>()
@@ -47,7 +47,10 @@ export class RealmService {
         }
       });
       this.statusInterval.subscribe(() => this.checkForUpdates());
-      this.timeSinceInterval.subscribe(() => this.setTimeSince());
+      this.timeSinceInterval.subscribe(() => {
+        this.setTimeSince();
+        this.setTimeSinceRegional();
+      });
     }
   }
 
@@ -119,15 +122,32 @@ export class RealmService {
       Endpoints.getLambdaUrl(`auction/log/${ahId}`)).toPromise() as Promise<AuctionUpdateLog>;
   }
 
-  private updateLastRequestedForRealm(
-    region: string,
-    ahId: number,
-    lastRequested: number
-  ): Promise<any> {
-    return this.http.post(Endpoints.getLambdaUrl('realms/update-last-requested', region), {
-      id: ahId,
-      lastRequested,
-    }).toPromise();
+  private getVersionId(realmStatus: RealmStatus) {
+    if (!realmStatus) {
+      return '?' + Math.random() * 1000;
+    }
+    const nextTime = realmStatus.lowestDelay * 1000 * 60 + realmStatus.lastModified;
+    const timeSince = realmStatus ? DateUtil.getDifferenceInSeconds(nextTime, new Date()) : false;
+
+    return timeSince && timeSince > 1 ? '?timeDiff=' + timeSince : '';
+  }
+
+  getRegionalStatus(region: string = SharedService.user.region): Promise<AuctionHouseStatus> {
+    return new Promise<AuctionHouseStatus>((resolve, reject) => {
+      const realmStatus = this.events.regionalStatus.value;
+      const versionId = this.getVersionId(realmStatus);
+
+      firstValueFrom(this.http.get(Endpoints.getS3URL(region, 'status', 'regional') + versionId))
+        .then((status: AuctionHouseStatus) => {
+          if (!realmStatus || status.lastModified > realmStatus.lastModified) {
+            this.events.regionalStatus.next(status);
+            resolve(status);
+          } else {
+            resolve(realmStatus);
+          }
+        })
+        .catch(reject);
+    });
   }
 
   getStatus(
@@ -144,29 +164,21 @@ export class RealmService {
         ahId = SharedService.user.ahId;
       }
     }
+
     this.isCheckingStatus = true;
-    const realmStatus = this.events.realmStatus.value,
-      timeSince = realmStatus ? DateUtil.getDifferenceInSeconds(
-        realmStatus.lowestDelay * 1000 * 60 + realmStatus.lastModified, new Date()) : false,
-      versionId = timeSince && timeSince > 1 ? '?timeDiff=' + timeSince : '';
+    const realmStatus = this.events.realmStatus.value;
+    const versionId = this.getVersionId(realmStatus);
+
     return new Promise<AuctionHouseStatus>(((resolve, reject) => {
-      this.http.get(Endpoints.getS3URL(region, 'status', `${ahId}`) + versionId)
-        .toPromise()
+      firstValueFrom(
+        this.http.get(Endpoints.getS3URL(region, 'status', `${ahId}`) + versionId)
+      )
         .then(async (house: AuctionHouseStatus) => {
           const status = this.connectRealmForHouse(house, realm);
           console.log('Status', status);
           const isClassic = status.gameBuild > 0;
           const recipeLength = CraftingService.list.value.length;
           status.ahTypeIsChanged = ahTypeIdChanged;
-
-          /* TODO: Activate if I decide to allow the client to do this
-          if (!realmStatus || status.lastModified !== realmStatus.lastModified) {
-            // So that we can keep track of which realms to keep up to date
-            this.updateLastRequestedForRealm(status.region, status.ahId, status.lastRequested)
-              .then(res => console.log('updateLastRequestedForRealm', res))
-              .catch(console.error);
-          }
-          */
 
           if (this.isClassic !== undefined && isClassic !== this.isClassic && recipeLength) {
             await this.craftingService.load(undefined, isClassic)
@@ -233,8 +245,14 @@ export class RealmService {
 
   private async checkForUpdates() {
     const {region, ahId, realm} = SharedService.user;
-    if (!this.isCheckingStatus && this.shouldUpdateRealmStatus() && ahId && region) {
-      await this.getStatus(region, realm, ahId);
+    if (!this.isCheckingStatus) {
+      if (this.shouldUpdateRealmStatus() && ahId && region) {
+        await this.getStatus(region, realm, ahId);
+      }
+
+      if (this.shouldUpdateRegionStatus() && region) {
+        await this.getRegionalStatus(region);
+      }
     }
   }
 
@@ -246,12 +264,26 @@ export class RealmService {
     return !status || this.events.timeSince.value > status.lowestDelay;
   }
 
+  private shouldUpdateRegionStatus(): boolean {
+    const status = this.events.regionalStatus.value;
+    return !status || this.events.timeSinceRegional.value > status.lowestDelay;
+  }
+
   private setTimeSince() {
     const status = this.events.realmStatus.value;
     if (status) {
       this.events.timeSince.next(DateUtil.timeSince(status.lastModified, 'm'));
     } else {
       this.events.timeSince.next(0);
+    }
+  }
+
+  private setTimeSinceRegional() {
+    const status = this.events.regionalStatus.value;
+    if (status) {
+      this.events.timeSinceRegional.next(DateUtil.timeSince(status.lastModified, 'm'));
+    } else {
+      this.events.timeSinceRegional.next(0);
     }
   }
 

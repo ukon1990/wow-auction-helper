@@ -34,7 +34,7 @@ export class StatsRepository {
           .map(data => this.conn.query(`
               SELECT date, itemId, ahTypeId, petSpeciesId, bonusIds, ${data.columns.join(', ')}
               FROM itemPriceHistoryPerHour
-              WHERE ahId = ${house.id}
+              WHERE (ahId = ${house.id} OR ahId = ${this.getRegionId()})
                 AND date = ${data.date};`)
             .then(res => {
               result = [...result, ...res];
@@ -57,7 +57,7 @@ export class StatsRepository {
         SELECT date, itemId, ahTypeId, petSpeciesId, bonusIds, ${columns.join(', ')}
         FROM itemPriceHistoryPerDay
         WHERE ${months.map(month => `(
-          ahId = ${ahId}
+          (ahId = ${ahId} OR ahId = ${this.getRegionId()})
             AND date = ${month}
           )`).join(' OR ')};
     `);
@@ -92,6 +92,16 @@ export class StatsRepository {
       maxQuantity${day} = VALUES(maxQuantity${day});`;
   }
 
+  private getRegionId(): number {
+    const region = (process.env.AWS_REGION || 'eu').split('-')[0];
+    switch (region) {
+      case 'us': return 1002;
+      case 'tw': return 1003;
+      case 'kr': return 1004;
+      default: return 1001;
+    }
+  }
+
   getPriceHistoryHourly(items: AhStatsRequest[]): any {
     return this.conn.query(`SELECT *
                             FROM itemPriceHistoryPerHour
@@ -105,7 +115,7 @@ export class StatsRepository {
                                                              ahTypeId = 0
                                                          }) => `
                   (
-                    ahId = ${ahId}
+                    (ahId = ${ahId} OR ahId = ${this.getRegionId()})
                     AND ahTypeId = ${ahTypeId}
                     AND itemId = ${itemId}
                     AND petSpeciesId = ${petSpeciesId}
@@ -169,7 +179,7 @@ export class StatsRepository {
        WHERE (
                  ${items.map(({ahId, itemId, petSpeciesId = '-1', bonusIds, ahTypeId = 0}) => `
                   (
-                    ahId = ${ahId}
+                    (ahId = ${ahId} OR ahId = ${this.getRegionId()})
                     AND itemId = ${itemId}
                     AND ahTypeId = ${ahTypeId}
                     AND petSpeciesId = ${petSpeciesId}

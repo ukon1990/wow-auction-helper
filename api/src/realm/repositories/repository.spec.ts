@@ -45,7 +45,7 @@ describe('RealmRepository', () => {
   });
 
   it('Can collect a list of all the realms', async () => {
-    const realms: RealmStatus[] = await repository.getAllRealmsSeparated();
+    const realms: RealmStatus[] = (await repository.getAllRealmsSeparated()).realms;
 
     expect(realms).toBeTruthy();
     expect(realms.length).toBe(556);
@@ -104,7 +104,7 @@ describe('RealmRepository', () => {
       const houseIdMap = new Map<number, AuctionHouse>();
       allHouses.forEach(house => houseIdMap.set(house.id, house));
       repository.getAllRealmsSeparated()
-        .then(async (realms) => {
+        .then(async ({realms}) => {
           realms.forEach(({ahId, region, slug}) => {
             const key = `${region}-${slug}`;
             if (!ahIdMap[key]) {
