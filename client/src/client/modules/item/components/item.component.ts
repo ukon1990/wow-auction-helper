@@ -216,7 +216,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
 
   /* istanbul ignore next */
   getPet(): Pet {
-    const auctionItem: AuctionItem = this.selected.auctionItem;
+    const auctionItem: AuctionItem = this.selected?.auctionItem;
     const speciesId = auctionItem ? auctionItem.petSpeciesId : undefined;
     if (!speciesId) {
       return undefined;
@@ -258,6 +258,10 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     this.selected = ItemDetailsUtil.getSelection(item,
       this.auctionService.mapped.value,
       this.auctionService.mappedVariations.value);
+
+    if (!this.selected) {
+      return;
+    }
     try {
       this.itemVariations = (this.auctionService.mappedVariations.value.get(this.selected.item.id) || [])
         .sort((a, b) => b.itemLevel - a.itemLevel);
