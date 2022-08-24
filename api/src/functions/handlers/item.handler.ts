@@ -111,14 +111,14 @@ export class ItemHandler {
                 .insertOrUpdate(friendlyItem, true);
               console.log('Insert item SQL:', query);
               db.query(query)
-                .then(async itemSuccess => {
+                .then(async () => {
                   console.log(`Successfully added ${friendlyItem.name} (${id})`);
                   await LocaleUtil.insertToDB(
                     this.localeTable,
                     'id',
                     item.nameLocales,
                     db)
-                    .then(localeSuccess =>
+                    .then(() =>
                       console.log(`Successfully added locales for ${friendlyItem.name} (${id})`))
                     .catch(console.error);
                   const map = {};

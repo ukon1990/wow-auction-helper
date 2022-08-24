@@ -61,7 +61,7 @@ export class UpdatesService {
             {
               region: ''
             })
-            .then(r => {
+            .then(() => {
               console.log('Successfully uploaded timestamps');
               db.end();
               resolve(rows);
@@ -177,7 +177,7 @@ export class UpdatesService {
   }
 
   static getAndSetItemClasses(): Promise<any> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
       const classes = [];
 
       const http = new HttpClientUtil();

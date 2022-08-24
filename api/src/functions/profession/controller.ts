@@ -1,10 +1,15 @@
-import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
-import {Response} from '../../utils/response.util';
 import {ProfessionService} from './service';
+import {middyfy} from '@libs/lambda';
+import {formatErrorResponse, formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from '@libs/api-gateway';
 
-export const getProfessions = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+
+export const getProfessions = middyfy(async (event): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
+  let response;
+
   const {locale} = JSON.parse(event.body);
-  ProfessionService.getAll(locale)
-    .then(res => Response.send(res, callback))
-    .catch(err => Response.error(callback, err, event, 500));
-};
+  await ProfessionService.getAll(locale)
+    .then((data) => response = formatJSONResponse(data as any))
+    .catch(err => response = formatErrorResponse(err.code, err.message, err));
+
+  return response;
+});

@@ -54,14 +54,14 @@ export class NPCService {
           });
 
           let completed = 0;
-          let successfull = 0;
+          // let successfull = 0;
           const count = newIds.length;
 
-          const startTime = +new Date();
+          // const startTime = +new Date();
           const promises: Promise<any>[] = [];
           newIds.forEach(id => promises.push(
             promiseThrottle.add(() =>
-              new Promise(async (success, fail) => {
+              new Promise(async (success) => {
                 /*
                 if (DateUtil.timeSince(startTime, 's') > 200) {
                   success();
@@ -71,10 +71,10 @@ export class NPCService {
                 this.addOrUpdateById(id, db)
                   .then(() => {
                     completed++;
-                    successfull++;
+                    // successfull++;
                     console.log(`Completed ${completed} / ${count} (${
                       Math.round(completed / count * 100)}%)`);
-                    success();
+                    success(null);
                   })
                   .catch(error => {
                       completed++;

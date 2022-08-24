@@ -1,13 +1,13 @@
-import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
-import {Response} from '../../utils/response.util';
 import {UpdatesService} from './service';
+import {middyfy} from '@libs/lambda';
+import {formatErrorResponse, formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from '@libs/api-gateway';
 
-exports.syncS3WithTheDatabase = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  UpdatesService.syncS3WithTheDatabase()
-    .then(res => {
-      Response.send(res, callback);
-    })
-    .catch(err => {
-      Response.error(callback, err, event, 500);
-    });
-};
+export const syncS3WithTheDatabase = middyfy(async (): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
+  let response;
+
+  await UpdatesService.syncS3WithTheDatabase()
+    .then((data) => response = formatJSONResponse(data as any))
+    .catch(err => response = formatErrorResponse(err.code, err.message, err));
+
+  return response;
+});
