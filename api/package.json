@@ -7,7 +7,7 @@
     "node": ">=14.15.0"
   },
   "scripts": {
-    "start": "sls offline start --useSeparateProcesses",
+    "start": "sls offline start",
     "build": "sls package",
     "package": "sls package",
     "test": "jest",
