@@ -12,6 +12,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {EmptyUtil, TextUtil} from '@ukon1990/js-utilities';
 import {DatabaseService} from '../../../services/database.service';
 import {ErrorReport} from "../../../utils/error-report.util";
+import {RoutingUtil} from "../../core/utils/routing.util";
 
 @Injectable({
   providedIn: 'root'
@@ -86,6 +87,13 @@ export class AuthService {
     });
   }
 
+  isAdmin(): boolean {
+    if (!this.userGroups) {
+      return false;
+    }
+    return this.userGroups.indexOf('Admin') > -1;
+  }
+
   private getAndSetUserGroups(currentUser: CognitoUser) {
     try {
       const {
@@ -93,6 +101,7 @@ export class AuthService {
       } = currentUser.getSignInUserSession().getIdToken().payload;
 
       this.userGroups = cognitoGroups;
+      RoutingUtil.isAdmin = this.isAdmin();
     } catch (error) {
       ErrorReport.sendError('AuthService.getAndSetUserGroups', error);
     }

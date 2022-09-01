@@ -1,7 +1,7 @@
 import {APIGatewayEvent} from 'aws-lambda';
 import {AccessToken} from '../models/user/access-token.model';
 import {Group} from '../enums/group.enum';
-import { COGNITO } from '../secrets';
+import {COGNITO} from '../secrets';
 
 export class AuthorizationUtil {
   static token: AccessToken;
@@ -39,35 +39,5 @@ export class AuthorizationUtil {
       }
     }
     return false;
-  }
-
-  static refreshToken(): Promise<any> {
-    /*
-    const params = {
-      ClientId: environment.cognitoClientId,
-      AuthFlow: 'REFRESH_TOKEN_AUTH',
-      AuthParameters: {
-        REFRESH_TOKEN: AuthorizationUtil.tokenRaw
-      }
-    };*/
-    return new Promise((resolve, reject) => {
-      /*
-      request.post({
-        headers: {
-          'X-Amz-Target': 'AWSCognitoIdentityProviderService.InitiateAuth',
-          'Content-Type': 'application/x-amz-json-1.1'
-        },
-        url: `${environment.signInEndpoint}/oauth2/token`,
-        body: params,
-        json: true
-      }, (error, r, body) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        resolve(body);
-      });*/
-      resolve();
-    });
   }
 }

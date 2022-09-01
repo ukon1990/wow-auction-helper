@@ -31,4 +31,8 @@ export class AccessToken {
 
     this.exp = this.exp * 1000;
   }
+
+  hasGroup(group: Group): boolean {
+    return !!this.groups.filter(g => group === g).length;
+  }
 }

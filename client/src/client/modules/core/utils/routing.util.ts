@@ -8,6 +8,7 @@ import {SharedService} from '../../../services/shared.service';
 export class RoutingUtil {
   private static map = {};
   private static list = [];
+  static isAdmin: boolean = false;
 
   static getCurrentRoute(path: string): MenuItem {
     if (!this.list.length) {
@@ -48,6 +49,8 @@ export class RoutingUtil {
 
   private static getIsHidden({isHidden}: TitledRoute): boolean {
     switch (isHidden) {
+      case ROUTE_HIDDEN_FLAGS.ADMIN_ONLY:
+        return !this.isAdmin;
       case ROUTE_HIDDEN_FLAGS.ONLY_IN_DEVELOP:
         return environment.production;
       case ROUTE_HIDDEN_FLAGS.IS_REGISTERED:

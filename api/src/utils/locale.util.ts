@@ -4,7 +4,7 @@ import {LocaleQuery} from '../queries/locale.query';
 import {DatabaseUtil} from './database.util';
 import {Endpoints} from './endpoints.util';
 import {BLIZZARD} from '../secrets';
-import {AuthHandler} from '../handlers/auth.handler';
+import {AuthHandler} from '../functions/handlers/auth.handler';
 
 /**
  * Sets the locale for the request, if no locale is defined, it will either use en_GB or the users browser locale if possible
