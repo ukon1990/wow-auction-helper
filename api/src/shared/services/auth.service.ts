@@ -21,7 +21,6 @@ export class AuthService {
   }
 
   constructor(headers: {[key: string]: string}) {
-    console.log('headers', headers);
     this.setToken(headers);
   }
 

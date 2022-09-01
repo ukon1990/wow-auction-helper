@@ -1,0 +1,15 @@
+
+
+<span *ngIf="isLoading; else tableTemplate">
+    <mat-progress-spinner></mat-progress-spinner> Loading users…
+</span>
+
+<ng-template #tableTemplate>
+    <button mat-raised-button color="accent" (click)="getAllUsers()">
+        Refresh
+    </button>
+    <wah-data-table
+        [columns]="columns"
+        [data]="users"
+></wah-data-table>
+</ng-template>

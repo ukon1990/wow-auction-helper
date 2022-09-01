@@ -13,7 +13,22 @@ export class UserRepository {
   }
 
   getAll(): Promise<any> {
-    return this.provider.listUsers({UserPoolId: this.userPoolId}).promise();
+    return new Promise<any>(async (resolve) => {
+      let done = false;
+      let nextPageToken;
+      let users = [];
+      const getUsers = (token?: string) => this.provider.listUsers({
+        UserPoolId: this.userPoolId,
+        PaginationToken: token,
+      }).promise();
+      while (!done) {
+        const {Users, PaginationToken} = await getUsers(nextPageToken);
+        nextPageToken = PaginationToken;
+        users = [...users, ...Users];
+        done = !PaginationToken;
+      }
+      resolve(users);
+    });
   }
 
   getById(id: string): Promise<UserType> {
@@ -43,12 +58,39 @@ export class UserRepository {
     });
   }
 
+  remove(username: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.provider.adminDeleteUser({
+        Username: username,
+        UserPoolId: this.userPoolId
+      }).promise()
+        .then(() => {
+          resolve();
+        })
+        .catch(reject);
+    });
+  }
+
   addUserToGroup(username: string, groupName: string): Promise<AdminGetUserResponse> {
     return new Promise<AdminGetUserResponse>((resolve, reject) => {
       this.provider.adminAddUserToGroup({
         Username: username,
         GroupName: groupName,
         UserPoolId: this.userPoolId
+      }).promise()
+        .then((result: any) => {
+          resolve(result);
+        })
+        .catch(reject);
+    });
+  }
+
+  changePassword(accessToken: string, previousPassword: string, proposedPassword: string) {
+    return new Promise<AdminGetUserResponse>((resolve, reject) => {
+      this.provider.changePassword({
+        AccessToken: accessToken,
+        PreviousPassword: previousPassword,
+        ProposedPassword: proposedPassword,
       }).promise()
         .then((result: any) => {
           resolve(result);

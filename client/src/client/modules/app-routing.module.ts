@@ -29,6 +29,7 @@ import {TestComponent} from './admin/components/test/test.component';
 import {AuctionComparisonComponent} from './auction/components/auction-comparison/auction-comparison.component';
 import {ProfitSummaryComponent} from './addon/components/profit-summary2/profit-summary.component';
 import {AdminCanActivateGuard} from "./admin/admin-can-activate.guard";
+import {UsersComponent} from "./admin/components/users/users.component";
 
 export const ROUTE_HIDDEN_FLAGS = {
   IS_NOT_REGISTERED: 'IS_NOT_REGISTERED',
@@ -183,6 +184,12 @@ const ADMIN_ROUTE: TitledRoute = {
       component: AddNpcsComponent,
       isHidden: ROUTE_HIDDEN_FLAGS.ADMIN_ONLY,
       path: 'add-npcs'
+    },
+    {
+      title: 'Users',
+      component: UsersComponent,
+      isHidden: ROUTE_HIDDEN_FLAGS.ADMIN_ONLY,
+      path: 'users'
     }
   ]
 };
