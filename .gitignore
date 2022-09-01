@@ -2,6 +2,7 @@
 
 # compiled output
 /dist
+.esbuild
 /tmp
 shared/out-tsc
 tmp

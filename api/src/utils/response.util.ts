@@ -2,14 +2,14 @@ import {APIGatewayEvent, Callback} from 'aws-lambda';
 import {GzipUtil} from './gzip.util';
 
 export class Response {
-  public static send(body: any, callback: Callback, needsEncoding = true) {
+  public static send(body: any, callback: Callback, needsEncoding = true, statusCode: number = 200) {
     try {
       if (!needsEncoding) {
-        callback(null, this.getResponse(body));
+        callback(null, this.getResponse(body, statusCode));
       } else {
         new GzipUtil().compress(body)
           .then(obj =>
-            callback(null, this.getResponse(obj)))
+            callback(null, this.getResponse(obj, statusCode)))
           .catch(console.error);
       }
     } catch (e) {
@@ -17,9 +17,9 @@ export class Response {
     }
   }
 
-  private static getResponse(obj: Buffer) {
+  private static getResponse(obj: Buffer, statusCode: number = 200) {
     return {
-      statusCode: 200,
+      statusCode,
       body: obj.toString('base64'),
       isBase64Encoded: true,
       headers: {
@@ -39,7 +39,7 @@ export class Response {
       status: statusCode || 500,
       error: this.getErrorMessage(error),
       event: this.getEvent(event)
-    }, callback);
+    }, callback, undefined, statusCode || 500);
   }
 
   private static getEvent(event: APIGatewayEvent) {

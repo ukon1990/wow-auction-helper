@@ -1,0 +1,373 @@
+service:
+  name: wah-api
+
+# Add the serverless-webpack plugin
+plugins:
+  - serverless-webpack
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 200
+  timeout: 30
+  versionFunctions: false
+  #tags:
+    #Project: WAH
+  #tracing:
+    #apiGateway: true
+    #lambda: true
+
+functions:
+  syncS3WithTheDatabase:
+    tags:
+      Function: Wah-syncS3WithTheDatabase
+      Project: WAH
+    handler: src/updates/controller.syncS3WithTheDatabase
+    memorySize: 1024
+    timeout: 600
+  auctionUpdateLogForRealm:
+    tags:
+      Function: Wah-auctionUpdateLogForRealm
+      Project: WAH
+    handler: src/realm/controller.getUpdateLogForRealm
+    memorySize: 200
+    events:
+      - http:
+          method: get
+          path: auction/log/{id}
+          cors:
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
+  updateLastRequested:
+    tags:
+      Function: Wah-updateLastRequested
+      Project: WAH
+    handler: src/realm/controller.updateLastRequested
+    memorySize: 200
+    timeout: 5
+    #events:
+     # - http:
+         # method: post
+          #path: realms/update-last-requested
+          #cors: 'http://localhost:4200,https://wah.jonaskf.net'
+  auctionsDownloadAndSave:
+    tags:
+      Function: Wah-auctionsDownloadAndSave
+      Project: WAH
+    handler: src/auction/controller.auctionsDownloadAndSave
+    memorySize: 320 # Original value 320
+    timeout: 50
+  auctionsUpdateStaticS3Data:
+    tags:
+      Function: Wah-auctionsUpdateStaticS3Data
+      Project: WAH
+    handler: src/auction/controller.updateStaticS3Data
+    memorySize: 400 # Original value 400
+    timeout: 30
+  auctionsInsertStatisticsData:
+    tags:
+      Function: Wah-auctionsInsertStatisticsData
+      Project: WAH
+    handler: src/auction/controller.insertStatisticsData
+    memorySize: 222
+    timeout: 120
+
+  auctionsUpdateRealmTrends:
+    tags:
+      Function: Wah-updateRealmTrends
+      Project: WAH
+    handler: src/auction/controller.updateRealmTrends
+    memorySize:  1344 # Original memory usage based: 830
+    timeout: 300
+  updateAllHouses:
+    tags:
+      Function: Wah-updateAllHouses
+      Project: WAH
+    handler: src/auction/controller.updateAll
+    memorySize: 212
+    timeout: 59
+
+  deactivateInactiveHouses:
+    tags:
+      Function: Wah-deactivateInactiveHouses
+      Project: WAH
+    handler: src/auction/controller.deactivateInactiveHouses
+    memorySize: 200
+  deleteOldPriceHistoryForRealmAndSetDailyPrice:
+    tags:
+      Function: Wah-deleteOldPriceHistoryForRealmAndSetDailyPrice
+      Project: WAH
+    handler: src/auction/controller.deleteOldPriceHistoryForRealmAndSetDailyPrice
+    memorySize: 200
+    timeout: 60
+  updateNextRealmsDailyPrices:
+    tags:
+      Function: Wah-updateNextRealmsDailyPrices
+      Project: WAH
+    handler: src/auction/controller.updateNextRealmsDailyPrices
+    memorySize: 1024 # Original size: 650
+    timeout: 60
+  deleteOldPriceForRealmHourly:
+    tags:
+      Function: Wah-deleteOldPriceForRealmHourly
+      Project: WAH
+    handler: src/auction/controller.deleteOldPriceForRealmHourly
+    memorySize: 250
+    timeout: 10
+  deleteOldPriceForRealmDaily:
+    tags:
+      Function: Wah-deleteOldPriceForRealmDaily
+      Project: WAH
+    handler: src/auction/controller.deleteOldPriceForRealmDaily
+    memorySize: 250
+    timeout: 120
+  # TODO: Remove!
+  updateAllRealmDailyData:
+    tags:
+      Function: Wah-updateAllRealmDailyData
+      Project: WAH
+    handler: src/auction/controller.updateAllRealmDailyData
+    memorySize: 1024
+    timeout: 300
+  items:
+    tags:
+      Function: Wah-items
+      Project: WAH
+    handler: src/controllers/item.handler
+    memorySize: 300
+  findMissingItemsAndImport:
+    tags:
+      Function: Wah-findMissingItemsAndImport
+      Project: WAH
+    handler: src/item/controller.findMissingItemsAndImport
+    memorySize: 200
+    timeout: 300
+  getPriceHistoryForItem:
+    tags:
+      Function: Wah-item-history
+      Project: WAH
+    handler: src/auction/controller.getPriceHistoryForItem
+    memorySize: 256
+    events:
+      - http:
+          method: post
+          path: item/history
+          cors:
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
+  migrate:
+    tags:
+      Function: Wah-item-history
+      Project: WAH
+    handler: src/auction/controller.migrate
+    memorySize: 256
+    events:
+      - http:
+          method: get
+          path: migrate
+          cors:
+            origin: 'http://localhost:4200'
+  getComparablePricesFor:
+    tags:
+      Function: Wah-item-getComparablePricesFor
+      Project: WAH
+    handler: src/auction/controller.getComparablePricesFor
+    memorySize: 256
+    events:
+      - http:
+          method: post
+          path: item/history/compare
+          cors:
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
+  pets:
+    tags:
+      Function: Wah-pets
+      Project: WAH
+    handler: src/controllers/pet.handler
+    memorySize: 128
+  getProfessions:
+    tags:
+      Function: Wah-getProfessions
+      Project: WAH
+    memorySize: 128
+    handler: src/profession/controller.getProfessions
+  getAllRecipesAfter:
+    tags:
+      Function: Wah-getAllRecipesAfter
+      Project: WAH
+    memorySize: 128
+    handler: src/recipe/controller.getAfter
+
+  getRecipeById:
+    tags:
+      Function: Wah-getRecipeById
+      Project: WAH
+    memorySize: 128
+    handler: src/recipe/controller.getById
+  zone:
+    tags:
+      Function: Wah-zone
+      Project: WAH
+    handler: src/controllers/zone.getAll
+    memorySize: 128
+    timeout: 30
+  npcGetById:
+    tags:
+      Function: Wah-npcGetById
+      Project: WAH
+    handler: src/controllers/npc.getById
+    memorySize: 128
+  npcGetAll:
+    tags:
+      Function: Wah-npcGetAll
+      Project: WAH
+    handler: src/controllers/npc.getAll
+    memorySize: 400
+  npcGetByIds:
+    tags:
+      Function: Wah-npcGetByIds
+      Project: WAH
+    handler: src/controllers/npc.addNewNPCsByIds
+    memorySize: 256
+    timeout: 30
+  character:
+    tags:
+      Function: Wah-character
+      Project: WAH
+    handler: src/character/controller.getCharacter
+    memorySize: 128
+    events:
+      - http:
+          method: post
+          path: character
+          cors:
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
+  realm:
+    tags:
+      Function: Wah-realm
+      Project: WAH
+    handler: src/controllers/realm.handler
+  realmAllRegions:
+    tags:
+      Function: Wah-realmAllRegions
+      Project: WAH
+    handler: src/controllers/realm.realmAllRegions
+    memorySize: 200
+  loggerProcessAccessLogs:
+    tags:
+      Function: Wah-loggerProcessAccessLogs
+      Project: WAH
+    handler: src/logs/controller.processAccessLogs
+    memorySize: 128
+    timeout: 90
+  loggerGetTableSize:
+    tags:
+      Function: Wah-loggerGetTableSize
+      Project: WAH
+    handler: src/logs/controller.getTableSize
+    memorySize: 128
+    events:
+      - http:
+          method: get
+          path: logger/tables
+          cors:
+            origin: 'http://localhost:4200'
+  loggerGetGlobalStatus:
+    tags:
+      Function: Wah-loggerGetGlobalStatus
+      Project: WAH
+    handler: src/logs/controller.getGlobalStatus
+    memorySize: 128
+    events:
+      - http:
+          method: get
+          path: logger/global-status
+          cors:
+            origin: 'http://localhost:4200'
+  loggerQueries:
+    tags:
+      Function: Wah-loggerGetCurrentQueries
+      Project: WAH
+    handler: src/logs/controller.getCurrentQueries
+    memorySize: 128
+    events:
+      - http:
+          method: get
+          path: logger/queries
+          cors:
+            origin: 'http://localhost:4200'
+  currency:
+    tags:
+      Function: Wah-currency
+      Project: WAH
+    handler: src/controllers/currency.handler
+    memorySize: 128
+  updateTSMDumpData:
+    tags:
+      Function: Wah-updateTSMDumpData
+      Project: WAH
+    handler: src/auction/controller.updateTSMDataForOneRealm
+    memorySize: 256
+## User related
+  deleteDashboard:
+    handler: src/dashboard/controller.delete
+    tags:
+      Function: Wah-deleteDashboard
+      Project: WAH
+    events:
+      - http:
+          method: DELETE
+          path: dashboard/{id}
+          cors:
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
+  getByIdDashboard:
+    handler: src/dashboard/controller.getById
+    tags:
+      Function: Wah-getByIdDashboard
+      Project: WAH
+    events:
+      - http:
+          method: GET
+          path: dashboard/{id}
+          cors:
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
+  copyDashboard:
+    handler: src/dashboard/controller.copy
+    tags:
+      Function: Wah-copyDashboard
+      Project: WAH
+    events:
+      - http:
+          method: GET
+          path: dashboard/copy/{id}
+          cors:
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
+  getAllDashboard:
+    handler: src/dashboard/controller.getAll
+    tags:
+      Function: Wah-getAllDashboard
+      Project: WAH
+    events:
+      - http:
+          method: GET
+          path: dashboard
+          cors:
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
+  saveDashboard:
+    handler: src/dashboard/controller.save
+    tags:
+      Function: Wah-saveDashboard
+      Project: WAH
+    events:
+      - http:
+          method: POST
+          path: dashboard
+          cors:
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
+  # Admin
+  adminOptimizeTable:
+    memorySize: 128
+    timeout: 5 #600
+    handler: src/admin/controller.optimizeTable
+    tags:
+      Function: Wah-adminOptimizeTable
+      Project: WAH

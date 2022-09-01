@@ -1,6 +1,11 @@
 const request: any = require('request');
 
 export class HttpClientUtil {
+  private readonly timeout?: number;
+
+  constructor(timeout?: number) {
+    this.timeout = timeout;
+  }
   get(url: string, expectJSON: boolean = true, headers: any = {}): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       request.get(
@@ -9,7 +14,8 @@ export class HttpClientUtil {
           headers: {
             'User-Agent': 'Mozilla/5.0',
             ...headers
-          }
+          },
+          timeout: this.timeout || undefined,
         },
         (error, response, body) => {
           try {

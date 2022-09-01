@@ -213,7 +213,7 @@ export class WoWHeadUtil {
       const dataResult = dataRegex.exec(result[1]);
       if (dataResult && dataResult.length) {
         const totalCount = this.getTotalCount(result);
-        // tslint:disable-next-line:no-eval
+        // tslint:disable-next-line:no-eval direct-eval
         return eval(dataResult[0].replace('data: ', '')
           .replace(/,$/g, '')).map(entry => ({
           ...entry, totalCount
@@ -231,7 +231,7 @@ export class WoWHeadUtil {
       result = regex.exec(body);
     try {
       if (result && result[0]) {
-        // tslint:disable-next-line:no-eval
+        // tslint:disable-next-line:no-eval direct-eval
         return eval(result[0]
           .replace('var ' + variableName + ' =', '')
           .replace(/;$/g, ''));
