@@ -58,7 +58,7 @@ export class UserRepository {
     });
   }
 
-  remove(username: string): Promise<void> {
+  adminDeleteUser(username: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.provider.adminDeleteUser({
         Username: username,
@@ -91,6 +91,22 @@ export class UserRepository {
         AccessToken: accessToken,
         PreviousPassword: previousPassword,
         ProposedPassword: proposedPassword,
+      }).promise()
+        .then((result: any) => {
+          resolve(result);
+        })
+        .catch(reject);
+    });
+  }
+
+  updateEmail(accessToken: string, email: string) {
+    return new Promise<AdminGetUserResponse>((resolve, reject) => {
+      this.provider.updateUserAttributes({
+        AccessToken: accessToken,
+        UserAttributes: [{
+          Name: 'email',
+          Value: email,
+        }]
       }).promise()
         .then((result: any) => {
           resolve(result);

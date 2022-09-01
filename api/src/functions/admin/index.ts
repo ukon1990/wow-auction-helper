@@ -29,11 +29,11 @@ export default {
     }]
   },
   adminUser: {
-    handler: `${handlerPath(__dirname)}/controller.user`,
+    handler: `${handlerPath(__dirname)}/controller.adminUser`,
     memorySize: 128,
     timeout: 5,
     tags: {
-      Function: 'Wah-adminGetUserList',
+      Function: 'Wah-adminUser',
       Project: 'WAH',
     },
     events: [{

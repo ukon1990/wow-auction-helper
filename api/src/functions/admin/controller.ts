@@ -1,7 +1,7 @@
 import {formatErrorResponse, formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from '@libs/api-gateway';
 import {AdminService} from './admin.service';
 import {middyfy} from '@libs/lambda';
-import {UserService} from '@functions/admin/user.service';
+import {UserService} from '@functions/user/user.service';
 import {APIGatewayEvent} from 'aws-lambda';
 
 export const optimizeTable = middyfy(async (event): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
@@ -24,12 +24,12 @@ export const getUserList = middyfy(async (event: APIGatewayEvent): Promise<Valid
   return response;
 });
 
-export const user = middyfy(async (event: APIGatewayEvent): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
+export const adminUser = middyfy(async (event: APIGatewayEvent): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
   const service = new UserService(event.headers);
   let response;
   switch (event.httpMethod) {
     case 'delete':
-      await service.deleteUser(event.pathParameters?.username)
+      await service.adminDeleteUser(event.pathParameters?.username)
         .then((users) => response = formatJSONResponse(users as any))
         .catch(err => response = formatErrorResponse(err.code, err.message, err));
       break;

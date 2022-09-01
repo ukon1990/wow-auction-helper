@@ -77,6 +77,10 @@ export class AuthService {
     return false;
   }
 
+  getToken(): string {
+    return this.tokenRaw;
+  }
+
   getUnauthorizedResponse() {
     return {
       status: 401,

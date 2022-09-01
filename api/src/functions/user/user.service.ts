@@ -76,12 +76,12 @@ export class UserService extends BaseService<any, any> {
     });
   }
 
-  deleteUser(username: string) {
+  adminDeleteUser(username: string) {
     return new Promise(async (resolve, reject) => {
       if (!await this.authService.isAdmin() || !username) {
         return reject(this.authService.getUnauthorizedResponse());
       }
-      (this.repository as UserRepository).remove(username)
+      (this.repository as UserRepository).adminDeleteUser(username)
         .then(data => {
           resolve(data as any);
         })
@@ -89,16 +89,17 @@ export class UserService extends BaseService<any, any> {
     });
   }
 
-  changePassword(accessToken: string, previousPassword: string, proposedPassword: string) {
+  updateEmail(email: string) {
+    return (this.repository as UserRepository).updateEmail(this.authService.getToken(), email);
+  }
+
+  changePassword(previousPassword: string, proposedPassword: string) {
     return new Promise(async (resolve, reject) => {
-      if (!await this.authService || !previousPassword || !proposedPassword) {
-        return reject(this.authService.getUnauthorizedResponse());
-      }
-      (this.repository as UserRepository).changePassword(accessToken, previousPassword, proposedPassword)
+      (this.repository as UserRepository).changePassword(this.authService.getToken(), previousPassword, proposedPassword)
         .then(data => {
           resolve(data as any);
         })
-        .catch(resolve);
+        .catch(reject);
     });
   }
 }
