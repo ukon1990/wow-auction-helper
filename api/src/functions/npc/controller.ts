@@ -12,7 +12,7 @@ export const addNewNPCsByIds = middyfy(async (event): Promise<ValidatedEventAPIG
   if (!isAdmin) {
     response = formatErrorResponse(401, 'Not authorized');
   } else {
-    await NpcHandler.addNewNPCsByIds(JSON.parse(event.body).ids, db)
+    await NpcHandler.addNewNPCsByIds(event.body.ids, db)
       .then((data) => response = formatJSONResponse(data as any))
       .catch(err => response = formatErrorResponse(err.code, err.message, err))
       .finally(() => db.end());
@@ -23,7 +23,7 @@ export const addNewNPCsByIds = middyfy(async (event): Promise<ValidatedEventAPIG
 
 export const getAll = middyfy(async (event): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
   const isAdmin = await new AuthService(event.headers).isAdmin();
-  const {locale, timestamp} = JSON.parse(event.body);
+  const {locale, timestamp} = event.body;
   const db = new DatabaseUtil(false);
   let response;
 
@@ -47,7 +47,7 @@ export const getById = middyfy(async (event): Promise<ValidatedEventAPIGatewayPr
   if (!isAdmin) {
     response = formatErrorResponse(401, 'Not authorized');
   } else {
-    await NpcHandler.getById(+event.pathParameters.id, JSON.parse(event.body).locale)
+    await NpcHandler.getById(+event.pathParameters.id, event.body.locale)
       .then((data) => response = formatJSONResponse(data as any))
       .catch(err => response = formatErrorResponse(err.code, err.message, err))
       .finally(() => db.end());

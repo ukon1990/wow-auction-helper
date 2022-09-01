@@ -24,7 +24,7 @@ export const save = middyfy(async (event): Promise<ValidatedEventAPIGatewayProxy
   if (!token) {
     response = formatErrorResponse(401, 'Not authorized');
   } else {
-    await service.save(JSON.parse(event.body))
+    await service.save(event.body)
       .then((board) => response = formatJSONResponse(board as any))
       .catch(err => response = formatErrorResponse(err.code, err.message, err));
   }

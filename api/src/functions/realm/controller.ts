@@ -13,6 +13,16 @@ interface CloudTrailS3Event {
   };
 }
 
+export const updateActiveRealms = middyfy(async (): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
+  let response;
+
+  await new RealmService().updateActiveRealms()
+    .then((data) => response = formatJSONResponse(data as any))
+    .catch(err => response = formatErrorResponse(err.code, err.message, err));
+
+  return response;
+});
+
 export const getUpdateLogForRealm = middyfy(async (event): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
   let response;
 

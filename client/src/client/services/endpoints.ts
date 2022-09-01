@@ -39,7 +39,7 @@ export class Endpoints {
 
   public static getLambdaUrl(path: string, region?: string): string {
     if (!environment.production && USE_LOCAL_BACKEND) {
-      return 'http://localhost:3000/' + path;
+      return 'http://localhost:3000/dev/' + path;
     }
     if (!region) {
       region = SharedService.user && SharedService.user.region ?

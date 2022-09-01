@@ -41,8 +41,8 @@ export const updateAllRealmDailyData = middyfy(async (event): Promise<ValidatedE
 
 /* istanbul ignore next */
 export const getPriceHistoryForItem = middyfy(async (event): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
-  const {ahId, id, petSpeciesId, bonusIds, onlyHourly} = JSON.parse(event.body);
-  const {items} = JSON.parse(event.body);
+  const {ahId, id, petSpeciesId, bonusIds, onlyHourly} = event.body;
+  const {items} = event.body;
   const conn = new DatabaseUtil(false, true);
   const service = new StatsService();
 
@@ -64,7 +64,7 @@ export const getComparablePricesFor = middyfy(async ({body}): Promise<ValidatedE
   const service = new StatsService();
 
   let response;
-  await service.getComparablePricesFor(JSON.parse(body))
+  await service.getComparablePricesFor(body)
     .then(history => {
       response = formatJSONResponse(history);
     })

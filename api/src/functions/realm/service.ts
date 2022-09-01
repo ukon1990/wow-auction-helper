@@ -158,6 +158,8 @@ export class RealmService {
     });
   }
 
+
+
   async createLastModifiedFile(ahId: number, region: string): Promise<void> {
     const start = +new Date();
     return new Promise(async (resolve, reject) => {
@@ -188,7 +190,7 @@ export class RealmService {
   }
 
   getAllRealmsFromAPI(region: string, nameSpace: NameSpace.DYNAMIC_CLASSIC | NameSpace.DYNAMIC_RETAIL): Promise<any> {
-    const http = new HttpClientUtil();
+    const http = new HttpClientUtil(30_000);
     return new Promise<any>(async (resolve, reject) => {
       await AuthHandler.getToken();
       const url = new Endpoints().getPath(`connected-realm/`, region, nameSpace);
@@ -222,8 +224,9 @@ export class RealmService {
                 gameBuild: TextUtil.contains(nameSpace, 'classic') ?
                   GameBuildVersion.Classic : GameBuildVersion.Retail,
               };
-              realms.push(processedRealm);
-              await this.repository.add(processedRealm);
+              // realms.push(processedRealm);
+              realms.push(body);
+              // await this.repository.add(processedRealm);
             } catch (error) {
               console.error(`Realm not found for ${realm.href}`, error);
             }
@@ -231,6 +234,60 @@ export class RealmService {
 
           resolve(realms);
         })
+        .catch(reject);
+    });
+  }
+
+  correctIncorrectAhIds() {
+    return new Promise<any>(async (resolve) => {
+      const list = [];
+      const map = new Map<string, any>();
+      const mapConnectedId = new Map<number, any>();
+      const mapSlugs = new Map<string, any>();
+      const savedRealms = await this.repository.getAll();
+      const correctIdMap = new Map<number, any>();
+      const correct = [];
+      savedRealms.forEach(realm => {
+        if (!!realm.gameBuild) {
+          return;
+        }
+        const customId = realm.realms.map(r => r.id).sort((a, b) => a - b).join(',');
+        map.set(customId, realm);
+        mapSlugs.set(realm.realmSlugs, realm);
+        mapConnectedId.set(realm.connectedId, realm);
+
+        if (realm.id !== realm.connectedId) {
+          correctIdMap.set(realm.id, realm);
+          correct.push(realm);
+        }
+      }); // tempRealmFile
+      [].forEach(async realm => {
+        const customId = realm.realms.map(r => r.id).sort((a, b) => a - b).join(',');
+        const slugId = realm.realms.map(r => r.slug).sort().join(',');
+        const updatedRealm = map.get(customId) || mapSlugs.get(slugId);
+        if (updatedRealm && !correctIdMap.has(realm.ahId)) {
+          updatedRealm.id = realm.ahId;
+          updatedRealm.stats = realm.stats;
+          list.push(updatedRealm);
+          console.log('Deleting', updatedRealm.connectedId, 'Adding', updatedRealm.id);
+          // await this.repository.delete(updatedRealm.connectedId);
+          // await this.repository.add(updatedRealm);
+
+        }
+      });
+
+      resolve(list);
+    });
+  }
+
+  updateActiveRealms() {
+    return new Promise<any>(async (resolve, reject) => {
+      const regions = ['eu', 'us', 'kr', 'tw'];
+      Promise.all([
+        ...regions.map(region => this.getAllRealmsFromAPI(region, NameSpace.DYNAMIC_CLASSIC)),
+        ...regions.map(region => this.getAllRealmsFromAPI(region, NameSpace.DYNAMIC_RETAIL))
+      ])
+        .then(resolve)
         .catch(reject);
     });
   }

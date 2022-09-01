@@ -27,4 +27,22 @@ export default {
       Project: 'WAH',
     },
   },
+  updateActiveRealms: {
+    handler: `${handlerPath(__dirname)}/controller.updateActiveRealms`,
+    memorySize: 128,
+    timeout: 10,
+    tags: {
+      Function: 'Wah-updateActiveRealms',
+      Project: 'WAH',
+    },
+    events: [{
+      http: {
+        method: 'get',
+        path: 'realm/statuses',
+        cors: {
+          origin: 'http://localhost:4200,https://wah.jonaskf.net',
+        }
+      },
+    }]
+  },
 };
