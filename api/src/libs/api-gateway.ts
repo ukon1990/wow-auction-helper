@@ -1,12 +1,13 @@
-import type {APIGatewayProxyEvent, APIGatewayProxyResult, Handler} from "aws-lambda"
-import type {FromSchema} from "json-schema-to-ts";
+import type {APIGatewayProxyEvent, APIGatewayProxyResult, Handler} from 'aws-lambda'
+import type {FromSchema} from 'json-schema-to-ts';
 
-type ValidatedAPIGatewayProxyEvent<S> = Omit<APIGatewayProxyEvent, 'body'> & { body: FromSchema<S> }
-export type ValidatedEventAPIGatewayProxyEvent<S> = Handler<ValidatedAPIGatewayProxyEvent<S>, APIGatewayProxyResult>
+type ValidatedAPIGatewayProxyEvent<S> = Omit<APIGatewayProxyEvent, 'body'> & { body: FromSchema<S> };
+export type ValidatedEventAPIGatewayProxyEvent<S> = Handler<ValidatedAPIGatewayProxyEvent<S>, APIGatewayProxyResult>;
 
+export const isOffline = (process.env.IS_OFFLINE || process.env.IS_LOCAL) || process.env.NODE_ENV === 'test';
 
 export const cors = {
-  origin: 'https://d1nncf1c3i0f3i.cloudfront.net'
+  origin: isOffline ? 'localhost:4200' : 'https://wah.jonaskf.net'
 };
 
 const headers = {

@@ -1,4 +1,4 @@
-import {AdminRepository} from "./admin.repository";
+import {AdminRepository} from './admin.repository';
 
 export class AdminService {
   private readonly repository: AdminRepository;

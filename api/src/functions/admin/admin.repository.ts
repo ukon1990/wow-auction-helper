@@ -4,6 +4,6 @@ export class AdminRepository {
 
   optimizeTable(table: string): Promise<void> {
     return new DatabaseUtil()
-      .query('OPTIMIZE TABLE itemPriceHistoryPerHour;');
+      .query(`OPTIMIZE TABLE ${table};`);
   }
 }

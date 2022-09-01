@@ -164,12 +164,8 @@ export class RealmService {
     const start = +new Date();
     return new Promise(async (resolve, reject) => {
       const s3 = new S3Handler();
-      let house: AuctionHouse;
       await this.getById(ahId)
-        .then(h => house = h)
-        .catch(console.error);
-      this.repository.getRealmsSeparated(ahId)
-        .then(realms => {
+        .then((house: AuctionHouse) => {
           s3.save(
             house,
             `status/${region}/${house.id}.json.gz`, {url: '', region})
@@ -182,10 +178,17 @@ export class RealmService {
             .then(resolve)
             .catch(reject);
         })
+        .catch(reject);
+
+      /* TODO: This one was not used?
+      this.repository.getRealmsSeparated(ahId)
+        .then(realms => {
+
+        })
         .catch(error => {
           console.error(error);
           resolve();
-        });
+        });*/
     });
   }
 
@@ -224,8 +227,8 @@ export class RealmService {
                 gameBuild: TextUtil.contains(nameSpace, 'classic') ?
                   GameBuildVersion.Classic : GameBuildVersion.Retail,
               };
-              // realms.push(processedRealm);
-              realms.push(body);
+              realms.push(processedRealm);
+              // realms.push(body);
               // await this.repository.add(processedRealm);
             } catch (error) {
               console.error(`Realm not found for ${realm.href}`, error);

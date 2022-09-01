@@ -45,20 +45,37 @@ const serverlessConfiguration: AWS = {
               'dynamodb:PutItem',
               'dynamodb:UpdateItem',
               'dynamodb:DeleteItem',
+
               'cognito-idp:ListUsers',
               'cognito-idp:AdminGetUser',
             ],
             Resource: [
-              'arn:aws:dynamodb:eu-central-1:553087069693:table/lang_flash_card',
-              'arn:aws:dynamodb:eu-central-1:553087069693:table/lang_last_modified',
-              'arn:aws:dynamodb:eu-central-1:553087069693:table/lang_language',
-              'arn:aws:dynamodb:eu-central-1:553087069693:table/lang_lesson',
-              'arn:aws:dynamodb:eu-central-1:553087069693:table/lang_sentence',
-              'arn:aws:dynamodb:eu-central-1:553087069693:table/lang_category',
-              'arn:aws:dynamodb:eu-central-1:553087069693:table/lang_word',
-              'arn:aws:dynamodb:eu-central-1:553087069693:table/lang_word_class',
-              'arn:aws:dynamodb:eu-central-1:553087069693:table/lang_word_gender',
-              'arn:aws:cognito-idp:eu-central-1:553087069693:userpool/eu-central-1_5RwvwTYhN',
+              // DynamoDB
+              'arn:aws:dynamodb:eu-west-1:553087069693:table/wah_items',
+              'arn:aws:dynamodb:eu-west-1:553087069693:table/wah_messages',
+              'arn:aws:dynamodb:eu-west-1:553087069693:table/wah_npcs',
+              'arn:aws:dynamodb:eu-west-1:553087069693:table/wah_professions',
+              'arn:aws:dynamodb:eu-west-1:553087069693:table/wah_recipes',
+
+              // DynamoDB with replicas
+              'arn:aws:dynamodb:eu-west-1:553087069693:table/wah_auction_houses',
+              'arn:aws:dynamodb:us-west-1:553087069693:table/wah_auction_houses',
+              'arn:aws:dynamodb:ap-northeast-2:553087069693:table/wah_auction_houses',
+
+              'arn:aws:dynamodb:eu-west-1:553087069693:table/wah_auction_houses_update_log',
+              'arn:aws:dynamodb:us-west-1:553087069693:table/wah_auction_houses_update_log',
+              'arn:aws:dynamodb:ap-northeast-2:553087069693:table/wah_auction_houses_update_log',
+
+              'arn:aws:dynamodb:eu-west-1:553087069693:table/wah_dashboards',
+              'arn:aws:dynamodb:us-west-1:553087069693:table/wah_dashboards',
+              'arn:aws:dynamodb:ap-northeast-2:553087069693:table/wah_dashboards',
+
+              'arn:aws:dynamodb:eu-west-1:553087069693:table/wah_user_settings',
+              'arn:aws:dynamodb:us-west-1:553087069693:table/wah_user_settings',
+              'arn:aws:dynamodb:ap-northeast-2:553087069693:table/wah_user_settings',
+
+              // Cognito
+              'arn:aws:cognito-idp:eu-west-1:553087069693:userpool/eu-west-1_1wW49ehTc',
             ]
           }
         ]
