@@ -24,6 +24,7 @@ export interface AuctionHouse {
   autoUpdate: boolean;
   firstRequested?: number;
   lowestDelay?: number;
+  updateAttempts?: number;
   nextUpdate?: number;
   lastModified?: number;
   size?: number;
