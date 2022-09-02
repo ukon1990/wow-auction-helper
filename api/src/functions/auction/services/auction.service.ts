@@ -179,20 +179,53 @@ export class AuctionService {
     }, callback);
   }
 
+  /**
+   * Exponential backoff function for attempting new AH requests.
+   * This is an attempt at reducing costs in periods where the AH and/or API is down
+   * @param updateAttempts
+   */
+  private getNextAttemptTime(updateAttempts: number = 0) {
+    let delay = 0;
+    const minute = 60_000;
+    switch (updateAttempts) {
+      case 0: delay = minute * 2; break;
+      case 1: delay = minute * 5; break;
+      case 2: delay = minute * 15; break;
+      case 3: delay = minute * 30; break;
+      case 4: delay = minute * 45; break;
+      default: delay = minute * 60; break;
+    }
+
+    return {
+      updateAttempts: updateAttempts + 1,
+      nextUpdate: +new Date() + delay,
+      delay: delay / minute,
+    };
+  }
+
   private async updateHouse(house: AuctionHouse): Promise<boolean> {
     let error, ahDumpResponse: AHDumpResponse;
     return new Promise<any>(async (resolve, reject) => {
       await this.getLatestDumpPath(house.connectedId, house.region, house.gameBuild)
-        .then((r: AHDumpResponse) =>
-          ahDumpResponse = r)
-        .catch(async e => {
+        .then((r: AHDumpResponse) => {
+          ahDumpResponse = r;
+        })
+        .catch(e => {
           error = e || {message: 'Could not fetch AH dump'};
-          const minutesToNextAttempt = 5;
-          const nextUpdateAttemptAppend = 1000 * 60 * minutesToNextAttempt;
-          await this.realmRepository.update(house.id, {nextUpdate: +new Date() + nextUpdateAttemptAppend})
-            .catch(console.error);
+          const {delay} = this.getNextAttemptTime(house.updateAttempts);
           console.error(`Could not get AH data for ${
-            house.id}(${house.region}), trying again in ${minutesToNextAttempt} minutes.`, error);
+            house.id}(${house.region}), trying again in ${delay} minutes.`, error);
+        })
+        .finally(async () => {
+          const {
+            nextUpdate,
+            updateAttempts,
+          } = this.getNextAttemptTime(house.updateAttempts);
+          await this.realmRepository.update(house.id, {
+            nextUpdate,
+            updateAttempts,
+          })
+            .catch(console.error);
         });
 
       /**

@@ -105,6 +105,7 @@ export class RealmService {
           url: entry.url,
           size: entry.size,
           nextUpdate,
+          updateAttempts: 0,
         })
           .then(resolve)
           .catch(reject);
@@ -122,6 +123,7 @@ export class RealmService {
               size: entry.size,
               ...delay,
               nextUpdate,
+              updateAttempts: 0,
             })
               .then(resolve)
               .catch(reject);
