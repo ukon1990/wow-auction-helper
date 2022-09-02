@@ -12,7 +12,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
 import {MatTabsModule} from '@angular/material/tabs';
-import {MonitorComponent} from './components/monitor/monitor.component';
+import {MonitorDatabaseComponent} from './components/monitor-database/monitor-database.component';
 import {AdminService} from './services/admin.service';
 import {UtilModule} from '../util/util.module';
 import {MatListModule} from '@angular/material/list';
@@ -20,7 +20,7 @@ import {TestComponent} from './components/test/test.component';
 import {ItemModule} from '../item/item.module';
 import {UserModule} from '../user/user.module';
 import {UsersComponent} from './components/users/users.component';
-import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 
 @NgModule({
@@ -28,7 +28,7 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
     UpdateComponent,
     AddItemsComponent,
     AddNpcsComponent,
-    MonitorComponent,
+    MonitorDatabaseComponent,
     TestComponent,
     UsersComponent,
   ],

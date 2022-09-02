@@ -11,15 +11,15 @@ export class AdminService {
   }
 
   getCurrentQueries(): Promise<SQLProcess[]> {
-    return this.http.get(Endpoints.getLambdaUrl('logger/queries')).toPromise() as Promise<SQLProcess[]>;
+    return firstValueFrom(this.http.get(Endpoints.getLambdaUrl('admin/database/queries'))) as Promise<SQLProcess[]>;
   }
 
   getTableSize(): Promise<TableSize[]> {
-    return this.http.get(Endpoints.getLambdaUrl('logger/tables')).toPromise() as Promise<TableSize[]>;
+    return firstValueFrom(this.http.get(Endpoints.getLambdaUrl('admin/database/tables'))) as Promise<TableSize[]>;
   }
 
   getGlobalStatus(): Promise<GlobalStatus> {
-    return this.http.get(Endpoints.getLambdaUrl('logger/global-status')).toPromise() as Promise<GlobalStatus>;
+    return firstValueFrom(this.http.get(Endpoints.getLambdaUrl('admin/database/global-status'))) as Promise<GlobalStatus>;
   }
 
   getUsers(paginationToken?: string): Promise<any[]> {
