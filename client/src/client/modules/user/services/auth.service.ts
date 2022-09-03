@@ -13,6 +13,7 @@ import {EmptyUtil, TextUtil} from '@ukon1990/js-utilities';
 import {DatabaseService} from '../../../services/database.service';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {RoutingUtil} from '../../core/utils/routing.util';
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +31,7 @@ export class AuthService {
   constructor(private appSync: AppSyncService,
               private db: DatabaseService,
               private dialog: MatDialog,
+              public snackBar: MatSnackBar,
               private settingsSync: SettingsService) {
     Auth.configure({
       userPoolId: COGNITO.POOL_ID,
@@ -334,12 +336,13 @@ export class AuthService {
         })
         .catch(error => {
           console.error(error);
+          this.snackBar.open('Could not change password', 'Ok');
           reject(error);
         });
     });
   }
 
-  changeEmail(email: string) {
+  changeEmail({email}: { email: string }) {
     return new Promise<any>(async (resolve, reject) => {
       const user = await Auth.currentAuthenticatedUser();
       Auth.updateUserAttributes(user, {email})
@@ -350,6 +353,37 @@ export class AuthService {
           console.error(error);
           reject(error);
         });
+    });
+  }
+
+  verifyAttribute(code: string) {
+    return new Promise<any>(async (resolve, reject) => {
+      const user = await Auth.currentAuthenticatedUser();
+      this.user.value.verifyAttribute('email', `${code}`, {
+        onSuccess: (response) => {
+          resolve(response);
+        },
+        onFailure: (error) => {
+          if (error.name === 'ExpiredCodeException') {
+            this.snackBar.open('Your confirmation code has expired.', 'ok');
+          }
+          console.error(error);
+          reject(error);
+        },
+      });
+    });
+  }
+
+  resendVerificationCode() {
+    return new Promise<void>(async (resolve, reject) => {
+      this.user.value.resendConfirmationCode( (error) => {
+        if (error) {
+          reject(error);
+        } else {
+          this.snackBar.open('Successfully requested a new confirmation code.', 'ok');
+          resolve();
+        }
+      });
     });
   }
 }
