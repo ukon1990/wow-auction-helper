@@ -306,12 +306,13 @@ export class CharacterService {
       const charMap = new Map<string, Character>();
       const updatePromises: Promise<void>[] = [];
       const getId = (character: Character) => `${character.slug}-${character.name}`;
+      let errorCount = 0;
 
       (this.characters.value || []).forEach(character => {
         charMap.set(getId(character), character);
       });
       // The overlap in the models should be similar enough for Character and SettingsCharacter
-      settings.characters.forEach((character: Character) => {
+      settings.characters.forEach((character: Character, index: number) => {
         const alreadyStored: Character = charMap.get(getId(character));
         if (alreadyStored &&
           alreadyStored.lastModified >= character.lastModified) {
@@ -321,7 +322,10 @@ export class CharacterService {
             new Promise<void>(async resolve => {
               await this.update(character, false)
                 .then(char => characters.push(char))
-                .catch(console.error);
+                .catch((error) => {
+                  console.error(error);
+                  errorCount++;
+                });
               resolve();
             })
           );
@@ -332,6 +336,9 @@ export class CharacterService {
       await Promise.all(updatePromises)
         .catch(console.error);
       this.characters.next(characters);
+      if (errorCount > 0) {
+        this.updateAppSync();
+      }
     }
   }
 }
