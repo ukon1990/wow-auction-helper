@@ -8,6 +8,10 @@ export interface Register extends Login {
   confirmPassword: string;
 }
 
+export interface ChangePassword extends Login {
+  oldPassword: string;
+}
+
 export interface ForgotPassword extends Login {
   code: string;
 }

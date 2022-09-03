@@ -3,7 +3,7 @@ import {Auth, CognitoHostedUIIdentityProvider} from '@aws-amplify/auth';
 import {Hub, ICredentials} from '@aws-amplify/core';
 import {CodeDeliveryDetails, CognitoUser, CognitoUserSession, ISignUpResult} from 'amazon-cognito-identity-js';
 import {COGNITO} from '../../../secrets';
-import {ForgotPassword, Login, Register} from '../models/auth.model';
+import {ChangePassword, ForgotPassword, Login, Register} from '../models/auth.model';
 import {BehaviorSubject} from 'rxjs';
 import {FederatedProvider} from '../enums/federated-provider.enum';
 import {AppSyncService} from './app-sync.service';
@@ -11,8 +11,8 @@ import {SettingsService} from './settings/settings.service';
 import {MatDialog} from '@angular/material/dialog';
 import {EmptyUtil, TextUtil} from '@ukon1990/js-utilities';
 import {DatabaseService} from '../../../services/database.service';
-import {ErrorReport} from "../../../utils/error-report.util";
-import {RoutingUtil} from "../../core/utils/routing.util";
+import {ErrorReport} from '../../../utils/error-report.util';
+import {RoutingUtil} from '../../core/utils/routing.util';
 
 @Injectable({
   providedIn: 'root'
@@ -315,6 +315,34 @@ export class AuthService {
   verifyForgotPassword({username, password, code}: ForgotPassword) {
     return new Promise<any>((resolve, reject) => {
       Auth.forgotPasswordSubmit(username, code, password)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch(error => {
+          console.error(error);
+          reject(error);
+        });
+    });
+  }
+
+  changePassword({oldPassword, password}: ChangePassword) {
+    return new Promise<any>(async (resolve, reject) => {
+      const user = await Auth.currentAuthenticatedUser();
+      Auth.changePassword(user, oldPassword, password)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch(error => {
+          console.error(error);
+          reject(error);
+        });
+    });
+  }
+
+  changeEmail(email: string) {
+    return new Promise<any>(async (resolve, reject) => {
+      const user = await Auth.currentAuthenticatedUser();
+      Auth.updateUserAttributes(user, {email})
         .then((response) => {
           resolve(response);
         })
