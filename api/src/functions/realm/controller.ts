@@ -1,7 +1,7 @@
 /* istanbul ignore next */
 import {RealmService} from './service';
-import {middyfy} from "@libs/lambda";
-import {formatErrorResponse, formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "@libs/api-gateway";
+import {middyfy} from '@libs/lambda';
+import {formatErrorResponse, formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from '@libs/api-gateway';
 
 interface CloudTrailS3Event {
   detail: {

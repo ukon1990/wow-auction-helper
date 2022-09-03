@@ -244,44 +244,46 @@ export class RealmService {
   }
 
   correctIncorrectAhIds() {
-    return new Promise<any>(async (resolve) => {
+    return new Promise<any>(async (resolve, reject) => {
+      const promises = [];
       const list = [];
-      const map = new Map<string, any>();
-      const mapConnectedId = new Map<number, any>();
-      const mapSlugs = new Map<string, any>();
-      const savedRealms = await this.repository.getAll();
-      const correctIdMap = new Map<number, any>();
-      const correct = [];
-      savedRealms.forEach(realm => {
-        if (!!realm.gameBuild) {
-          return;
+      const duplicates = [];
+      const connectedIDBased = [];
+      const oldIdBased = [];
+      const map = new Map<number, any>();
+      const oldIdBasedMap = new Map<number, any>();
+      const allHouses = await this.repository.getAll();
+      allHouses.filter(house => !house.gameBuild)
+        .forEach(house => {
+        if (!map.has(house.connectedId)) {
+          map.set(house.connectedId, []);
+          list.push(map.get(house.connectedId));
         }
-        const customId = realm.realms.map(r => r.id).sort((a, b) => a - b).join(',');
-        map.set(customId, realm);
-        mapSlugs.set(realm.realmSlugs, realm);
-        mapConnectedId.set(realm.connectedId, realm);
+        map.get(house.connectedId).push(house);
 
-        if (realm.id !== realm.connectedId) {
-          correctIdMap.set(realm.id, realm);
-          correct.push(realm);
-        }
-      }); // tempRealmFile
-      [].forEach(async realm => {
-        const customId = realm.realms.map(r => r.id).sort((a, b) => a - b).join(',');
-        const slugId = realm.realms.map(r => r.slug).sort().join(',');
-        const updatedRealm = map.get(customId) || mapSlugs.get(slugId);
-        if (updatedRealm && !correctIdMap.has(realm.ahId)) {
-          updatedRealm.id = realm.ahId;
-          updatedRealm.stats = realm.stats;
-          list.push(updatedRealm);
-          console.log('Deleting', updatedRealm.connectedId, 'Adding', updatedRealm.id);
-          // await this.repository.delete(updatedRealm.connectedId);
-          // await this.repository.add(updatedRealm);
-
+        if (house.id !== house.connectedId) {
+          oldIdBased.push(house);
+          oldIdBasedMap.set(house.connectedId, house);
+        } else {
+          connectedIDBased.push(house);
         }
       });
 
-      resolve(list);
+      connectedIDBased.forEach(house => {
+        if (oldIdBasedMap.has(house.id)) {
+          duplicates.push(house);
+          // promises.push(this.repository.delete(house.connectedId));
+        }
+      });
+      /*await Promise.all(promises)
+        .then(resolve)
+        .catch(reject);*/
+      resolve({
+        oldIdBased,
+        connectedIDBased,
+        duplicates,
+        allHouses,
+      });
     });
   }
 

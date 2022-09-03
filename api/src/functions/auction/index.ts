@@ -115,7 +115,6 @@ export default {
       Project: 'WAH',
     },
   },
-  // TODO: Remove?
   updateNextRealmsDailyPrices: {
     handler: `${handlerPath(__dirname)}/controller.updateNextRealmsDailyPrices`,
     memorySize: 1024,
