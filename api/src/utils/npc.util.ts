@@ -517,7 +517,7 @@ export class NPCUtil {
       this.ignoreItemIds[id] = true;
       /*
       new ItemHandler().getById(id, 'en_GB')
-        .then(() => console.log('ItemModel added?'))
+        .then(() => console.log('Item added?'))
         .catch(console.error);*/
     }
   }

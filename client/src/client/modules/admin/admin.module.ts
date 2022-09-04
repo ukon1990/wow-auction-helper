@@ -21,6 +21,7 @@ import {ItemModule} from '../item/item.module';
 import {UserModule} from '../user/user.module';
 import {UsersComponent} from './components/users/users.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { RealmComponent } from './components/realm/realm.component';
 
 
 @NgModule({
@@ -31,6 +32,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     MonitorDatabaseComponent,
     TestComponent,
     UsersComponent,
+    RealmComponent,
   ],
   imports: [
     CommonModule,

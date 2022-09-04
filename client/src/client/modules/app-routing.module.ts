@@ -30,6 +30,7 @@ import {AuctionComparisonComponent} from './auction/components/auction-compariso
 import {ProfitSummaryComponent} from './addon/components/profit-summary2/profit-summary.component';
 import {AdminCanActivateGuard} from './admin/admin-can-activate.guard';
 import {UsersComponent} from './admin/components/users/users.component';
+import {RealmComponent} from "./admin/components/realm/realm.component";
 
 export const ROUTE_HIDDEN_FLAGS = {
   IS_NOT_REGISTERED: 'IS_NOT_REGISTERED',
@@ -168,6 +169,12 @@ const ADMIN_ROUTE: TitledRoute = {
       component: UsersComponent,
       isHidden: ROUTE_HIDDEN_FLAGS.ADMIN_ONLY,
       path: 'users'
+    },
+    {
+      title: 'Auction houses',
+      component: RealmComponent,
+      isHidden: ROUTE_HIDDEN_FLAGS.ADMIN_ONLY,
+      path: 'auction-houses'
     },
     {
       title: 'Database',

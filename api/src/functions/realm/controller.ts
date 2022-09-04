@@ -31,6 +31,23 @@ export const updateActiveRealms = middyfy(async (event): Promise<ValidatedEventA
   return response;
 });
 
+export const getAllAuctionHouses = middyfy(async (event): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
+  let response;
+  const authService = new AuthService(event.headers);
+  const isAdmin = await authService.isAdmin();
+
+  if (isAdmin) {
+    await new RealmService().getAll()
+      .then((data) => response = formatJSONResponse(data as any))
+      .catch(err => response = formatErrorResponse(err.code, err.message, err));
+
+  } else {
+    response = authService.getUnauthorizedResponse();
+  }
+
+  return response;
+});
+
 export const getUpdateLogForRealm = middyfy(async (event): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
   let response;
 

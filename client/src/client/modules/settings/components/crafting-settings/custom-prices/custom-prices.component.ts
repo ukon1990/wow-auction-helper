@@ -2,9 +2,8 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
 
 import {SharedService} from '../../../../../services/shared.service';
-import {Item} from '@shared/models';
+import {ColumnDescription, Item} from '@shared/models';
 import {CustomPrice, CustomPrices} from '../../../../crafting/models/custom-price';
-import {ColumnDescription} from '@shared/models';
 import {CraftingUtil} from '../../../../crafting/utils/crafting.util';
 import {customPricesDefault} from '../../../../crafting/models/default-custom-prices';
 import {Report} from '../../../../../utils/report.util';
@@ -52,7 +51,7 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
 
   /**
    * Such efficient, such ugh
-   * @param name ItemModel name for the query
+   * @param name Item name for the query
    */
   private filter(name: string): void {
     this.filteredItems = SharedService.itemsUnmapped.filter(i =>

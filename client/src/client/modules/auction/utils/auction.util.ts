@@ -293,7 +293,7 @@ export class AuctionUtil {
 
     return SharedService.items[auction.item] ?
       `${SharedService.items[auction.item].name}${nameSuffix}${tags}${idSuffix}` :
-      'ItemModel name missing';
+      'Item name missing';
   }
 
   private static updateAuctionItem(auction: Auction, auctionItemIdBase: string, map: Map<string, AuctionItem>): void {

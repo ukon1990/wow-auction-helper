@@ -1,5 +1,5 @@
 export class GameBuild {
-  static readonly latestClassicExpansion = 1;
+  static readonly latestClassicExpansion = 2;
 
   static readonly ADDONS = {
     AHDB: {file: 'AuctionDB.lua', name: 'AHDB'},
@@ -53,5 +53,5 @@ export class GameBuild {
     'First aid',
     'None'
   ];
-  static latestClassicPhase = 5;
+  static latestClassicPhase = 1;
 }

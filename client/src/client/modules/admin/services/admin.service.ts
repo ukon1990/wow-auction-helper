@@ -26,4 +26,8 @@ export class AdminService {
     const queryParams = paginationToken ? `?paginationToken=${paginationToken}` : '';
     return firstValueFrom(this.http.get(Endpoints.getLambdaUrl(`admin/users` + queryParams))) as Promise<any[]>;
   }
+
+  getAllHouses(): Promise<any[]> {
+    return firstValueFrom(this.http.get(Endpoints.getLambdaUrl(`admin/realm`))) as Promise<any[]>;
+  }
 }

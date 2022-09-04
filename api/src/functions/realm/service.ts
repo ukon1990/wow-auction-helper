@@ -35,6 +35,10 @@ export class RealmService {
     });
   }
 
+  getAll(): Promise<AuctionHouse[]> {
+    return this.repository.getAll();
+  }
+
   updateLastRequested(id: number, lastRequested?: number): Promise<any> {
     return new Promise(async (resolve, reject) => {
       if (!lastRequested) {

@@ -26,7 +26,7 @@ export class ItemQuery {
   }
 
   /* Depricated
-  public static insert(item: ItemModel) {
+  public static insert(item: item) {
     return `
       INSERT INTO items(\`id\`,
                         \`name\`,
