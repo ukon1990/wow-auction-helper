@@ -1,0 +1,59 @@
+<span *ngIf="isLoading; else tableTemplate">
+    <mat-progress-spinner></mat-progress-spinner> Loading users…
+</span>
+
+<ng-template #tableTemplate>
+    <button mat-raised-button color="accent" (click)="getAllUsers()">
+        Refresh
+    </button>
+    <form [formGroup]="searchForm">
+        <mat-form-field>
+            <input matInput
+                   formControlName="username"
+                   placeholder="Username"
+            />
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput
+                   formControlName="email"
+                   placeholder="Email"
+            />
+        </mat-form-field>
+        <mat-form-field>
+            <mat-select
+                    formControlName="emailVerified"
+                    placeholder="Email verified"
+            >
+                <mat-option [value]="null">
+                    All
+                </mat-option>
+                <mat-option [value]="true">
+                    Yes
+                </mat-option>
+                <mat-option [value]="false">
+                    No
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-select
+                    formControlName="status"
+                    placeholder="Status"
+            >
+                <mat-option [value]="null">
+                    All
+                </mat-option>
+                <mat-option
+                        *ngFor="let status of statuses"
+                        [value]="status"
+                >
+                    {{status}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </form>
+    <wah-data-table
+            [columns]="columns"
+            [data]="tableData"
+    ></wah-data-table>
+</ng-template>

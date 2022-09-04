@@ -8,6 +8,5 @@ export {default as npc} from './npc';
 export {default as profession} from './profession';
 export {default as realm} from './realm';
 export {default as recipe} from './recipe';
-export {default as update} from './updates';
-
-//  --useSeparateProcesses
+export {default as updates} from './updates';
+export {default as user} from './user';

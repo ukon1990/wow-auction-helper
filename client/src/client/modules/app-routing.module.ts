@@ -24,11 +24,12 @@ import {CharactersComponent} from './character/components/characters.component';
 import {AddNpcsComponent} from './admin/components/add-npcs/add-npcs.component';
 import {DetailsComponent as NpcDetailsComponent} from './npc/components/details/details.component';
 import {ListComponent as NpcListComponent} from './npc/components/list/list.component';
-import {MonitorComponent} from './admin/components/monitor/monitor.component';
+import {MonitorDatabaseComponent} from './admin/components/monitor-database/monitor-database.component';
 import {TestComponent} from './admin/components/test/test.component';
 import {AuctionComparisonComponent} from './auction/components/auction-comparison/auction-comparison.component';
 import {ProfitSummaryComponent} from './addon/components/profit-summary2/profit-summary.component';
-import {AdminCanActivateGuard} from "./admin/admin-can-activate.guard";
+import {AdminCanActivateGuard} from './admin/admin-can-activate.guard';
+import {UsersComponent} from './admin/components/users/users.component';
 
 export const ROUTE_HIDDEN_FLAGS = {
   IS_NOT_REGISTERED: 'IS_NOT_REGISTERED',
@@ -163,8 +164,14 @@ const ADMIN_ROUTE: TitledRoute = {
   canActivate: [AdminCanActivateGuard],
   children: [
     {
-      title: 'Monitor',
-      component: MonitorComponent,
+      title: 'Users',
+      component: UsersComponent,
+      isHidden: ROUTE_HIDDEN_FLAGS.ADMIN_ONLY,
+      path: 'users'
+    },
+    {
+      title: 'Database',
+      component: MonitorDatabaseComponent,
       isHidden: ROUTE_HIDDEN_FLAGS.ADMIN_ONLY,
       path: 'monitor'
     }, {
@@ -183,7 +190,7 @@ const ADMIN_ROUTE: TitledRoute = {
       component: AddNpcsComponent,
       isHidden: ROUTE_HIDDEN_FLAGS.ADMIN_ONLY,
       path: 'add-npcs'
-    }
+    },
   ]
 };
 

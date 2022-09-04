@@ -21,7 +21,6 @@ export class AuthService {
   }
 
   constructor(headers: {[key: string]: string}) {
-    console.log('headers', headers);
     this.setToken(headers);
   }
 
@@ -76,6 +75,10 @@ export class AuthService {
       console.error(e);
     }
     return false;
+  }
+
+  getToken(): string {
+    return this.tokenRaw;
   }
 
   getUnauthorizedResponse() {

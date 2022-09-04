@@ -1,7 +1,8 @@
 /* istanbul ignore next */
 import {RealmService} from './service';
-import {middyfy} from "@libs/lambda";
-import {formatErrorResponse, formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "@libs/api-gateway";
+import {middyfy} from '@libs/lambda';
+import {formatErrorResponse, formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from '@libs/api-gateway';
+import {AuthService} from "../../shared/services/auth.service";
 
 interface CloudTrailS3Event {
   detail: {
@@ -13,12 +14,19 @@ interface CloudTrailS3Event {
   };
 }
 
-export const updateActiveRealms = middyfy(async (): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
+export const updateActiveRealms = middyfy(async (event): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
   let response;
+  const authService = new AuthService(event.headers);
+  const isAdmin = await authService.isAdmin();
 
-  await new RealmService().updateActiveRealms()
-    .then((data) => response = formatJSONResponse(data as any))
-    .catch(err => response = formatErrorResponse(err.code, err.message, err));
+  if (isAdmin) {
+    await new RealmService().updateActiveRealms()
+      .then((data) => response = formatJSONResponse(data as any))
+      .catch(err => response = formatErrorResponse(err.code, err.message, err));
+
+  } else {
+    response = authService.getUnauthorizedResponse();
+  }
 
   return response;
 });

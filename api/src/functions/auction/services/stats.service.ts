@@ -515,7 +515,7 @@ export class StatsService {
 
   compileDailyAuctionData(id: number, conn = new DatabaseUtil(false), date = this.getYesterday(), region: string = 'eu'): Promise<void> {
     console.log('Updating daily price data');
-    const s3 = new S3Handler();
+    // const s3 = new S3Handler();
     const dayOfMonth = AuctionProcessorUtil.getDateNumber(date.getUTCDate());
     return new Promise<void>((resolve, reject) => {
       new StatsRepository(conn).getHourlyStatsForRealmAtDate(id, date, dayOfMonth)
@@ -538,16 +538,18 @@ export class StatsService {
           const promises = [];
           ahListMap.forEach(ahList => {
             AuctionProcessorUtil.splitEntries(ahList)
-              .forEach((entries, index) => {
+              .forEach((entries) => { // index
+                const query = repo.multiInsertOrUpdateDailyPrices(entries, dayOfMonth);
+                promises.push(conn.query(query));
+                /* TODO: Comment back out, if it had no effect on cost
                 const first: AuctionItemStat = ahList[0];
                 const ahTypeId = first ? first.ahTypeId : '';
-                const query = repo.multiInsertOrUpdateDailyPrices(entries, dayOfMonth);
                 const timestamp = new Date().toJSON().replace(/[:]/gi, '_');
                 promises.push(s3.save(
                   query,
                   `statistics/inserts/daily/${region}-${id}-${ahTypeId || '0'}-${timestamp}-part-${index}.sql.gz`,
                   {region: 'eu'}
-                ));
+                ));*/
               });
           });
           Promise.all(promises)
