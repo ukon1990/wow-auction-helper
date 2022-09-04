@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {GlobalStatus, SQLProcess, TableSize} from '@shared/models';
 import {Endpoints} from '../../../services/endpoints';
 import {firstValueFrom} from 'rxjs';
+import {AuctionHouseStatus} from '../../auction/models/auction-house-status.model';
 
 @Injectable()
 export class AdminService {
@@ -28,6 +29,16 @@ export class AdminService {
   }
 
   getAllHouses(): Promise<any[]> {
-    return firstValueFrom(this.http.get(Endpoints.getLambdaUrl(`admin/realm`))) as Promise<any[]>;
+    return new Promise<any[]>((resolve, reject) => {
+      firstValueFrom(this.http.get(Endpoints.getLambdaUrl(`admin/realm`)))
+        .then((houses: AuctionHouseStatus[]) => resolve(houses.map(house => ({
+          ...house,
+          lastRequested: house.lastRequested || 1,
+          lastModified: house.lastModified || 1,
+          nextUpdate: house.nextUpdate || 1,
+          gameBuild: house.gameBuild ? 'Classic' : 'Retail',
+        }))))
+        .catch(reject);
+    });
   }
 }
