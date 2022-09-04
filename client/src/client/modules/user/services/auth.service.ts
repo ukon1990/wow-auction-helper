@@ -134,14 +134,14 @@ export class AuthService {
             this.openLoginComponent.emit(true);
           } else if (!isRealmSet) {
             this.openSetupDialog(
-              localStorage.getItem('realm'),  localStorage.getItem('region'));
+              localStorage.getItem('realm'), localStorage.getItem('region'));
           }
           reject(error);
         });
     });
   }
 
-  private openSetupDialog(realm: string, region: string ) {
+  private openSetupDialog(realm: string, region: string) {
     const isRealmSet: boolean = !!(realm && region);
     if (!isRealmSet) {
       this.openSetupComponent.emit(true);
@@ -223,8 +223,9 @@ export class AuthService {
   }
 
   confirmSignIn(verificationCode: string): Promise<CognitoUser> {
-    return new Promise<CognitoUser>((resolve, reject) => {
-      Auth.confirmSignIn(this.user.value, verificationCode, 'SOFTWARE_TOKEN_MFA')
+    return new Promise<CognitoUser>(async (resolve, reject) => {
+      const currentAuthenticatedUser = await Auth.currentAuthenticatedUser();
+      Auth.confirmSignIn(currentAuthenticatedUser, verificationCode, 'SOFTWARE_TOKEN_MFA', {})
         .then(async user => {
           await this.getCurrentUser()
             .catch(() => {
@@ -356,34 +357,41 @@ export class AuthService {
     });
   }
 
-  verifyAttribute(code: string) {
-    return new Promise<any>(async (resolve, reject) => {
+  verifyUserAttribute(code: string) {
+    return new Promise<void>(async (resolve, reject) => {
       const user = await Auth.currentAuthenticatedUser();
-      this.user.value.verifyAttribute('email', `${code}`, {
-        onSuccess: (response) => {
-          resolve(response);
-        },
-        onFailure: (error) => {
-          if (error.name === 'ExpiredCodeException') {
-            this.snackBar.open('Your confirmation code has expired.', 'ok');
-          }
+      Auth.verifyCurrentUserAttributeSubmit('email', code)
+        .then(() => {
+          this.snackBar.open('Successfully requested a new confirmation code.', 'ok');
+          resolve();
+        })
+        .catch(error => {
           console.error(error);
+          this.snackBar.open(error.message, 'ok');
           reject(error);
-        },
-      });
+        });
     });
   }
 
-  resendVerificationCode() {
+  getAttributeVerificationCode() {
     return new Promise<void>(async (resolve, reject) => {
-      this.user.value.resendConfirmationCode( (error) => {
-        if (error) {
-          reject(error);
-        } else {
-          this.snackBar.open('Successfully requested a new confirmation code.', 'ok');
-          resolve();
-        }
-      });
+      this.user.value.getAttributeVerificationCode(
+        'email', {
+          onSuccess: () => {
+            this.snackBar.open('Successfully requested a new confirmation code.', 'ok');
+            resolve();
+          },
+          onFailure: (error) => {
+            this.snackBar.open(error.message, 'ok');
+            reject(error);
+          }
+        });
+    });
+  }
+
+  getUserAttributes() {
+    this.user.value.getUserAttributes((error, attr) => {
+      console.log('User attributes is', attr);
     });
   }
 }

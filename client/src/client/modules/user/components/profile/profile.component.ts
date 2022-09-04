@@ -6,7 +6,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserSettings} from '../../models/settings.model';
 import {SettingsService} from '../../services/settings/settings.service';
 import {faSyncAlt} from '@fortawesome/free-solid-svg-icons/faSyncAlt';
-import {ValidatorsUtil} from "../../utils/validators.util";
+import {ValidatorsUtil} from '../../utils/validators.util';
 import {Subscription} from 'rxjs';
 
 @Component({
@@ -23,7 +23,7 @@ export class ProfileComponent implements OnInit {
   form: FormGroup = new FormGroup({
     username: new FormControl({value: null, disabled: true}),
     email: new FormControl({value: null, disabled: true}, [Validators.email]),
-    emailVerified: new FormControl(null, [Validators.email]),
+    emailVerified: new FormControl({value: null, disabled: true}, [Validators.email]),
   });
   passwordForm: FormGroup = new FormGroup({
     oldPassword: new FormControl(null, ValidatorsUtil.password),
@@ -83,6 +83,7 @@ export class ProfileComponent implements OnInit {
   }
 
   updateSettings() {
+    this.service.getUserAttributes();
     this.settingsService.getSettings()
       .then(settings => this.settings = settings)
       .catch(console.error);
@@ -112,13 +113,16 @@ export class ProfileComponent implements OnInit {
 
   confirmEmailChange() {
     this.isSavingEmail = true;
-    this.service.verifyAttribute(this.verifyEmailForm.value.confirmationCode)
-      .then(() => this.service.getCurrentUser())
+    this.service.verifyUserAttribute(`${this.verifyEmailForm.value.confirmationCode}`)
+      .then(() => {
+        this.form.controls.emailVerified.setValue(true);
+        this.user.getUserAttributes(res => console.log('getUserAttributes', res));
+        // this.service.user.next()
+      })
       .catch(error => {
         this.emailCodeExpired = error.name === 'ExpiredCodeException';
-        console.log('error.name', error.name);
         if (this.emailCodeExpired) {
-          // this.resendVerificationCode();
+          this.resendVerificationCode();
         }
       })
       .finally(() => this.isSavingEmail = false);
@@ -126,7 +130,7 @@ export class ProfileComponent implements OnInit {
 
   resendVerificationCode() {
     this.isSavingEmail = true;
-    this.service.resendVerificationCode()
+    this.service.getAttributeVerificationCode()
       .finally(() => {
         this.isSavingEmail = false;
         this.emailCodeExpired = false;

@@ -20,6 +20,7 @@
                    type="text"
             />
         </mat-form-field>
+        <mat-checkbox formControlName="emailVerified" >Verified email</mat-checkbox>
     </form>
 
     <form [formGroup]="passwordForm" *ngIf="isEditing">
@@ -57,7 +58,7 @@
             Save new password
         </button>
     </form>
-    <form [formGroup]="emailForm" *ngIf="isEditing && form.value.emailVerified">
+    <form [formGroup]="emailForm" *ngIf="isEditing">
         <mat-form-field>
             <input
                     matInput
