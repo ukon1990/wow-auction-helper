@@ -31,13 +31,21 @@ export const getUserTableData = (users: CognitoUserModel[]) => users.map(user =>
 
 export const getListOfUsers = (users: CognitoUserModel[], userMap: Map<string, CognitoUserModel>) => {
   const list = [];
+  const statusMap = new Map<string, string>();
+  const statuses: string[] = [];
   users.forEach(u => {
     const sub = u.Attributes.filter(a => a.Name === 'sub')[0].Value;
     userMap.set(sub, u);
+
+    if (!statusMap.has(u.UserStatus)) {
+      statusMap.set(u.UserStatus, u.UserStatus);
+      statuses.push(u.UserStatus);
+    }
+
   });
 
   userMap.forEach(u => list.push(u));
 
   console.log(userMap, list);
-  return list;
+  return {list, statuses};
 };
