@@ -83,7 +83,7 @@ export class ProfileComponent implements OnInit {
   }
 
   updateSettings() {
-    this.service.getUserAttributes();
+    this.service.getCurrentUser().catch(console.error);
     this.settingsService.getSettings()
       .then(settings => this.settings = settings)
       .catch(console.error);
@@ -107,6 +107,7 @@ export class ProfileComponent implements OnInit {
       .finally(() => {
         this.emailForm.enable();
         this.emailForm.reset();
+        this.service.getCurrentUser(true).catch(console.error);
         this.isSavingEmail = false;
       });
   }
@@ -116,8 +117,7 @@ export class ProfileComponent implements OnInit {
     this.service.verifyUserAttribute(`${this.verifyEmailForm.value.confirmationCode}`)
       .then(() => {
         this.form.controls.emailVerified.setValue(true);
-        this.user.getUserAttributes(res => console.log('getUserAttributes', res));
-        // this.service.user.next()
+        this.service.getCurrentUser(true).catch(console.error);
       })
       .catch(error => {
         this.emailCodeExpired = error.name === 'ExpiredCodeException';

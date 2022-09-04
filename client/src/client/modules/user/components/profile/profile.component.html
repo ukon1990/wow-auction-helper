@@ -58,7 +58,7 @@
             Save new password
         </button>
     </form>
-    <form [formGroup]="emailForm" *ngIf="isEditing">
+    <form [formGroup]="emailForm" *ngIf="isEditing && form.value.emailVerified">
         <mat-form-field>
             <input
                     matInput

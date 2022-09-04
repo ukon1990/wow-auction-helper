@@ -67,7 +67,7 @@ export class AuthService {
 
   init(): Promise<void> {
     return new Promise<void>(resolve => {
-      this.getCurrentUser()
+      this.getCurrentUser(true)
         .then(async (currentUser) => {
           if (this.isAuthenticated) {
             this.getAndSetUserGroups(currentUser);
@@ -109,9 +109,9 @@ export class AuthService {
     }
   }
 
-  getCurrentUser(): Promise<CognitoUser> {
+  getCurrentUser(bypassCache?: boolean): Promise<CognitoUser> {
     return new Promise<any>((resolve, reject) => {
-      Auth.currentAuthenticatedUser()
+      Auth.currentAuthenticatedUser({bypassCache})
         .then(async (user: CognitoUser) => {
           this.user.next(user);
           await Auth.currentSession()
@@ -359,10 +359,9 @@ export class AuthService {
 
   verifyUserAttribute(code: string) {
     return new Promise<void>(async (resolve, reject) => {
-      const user = await Auth.currentAuthenticatedUser();
       Auth.verifyCurrentUserAttributeSubmit('email', code)
         .then(() => {
-          this.snackBar.open('Successfully requested a new confirmation code.', 'ok');
+          this.snackBar.open('Your email has now been verified.', 'ok');
           resolve();
         })
         .catch(error => {
@@ -389,9 +388,17 @@ export class AuthService {
     });
   }
 
-  getUserAttributes() {
-    this.user.value.getUserAttributes((error, attr) => {
-      console.log('User attributes is', attr);
+  getUserAttributes(user: CognitoUser = this.user.value) {
+    return new Promise((resolve, reject) => {
+      user.getUserAttributes((error, attributes) => {
+        if (error) {
+          reject(error);
+        } else {
+          const result = {};
+          attributes.forEach(attribute => result[attribute.Name] = attribute.Value);
+          resolve(result);
+        }
+      });
     });
   }
 }
