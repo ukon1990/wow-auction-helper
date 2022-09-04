@@ -1,7 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormControl} from '@angular/forms';
-import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
 import {SharedService} from '../../../../../services/shared.service';
 import {ColumnDescription} from '@shared/models';
 import {CraftingUtil} from '../../../../crafting/utils/crafting.util';
@@ -63,7 +61,7 @@ export class CustomProcComponent implements OnInit, OnDestroy {
 
   /**
    * Such efficient, such ugh
-   * @param name ItemModel name for the query
+   * @param name Item name for the query
    */
   private filter(name: string): Array<Recipe> {
     return CraftingService.list.value.filter(i =>

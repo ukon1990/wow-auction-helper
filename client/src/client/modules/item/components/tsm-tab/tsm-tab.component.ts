@@ -22,7 +22,7 @@ export class TsmTabComponent implements OnInit {
     if (this.auctionItem) {
       Report.debug(
         'TsmTabComponent',
-        'ItemModel detail view',
+        'Item detail view',
         `TSM tab for ${this.auctionItem.itemID} - ${this.auctionItem.name}`);
     }
     this.factionId = SharedService.user.faction;

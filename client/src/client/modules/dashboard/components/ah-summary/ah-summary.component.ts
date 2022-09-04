@@ -77,7 +77,7 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
 
   private getProfessionItemCount() {
     return new SummaryCard(
-      'ItemModel count per profession',
+      'Item count per profession',
       'line',
       this.getProfessionLabels(),
       []);

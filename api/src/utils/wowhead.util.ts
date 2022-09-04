@@ -185,7 +185,7 @@ export class WoWHeadUtil {
   public static getWowHeadData(id: number, isClassic = false): Promise<WoWHead> {
     return new Promise<WoWHead>(((resolve, reject) => {
       request.get(
-        `http://${isClassic ? 'tbc' : 'www'}.wowhead.com/item=${id}`,
+        `http://${isClassic ? 'wotlk' : 'www'}.wowhead.com/item=${id}`,
         null,
         (whError, whResponse, whBody) => {
           if (whError) {

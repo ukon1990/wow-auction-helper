@@ -11,7 +11,7 @@ export default {
     events: [{
       http: {
         method: 'get',
-        path: 'logger/queries',
+        path: 'admin/database/queries',
         cors: {
           origin: 'http://localhost:4200,https://wah.jonaskf.net',
         }
@@ -28,7 +28,7 @@ export default {
     events: [{
       http: {
         method: 'get',
-        path: 'logger/tables',
+        path: 'admin/database/tables',
         cors: {
           origin: 'http://localhost:4200,https://wah.jonaskf.net',
         }
@@ -45,7 +45,7 @@ export default {
     events: [{
       http: {
         method: 'get',
-        path: 'logger/global-status',
+        path: 'admin/database/global-status',
         cors: {
           origin: 'http://localhost:4200,https://wah.jonaskf.net',
         }

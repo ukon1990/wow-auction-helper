@@ -1,0 +1,13 @@
+<span *ngIf="isLoading; else tableTemplate">
+    <mat-progress-spinner></mat-progress-spinner> Loading auction houses…
+</span>
+
+<ng-template #tableTemplate>
+    <button mat-raised-button color="accent" (click)="getAllAuctionHouses()">
+        Refresh
+    </button>
+    <wah-data-table
+            [columns]="columns"
+            [data]="tableData"
+    ></wah-data-table>
+</ng-template>

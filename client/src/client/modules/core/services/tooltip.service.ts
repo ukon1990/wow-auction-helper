@@ -1,9 +1,8 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {BehaviorSubject} from 'rxjs';
 import {Tooltip} from '../models/tooltip.model';
 import {DomSanitizer} from '@angular/platform-browser';
-import {Report} from '../../../utils/report.util';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +24,7 @@ export class TooltipService {
   get(type: string, id: number, bonusIds: number[], isClassic: boolean, event: MouseEvent, item: any, extra: string): Promise<Element> {
     const map = this.tooltips.value;
     const locale = (localStorage.getItem('locale') || 'en').split('_')[0];
-    let url = `https://${isClassic ? 'tbc' : 'www'}.wowhead.com/tooltip/${type}/${id}?locale=${locale}`;
+    let url = `https://${isClassic ? 'wotlk' : 'www'}.wowhead.com/tooltip/${type}/${id}?locale=${locale}`;
     if (bonusIds && bonusIds.length) {
       url += '&bonus=' + bonusIds.join(':');
     }

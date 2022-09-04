@@ -1,12 +1,10 @@
-import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import {} from 'rxjs/operators';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {map, startWith} from 'rxjs/operators';
 import {Observable} from 'rxjs';
-import {startWith, map} from 'rxjs/operators';
 import {FormControl} from '@angular/forms';
 import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util';
 import {SharedService} from '../../../../services/shared.service';
-import {Item, Remains, RemainsSource} from '@shared/models';
-import {ColumnDescription} from '@shared/models';
+import {ColumnDescription, Item, Remains, RemainsSource} from '@shared/models';
 import {Report} from '../../../../utils/report.util';
 
 @Component({
@@ -69,7 +67,7 @@ export class ShuffleItemManageComponent implements OnInit {
 
   /**
    * Such efficient, such ugh
-   * @param name ItemModel name for the query
+   * @param name Item name for the query
    */
   private filter(name: string): Array<Item> {
     if (name === null) {

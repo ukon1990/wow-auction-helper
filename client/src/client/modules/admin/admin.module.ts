@@ -4,7 +4,7 @@ import {AddItemsComponent} from './components/update/add-items/add-items.compone
 import {UpdateComponent} from './components/update/update.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {TableModule} from '../table/table.module';
-import { AddNpcsComponent } from './components/add-npcs/add-npcs.component';
+import {AddNpcsComponent} from './components/add-npcs/add-npcs.component';
 import {MatCardModule} from '@angular/material/card';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatButtonModule} from '@angular/material/button';
@@ -12,13 +12,16 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
 import {MatTabsModule} from '@angular/material/tabs';
-import { MonitorComponent } from './components/monitor/monitor.component';
+import {MonitorDatabaseComponent} from './components/monitor-database/monitor-database.component';
 import {AdminService} from './services/admin.service';
 import {UtilModule} from '../util/util.module';
 import {MatListModule} from '@angular/material/list';
-import { TestComponent } from './components/test/test.component';
+import {TestComponent} from './components/test/test.component';
 import {ItemModule} from '../item/item.module';
 import {UserModule} from '../user/user.module';
+import {UsersComponent} from './components/users/users.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { RealmComponent } from './components/realm/realm.component';
 
 
 @NgModule({
@@ -26,8 +29,10 @@ import {UserModule} from '../user/user.module';
     UpdateComponent,
     AddItemsComponent,
     AddNpcsComponent,
-    MonitorComponent,
+    MonitorDatabaseComponent,
     TestComponent,
+    UsersComponent,
+    RealmComponent,
   ],
   imports: [
     CommonModule,
@@ -43,7 +48,8 @@ import {UserModule} from '../user/user.module';
     UtilModule,
     MatListModule,
     ItemModule,
-    UserModule
+    UserModule,
+    MatProgressSpinnerModule
   ],
   providers: [AdminService]
 })

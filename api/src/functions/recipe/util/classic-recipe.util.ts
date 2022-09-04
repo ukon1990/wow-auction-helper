@@ -71,7 +71,7 @@ export class ClassicRecipeUtil {
   ): Promise<APIRecipe[]> {
     return new Promise<APIRecipe[]>((resolve, reject) => {
       const urlName = this.getUrlName(this.slugifyString(profession), gameVersion);
-      const url = profession === 'None' ? 'https://tbc.wowhead.com/spells?filter=20:25;1:3;0:0#50' : this.getUrl(urlName);
+      const url = profession === 'None' ? 'https://wotlk.wowhead.com/spells?filter=20:25;1:3;0:0#50' : this.getUrl(urlName);
       new HttpClientUtil().get(url, false)
         .then(async ({body}) => {
           const list = this.getList('', body);
@@ -104,7 +104,7 @@ export class ClassicRecipeUtil {
   }
 
   private static getUrl(urlName: string) {
-    return `https://tbc.wowhead.com/spells/${urlName.toLocaleLowerCase()}?filter=20;1;0`;
+    return `https://wotlk.wowhead.com/spells/${urlName.toLocaleLowerCase()}?filter=20;1;0`;
   }
 
   private static async mapResultToRecipe(list, professionId: number, gameVersion?: string) {
@@ -145,7 +145,7 @@ export class ClassicRecipeUtil {
   private static async getRecipeTooltip(id, language, recipe): Promise<void> {
     await new Promise<void>((resolve, reject) => {
       new HttpClientUtil().get(
-        `https://tbc.wowhead.com/tooltip/spell/${id}?locale=${language.key}`)
+        `https://wotlk.wowhead.com/tooltip/spell/${id}?locale=${language.key}`)
         .then(({body}) => {
           if (language.key === 'en') {
             const regexResult = (/Rank [\d]{0,1}/g).exec(body.tooltip);

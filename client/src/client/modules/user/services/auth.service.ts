@@ -3,7 +3,7 @@ import {Auth, CognitoHostedUIIdentityProvider} from '@aws-amplify/auth';
 import {Hub, ICredentials} from '@aws-amplify/core';
 import {CodeDeliveryDetails, CognitoUser, CognitoUserSession, ISignUpResult} from 'amazon-cognito-identity-js';
 import {COGNITO} from '../../../secrets';
-import {ForgotPassword, Login, Register} from '../models/auth.model';
+import {ChangePassword, ForgotPassword, Login, Register} from '../models/auth.model';
 import {BehaviorSubject} from 'rxjs';
 import {FederatedProvider} from '../enums/federated-provider.enum';
 import {AppSyncService} from './app-sync.service';
@@ -11,8 +11,9 @@ import {SettingsService} from './settings/settings.service';
 import {MatDialog} from '@angular/material/dialog';
 import {EmptyUtil, TextUtil} from '@ukon1990/js-utilities';
 import {DatabaseService} from '../../../services/database.service';
-import {ErrorReport} from "../../../utils/error-report.util";
-import {RoutingUtil} from "../../core/utils/routing.util";
+import {ErrorReport} from '../../../utils/error-report.util';
+import {RoutingUtil} from '../../core/utils/routing.util';
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +31,7 @@ export class AuthService {
   constructor(private appSync: AppSyncService,
               private db: DatabaseService,
               private dialog: MatDialog,
+              public snackBar: MatSnackBar,
               private settingsSync: SettingsService) {
     Auth.configure({
       userPoolId: COGNITO.POOL_ID,
@@ -65,7 +67,7 @@ export class AuthService {
 
   init(): Promise<void> {
     return new Promise<void>(resolve => {
-      this.getCurrentUser()
+      this.getCurrentUser(true)
         .then(async (currentUser) => {
           if (this.isAuthenticated) {
             this.getAndSetUserGroups(currentUser);
@@ -107,9 +109,9 @@ export class AuthService {
     }
   }
 
-  getCurrentUser(): Promise<CognitoUser> {
+  getCurrentUser(bypassCache?: boolean): Promise<CognitoUser> {
     return new Promise<any>((resolve, reject) => {
-      Auth.currentAuthenticatedUser()
+      Auth.currentAuthenticatedUser({bypassCache})
         .then(async (user: CognitoUser) => {
           this.user.next(user);
           await Auth.currentSession()
@@ -132,14 +134,14 @@ export class AuthService {
             this.openLoginComponent.emit(true);
           } else if (!isRealmSet) {
             this.openSetupDialog(
-              localStorage.getItem('realm'),  localStorage.getItem('region'));
+              localStorage.getItem('realm'), localStorage.getItem('region'));
           }
           reject(error);
         });
     });
   }
 
-  private openSetupDialog(realm: string, region: string ) {
+  private openSetupDialog(realm: string, region: string) {
     const isRealmSet: boolean = !!(realm && region);
     if (!isRealmSet) {
       this.openSetupComponent.emit(true);
@@ -221,8 +223,9 @@ export class AuthService {
   }
 
   confirmSignIn(verificationCode: string): Promise<CognitoUser> {
-    return new Promise<CognitoUser>((resolve, reject) => {
-      Auth.confirmSignIn(this.user.value, verificationCode, 'SOFTWARE_TOKEN_MFA')
+    return new Promise<CognitoUser>(async (resolve, reject) => {
+      const currentAuthenticatedUser = await Auth.currentAuthenticatedUser();
+      Auth.confirmSignIn(currentAuthenticatedUser, verificationCode, 'SOFTWARE_TOKEN_MFA', {})
         .then(async user => {
           await this.getCurrentUser()
             .catch(() => {
@@ -322,6 +325,80 @@ export class AuthService {
           console.error(error);
           reject(error);
         });
+    });
+  }
+
+  changePassword({oldPassword, password}: ChangePassword) {
+    return new Promise<any>(async (resolve, reject) => {
+      const user = await Auth.currentAuthenticatedUser();
+      Auth.changePassword(user, oldPassword, password)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch(error => {
+          console.error(error);
+          this.snackBar.open('Could not change password', 'Ok');
+          reject(error);
+        });
+    });
+  }
+
+  changeEmail({email}: { email: string }) {
+    return new Promise<any>(async (resolve, reject) => {
+      const user = await Auth.currentAuthenticatedUser();
+      Auth.updateUserAttributes(user, {email})
+        .then((response) => {
+          resolve(response);
+        })
+        .catch(error => {
+          console.error(error);
+          reject(error);
+        });
+    });
+  }
+
+  verifyUserAttribute(code: string) {
+    return new Promise<void>(async (resolve, reject) => {
+      Auth.verifyCurrentUserAttributeSubmit('email', code)
+        .then(() => {
+          this.snackBar.open('Your email has now been verified.', 'ok');
+          resolve();
+        })
+        .catch(error => {
+          console.error(error);
+          this.snackBar.open(error.message, 'ok');
+          reject(error);
+        });
+    });
+  }
+
+  getAttributeVerificationCode() {
+    return new Promise<void>(async (resolve, reject) => {
+      this.user.value.getAttributeVerificationCode(
+        'email', {
+          onSuccess: () => {
+            this.snackBar.open('Successfully requested a new confirmation code.', 'ok');
+            resolve();
+          },
+          onFailure: (error) => {
+            this.snackBar.open(error.message, 'ok');
+            reject(error);
+          }
+        });
+    });
+  }
+
+  getUserAttributes(user: CognitoUser = this.user.value) {
+    return new Promise((resolve, reject) => {
+      user.getUserAttributes((error, attributes) => {
+        if (error) {
+          reject(error);
+        } else {
+          const result = {};
+          attributes.forEach(attribute => result[attribute.Name] = attribute.Value);
+          resolve(result);
+        }
+      });
     });
   }
 }

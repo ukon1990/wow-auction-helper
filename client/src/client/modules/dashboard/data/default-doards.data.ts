@@ -1,8 +1,6 @@
-import {Dashboard} from '@shared/models';
-import {ConditionEnum} from '@shared/enum';
-import {TargetValueEnum} from '@shared/enum';
+import {Dashboard, Profession} from '@shared/models';
+import {ConditionEnum, TargetValueEnum} from '@shared/enum';
 import {columnConfig} from './columns.data';
-import {Profession} from '@shared/models';
 
 enum BoardModifiedDate {
   DECEMBER_27_2020 = 1609059487771,
@@ -416,7 +414,7 @@ const destroyBoards = ['milling', 'prospecting'].map((type: string): Dashboard =
   },
   columns: [
     {
-      key: 'name', title: 'ItemModel name', dataType: 'name'
+      key: 'name', title: 'Item name', dataType: 'name'
     },
     {key: 'buyout', title: 'Value', dataType: 'gold'},
     {key: `source.destroy.${type}.sourceIn.yield`, title: 'ROI', dataType: 'gold'},

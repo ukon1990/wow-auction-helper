@@ -108,7 +108,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     this.setItemData();
     this.setRecipesForItem();
 
-    Report.send('Opened', 'ItemModel detail view');
+    Report.send('Opened', 'Item detail view');
   }
 
   ngAfterViewInit(): void {
@@ -206,10 +206,10 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     const quantity: number = +this.shoppingCartQuantityField.value;
     if (isRecipe) {
       this.shoppingCartService.addRecipeByItemId(this.selected.item.id, quantity);
-      Report.send('Added to recipe shopping cart', 'ItemModel detail view');
+      Report.send('Added to recipe shopping cart', 'Item detail view');
     } else {
       this.shoppingCartService.addItem(this.selected.item.id, quantity);
-      Report.send('Added to item shopping cart', 'ItemModel detail view');
+      Report.send('Added to item shopping cart', 'Item detail view');
     }
 
   }
@@ -275,7 +275,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
       ErrorReport.sendError('ItemComponent.setSelection', error);
     }
     this.wowheadBaseUrl = `http://${
-      this.realmService.isClassic ? 'tbc' : 'www'
+      this.realmService.isClassic ? 'wotlk' : 'www'
     }.wowhead.com/item=`;
   }
 

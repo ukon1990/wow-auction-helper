@@ -38,7 +38,25 @@ export default {
     events: [{
       http: {
         method: 'get',
-        path: 'realm/statuses',
+        path: 'admin/realm/statuses',
+        cors: {
+          origin: 'http://localhost:4200,https://wah.jonaskf.net',
+        }
+      },
+    }]
+  },
+  getAllAuctionHouses: {
+    handler: `${handlerPath(__dirname)}/controller.getAllAuctionHouses`,
+    memorySize: 128,
+    timeout: 10,
+    tags: {
+      Function: 'Wah-getAllAuctionHouses',
+      Project: 'WAH',
+    },
+    events: [{
+      http: {
+        method: 'get',
+        path: 'admin/realm',
         cors: {
           origin: 'http://localhost:4200,https://wah.jonaskf.net',
         }

@@ -95,12 +95,12 @@ export class ItemService {
         locale: localStorage['locale']
       })
       .toPromise()
-      .then((item: ItemModel) => {
+      .then((item: Item) => {
         if (item['error']) {
           ErrorReport.sendHttpError(item['error']);
           return;
         }
-        SharedService.items[item.id] = (item as ItemModel);
+        SharedService.items[item.id] = (item as Item);
         if (SharedService.auctionItemsMap[item.id]) {
           SharedService.auctionItemsMap[item.id].name = item.name;
           SharedService.auctionItemsMap[item.id].vendorSell = item.sellPrice;
@@ -147,7 +147,10 @@ export class ItemService {
 
     items.items.forEach((item: Item) => {
       // Removing non current items from classic
-      if (isClassic && item.classicPhase <= GameBuild.latestClassicPhase) {
+      if (
+        isClassic &&
+        item.classicPhase <= GameBuild.latestClassicPhase
+      ) {
         return;
       }
       // Making sure that the tradevendor item names are updated in case of locale change
@@ -349,7 +352,7 @@ export class ItemService {
 
     setTimeout(() => {
       if (itemsToAdd[i]) {
-        SharedService.items[i] = new ItemModel();
+        SharedService.items[i] = new Item();
         this.addItem(itemsToAdd[i]);
       }
 

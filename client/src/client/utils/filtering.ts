@@ -140,8 +140,11 @@ export class Filters {
   public static isExpansionMatch(itemID: number, expansionId: number, isClassic: boolean): boolean {
     const item: Item = SharedService.items[itemID] as Item;
 
-
-    if (isClassic && item && item.classicPhase <= GameBuild.latestClassicPhase) {
+    if (
+      isClassic && item &&
+      item.classicPhase <= GameBuild.latestClassicPhase &&
+      item.expansionId === GameBuild.latestClassicExpansion
+    ) {
       return false;
     }
 

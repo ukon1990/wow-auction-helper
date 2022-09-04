@@ -1,4 +1,4 @@
-import type {APIGatewayProxyEvent, APIGatewayProxyResult, Handler} from 'aws-lambda'
+import type {APIGatewayProxyEvent, APIGatewayProxyResult, Handler} from 'aws-lambda';
 import type {FromSchema} from 'json-schema-to-ts';
 
 type ValidatedAPIGatewayProxyEvent<S> = Omit<APIGatewayProxyEvent, 'body'> & { body: FromSchema<S> };
@@ -7,7 +7,7 @@ export type ValidatedEventAPIGatewayProxyEvent<S> = Handler<ValidatedAPIGatewayP
 export const isOffline = (process.env.IS_OFFLINE || process.env.IS_LOCAL) || process.env.NODE_ENV === 'test';
 
 export const cors = {
-  origin: isOffline ? 'localhost:4200' : 'https://wah.jonaskf.net'
+  origin: isOffline ? 'http://localhost:4200' : 'https://wah.jonaskf.net'
 };
 
 const headers = {

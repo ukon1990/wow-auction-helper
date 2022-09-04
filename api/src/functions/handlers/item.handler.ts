@@ -77,7 +77,7 @@ export class ItemHandler {
         this.table,
         this.localeTable
       );
-      console.log('ItemModel fetch', sql);
+      console.log('Item fetch', sql);
       conn.query(sql)
         .then((rows: any[]) => {
           const ts = rows[0] ? rows[0].timestamp : new Date().toJSON();

@@ -163,6 +163,7 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
     lastModified?: number;
     url?: string | {[key: string]: string};
     size?: number;
+    updateAttempts?: number;
     nextUpdate?: number;
     lastHistoryDeleteEvent?: number;
     lastHistoryDeleteEventDaily?: number;

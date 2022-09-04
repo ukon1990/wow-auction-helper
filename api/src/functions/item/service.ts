@@ -180,7 +180,7 @@ export class ItemServiceV2 {
   getAllRelevant(timestamp: Date, locale: string, conn: DatabaseUtil) {
     return new Promise((resolve, reject) => {
       const sql = ItemQuery.getAllItemsAfterAndOrderByTimestamp(locale, timestamp);
-      console.log('ItemModel fetch', sql);
+      console.log('Item fetch', sql);
       conn.query(sql)
         .then((rows: any[]) => {
           const ts = rows[0] ? rows[0].timestamp : new Date().toJSON();

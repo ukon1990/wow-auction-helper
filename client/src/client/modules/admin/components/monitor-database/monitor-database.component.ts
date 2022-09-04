@@ -11,11 +11,11 @@ import {ThemeUtil} from '../../../core/utils/theme.util';
 import {getXAxisDateLabel} from '../../../util/utils/highcharts.util';
 
 @Component({
-  selector: 'wah-monitor',
-  templateUrl: './monitor.component.html',
-  styleUrls: ['./monitor.component.scss']
+  selector: 'wah-monitor-database',
+  templateUrl: './monitor-database.component.html',
+  styleUrls: ['./monitor-database.component.scss']
 })
-export class MonitorComponent implements OnDestroy {
+export class MonitorDatabaseComponent implements OnDestroy {
   size: TableSize[] = [];
   tableStatSummary = {
     totalTableSize: 0,

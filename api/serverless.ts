@@ -1,7 +1,18 @@
 import type {AWS} from '@serverless/typescript';
-import {admin, auction, character, dashboard, logs, npc, profession, realm, recipe} from '@functions/index';
+import {
+  admin,
+  auction,
+  character,
+  dashboard,
+  logs,
+  npc,
+  profession,
+  realm,
+  recipe,
+  updates,
+  user
+} from '@functions/index';
 import item from '@functions/item';
-import updates from "@functions/updates";
 
 const serverlessConfiguration: AWS = {
   service: 'wah-api',
@@ -95,6 +106,7 @@ const serverlessConfiguration: AWS = {
     ...realm,
     ...recipe,
     ...updates,
+    ...user,
   },
 };
 

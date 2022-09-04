@@ -19,7 +19,7 @@ describe('ItemHandler', () => {
   it('Can get complete item', async () => {
     jest.setTimeout(10000);
     const item: Item = await new ItemHandler().getFreshItem(109118, 'en_GB');
-    console.log('ItemModel data', item);
+    console.log('Item data', item);
     expect(item.itemSource.droppedBy.length).toBe(8);
     expect(item.expansionId).toBe(5);
     expect(item.patch).toBe('6.0.1.18125');

@@ -1,55 +1,149 @@
 <wah-close-btn (close)="close()"></wah-close-btn>
 
 <h1 mat-dialog-title>
-  Profile
+    Profile
 </h1>
 
 <mat-dialog-content>
-  <form [formGroup]="form">
-    <mat-form-field>
-      <input matInput
-             placeholder="Username"
-             formControlName="username"
-             type="text"
-      />
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput
-             placeholder="Email"
-             formControlName="email"
-             type="text"
-      />
-    </mat-form-field>
-  </form>
+    <form [formGroup]="form" *ngIf="!isEditing">
+        <mat-form-field>
+            <input matInput
+                   placeholder="Username"
+                   formControlName="username"
+                   type="text"
+            />
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput
+                   placeholder="Email"
+                   formControlName="email"
+                   type="text"
+            />
+        </mat-form-field>
+        <mat-checkbox formControlName="emailVerified" >Verified email</mat-checkbox>
+    </form>
+
+    <form [formGroup]="passwordForm" *ngIf="isEditing">
+        <mat-form-field>
+            <input
+                    matInput
+                    placeholder="Current password"
+                    formControlName="oldPassword"
+                    type="password"
+            />
+        </mat-form-field>
+        <mat-form-field>
+            <input
+                    matInput
+                    placeholder="New password"
+                    formControlName="password"
+                    type="password"
+            />
+        </mat-form-field>
+        <mat-form-field>
+            <input
+                    matInput
+                    placeholder="Repeat password"
+                    formControlName="confirmPassword"
+                    type="password"
+            />
+        </mat-form-field>
+
+        <button
+                mat-stroked-button color="accent"
+                [disabled]="passwordForm.invalid || isSavingPassword"
+                type="button"
+                (click)="changePassword()"
+        >
+            Save new password
+        </button>
+    </form>
+    <form [formGroup]="emailForm" *ngIf="isEditing && form.value.emailVerified">
+        <mat-form-field>
+            <input
+                    matInput
+                    placeholder="New email"
+                    formControlName="email"
+                    type="email"
+            />
+        </mat-form-field>
+        <button
+                mat-stroked-button color="accent"
+                [disabled]="emailForm.invalid || !emailForm.value.email?.length || isSavingEmail"
+                type="button"
+                (click)="changeEmail()"
+        >
+            Save email
+        </button>
+    </form>
+
+    <form [formGroup]="verifyEmailForm" *ngIf="isEditing && !form.value.emailVerified">
+        <mat-form-field>
+            <mat-label>Confirmation code (check your mail)</mat-label>
+            <input
+                    matInput
+                    placeholder="Confirmation code (check your mail)"
+                    formControlName="confirmationCode"
+                    type="number"
+            />
+            <mat-error *ngIf="emailCodeExpired">
+                This confirmation code has expired.
+            </mat-error>
+        </mat-form-field>
+        <button
+                mat-stroked-button color="accent"
+                [disabled]="verifyEmailForm.invalid || isSavingEmail"
+                type="button"
+                (click)="confirmEmailChange()"
+        >
+            Verify email change
+        </button>
+        <button
+                mat-stroked-button color="primary"
+                type="button"
+                (click)="resendVerificationCode()"
+        >
+            Re-send confirmation code
+        </button>
+    </form>
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button
-          color="warn"
-          type="button"
-          mat-stroked-button
-          (click)="logout()"
+    <button
+            color="warn"
+            type="button"
+            mat-stroked-button
+            (click)="logout()"
 
-  >
-    Log out
-  </button>
+    >
+        Log out
+    </button>
 
-  <button
-    type="button"
-    mat-stroked-button
-    color="accent"
-    (click)="updateSettings()"
-  >
-    <fa-icon [icon]="updateIcon"></fa-icon>
-    Sync settings (last modified: {{ settings?.lastModified | date: 'dd.MMM yyyy HH:mm:ss' }})
-  </button>
+    <button
+            type="button"
+            mat-stroked-button
+            color="accent"
+            (click)="isEditing = !isEditing"
+    >
+        Change email or password
+    </button>
 
-  <button
-          color="primary"
-          type="button"
-          mat-stroked-button
-          (click)="close()"
-  >
-    Close
-  </button>
+    <button
+            type="button"
+            mat-stroked-button
+            color="primary"
+            (click)="updateSettings()"
+    >
+        <fa-icon [icon]="updateIcon"></fa-icon>
+        Sync settings (last modified: {{ settings?.lastModified | date: 'dd.MMM yyyy HH:mm:ss' }})
+    </button>
+
+    <button
+            color="primary"
+            type="button"
+            mat-stroked-button
+            (click)="close()"
+    >
+        Close
+    </button>
 </mat-dialog-actions>
