@@ -260,9 +260,13 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
     return new Promise<AuctionHouse[]>((resolve, reject) => {
       this.scan({
         TableName: this.table,
-        FilterExpression:
-        '(#lastTrendUpdateInitiation < :time OR attribute_not_exists(#lastTrendUpdateInitiation)) AND ' +
-          '(#lastStatsInsert > #lastTrendUpdateInitiation OR attribute_not_exists(#lastStatsInsert))', // Was: lastDailyPriceUpdate
+        FilterExpression: `
+        attribute_not_exists(#lastTrendUpdateInitiation) AND attribute_exists(#lastStatsInsert)
+        OR (
+          (attribute_not_exists(#lastTrendUpdateInitiation) OR #lastTrendUpdateInitiation < :time)
+          AND (attribute_not_exists(#lastStatsInsert) OR #lastStatsInsert > #lastTrendUpdateInitiation)
+        )
+        `, // Was: lastDailyPriceUpdate
         ExpressionAttributeNames: {
           '#lastTrendUpdateInitiation': 'lastTrendUpdateInitiation',
           '#lastStatsInsert': 'lastStatsInsert',
