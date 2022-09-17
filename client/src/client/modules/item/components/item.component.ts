@@ -274,9 +274,9 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     } catch (error) {
       ErrorReport.sendError('ItemComponent.setSelection', error);
     }
-    this.wowheadBaseUrl = `http://${
-      this.realmService.isClassic ? 'wotlk' : 'www'
-    }.wowhead.com/item=`;
+    this.wowheadBaseUrl = `http://www.wowhead.com${
+      this.realmService.isClassic ? '/wotlk' : ''
+    }/item=`;
   }
 
 
