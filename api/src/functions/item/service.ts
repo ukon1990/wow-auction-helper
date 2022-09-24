@@ -7,12 +7,12 @@ import {ItemUtil} from '../../utils/item.util';
 import {QueryIntegrity} from '../../queries/integrity.query';
 import {RDSQueryUtil} from '../../utils/query.util';
 import {LocaleUtil} from '../../utils/locale.util';
-import {WoWDBItem} from '../../models/item/wowdb';
 import {WoWHeadUtil} from '../../utils/wowhead.util';
-import {WoWHead} from '../../models/item/wowhead';
+import {WoWDBItem, WoWHead} from '@models/item';
 import {DateUtil} from '@ukon1990/js-utilities';
 import {UpdatesService} from '../updates/service';
 import {NameSpace} from '../../enums/name-space.enum';
+import {UpdateProgressModel} from '@models/update';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -28,7 +28,7 @@ export class ItemServiceV2 {
   this.nameSpace = isClassic ? NameSpace.STATIC_CLASSIC : NameSpace.STATIC_RETAIL;
   }
 
-  findMissingItemsAndImport(clientId?: string, clientSecret?: string): Promise<void> {
+  findMissingItemsAndImport(clientId?: string, clientSecret?: string): Promise<UpdateProgressModel> {
     if (clientId) {
       BLIZZARD.CLIENT_ID = clientId;
     }
@@ -36,15 +36,15 @@ export class ItemServiceV2 {
       BLIZZARD.CLIENT_SECRET = clientSecret;
     }
 
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<UpdateProgressModel>((resolve, reject) => {
       const db = new DatabaseUtil(false);
       (this.isClassic ? this.repository.findMissingItemsFromAuctionsClassic(db) : this.repository.findMissingItemsFromAuctions(db))
         .then(ids => {
           console.log(`There are ${ids.length} new items to add.`);
           this.addOrUpdateItemsByIds(ids, db)
-            .then(() => {
+            .then((response) => {
               db.end();
-              resolve();
+              resolve(response);
             })
             .catch(err => {
               db.end();
@@ -81,10 +81,10 @@ export class ItemServiceV2 {
     });
   }
 
-  addOrUpdateItemsByIds(ids: number[], db: DatabaseUtil): Promise<void> {
-    return new Promise<void>(async (resolve, reject) => {
+  addOrUpdateItemsByIds(ids: number[], db: DatabaseUtil): Promise<UpdateProgressModel> {
+    return new Promise<UpdateProgressModel>(async (resolve, reject) => {
       let completed = 0;
-      let successfull = 0;
+      let successful = 0;
       const promiseThrottle = new PromiseThrottle({
         requestsPerSecond: 1,
         promiseImplementation: Promise
@@ -98,7 +98,7 @@ export class ItemServiceV2 {
         await this.addItem(id, 'en_GB', db)
           .then(() => {
             completed++;
-            successfull++;
+            successful++;
             console.log(`Completed ${completed} / ${ids.length} (${
               Math.round(completed / ids.length * 100)}%)`);
           })
@@ -108,9 +108,9 @@ export class ItemServiceV2 {
             }
           );
       }
-      console.log(`Done processing ${ids.length} items (${successfull} successfully so).`);
+      console.log(`Done processing ${ids.length} items (${successful} successfully so).`);
 
-      if (successfull && !isOffline) {
+      if (successful && !isOffline) {
         console.log('Starting to update the static files');
         await UpdatesService.getAndSetItems()
           .then(() => console.log('Done uploading items'))
@@ -120,7 +120,11 @@ export class ItemServiceV2 {
           .catch(console.error);
         console.log('Done updating static files');
       }
-      resolve();
+      resolve({
+        successful,
+        completed,
+        total: ids.length,
+      });
     });
   }
 
