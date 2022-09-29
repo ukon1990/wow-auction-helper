@@ -238,6 +238,12 @@ export const ruleFields: RuleFieldGroup[] = [
         defaultType: TargetValueEnum.GOLD
       },
       {
+        key: columnConfig.recipe.vendorVSKnownROI.key,
+        name: columnConfig.recipe.vendorVSKnownROI.title,
+        column: columnConfig.recipe.vendorVSKnownROI,
+        defaultType: TargetValueEnum.GOLD
+      },
+      {
         key: columnConfig.recipe.knownROI.key,
         name: 'ROI',
         column: columnConfig.recipe.knownROI,
@@ -288,6 +294,12 @@ export const ruleFields: RuleFieldGroup[] = [
         key: columnConfig.recipe.cost.key,
         name: 'Cost',
         column: columnConfig.recipe.cost,
+        defaultType: TargetValueEnum.GOLD
+      },
+      {
+        key: columnConfig.recipe.vendorVSROI.key,
+        name: columnConfig.recipe.vendorVSROI.title,
+        column: columnConfig.recipe.vendorVSROI,
         defaultType: TargetValueEnum.GOLD
       },
       {

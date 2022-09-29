@@ -8,7 +8,8 @@ export const columnConfig = {
     vendorSell: {
       key: 'vendorSell',
       title: 'Vendor sell',
-      dataType: 'gold'
+      dataType: 'gold',
+      options: {tooltip: 'Vendor sell price, for armor and weapons can be inaccurate.'}
     },
     itemLevel: {
       key: 'itemLevel',
@@ -88,29 +89,20 @@ export const columnConfig = {
     buyoutVsVendorSell: {
       key: 'buyout/vendorSell',
       title: 'Buyout vs vendor',
-      dataType: 'percent'
+      dataType: 'percent',
+      options: {tooltip: 'Vendor sell price, for armor and weapons can be inaccurate.'}
     },
     vendorSellVsBuyout: {
       key: 'vendorSell/buyout',
       title: 'Vendor ROI',
-      dataType: 'percent'
+      dataType: 'percent',
+      options: {tooltip: 'Vendor sell price, for armor and weapons can be inaccurate.'}
     },
     auctionsBidMinusBuyout: {
       key: 'buyout-[auctions].bid',
       title: 'Profit',
       dataType: 'gold'
     },
-    /* TODO: If TSM is public again
-    regionSaleRate: {
-      key: 'regionSaleRate',
-      title: 'Sale rate',
-      dataType: 'percent'
-    },
-    avgDailySold: {
-      key: 'avgDailySold',
-      title: 'Avg daily sold',
-      dataType: 'number'
-    },*/
     timeLeft: {
       key: '[auctions].timeLeft',
       title: 'Time left',
@@ -270,6 +262,18 @@ export const columnConfig = {
       key: '0.95*buyout/source.recipe.[all].cost',
       title: 'ROI %',
       dataType: 'percent'
+    },
+    vendorVSROI: {
+      key: 'vendorSell-source.recipe.[all].cost',
+      title: 'Vendor price vs crafting cost',
+      dataType: 'gold',
+      options: {tooltip: 'Vendor sell price, for armor and weapons can be inaccurate.'}
+    },
+    vendorVSKnownROI: {
+      key: 'vendorSell-source.recipe.[known].cost',
+      title: 'Vendor price vs crafting cost',
+      dataType: 'gold',
+      options: {tooltip: 'Vendor sell price, for armor and weapons can be inaccurate.'}
     },
     cost: {
       key: 'source.recipe.[all].cost',

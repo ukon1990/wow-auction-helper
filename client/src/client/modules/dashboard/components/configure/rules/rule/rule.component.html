@@ -25,6 +25,9 @@
         </ng-container>
       </mat-optgroup>
     </mat-select>
+    <mat-hint *ngIf="tooltipField">
+      {{ tooltipField }}
+    </mat-hint>
   </mat-form-field>
   <mat-form-field class="col-md-1">
     <mat-select
@@ -61,6 +64,9 @@
         </ng-container>
       </mat-optgroup>
     </mat-select>
+    <mat-hint *ngIf="tooltipToField">
+      {{ tooltipToField }}
+    </mat-hint>
   </mat-form-field>
   <ng-container>
     <mat-form-field class="col"

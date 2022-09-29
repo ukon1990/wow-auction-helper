@@ -2,7 +2,7 @@ import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output} from '
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ruleFields} from '../../../../data/rule-fields.data';
 import {GameBuild} from '@shared/utils';
-import {Profession} from '@shared/models';
+import {Profession, Rule} from '@shared/models';
 import {conditionLocale} from '@shared/enum';
 import {ProfessionService} from '../../../../../crafting/services/profession.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
@@ -15,7 +15,7 @@ import {RuleFieldGroup} from '../../../../models/rule-field.model';
 import {ThemeUtil} from '../../../../../core/utils/theme.util';
 import {ItemClassService} from '../../../../../item/service/item-class.service';
 import {ItemClass} from '../../../../../item/models/item-class.model';
-import {Rule} from "@shared/models";
+import {columnConfig} from "../../../../data/columns.data";
 
 @Component({
   selector: 'wah-rule',
@@ -55,6 +55,15 @@ export class RuleComponent implements AfterViewInit, OnDestroy {
 
   get orRules(): FormArray {
     return this.formGroup.get('or') as FormArray;
+  }
+
+  get tooltipField(): string {
+    return TextUtil.contains(this.formGroup.get('field').value, columnConfig.item.vendorSell.key) ?
+      columnConfig.item.vendorSell?.options?.tooltip : undefined;
+  }
+  get tooltipToField(): string {
+    return TextUtil.contains(this.formGroup.get('toField').value, columnConfig.item.vendorSell.key) ?
+      columnConfig.item.vendorSell?.options?.tooltip : undefined;
   }
 
   constructor(private professionService: ProfessionService) {
