@@ -37,6 +37,7 @@
     "jwt-decode": "^3.0.0-beta.2",
     "mysql": "^2.17.1",
     "njwt": "^1.0.0",
+    "node-fetch": "^3.2.10",
     "promise-throttle": "^1.0.1",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",

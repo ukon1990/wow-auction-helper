@@ -12,7 +12,7 @@ export default {
   },
   findMissingItemsAndImportManualTrigger: {
     handler: `${handlerPath(__dirname)}/controller.findMissingItemsAndImport`,
-    memorySize: 200,
+    memorySize: 2048,
     timeout: 60,
     tags: {
       Function: 'Wah-findMissingItemsAndImportManualTrigger',

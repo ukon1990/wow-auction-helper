@@ -43,6 +43,9 @@ export class AdminService {
   }
 
   updateMissingItemsAtAH(isClassic): Promise<any> {
-    return firstValueFrom(this.http.post(Endpoints.getLambdaUrl(`admin/item/find-missing-items`)));
+    return firstValueFrom(this.http.post(
+      Endpoints.getLambdaUrl(`admin/item/find-missing-items`),
+      {isClassic}
+    ));
   }
 }

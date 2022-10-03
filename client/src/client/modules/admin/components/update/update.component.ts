@@ -7,6 +7,7 @@ import {Filters} from '../../../../utils/filtering';
 import {environment} from '../../../../../environments/environment';
 import {Item} from '@shared/models';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
+import {AdminService} from '../../services/admin.service';
 import {AuctionsService} from '../../../../services/auctions.service';
 
 @Component({
@@ -16,6 +17,7 @@ import {AuctionsService} from '../../../../services/auctions.service';
 })
 export class UpdateComponent implements OnInit {
   private isClassic = false;
+  isUpdatingItems = false;
   inProd = environment.production;
   updated = {
     recipes: {
@@ -38,8 +40,12 @@ export class UpdateComponent implements OnInit {
     }
   };
 
-  constructor(private _craftingService: CraftingService, private _itemService: ItemService,
-              private auctionService: AuctionsService) {
+  constructor(
+    private _craftingService: CraftingService,
+    private _itemService: ItemService,
+    private adminService: AdminService,
+    private auctionsService: AuctionsService,
+  ) {
     console.log('Environment', environment);
   }
 
@@ -109,8 +115,11 @@ export class UpdateComponent implements OnInit {
     return this.updated.items.completed.length / this.getItemCount() * 100;
   }
 
-  updateItems(i?: number): void {
-    if (!i) {
+  updateItems(): void {
+    this.isUpdatingItems = true;
+    this.adminService.updateMissingItemsAtAH(true)
+      .finally(() => this.isUpdatingItems = false);
+    /*if (!i) {
       i = 0;
       this.updated.items.list = [];
       Object.keys(SharedService.items).forEach(itemID => {
@@ -148,7 +157,8 @@ export class UpdateComponent implements OnInit {
         this.updateItems(i);
       }
     }, 100);
-  } // updateItem
+    */
+  }
 
   getItemCount(): number {
     return this.updated.items.list.length;
@@ -183,7 +193,7 @@ export class UpdateComponent implements OnInit {
       if (!item) {
         return;
       }
-      const ai: AuctionItem = this.auctionService.getById(item.id);
+      const ai: AuctionItem = this.auctionsService.getById(item.id);
       if (ai) {
         ai.auctions.slice(0, 30)
           .forEach(a =>

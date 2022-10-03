@@ -187,7 +187,7 @@ export class WoWHeadUtil {
       request.get(
         `http://www.wowhead.com${isClassic ? '/wotlk' : ''}/item=${id}`,
         null,
-        (whError, whResponse, whBody) => {
+        (whError, _, whBody) => {
           if (whError) {
             reject(`Could not find the item with id=${id} on WoWHead`);
           }
