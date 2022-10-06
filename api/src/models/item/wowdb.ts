@@ -16,6 +16,9 @@ export class WoWDBItem {
   PossibleBonuses?: Array<ItemBonus>;
 
   public static setItemWithWoWDBValues(wowDBItem: WoWDBItem, item: Item): void {
+    if (!wowDBItem) {
+      return;
+    }
       item.itemSpells = wowDBItem.Spells ? wowDBItem.Spells : [];
       item.minReputation = parseInt(wowDBItem.RequiredFactionStanding, 10);
       item.isDropped = wowDBItem.DroppedBy ? wowDBItem.DroppedBy.length > 0 : false;

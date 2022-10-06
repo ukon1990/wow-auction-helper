@@ -136,6 +136,7 @@ export class RDSItemRepository {
                     id
                     FROM
                     itemsClassic)) AS tbl
+          WHERE id NOT IN (SELECT id FROM missing_items WHERE classic = 1)
           GROUP BY id
           ORDER BY id DESC;`)
         .then(res => {

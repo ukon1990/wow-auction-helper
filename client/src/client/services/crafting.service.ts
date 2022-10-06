@@ -82,14 +82,13 @@ export class CraftingService {
     return itemId;
   }
 
-  private getStorageKey(isClassic: boolean) {
+  public getStorageKey(isClassic: boolean) {
     return `${this.LOCAL_STORAGE_TIMESTAMP}${isClassic ? '_classic' : ''}`;
   }
 
   async load(latestTimestamp: Date, isClassic = SharedService.user.gameVersion > 0) {
     if (!latestTimestamp) {
-      latestTimestamp = new Date(
-        isClassic ? this.lastModifiedClassic.value : this.lastModified.value);
+      latestTimestamp = this.getLatestTime(isClassic);
     }
     await this.dbService.getAllRecipes(isClassic)
       .then(async (result) => {
@@ -109,6 +108,11 @@ export class CraftingService {
     this.setOnUseCraftsWithNoReagents();
   }
 
+  private getLatestTime(isClassic: boolean) {
+    return new Date(
+      isClassic ? this.lastModifiedClassic.value : this.lastModified.value);
+  }
+
   get(isClassic: boolean): Promise<any> {
     const locale = localStorage['locale'];
     console.log('Downloading recipes');
@@ -116,12 +120,15 @@ export class CraftingService {
     SharedService.downloading.recipes = true;
     return this._http.get(`${Endpoints.S3_BUCKET}${
       isClassic ? '/classic' : ''
-    }/recipe/${locale}.json.gz?lastModified=${this.lastModified.value}`)
+    }/recipe/${locale}.json.gz?lastModified=${this.getLatestTime(isClassic)}`)
       .toPromise()
       .then(async (result: RecipeResponse) => {
         SharedService.downloading.recipes = false;
         await this.clearAndSaveResult(result, isClassic);
-        this.handleRecipes(result.recipes);
+        // Checking if we are downloading for the same version
+        if (isClassic === ( SharedService.user.gameVersion || 0) > 0) {
+          this.handleRecipes(result.recipes);
+        }
       })
       .catch(error => {
         ErrorReport.sendHttpError(error);

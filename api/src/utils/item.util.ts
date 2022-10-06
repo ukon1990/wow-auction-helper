@@ -58,8 +58,7 @@ export class ItemUtil {
           item.icon = await GameMediaUtil.getIcon(raw.media, region);
           resolve(item as Item);
         })
-        .catch((err) => {
-          console.error(err);
+        .catch(() => {
           reject(`Could not find item with id=${id} from Blizzard`);
         });
     });
@@ -79,7 +78,10 @@ export class ItemUtil {
             reject(errorMessage);
           }
         })
-        .catch(error => reject(errorMessage));
+        .catch((error) => {
+          console.error('ItemUtil.getWowDBData', error);
+          reject(errorMessage);
+        });
     }));
   }
 

@@ -20,7 +20,6 @@ import {Platform} from '@angular/cdk/platform';
 import {Report} from '../utils/report.util';
 import {BehaviorSubject} from 'rxjs';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
-import {GameBuild} from '@shared/utils';
 
 class ItemResponse {
   timestamp: Date;
@@ -37,11 +36,17 @@ export class ItemService {
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_items';
   selectionHistory: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
   lastModified: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  lastModifiedClassic: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
   constructor(private _http: HttpClient,
               private dbService: DatabaseService,
               public snackBar: MatSnackBar,
               public platform: Platform) {
+  }
+
+  private getLatestTime(isClassic: boolean) {
+    return new Date(
+      isClassic ? this.lastModifiedClassic.value : this.lastModified.value);
   }
 
   clearItemHistoryMap(): void {
@@ -54,8 +59,13 @@ export class ItemService {
   }
 
   async loadItems(latestTimestamp: Date, isClassic = SharedService.user.gameVersion > 0) {
+
+    if (!latestTimestamp) {
+      latestTimestamp = this.getLatestTime(isClassic);
+    }
     await this.dbService.getAllItems(isClassic)
       .then(async (items) => {
+        console.log('Items', items);
         if (items.length === 0) {
           localStorage.removeItem(this.getStorageKey(isClassic));
         }
@@ -123,7 +133,7 @@ export class ItemService {
     SharedService.itemsUnmapped.length = 0;
     await this._http.get(`${Endpoints.S3_BUCKET}${
       isClassic ? '/classic' : ''
-    }/item/${locale}.json.gz?lastModified=${this.lastModified.value}`)
+    }/item/${locale}.json.gz?lastModified=${this.getLatestTime(isClassic)}`)
       .toPromise()
       .then((response: ItemResponse) => {
         localStorage.setItem(this.getStorageKey(isClassic), `${response.timestamp}`);
@@ -145,14 +155,26 @@ export class ItemService {
     const list: Item[] = [];
     const mapped = new Map<number, Item>();
 
+
+
+    if (shouldSave && this.platform !== null && !this.platform.WEBKIT) {
+      this.dbService.addItems(items.items, isClassic);
+    }
+
+    /*if (isClassic !== !SharedService.user.gameVersion) {
+      // Don't replace the retail items with classic vica versa in memory
+      console.log('item not initated', isClassic, SharedService.user.gameVersion);
+      return;
+    }*/
+
     items.items.forEach((item: Item) => {
       // Removing non current items from classic
-      if (
+      /*if (
         isClassic &&
         item.classicPhase <= GameBuild.latestClassicPhase
       ) {
         return;
-      }
+      }*/
       // Making sure that the tradevendor item names are updated in case of locale change
       if (SharedService.tradeVendorMap[item.id]) {
         SharedService.tradeVendorMap[item.id].name = item.name;
@@ -186,10 +208,6 @@ export class ItemService {
 
     if (missingItems.length > 0) {
       // TODO: when I have time -> this.addItems(missingItems);
-    }
-
-    if (shouldSave && this.platform !== null && !this.platform.WEBKIT) {
-      this.dbService.addItems(items.items, isClassic);
     }
     SharedService.events.items.emit(true);
     ItemService.mapped.next(mapped);
@@ -380,7 +398,7 @@ export class ItemService {
     }
   }
 
-  private getStorageKey(isClassic: boolean) {
+  public getStorageKey(isClassic: boolean) {
     return `${this.LOCAL_STORAGE_TIMESTAMP}${isClassic ? '_classic' : ''}`;
   }
 }

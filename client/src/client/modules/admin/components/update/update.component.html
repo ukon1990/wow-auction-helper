@@ -38,7 +38,7 @@
       <mat-card>
         <mat-card-title>
           Items
-          <button mat-stroked-button (click)="updateItems()" [disabled]="updated.items.completed.length  !== 0 || updated.items.completed.length > this.updated.items.list.length">
+          <button mat-stroked-button (click)="updateItems()" [disabled]="isUpdatingItems">
             Update
           </button>
         </mat-card-title>

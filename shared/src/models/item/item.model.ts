@@ -1,5 +1,5 @@
 import {ItemSpells} from './item-spells.model';
-import {WoWHead, ItemLocale, ItemGameData, PreviewItemSpells} from '../index';
+import {ItemGameData, ItemLocale, PreviewItemSpells, WoWHead} from '../index';
 import {QualityUtil} from '../../utils';
 
 export class Item {
@@ -56,11 +56,11 @@ export class Item {
   }
 
   setDataFromWoWHead(wowHead: any) {
-    this.expansionId = wowHead.expansionId;
-    this.patch = wowHead.patch;
-    delete wowHead.expansionId;
+    this.expansionId = wowHead?.expansionId;
+    this.patch = wowHead?.patch;
+    delete wowHead?.expansionId;
     this.itemSource = wowHead as WoWHead;
-    this.classicPhase = wowHead.classicPhase;
+    this.classicPhase = wowHead?.classicPhase;
   }
 
   private getItemSpellsFromGameData(spells: PreviewItemSpells[]) {

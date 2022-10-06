@@ -163,8 +163,7 @@ export class BackgroundDownloadService {
           this.itemClassService.getAll()
             .catch(console.error),
           this.professionService.load(timestamps.professions),
-          this.itemService.loadItems(itemTimestamp,
-            this.realmService.isClassic)
+          this.itemService.loadItems(itemTimestamp, this.realmService.isClassic)
             .then(() => console.log('Loaded items in ' + DateUtil.getDifferenceInSeconds(start, +new Date()))),
           this.petService.loadPets(timestamps.pets),
           this.npcService.getAll(false, timestamps.npcs),
@@ -193,12 +192,13 @@ export class BackgroundDownloadService {
     Report.send(`${(loadingTime / 1000).toFixed(2)}`, 'startup');
   }
 
-  private getUpdateTimestamps(): Promise<Timestamps> {
+  public getUpdateTimestamps(): Promise<Timestamps> {
     return new Promise<Timestamps>((resolve, rejects) => {
       this.http.get(`${Endpoints.S3_BUCKET}/timestamps.json.gz?rand=${Math.round(Math.random() * 10000)}`)
         .toPromise()
         .then((result: Timestamps) => {
           this.itemService.lastModified.next(+new Date(result.items));
+          this.itemService.lastModifiedClassic.next(+new Date(result.itemsClassic));
           this.npcService.lastModified.next(+new Date(result.npcs));
           this.professionService.lastModified.next(+new Date(result.professions));
           this.petService.lastModified.next(+new Date(result.pets));
