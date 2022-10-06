@@ -44,7 +44,7 @@
     "aws-appsync": "^4.1.5",
     "chart.js": "^2.9.3",
     "dexie": "^3.2.1",
-    "distinct-colors": "^1.0.4",
+    "distinct-colors": "^3.0.0",
     "file-saver": "^2.0.5",
     "graphql": "^15.8.0",
     "graphql-tag": "^2.12.6",
