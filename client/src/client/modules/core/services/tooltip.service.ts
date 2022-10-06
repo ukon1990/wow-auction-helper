@@ -24,7 +24,7 @@ export class TooltipService {
   get(type: string, id: number, bonusIds: number[], isClassic: boolean, event: MouseEvent, item: any, extra: string): Promise<Element> {
     const map = this.tooltips.value;
     const locale = (localStorage.getItem('locale') || 'en').split('_')[0];
-    let url = `https://${isClassic ? 'wotlk' : 'www'}.wowhead.com/tooltip/${type}/${id}?locale=${locale}`;
+    let url = `https://www.wowhead.com${isClassic ? '/wotlk' : ''}/tooltip/${type}/${id}?locale=${locale}`;
     if (bonusIds && bonusIds.length) {
       url += '&bonus=' + bonusIds.join(':');
     }

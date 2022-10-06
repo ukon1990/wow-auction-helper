@@ -7,6 +7,8 @@
     <button mat-stroked-button (click)="printData()">Print data</button>
   </div>
 
+  <button (click)="adminService.updateRealmStatuses()">Click</button>
+
   <div class="row col-md-12">
     <div class="col-md-4">
       <mat-card>
@@ -38,7 +40,7 @@
       <mat-card>
         <mat-card-title>
           Items
-          <button mat-stroked-button (click)="updateItems()" [disabled]="updated.items.completed.length  !== 0 || updated.items.completed.length > this.updated.items.list.length">
+          <button mat-stroked-button (click)="updateItems()" [disabled]="isUpdatingItems">
             Update
           </button>
         </mat-card-title>

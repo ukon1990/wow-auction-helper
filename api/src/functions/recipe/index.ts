@@ -17,4 +17,21 @@ export default {
       Project: 'WAH',
     },
   },
+  updateRecipes: {
+    handler: `${handlerPath(__dirname)}/controller.updateRecipes`,
+    memorySize: 256,
+    tags: {
+      Function: 'Wah-updateRecipes',
+      Project: 'WAH',
+    },
+    events: [{
+      http: {
+        method: 'post',
+        path: 'admin/recipes/update-all',
+        cors: {
+          origin: 'http://localhost:4200,https://wah.jonaskf.net',
+        }
+      },
+    }]
+  },
 };

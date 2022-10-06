@@ -156,15 +156,17 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
     this.setTimestamps();
     console.log('stuff', this.timestamps);
     this.downloadRows = [
-      {name: 'Realm auctions', lastModified: this.timestamps.auctions},
-      {name: 'Region auctions', lastModified: this.timestamps.regionalAuctions},
-      {name: 'TSM', lastModified: this.timestamps.tsm},
-      {name: 'Items', lastModified: this.timestamps.items},
-      {name: 'Pets', lastModified: this.timestamps.pets},
-      {name: 'Recipes', lastModified: this.timestamps.recipes},
-      {name: 'NPCs', lastModified: this.timestamps.npc},
-      {name: 'Zones', lastModified: this.timestamps.zone},
-      {name: 'Professions', lastModified: this.timestamps.professions}
+      {id: 'auctions', name: 'Realm auctions', lastModified: this.timestamps.auctions},
+      {id: 'regionalAuctions', name: 'Region auctions', lastModified: this.timestamps.regionalAuctions},
+      {id: 'tsm', name: 'TSM', lastModified: this.timestamps.tsm},
+      {id: 'items', name: 'Items', lastModified: this.timestamps.items},
+      {id: 'classicItems', name: 'Classic items', lastModified: this.timestamps.classicItems},
+      {id: 'pets', name: 'Pets', lastModified: this.timestamps.pets},
+      {id: 'recipes', name: 'Recipes', lastModified: this.timestamps.recipes},
+      {id: 'classicRecipes', name: 'Classic recipes', lastModified: this.timestamps.classicRecipes},
+      {id: 'npc', name: 'NPCs', lastModified: this.timestamps.npc},
+      {id: 'zones', name: 'Zones', lastModified: this.timestamps.zone},
+      {id: 'professions', name: 'Professions', lastModified: this.timestamps.professions}
     ].map((row: DownloadRow) => {
       if (row.name.toLowerCase() === isDownloading) {
         row.loading = 'Loading…';
@@ -186,8 +188,10 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
   setTimestamps(): void {
     this.timestamps = {
       items: this.getValue('timestamp_items'),
+      classicItems: this.getValue('timestamp_items_classic'),
       pets: this.getValue('timestamp_pets'),
       recipes: this.getValue('timestamp_recipes'),
+      classicRecipes: this.getValue('timestamp_recipes_classic'),
       auctions: this.getValue('timestamp_auctions'),
       regionalAuctions: this.getValue('timestamp_regionalAuctions'),
       tsm: this.getValue('timestamp_tsm'),
@@ -206,13 +210,15 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
   }
 
   /* istanbul ignore next */
-  async download({name}: { name: string }) {
-    const type = name.toLowerCase();
-    this.isDownloading = type;
+  async download({id}: { id: string }) {
+    this.isDownloading = id;
     this.setDownloadRows();
 
-    Report.send(type, 'Manual download');
-    switch (type) {
+    await this.service.getUpdateTimestamps()
+      .catch(console.error);
+
+    Report.send(id, 'Manual download');
+    switch (id) {
       case 'tsm':
         await this.downloadTSM()
           .catch(console.error);
@@ -221,11 +227,15 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
         await this.downloadAuctions(false)
           .catch(console.error);
         break;
-      case 'region auctions':
+      case 'regionAuctions':
         await this.downloadAuctions(true)
           .catch(console.error);
         break;
       case 'items':
+        await this.downloadItems(true)
+          .catch(console.error);
+        break;
+      case 'classicItems':
         await this.downloadItems(true)
           .catch(console.error);
         break;
@@ -235,6 +245,10 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
         break;
       case 'recipes':
         await this.downloadRecipes(true)
+          .catch(console.error);
+        break;
+      case 'classicRecipes':
+        await this.downloadRecipes(true, true)
           .catch(console.error);
         break;
       case 'npcs':
@@ -282,23 +296,23 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async downloadRecipes(forceUpdate: boolean) {
+  private async downloadRecipes(forceUpdate: boolean, isClassic?: boolean) {
     if (forceUpdate) {
-      delete localStorage['timestamp_recipes'];
+      delete localStorage[this.craftingService.getStorageKey(isClassic)];
     }
-    await this.craftingService.get(this.realmService.isClassic);
+    await this.craftingService.get(isClassic);
 
     if (forceUpdate) {
       await this.auctionsService.organize();
     }
   }
 
-  private async downloadItems(forceUpdate: boolean) {
+  private async downloadItems(forceUpdate: boolean, isClassic?: boolean) {
     if (forceUpdate) {
-      delete localStorage['timestamp_items'];
+      delete localStorage[this.itemService.getStorageKey(isClassic)];
     }
 
-    await this.itemService.getItems(this.realmService.isClassic);
+    await this.itemService.getItems(isClassic);
 
     if (forceUpdate) {
       await this.auctionsService.organize();

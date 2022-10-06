@@ -129,4 +129,15 @@ export class LocaleUtil {
         .finally(() => resolve());
     });
   }
+  public static getLocales(): string[] {
+    let list = [];
+    Object.keys(LocaleUtil.locales).forEach((region) => {
+      list = [...list, ...LocaleUtil.locales[region]];
+    });
+    return list;
+  }
+
+  static getDbLocale(locale: string) {
+    return locale === 'pt_PT' ? 'pt_BR' : locale;
+  }
 }

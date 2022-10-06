@@ -16,15 +16,8 @@ import {NameSpace} from '../../enums/name-space.enum';
 import {ClassicRecipeService} from '../recipe/service/classic-recipe.service';
 
 export class UpdatesService {
-  static readonly locales = UpdatesService.getLocales();
+  static readonly locales = LocaleUtil.getLocales();
 
-  private static getLocales(): string[] {
-    let list = [];
-    Object.keys(LocaleUtil.locales).forEach((region) => {
-      list = [...list, ...LocaleUtil.locales[region]];
-    });
-    return list;
-  }
 
   static syncS3WithTheDatabase(): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
@@ -75,7 +68,7 @@ export class UpdatesService {
   static getAndSetRecipes(db: DatabaseUtil = new DatabaseUtil(false)): Promise<any> {
     return new Promise(async (resolve, reject) => {
       for (const locale of this.locales) {
-        await RecipeService.getAllAfter(0, this.getDbLocale(locale), db)
+        await RecipeService.getAllAfter(0, LocaleUtil.getDbLocale(locale), db)
           .then(async recipes => {
             await new S3Handler().save(
               recipes,
@@ -96,32 +89,8 @@ export class UpdatesService {
     });
   }
 
-  static getAndSetClassicRecipes(db: DatabaseUtil = new DatabaseUtil(false)): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      for (const locale of this.locales) {
-        await ClassicRecipeService.getAllAfter(0, this.getDbLocale(locale), db)
-          .then(async recipes => {
-            await new S3Handler().save(
-              recipes,
-              `classic/recipe/${locale}.json.gz`,
-              {
-                region: ''
-              })
-              .then(() => {
-                console.log('Successfully uploaded classic recipes');
-              })
-              .catch(reject);
-          })
-          .catch(reject);
-      }
-
-      db.end();
-      resolve(true);
-    });
-  }
-
-  private static getDbLocale(locale: string) {
-    return locale === 'pt_PT' ? 'pt_BR' : locale;
+  static getAndSetClassicRecipes(): Promise<any> {
+    return new ClassicRecipeService().updateS3();
   }
 
   static getAndSetItems(db: DatabaseUtil = new DatabaseUtil(false)): Promise<any> {
@@ -321,7 +290,7 @@ export class UpdatesService {
   static getAndSetProfessions(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       for (const locale of this.locales) {
-        await ProfessionService.getAll(this.getDbLocale(locale))
+        await ProfessionService.getAll(LocaleUtil.getDbLocale(locale))
           .then(async professions => {
             await new S3Handler().save(
               professions,

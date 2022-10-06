@@ -2,8 +2,7 @@ import {Repository} from '../../../core/repository';
 import {DatabaseUtil} from '../../../utils/database.util';
 import {RDSQueryUtil} from '../../../utils/query.util';
 import {format} from 'sqlstring';
-import {Recipev2} from '../recipev2.model';
-import {APIReagent, APIRecipe} from '../../../shared/models';
+import {APIReagent, APIRecipe, ItemLocale} from '../../../shared/models';
 
 export class ClassicRecipeRepository extends Repository<APIRecipe> {
 
@@ -56,7 +55,6 @@ export class ClassicRecipeRepository extends Repository<APIRecipe> {
   getAllAfter(timestamp: number, locale: string, db: DatabaseUtil): Promise<APIRecipe[]> {
     return new Promise<APIRecipe[]>((resolve, reject) => {
       const unix = +new Date(timestamp);
-      console.log('unix', unix);
       const date = isNaN(unix) ? 0 : Math.round(unix / 1000);
       db.query(`${this.geteBaseQuery(locale)}
           AND UNIX_TIMESTAMP(recipes.timestamp) > ${date}
@@ -123,73 +121,62 @@ export class ClassicRecipeRepository extends Repository<APIRecipe> {
     });
   }
 
-  insertData(recipe: Recipev2, db: DatabaseUtil): Promise<void> {
+  insertData(recipe: APIRecipe, db: DatabaseUtil): Promise<void> {
+    console.log('Recipe', recipe);
     // this.getIcon(recipe.id)
     return new Promise(async (resolve, reject) => {
       const queries = [
-        new RDSQueryUtil('recipesName', false).insert({
+        new RDSQueryUtil('recipesClassicName', false).insertOrUpdate({
+          ...recipe.name as ItemLocale,
           id: recipe.id,
-          ...recipe.name
         })
       ];
 
       if (recipe.reagents) {
         queries.push(`DELETE
-                      FROM \`wah\`.\`reagents\`
+                      FROM \`wah\`.\`reagentsClassic\`
                       WHERE recipeId = ${recipe.id};`);
-        recipe.reagents.map(r => queries.push(format(`
-            INSERT INTO reagents
+        recipe.reagents.map((r) => queries.push(format(`
+            INSERT INTO reagentsClassic
             VALUES (?, ?, ?, ?);
         `, [
           recipe.id,
-          r.reagent.id,
+          r.id,
           r.quantity,
           0
         ])));
       }
-
-      if (recipe.description && recipe.description.en_GB) {
-        queries.push(new RDSQueryUtil('recipesDescription', false).insert({
-          id: recipe.id,
-          ...recipe.description
-        }));
-      }
-
-      if (recipe.modified_crafting_slots) {
-        recipe.modified_crafting_slots.forEach(slot => queries.push(
-          new RDSQueryUtil('recipesModifiedCraftingSlot', false).insert({
-            id: slot.slot_type.id,
-            recipeId: recipe.id,
-            sortOrder: slot.display_order,
-          })
-        ));
-      }
-      await db.query(`INSERT INTO recipes(id,
-                                          icon,
-                                          rank,
-                                          craftedItemId,
-                                          hordeCraftedItemId,
-                                          allianceCraftedItemId,
-                                          minCount,
-                                          maxCount,
-                                          procRate,
-                                          timestamp,
-                                          professionSkillTierId)
-                      VALUES (${recipe.id},
-                              "${recipe.media.icon}",
-                              ${recipe.rank || 0},
-                              ${recipe.crafted_item ? recipe.crafted_item.id : null},
-                              ${recipe.horde_crafted_item ? recipe.horde_crafted_item.id : null},
-                              ${recipe.alliance_crafted_item ? recipe.alliance_crafted_item.id : null},
-                              ${recipe.crafted_quantity ? recipe.crafted_quantity.minimum || recipe.crafted_quantity.value : 0},
-                              ${recipe.crafted_quantity ? recipe.crafted_quantity.maximum || recipe.crafted_quantity.value : 0},
-                              1,
-                              CURRENT_TIMESTAMP,
-                              null)
-                      ON DUPLICATE KEY UPDATE minCount  = ${recipe.crafted_quantity ? recipe.crafted_quantity.minimum || recipe.crafted_quantity.value : 0},
-                                              maxCount  = ${recipe.crafted_quantity ? recipe.crafted_quantity.maximum || recipe.crafted_quantity.value : 0},
-                                              timestamp = CURRENT_TIMESTAMP;
-      `)
+      const minCount = recipe.minCount || 0;
+      const maxCount = recipe.maxCount || 0;
+      await db.query(format(`
+            INSERT INTO recipesClassic(
+                                      id,
+                                      icon,
+                                      rank,
+                                      craftedItemId,
+                                      minCount,
+                                      maxCount,
+                                      procRate,
+                                      timestamp,
+                                      professionId,
+                                      professionSkillTierId
+                  )
+                  VALUES (${recipe.id},
+                          ?,
+                          ${recipe.rank || 0},
+                          ${recipe.craftedItemId || null},
+                          ${minCount},
+                          ${maxCount},
+                          1,
+                          CURRENT_TIMESTAMP,
+                          ${recipe['professionId']},
+                          null)
+                  ON DUPLICATE KEY UPDATE minCount  = ${minCount},
+                                          maxCount  = ${maxCount},
+                                          timestamp = CURRENT_TIMESTAMP;
+      `, [
+        recipe?.icon || ''
+      ]))
         .catch(console.error);
       Promise.all(
         queries.map(q =>

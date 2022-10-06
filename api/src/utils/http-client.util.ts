@@ -1,4 +1,5 @@
 const request: any = require('request');
+import fetch from 'node-fetch';
 
 export class HttpClientUtil {
   private readonly timeout?: number;
@@ -8,37 +9,27 @@ export class HttpClientUtil {
   }
   get(url: string, expectJSON: boolean = true, headers: any = {}): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-      request.get(
-        {
-          url,
-          headers: {
-            'User-Agent': 'Mozilla/5.0',
-            ...headers
-          },
-          timeout: this.timeout || undefined,
+      // timeout: this.timeout || undefined,
+      fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0',
+          ...headers
         },
-        (error, response, body) => {
-          try {
+      })
+        .then(async response => {
 
-            if (!error && response.statusCode === 304) {
-              resolve(response);
-              return;
-            }
-
-            if (error || !body || response.statusCode === 404) {
-              reject(error);
-              console.log('Http error for', url, error);
-              return;
-            }
-
-            if (expectJSON) {
-              response.body = JSON.parse(body);
-            }
-            resolve(response);
-          } catch (e) {
-            console.error('Error for url: ', url);
-            reject(e);
-          }
+          (expectJSON ? response.json() : response.text())
+            .then(body => {
+              resolve({
+                ...response,
+                body,
+              });
+            })
+            .catch(reject);
+        })
+        .catch(error => {
+          console.error('Http error for', url, error);
+          reject(error);
         });
     });
   }

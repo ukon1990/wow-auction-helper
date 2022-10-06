@@ -39,7 +39,11 @@ export class AddItemsComponent implements OnInit {
   ];
   form: FormGroup;
 
-  constructor(private service: ItemService, private fb: FormBuilder, private npcService: NpcService) {
+  constructor(
+    private service: ItemService,
+    private fb: FormBuilder,
+    private npcService: NpcService
+  ) {
     this.form = this.fb.group({
       input: new FormControl(),
       action: new FormControl(this.dbActions[0])

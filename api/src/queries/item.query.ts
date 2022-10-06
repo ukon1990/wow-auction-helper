@@ -138,6 +138,10 @@ export class ItemQuery {
          minReputation,
          isDropped,
          expansionId,
+         ${table === 'items' ? '' : `
+         classicPhase,
+         patch,
+         `}
          timestamp
     FROM ${table} as i
     LEFT OUTER JOIN ${localeTable} as l ON i.id = l.id
@@ -163,6 +167,7 @@ export class ItemQuery {
              minReputation,
              isDropped,
              expansionId,
+             patch,
              timestamp
       FROM items as i
       LEFT OUTER JOIN item_name_locale as l

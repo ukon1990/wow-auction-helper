@@ -196,6 +196,10 @@ export class AuctionService {
       default: delay = minute * 60; break;
     }
 
+    if (updateAttempts >= 60) {
+      delay = minute * 60 * 6;
+    }
+
     return {
       updateAttempts: updateAttempts + 1,
       nextUpdate: +new Date() + delay,

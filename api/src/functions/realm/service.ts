@@ -203,10 +203,19 @@ export class RealmService {
     return new Promise<any>(async (resolve, reject) => {
       await AuthHandler.getToken();
       const url = new Endpoints().getPath(`connected-realm/`, region, nameSpace);
+      const existingRealms = await this.repository.getAll();
+      const existingMap = new Map<number, AuctionHouse>();
+
+      [...(existingRealms || [])].forEach(house => {
+        if (!existingMap.has(house.connectedId)) {
+          existingMap.set(house.connectedId, house);
+        }
+      });
       console.log('URL', url);
       http.get(url)
         .then(async ({body: parentBody}: HttpResponse<{connected_realms: {href: string}[]}>) => {
-          const realms = [];
+          const newRealms = [];
+          const allRealms = [];
 
           for (const realm of parentBody.connected_realms) {
             try {
@@ -233,15 +242,19 @@ export class RealmService {
                 gameBuild: TextUtil.contains(nameSpace, 'classic') ?
                   GameBuildVersion.Classic : GameBuildVersion.Retail,
               };
-              realms.push(processedRealm);
-              // realms.push(body);
-              // await this.repository.add(processedRealm);
+
+              if (!existingMap.has(processedRealm.connectedId)) {
+                newRealms.push(processedRealm);
+                // realms.push(body);
+                // await this.repository.add(processedRealm);
+              }
+              allRealms.push(processedRealm);
             } catch (error) {
               console.error(`Realm not found for ${realm.href}`, error);
             }
           }
 
-          resolve(realms);
+          resolve(newRealms);
         })
         .catch(reject);
     });

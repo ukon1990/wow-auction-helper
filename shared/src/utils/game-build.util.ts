@@ -47,6 +47,7 @@ export class GameBuild {
     'Cooking',
     'Jewelcrafting',
     'Mining',
+    'Inscription',
     'Tailoring',
     'Engineering',
     'Enchanting',
