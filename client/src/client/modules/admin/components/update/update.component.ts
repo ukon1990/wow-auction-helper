@@ -42,7 +42,7 @@ export class UpdateComponent implements OnInit {
   constructor(
     private _craftingService: CraftingService,
     private _itemService: ItemService,
-    private adminService: AdminService,
+    public adminService: AdminService,
     private auctionsService: AuctionsService,
   ) {
     console.log('Environment', environment);

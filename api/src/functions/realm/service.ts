@@ -214,7 +214,8 @@ export class RealmService {
       console.log('URL', url);
       http.get(url)
         .then(async ({body: parentBody}: HttpResponse<{connected_realms: {href: string}[]}>) => {
-          const realms = [];
+          const newRealms = [];
+          const allRealms = [];
 
           for (const realm of parentBody.connected_realms) {
             try {
@@ -243,16 +244,17 @@ export class RealmService {
               };
 
               if (!existingMap.has(processedRealm.connectedId)) {
-                realms.push(processedRealm);
+                newRealms.push(processedRealm);
                 // realms.push(body);
                 // await this.repository.add(processedRealm);
               }
+              allRealms.push(processedRealm);
             } catch (error) {
               console.error(`Realm not found for ${realm.href}`, error);
             }
           }
 
-          resolve(realms);
+          resolve(newRealms);
         })
         .catch(reject);
     });

@@ -55,4 +55,9 @@ export class AdminService {
       {isClassic}
     ));
   }
+
+  updateRealmStatuses(): Promise<any> {
+    return firstValueFrom(this.http.get(
+      Endpoints.getLambdaUrl(`admin/realm/statuses`)));
+  }
 }
