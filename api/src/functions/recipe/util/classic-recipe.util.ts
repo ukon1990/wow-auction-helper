@@ -110,7 +110,7 @@ export class ClassicRecipeUtil {
   private static async mapResultToRecipe(list, professionId: number, gameVersion?: string) {
     const recipes: APIRecipe[] = [];
     for (const recipe of list) {
-      const {id, creates, name, reagents} = recipe;
+      const {id, creates, reagents} = recipe;
       await this.setRankAndNameForRecipe(id, recipe);
 
       const minCount = creates ? creates[1] : 1,
@@ -119,7 +119,7 @@ export class ClassicRecipeUtil {
         id: +id * -1,
         spellId: id,
         craftedItemId: creates ? +creates[0] : -1,
-        name: recipe.name,
+        name: recipe.name as ItemLocale,
         minCount: minCount ? minCount : 1,
         maxCount: maxCount ? maxCount : 1,
         rank: recipe.rank || 0,
@@ -144,8 +144,9 @@ export class ClassicRecipeUtil {
 
   private static async getRecipeTooltip(id, language, recipe): Promise<void> {
     await new Promise<void>((resolve, reject) => {
+      const locale = language.key === 'en' ? '' : `${language.key}/`;
       new HttpClientUtil().get(
-        `https://www.wowhead.com/wotlk/tooltip/spell/${id}?locale=${language.key}`)
+        `https://www.wowhead.com/wotlk/${locale}tooltip/spell/${id}`)
         .then(({body}) => {
           if (language.key === 'en') {
             const regexResult = (/Rank [\d]{0,1}/g).exec(body.tooltip);

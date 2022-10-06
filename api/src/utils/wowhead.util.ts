@@ -157,7 +157,7 @@ export class WoWHeadUtil {
   }
 
   /* istanbul ignore next */
-  private static getWowheadDataList<T>(body: string, templateName: string, idName: string, keys: {
+  /*private static getWowheadDataList<T>(body: string, templateName: string, idName: string, keys: {
     remove: string[],
     transform: { id: string, callback: Function }[]
   }): T[] {
@@ -180,7 +180,7 @@ export class WoWHeadUtil {
     }
 
     return data;
-  }
+  }*/
 
   public static getWowHeadData(id: number, isClassic = false): Promise<WoWHead> {
     return new Promise<WoWHead>(((resolve, reject) => {
@@ -190,6 +190,7 @@ export class WoWHeadUtil {
         (whError, _, whBody) => {
           if (whError) {
             reject(`Could not find the item with id=${id} on WoWHead`);
+            return;
           }
 
           resolve(

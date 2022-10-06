@@ -48,4 +48,11 @@ export class AdminService {
       {isClassic}
     ));
   }
+
+  updateRecipes(isClassic): Promise<any> {
+    return firstValueFrom(this.http.post(
+      Endpoints.getLambdaUrl(`admin/recipes/update-all`),
+      {isClassic}
+    ));
+  }
 }

@@ -78,7 +78,10 @@ export class ItemUtil {
             reject(errorMessage);
           }
         })
-        .catch(error => reject(errorMessage));
+        .catch((error) => {
+          console.error('ItemUtil.getWowDBData', error);
+          reject(errorMessage);
+        });
     }));
   }
 

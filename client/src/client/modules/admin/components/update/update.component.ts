@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {SharedService} from '../../../../services/shared.service';
 import {CraftingService} from '../../../../services/crafting.service';
-import {Recipe} from '../../../crafting/models/recipe';
 import {ItemService} from '../../../../services/item.service';
 import {Filters} from '../../../../utils/filtering';
 import {environment} from '../../../../../environments/environment';
@@ -61,6 +60,10 @@ export class UpdateComponent implements OnInit {
   }
 
   updateRecipes(i?: number): void {
+    this.adminService.updateRecipes(true)
+      .then(console.log)
+      .catch(console.error);
+    /*
     if (!i) {
       i = 0;
       this.updated.recipes.list = [];
@@ -101,7 +104,7 @@ export class UpdateComponent implements OnInit {
       } else {
         this.updateRecipes(i);
       }
-    }, 100);
+    }, 100);*/
   }
 
   getRecipeCount(): number {

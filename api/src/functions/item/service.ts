@@ -12,14 +12,13 @@ import {WoWDBItem, WoWHead} from '@models/item';
 import {UpdatesService} from '../updates/service';
 import {NameSpace} from '../../enums/name-space.enum';
 import {UpdateProgressModel} from '@models/update';
-import {ProgressUpdateRepository} from '@shared/repositories';
-import {DateUtil} from "@ukon1990/js-utilities";
+import {DateUtil} from '@ukon1990/js-utilities';
 
-const PromiseThrottle: any = require('promise-throttle');
+// const PromiseThrottle: any = require('promise-throttle');
 
 export class ItemServiceV2 {
   private readonly repository = new RDSItemRepository();
-  private readonly updateProgressRepository = new ProgressUpdateRepository();
+  // private readonly updateProgressRepository = new ProgressUpdateRepository();
   private table: string;
   private localeTable: string;
   private nameSpace: NameSpace;
@@ -84,14 +83,14 @@ export class ItemServiceV2 {
   }
 
   addOrUpdateItemsByIds(ids: number[], db: DatabaseUtil): Promise<UpdateProgressModel> {
-    return new Promise<UpdateProgressModel>(async (resolve, reject) => {
+    return new Promise<UpdateProgressModel>(async (resolve) => {
       const progress = new UpdateProgressModel('items', ids.length);
-      const promiseThrottle = new PromiseThrottle({
+      /*const promiseThrottle = new PromiseThrottle({
         requestsPerSecond: 1,
         promiseImplementation: Promise
-      });
+      });*/
       const startTime = +new Date();
-      const promises: Promise<any>[] = [];
+      /*const promises: Promise<any>[] = [];*/
       for (const id of ids) {
         if (!isOffline && DateUtil.timeSince(startTime, 's') > 55) {
           continue;
@@ -119,7 +118,8 @@ export class ItemServiceV2 {
 
       if (progress.successful) {
         console.log('Starting to update the static files');
-        await UpdatesService.getAndSetItems()
+
+        await (this.isClassic ? UpdatesService.getAndSetClassicItems() : UpdatesService.getAndSetItems())
           .then(() => console.log('Done uploading items'))
           .catch(console.error);
         await UpdatesService.getAndSetTimestamps()
@@ -214,9 +214,9 @@ export class ItemServiceV2 {
                     .catch(console.error);
                   const map = {};
                   try {
-                    item.itemSource.droppedBy
+                    (item.itemSource?.droppedBy || [])
                       .forEach((drop) => map[drop.id] = drop.id);
-                    item.itemSource.soldBy
+                    (item.itemSource?.soldBy || [])
                       .forEach((vendor) => map[vendor.id] = vendor.id);
                   } catch (e) {
                     console.error(e);
