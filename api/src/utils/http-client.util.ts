@@ -7,7 +7,7 @@ export class HttpClientUtil {
   constructor(timeout?: number) {
     this.timeout = timeout;
   }
-  get(url: string, expectJSON: boolean = true, headers: any = {}): Promise<any> {
+  get<T = any>(url: string, expectJSON: boolean = true, headers: any = {}): Promise<T> {
     return new Promise<any>((resolve, reject) => {
       // timeout: this.timeout || undefined,
       fetch(url, {
@@ -34,7 +34,7 @@ export class HttpClientUtil {
     });
   }
 
-  head(url: string): Promise<any> {
+  head<T = any>(url: string): Promise<T> {
     return new Promise<any>((resolve, reject) => {
       request({
           method: 'HEAD',
@@ -53,7 +53,7 @@ export class HttpClientUtil {
     });
   }
 
-  post(url: string, requestBody: any, ignoreHttpResponse?: boolean): Promise<any> {
+  post<T = any>(url: string, requestBody: any, ignoreHttpResponse?: boolean): Promise<T> {
     return new Promise<any>((resolve, reject) => {
       request.post({
           headers: {

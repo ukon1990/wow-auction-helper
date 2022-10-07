@@ -7,11 +7,11 @@ import {Endpoints} from '../../utils/endpoints.util';
 import {NameSpace} from '../../enums/name-space.enum';
 import {AuthHandler} from '../handlers/auth.handler';
 import {BLIZZARD} from '../../secrets';
-import {HttpResponse} from '../../models/http-response.model';
+import {HttpResponse} from '@models/http-response.model';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {DynamoDbReturnValue} from '../../enums/dynamo-db-return-value.enum';
-import {GameBuildVersion} from '../../shared/enum';
-import {AuctionUpdateLog} from '../../shared/models';
+import {GameBuildVersion} from '@shared/enum';
+import {AuctionUpdateLog} from '@shared/models';
 
 export class RealmService {
   private repository: RealmRepository;
