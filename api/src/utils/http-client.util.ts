@@ -17,11 +17,11 @@ export class HttpClientUtil {
         },
       })
         .then(async response => {
-
           (expectJSON ? response.json() : response.text())
             .then(body => {
               resolve({
                 ...response,
+                headers: response?.headers?.raw(),
                 body,
               });
             })
@@ -34,11 +34,12 @@ export class HttpClientUtil {
     });
   }
 
-  head(url: string): Promise<any> {
+  head(url: string, headers?: any): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       request({
           method: 'HEAD',
           url,
+          headers,
         },
         (error, response) => {
           try {
