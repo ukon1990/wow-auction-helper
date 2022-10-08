@@ -2,7 +2,7 @@ import {Authorization} from '@models/authorization.model';
 import {HttpClientUtil} from '../../utils/http-client.util';
 import {TsmRegionalItemStats, TsmRegions} from '@functions/tsm/tsm.model';
 import {S3Handler} from '@functions/handlers/s3.handler';
-import {TsmGameVersion} from "@functions/tsm/tsm.enum";
+import {TsmGameVersion} from '@functions/tsm/tsm.enum';
 
 export class TsmRepository {
   private readonly http = new HttpClientUtil();
@@ -18,15 +18,29 @@ export class TsmRepository {
       return;
     }
     try {
-      this.authorization = await this.http.post<Authorization>(
+      await this.http.post<Authorization>(
         'https://auth.tradeskillmaster.com/oauth2/token',
         {
           client_id: 'c260f00d-1071-409a-992f-dda2e5498536',
           grant_type: 'api_token',
           scope: 'app:realm-api app:pricing-api',
           token: this.apiKey
+        },
+        undefined,
+        {
+          'Content-Type': 'application/json',
+          Accept: '*/*',
+          'Accept-Encoding': 'gzip, deflate, br',
+        }
+      )
+        .then(({body}) => {
+          if (!body.access_token) {
+            console.error('Token is missing', body);
+            return;
+          }
+          this.authorization = body;
+          this.tokenExpires = +new Date() + this.authorization.expires_in * 1000;
         });
-      this.tokenExpires = +new Date() + this.authorization.expires_in * 1000;
     } catch (error) {
       throw error;
     }
@@ -42,7 +56,7 @@ export class TsmRepository {
         true,
         this.getHeaders()
       )
-        .then(resolve)
+        .then(({body}) => resolve(body))
         .catch(reject);
     });
   }
@@ -68,6 +82,13 @@ export class TsmRepository {
   }
 
   public saveToS3(gameVersion: TsmGameVersion, region: string, content: TsmRegionalItemStats[]): Promise<void> {
-    return this.s3.save(content, `tsm/${gameVersion}`, {region});
+    return this.s3.save(
+      content,
+      `tsm/${region}/${gameVersion.toLowerCase()}`,
+      /*
+       * Storing it in EU, as that is where Il'l combine the data with the stats data
+       */
+      {region: 'eu'}
+    );
   }
 }

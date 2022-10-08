@@ -9,8 +9,9 @@ import {
   profession,
   realm,
   recipe,
+  tsm,
   updates,
-  user
+  user,
 } from '@functions/index';
 import item from '@functions/item';
 
@@ -105,6 +106,7 @@ const serverlessConfiguration: AWS = {
     ...profession,
     ...realm,
     ...recipe,
+    ...tsm,
     ...updates,
     ...user,
   },

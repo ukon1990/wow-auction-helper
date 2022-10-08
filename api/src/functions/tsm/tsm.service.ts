@@ -1,7 +1,7 @@
 import {TsmRepository} from '@functions/tsm/tsm.repository';
 import {TsmGameVersion, TsmRegionName} from '@functions/tsm/tsm.enum';
-import {TsmRegionSimplified} from "@functions/tsm/tsm.model";
-import {TextUtil} from "@ukon1990/js-utilities";
+import {TsmRegionSimplified} from '@functions/tsm/tsm.model';
+import {TextUtil} from '@ukon1990/js-utilities';
 
 
 export class TsmService {
@@ -14,24 +14,29 @@ export class TsmService {
   private getRegions(): Promise<TsmRegionSimplified[]> {
     return new Promise((resolve, reject) => {
       this.repository.getRegionsFromAPI()
-        .then(regions => resolve(regions.items.filter(region => {
-          if (region.gameVersion === TsmGameVersion.Wrath) {
-            return true;
-          }
-          return region.gameVersion === TsmGameVersion.Retail;
-        }).map(({
-                  regionId,
-                  name,
-                  gameVersion,
-                  lastModified,
-                }) => ({
-          regionId,
-          lastModified,
-          gameVersion: gameVersion === TsmGameVersion.Retail ?
-            // I do not intend on supporting any other than the current "Classic" for now
-            TsmGameVersion.Retail : TsmGameVersion.Classic,
-          region: this.getRegionShort(name),
-        }))))
+        .then(regions => {
+          const filteredRegions = regions.items.filter(region => {
+            if (region.gameVersion === TsmGameVersion.Wrath) {
+              return true;
+            }
+            return region.gameVersion === TsmGameVersion.Retail;
+          });
+          const reMappedRegions = filteredRegions.map(({
+                    regionId,
+                    name,
+                    gameVersion,
+                    lastModified,
+                  }) => ({
+            regionId,
+            lastModified,
+            gameVersion: gameVersion === TsmGameVersion.Retail ?
+              // I do not intend on supporting any other than the current "Classic" for now
+              TsmGameVersion.Retail : TsmGameVersion.Classic,
+            region: this.getRegionShort(name),
+          }));
+
+          resolve(reMappedRegions);
+        })
         .catch(reject);
     });
   }
@@ -75,7 +80,7 @@ export class TsmService {
             } in ${+new Date() - regionStart} ms`
           );
         }
-        console.log(`Doen updating in ${+new Date() - start} ms`);
+        console.log(`Done updating in ${+new Date() - start} ms`);
 
         resolve();
       } catch (error) {
