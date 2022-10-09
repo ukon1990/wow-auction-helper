@@ -11,6 +11,12 @@ export interface Stat {
 }
 
 export interface ItemStats {
+  tsm: {
+    salePct: number;
+    historical: number;
+    soldPerDay: number;
+    avgSalePrice: number
+  };
   itemId: number;
   petSpeciesId?: number;
   bonusIds?: string | number[];

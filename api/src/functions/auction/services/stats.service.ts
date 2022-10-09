@@ -1,6 +1,6 @@
 import {S3Handler} from '../../handlers/s3.handler';
 import {DatabaseUtil} from '../../../utils/database.util';
-import {EventSchema} from '../../../models/s3/event-record.model';
+import {EventSchema} from '@models/s3/event-record.model';
 import {GzipUtil} from '../../../utils/gzip.util';
 import {AuctionProcessorUtil, AuctionStatsUtil, NumberUtil} from '../../../shared/utils';
 import {StatsRepository} from '../repository/stats.repository';
@@ -20,6 +20,8 @@ import {AuctionHouse} from '../../realm/model';
 import {S3} from 'aws-sdk';
 import {LogRepository} from '../../logs/repository';
 import {RealmLogRepository} from '../../realm/repositories/realm-log.repository';
+import {TsmRegionalItemStats} from "@functions/tsm/tsm.model";
+import {TsmRepository} from "@functions/tsm/tsm.repository";
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -680,14 +682,23 @@ export class StatsService {
     return new Promise(async (resolve, reject) => {
       const startTime = +new Date();
       const conn = new DatabaseUtil(false);
+      const tsmRepository = new TsmRepository(''); // Can't fetch directly for tsm api
       conn.enqueueHandshake()
         .then(() => {
           let completed = 0;
           this.realmRepository.getRealmsThatNeedsTrendUpdate()
             .then(async (houses) => {
+              const regionMap = new Map<string, Map<number, TsmRegionalItemStats>>();
               for (const house of houses.slice(0, 10)) {
                 if (DateUtil.timeSince(startTime, 's') < 50) {
-                  await this.setRealmTrends(house, conn)
+                  const gameVersion = house.gameBuild === 1 ? 'classic' : 'retail';
+                  const regionId = `${house.region}-${gameVersion}`;
+                  if (!regionMap.has(regionId)) {
+                    await tsmRepository.getFromS3(gameVersion, house.region)
+                      .then(map => regionMap.set(regionId, map))
+                      .catch(console.error);
+                  }
+                  await this.setRealmTrends(house, conn, regionMap.get(house.region))
                     .then(async () => {
                       completed++;
                       await new RealmService().createLastModifiedFile(house.id, house.region)
@@ -713,7 +724,7 @@ export class StatsService {
     });
   }
 
-  getRealmPriceTrends(house: AuctionHouse, db: DatabaseUtil): Promise<{ [key: number]: ItemStats[] }> {
+  getRealmPriceTrends(house: AuctionHouse, tsmMap: Map<number, TsmRegionalItemStats>, db: DatabaseUtil): Promise<{ [key: number]: ItemStats[] }> {
     const start = +new Date();
     const repo = new StatsRepository(db);
     let hourlyData: { [key: number]: ItemPriceEntry[] } = {},
@@ -749,7 +760,7 @@ export class StatsService {
         })
       ])
         .then(() => {
-          const processedData = this.getProcessedAndCombineHourlyAndDailyTrends(hourlyData, dailyData);
+          const processedData = this.getProcessedAndCombineHourlyAndDailyTrends(hourlyData, dailyData, tsmMap);
           resolve(processedData);
         })
         .catch(reject);
@@ -760,11 +771,13 @@ export class StatsService {
    * Combines the hourly and daily data, for each AH per realm.
    * @param hourlyData
    * @param dailyData
+   * @param tsmMap
    * @private
    */
   private getProcessedAndCombineHourlyAndDailyTrends(
     hourlyData: { [key: number]: ItemPriceEntry[] },
-    dailyData: { [key: number]: ItemDailyPriceEntry[] }
+    dailyData: { [key: number]: ItemDailyPriceEntry[] },
+    tsmMap: Map<number, TsmRegionalItemStats>,
   ) {
     const processedData: { [key: number]: ItemStats[] } = {};
     /*
@@ -774,61 +787,117 @@ export class StatsService {
       .forEach(ahTypeId => {
         processedData[ahTypeId] = [];
         const map = new Map<string, ItemStats>();
-        AuctionStatsUtil.processHours(hourlyData[ahTypeId]).forEach(item => {
-          const id = AuctionStatsUtil.getId(item.itemId, item.bonusIds, item.petSpeciesId);
-          if (!map.has(id)) {
-            item.past7Days = {
-              price: {
-                trend: item.past24Hours.price.trend * 24,
-                avg: item.past24Hours.price.avg * 24
-              },
-              quantity: {
-                trend: item.past24Hours.quantity.trend * 24,
-                avg: item.past24Hours.quantity.avg * 24
-              },
-              totalEntries: item.past24Hours.totalEntries,
-            };
-            map.set(id, item);
-            processedData[ahTypeId].push(item);
-          } else {
-            map.get(id).past24Hours = item.past24Hours;
-          }
-        });
-        AuctionProcessorUtil.setCurrentDayFromHourly({
-          hourly: hourlyData[ahTypeId],
-          daily: dailyData[ahTypeId],
-        });
-        AuctionStatsUtil.processDays(dailyData[ahTypeId]).forEach(item => {
-          const id = AuctionStatsUtil.getId(item.itemId, item.bonusIds, item.petSpeciesId);
-          if (!map.has(id)) {
-            item.past24Hours = {
-              price: {
-                trend: 0,
-                avg: 0
-              },
-              quantity: {
-                trend: 0,
-                avg: 0
-              },
-              totalEntries: 0,
-            };
-            map.set(id, item);
-            processedData[ahTypeId].push(item);
-          } else {
-            map.get(id).past7Days = item.past7Days;
-          }
-        });
+        this.setDailyAndTSMDataToResult(hourlyData, ahTypeId, map, processedData, tsmMap, dailyData);
+        this.setHourlyDataToResult(dailyData, ahTypeId, map, processedData);
       });
     return processedData;
   }
 
-  setRealmTrends(house: AuctionHouse, db: DatabaseUtil): Promise<void> {
+  /**
+   * Adding the hourly data per item variation to the list
+   * @param dailyData
+   * @param ahTypeId
+   * @param map
+   * @param processedData
+   * @private
+   */
+  private setHourlyDataToResult(
+    dailyData: { [p: number]: ItemDailyPriceEntry[] },
+    ahTypeId: string, map: Map<string, ItemStats>,
+    processedData: { [p: number]: ItemStats[] }
+  ) {
+    AuctionStatsUtil.processDays(dailyData[ahTypeId]).forEach(item => {
+      const id = AuctionStatsUtil.getId(item.itemId, item.bonusIds, item.petSpeciesId);
+      if (!map.has(id)) {
+        item.past24Hours = {
+          price: {
+            trend: 0,
+            avg: 0
+          },
+          quantity: {
+            trend: 0,
+            avg: 0
+          },
+          totalEntries: 0,
+        };
+        map.set(id, item);
+        processedData[ahTypeId].push(item);
+      } else {
+        map.get(id).past7Days = item.past7Days;
+      }
+    });
+  }
+
+  /**
+   * Adding the daily and TSM stats data to the result
+   * @param hourlyData
+   * @param ahTypeId
+   * @param map
+   * @param processedData
+   * @param tsmMap
+   * @param dailyData
+   * @private
+   */
+  private setDailyAndTSMDataToResult(
+    hourlyData: { [p: number]: ItemPriceEntry[] },
+    ahTypeId: string,
+    map: Map<string, ItemStats>,
+    processedData: { [p: number]: ItemStats[] },
+    tsmMap: Map<number, TsmRegionalItemStats>,
+    dailyData: { [p: number]: ItemDailyPriceEntry[] }
+  ) {
+    AuctionStatsUtil.processHours(hourlyData[ahTypeId]).forEach(item => {
+      const id = AuctionStatsUtil.getId(item.itemId, item.bonusIds, item.petSpeciesId);
+      if (!map.has(id)) {
+        item.past7Days = {
+          price: {
+            trend: item.past24Hours.price.trend * 24,
+            avg: item.past24Hours.price.avg * 24
+          },
+          quantity: {
+            trend: item.past24Hours.quantity.trend * 24,
+            avg: item.past24Hours.quantity.avg * 24
+          },
+          totalEntries: item.past24Hours.totalEntries,
+        };
+        map.set(id, item);
+        processedData[ahTypeId].push(item);
+      } else {
+        map.get(id).past24Hours = item.past24Hours;
+      }
+
+      this.setTsmDataOnItem(tsmMap, item);
+    });
+    AuctionProcessorUtil.setCurrentDayFromHourly({
+      hourly: hourlyData[ahTypeId],
+      daily: dailyData[ahTypeId],
+    });
+  }
+
+  /**
+   * Adding the TSM data for the item onto the object
+   * @param tsmMap
+   * @param item
+   * @private
+   */
+  private setTsmDataOnItem(tsmMap: Map<number, TsmRegionalItemStats>, item: ItemStats) {
+    const tsmData = tsmMap.get(item.itemId);
+    item.tsm = {
+      // TSM API Data
+      avgSalePrice: tsmData?.avgSalePrice || 0,
+      salePct: tsmData?.salePct || 0,
+      soldPerDay: tsmData?.soldPerDay || 0,
+      historical: tsmData?.historical || 0,
+    };
+  }
+
+  setRealmTrends(house: AuctionHouse, db: DatabaseUtil, tsmMap: Map<number, TsmRegionalItemStats>): Promise<void> {
     const start = +new Date();
     console.log('Starting setRealmTrends for', house.region, house.id);
     return new Promise<void>(async (resolve, reject) => {
       await this.realmRepository.updateEntry(house.id, {id: house.id, lastTrendUpdateInitiation: +new Date()})
         .catch(console.error);
-      this.getRealmPriceTrends(house, db)
+      this.getRealmPriceTrends(house, tsmMap, db)
         .then((results) => {
           const processStart = +new Date();
           const hasMultipleAH = Object.keys(results).length > 1;

@@ -72,7 +72,7 @@ export class TsmRepository {
         true,
         this.getHeaders()
       )
-        .then(resolve)
+        .then(({body}) => resolve(body))
         .catch(reject);
     });
   }
@@ -84,11 +84,28 @@ export class TsmRepository {
   public saveToS3(gameVersion: TsmGameVersion, region: string, content: TsmRegionalItemStats[]): Promise<void> {
     return this.s3.save(
       content,
-      `tsm/${region}/${gameVersion.toLowerCase()}`,
+      `tsm/${region}/${gameVersion.toLowerCase()}.json.gz`,
       /*
        * Storing it in EU, as that is where Il'l combine the data with the stats data
        */
       {region: 'eu'}
     );
+  }
+
+  public getFromS3(gameVersion: 'classic' | 'retail', region: string): Promise<Map<number, TsmRegionalItemStats>> {
+
+    return new Promise<Map<number, TsmRegionalItemStats>>((resolve, reject) => {
+      this.s3.get<TsmRegionalItemStats[]>('wah-data-eu', `tsm/${region}/${gameVersion}.json.gz`)
+        .then(items => {
+          const map = new Map<number, TsmRegionalItemStats>();
+
+          items.forEach(item => {
+            map.set(item.itemId, item);
+          });
+
+          resolve(map);
+        })
+        .catch(reject);
+    });
   }
 }

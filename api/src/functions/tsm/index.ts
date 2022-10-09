@@ -3,8 +3,8 @@ import {handlerPath} from '@libs/handler-resolver';
 export default {
   updateTSMData: {
     handler: `${handlerPath(__dirname)}/controller.updateTSMData`,
-    memorySize: 512,
-    timeout: 60,
+    memorySize: 256,
+    timeout: 600,
     tags: {
       Function: 'Wah-updateTSMData',
       Project: 'WAH',
