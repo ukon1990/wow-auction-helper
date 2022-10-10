@@ -24,13 +24,13 @@
   </div>
   <div class="col-md-12">
     <strong>Wild guess at minimum sell
-      time:</strong> {{ resetPrice.numOfItems / auctionItem.regionSaleRate / auctionItem.avgDailySold | number }} days
+      time:</strong> {{ timeToSell | number }} days
     (items / regional sale rate / regional avg daily sold).
   </div>
   <div class="col-md-12">
     <strong>Wild guess at minimum sell
       time to
-      break-even:</strong> {{ resetPrice.breakEvenQuantity / auctionItem.regionSaleRate / auctionItem.avgDailySold | number }}
+      break-even:</strong> {{ timeToBreakEven | number }}
     days
     (break-even quantity / regional sale rate / regional avg daily sold).
   </div>

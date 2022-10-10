@@ -15,6 +15,7 @@ import {GameBuild} from '@shared/utils';
 import {ItemClass} from '../../../item/models/item-class.model';
 import {ItemClassService} from '../../../item/service/item-class.service';
 import {RealmService} from '../../../../services/realm.service';
+import {columnConfig} from "../../../dashboard/data/columns.data";
 
 @Component({
   selector: 'wah-market-reset',
@@ -170,8 +171,8 @@ export class MarketResetComponent implements OnInit {
               name: item.name,
               icon: item.icon,
               percentOfMkt: bp.newBuyout / ai.mktPrice,
-              regionSaleRate: ai.regionSaleRate,
-              avgDailySold: ai.avgDailySold,
+              regionSaleRate: ai.stats?.tsm?.salePct || 0,
+              avgDailySold: ai.stats?.tsm?.soldPerDay || 0,
               ...bp
             };
           }
@@ -186,7 +187,7 @@ export class MarketResetComponent implements OnInit {
   }
 
   private isSellTimeMatch(bp, query: any) {
-    return true; // TSM dependent -> Filters.isXSmallerThanOrEqualToY(bp.sellTime, query.timeToSell);
+    return Filters.isXSmallerThanOrEqualToY(bp.sellTime, query.timeToSell);
   }
 
   private isMinROIMatch(query: any, bp) {
@@ -268,9 +269,11 @@ export class MarketResetComponent implements OnInit {
     this.columns.push({key: 'auctionCount', title: '# Auctions', dataType: 'number'});
     this.columns.push({key: 'itemCount', title: '# Item', dataType: 'number'});
     this.columns.push({key: 'breakEvenQuantity', title: 'Break-even #', dataType: 'number'});
-    // TSM dependent -> this.columns.push(columnConfig.auction.avgDailySold);
-    // TSM dependent -> this.columns.push(columnConfig.auction.regionSaleRate);
-    // TSM dependent -> this.columns.push({key: 'sellTime', title: 'Est days to sell', dataType: 'number'});
+    this.columns.push({key: 'avgDailySold', title: 'Avg sold per day', dataType: 'number',
+      options: columnConfig.auction.regionSoldPerDay.options});
+    this.columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent',
+      options: columnConfig.auction.regionSoldPerDay.options});
+    this.columns.push({key: 'sellTime', title: 'Est days to sell', dataType: 'number'});
   }
 
   setNewInputGoldValue(newValue: any, field: string) {

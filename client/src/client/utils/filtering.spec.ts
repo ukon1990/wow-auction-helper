@@ -22,8 +22,8 @@ describe('Filters', () => {
   describe('isSaleRateMatch', () => {
     describe('Positive when', () => {
       it('null or undefined', () => {
-        expect(Filters.isSaleRateMatch(25, undefined)).toBeTruthy();
-        expect(Filters.isSaleRateMatch(25, null)).toBeTruthy();
+        expect(Filters.isPersonalSaleRateMatch(25, undefined)).toBeTruthy();
+        expect(Filters.isPersonalSaleRateMatch(25, null)).toBeTruthy();
       });
 
       it('No API is positive', () => {
@@ -32,7 +32,7 @@ describe('Filters', () => {
         ai.regionSaleRate = 0.10;
         ai.itemID = 25;
         service.mapped.value.set('' + ai.itemID, ai);
-        expect(Filters.isSaleRateMatch(ai.itemID, 9)).toBeTruthy();
+        expect(Filters.isPersonalSaleRateMatch(ai.itemID, 9)).toBeTruthy();
       });
 
       it('When an auction item is equal set value, true shall be returned', () => {
@@ -40,7 +40,7 @@ describe('Filters', () => {
         ai.regionSaleRate = 0.09;
         ai.itemID = 25;
         service.mapped.value.set('' + ai.itemID, ai);
-        expect(Filters.isSaleRateMatch(ai.itemID, 9)).toBeTruthy();
+        expect(Filters.isPersonalSaleRateMatch(ai.itemID, 9)).toBeTruthy();
       });
 
       it('When an auction item is above set value, true shall be returned', () => {
@@ -48,15 +48,15 @@ describe('Filters', () => {
         ai.regionSaleRate = 0.10;
         ai.itemID = 25;
         service.mapped.value.set('' + ai.itemID, ai);
-        expect(Filters.isSaleRateMatch(ai.itemID, 9)).toBeTruthy();
+        expect(Filters.isPersonalSaleRateMatch(ai.itemID, 9)).toBeTruthy();
       });
 
       it('if saleRate undefined or null it is positive', () => {
         const ai = new AuctionItem();
         ai.regionSaleRate = 0.08;
         ai.itemID = 25;
-        expect(Filters.isSaleRateMatch(ai.itemID, null)).toBeTruthy();
-        expect(Filters.isSaleRateMatch(ai.itemID, undefined)).toBeTruthy();
+        expect(Filters.isPersonalSaleRateMatch(ai.itemID, null)).toBeTruthy();
+        expect(Filters.isPersonalSaleRateMatch(ai.itemID, undefined)).toBeTruthy();
       });
     });
 
@@ -65,9 +65,9 @@ describe('Filters', () => {
       ai.regionSaleRate = 0.08;
       ai.itemID = 25;
       service.mapped.value.set('' + ai.itemID, ai);
-      expect(Filters.isSaleRateMatch(ai.itemID, 9)).toBeFalsy();
+      expect(Filters.isPersonalSaleRateMatch(ai.itemID, 9)).toBeFalsy();
 
-      expect(Filters.isSaleRateMatch(123, 90)).toBeFalsy();
+      expect(Filters.isPersonalSaleRateMatch(123, 90)).toBeFalsy();
       SharedService.user.apiToUse = 'Testing';
     });
   });

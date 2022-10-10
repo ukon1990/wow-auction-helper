@@ -159,18 +159,29 @@ export const ruleFields: RuleFieldGroup[] = [
         column: columnConfig.auction.buyoutVsMktPrice,
         defaultType: TargetValueEnum.PERCENT
       },
-      /* TODO: If TSM is public again
-      {
-        key: 'regionSaleAvg',
-        name: 'Avg sales price',
-        column: columnConfig.auction.regionSaleAvg,
-        defaultType: TargetValueEnum.GOLD
-      },*/
       {
         key: 'quantityTotal',
         name: 'Quantity total',
         column: columnConfig.auction.quantityTotal,
         defaultType: TargetValueEnum.NUMBER
+      },
+      {
+        key: columnConfig.auction.regionSaleAvg.key,
+        name: columnConfig.auction.regionSaleAvg.title,
+        column: columnConfig.auction.regionSaleAvg,
+        defaultType: TargetValueEnum.GOLD
+      },
+      {
+        key: columnConfig.auction.regionSoldPerDay.key,
+        name: columnConfig.auction.regionSoldPerDay.title,
+        column: columnConfig.auction.regionSoldPerDay,
+        defaultType: TargetValueEnum.NUMBER
+      },
+      {
+        key: columnConfig.auction.regionSalePct.key,
+        name: columnConfig.auction.regionSalePct.title,
+        column: columnConfig.auction.regionSalePct,
+        defaultType: TargetValueEnum.PERCENT
       },
       {
         key: 'past24HoursSaleRate',

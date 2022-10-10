@@ -108,14 +108,6 @@ export class AuctionUtil {
       auctionList.push(a);
     });
 
-    TsmService.list.value.forEach(tsm => {
-      if (!idMap.has(tsm.Id)) {
-        const auction = new Auction();
-        auction.item = +tsm.Id;
-        this.addNewAuctionItem(auction, false, '' + auction.item, map, list, stats);
-      }
-    });
-
     list.forEach(ai => {
       ai.auctions = ai.auctions.sort((a, b) => {
         return a.buyout / a.quantity - b.buyout / b.quantity;

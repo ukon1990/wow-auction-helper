@@ -95,7 +95,7 @@ export class S3Handler {
     });
   }
 
-  get(bucket: string, file: string): Promise<any> {
+  get<T = any>(bucket: string, file: string): Promise<T> {
     const s3 = this.getS3();
     return s3.getObject({
       Bucket: bucket,

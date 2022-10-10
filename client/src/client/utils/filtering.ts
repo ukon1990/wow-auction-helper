@@ -74,7 +74,7 @@ export class Filters {
     return item && item.itemLevel >= minItemLevel;
   }
 
-  public static isSaleRateMatch(itemID: number, saleRate: number, requirePresence = true): boolean {
+  public static isPersonalSaleRateMatch(itemID: number, saleRate: number, requirePresence = true): boolean {
     if (EmptyUtil.isNullOrUndefined(saleRate) || saleRate === 0 || !Filters.isUsingAPI()) {
       return true;
     }
@@ -206,7 +206,7 @@ export class Filters {
   }
 
   static isXSmallerThanOrEqualToY(x: number, y: number) {
-    return EmptyUtil.isNullOrUndefined(y) || x <= y;
+    return EmptyUtil.isNullOrUndefined(y) || (x || 0) <= y;
   }
 
   /**

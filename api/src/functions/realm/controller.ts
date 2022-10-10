@@ -2,7 +2,7 @@
 import {RealmService} from './service';
 import {middyfy} from '@libs/lambda';
 import {formatErrorResponse, formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from '@libs/api-gateway';
-import {AuthService} from "../../shared/services/auth.service";
+import {AuthService} from '@shared/services/auth.service';
 
 interface CloudTrailS3Event {
   detail: {

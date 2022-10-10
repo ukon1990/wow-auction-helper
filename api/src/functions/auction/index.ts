@@ -95,7 +95,16 @@ export default {
     tags: {
       Function: 'Wah-auctionsUpdateRealmTrends',
       Project: 'WAH',
-    },
+    }, /*
+    events: [{
+      http: {
+        method: 'get',
+        path: 'test/trends',
+        cors: {
+          origin: 'http://localhost:4200,https://wah.jonaskf.net',
+        }
+      },
+    }]*/
   },
   deleteOldPriceForRealmHourly: {
     handler: `${handlerPath(__dirname)}/controller.deleteOldPriceForRealmHourly`,

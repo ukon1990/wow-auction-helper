@@ -2,10 +2,9 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {OrganizedAuctionResult} from '../../utils/auction.util';
 import {RealmService} from '../../../../services/realm.service';
-import {RealmStatus} from '@shared/models';
+import {ColumnDescription, itemQualities, RealmStatus} from '@shared/models';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs';
-import {ColumnDescription, itemQualities} from '@shared/models';
 import {AuctionItem} from '../../models/auction-item.model';
 import {AuctionHouseStatus} from '../../models/auction-house-status.model';
 import {ItemClass} from '../../../item/models/item-class.model';
@@ -115,7 +114,7 @@ export class AuctionComparisonComponent implements OnInit, OnDestroy {
     return Filters.isNameMatch(item.itemID, this.form.getRawValue().name, item.petSpeciesId, item.id) &&
       Filters.isItemClassMatch(
         item.itemID, this.form.getRawValue().itemClass, changes.itemSubClass) &&
-      Filters.isSaleRateMatch(item.itemID, changes.saleRate) &&
+      Filters.isPersonalSaleRateMatch(item.itemID, changes.saleRate) &&
       Filters.isBelowMarketValue(item.itemID, changes.mktPrice) &&
       Filters.isQuantityAbove(
         item.id, changes.quantityTotal, this.comparisonSetOne?.map.get(item.id)) &&
