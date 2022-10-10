@@ -1,6 +1,7 @@
 import {Auction} from '@shared/models';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
+import {getEstimatedSellTime} from "../utils/reset.util";
 
 export class ItemResetBreakpoint {
   private pipe = new GoldPipe();
@@ -32,9 +33,7 @@ export class ItemResetBreakpoint {
   }
 
   private setPotentialSellTime() {
-    this.sellTime = this.itemCount /
-      this.auctionItem.regionSaleRate /
-      this.auctionItem.avgDailySold;
+    this.sellTime = getEstimatedSellTime(this.auctionItem, this.itemCount);
   }
 
   setShoppingString(): void {

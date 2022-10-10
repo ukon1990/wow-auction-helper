@@ -38,6 +38,7 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       }, hideOnMobile: true
     },
     {key: 'buyout', title: 'Buyout', dataType: 'gold'},
+    {key: 'salePct', title: 'Sale rate', dataType: 'percent', hideOnMobile: true},
     {
       key: 'priceTrend24', title: '24H trend', dataType: 'gold', options: {
         tooltip: 'Price trend per hour, the past ~24 hours'
@@ -157,6 +158,7 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
           quantityTrend24: i.stats ? i.stats.past24Hours.quantity.trend : 0,
           priceTrend: i.stats ? i.stats.past7Days.price.trend : 0,
           priceTrend24: i.stats ? i.stats.past24Hours.price.trend : 0,
+          salePct: i.stats ? i.stats.tsm?.salePct : 0,
         };
       });
     Report.debug('this.tableData', this.tableData);

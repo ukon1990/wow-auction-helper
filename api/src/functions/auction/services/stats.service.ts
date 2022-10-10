@@ -683,39 +683,42 @@ export class StatsService {
       const startTime = +new Date();
       const conn = new DatabaseUtil(false);
       const tsmRepository = new TsmRepository(''); // Can't fetch directly for tsm api
+      let housesToUpdate: AuctionHouse[];
+      await this.realmRepository.getRealmsThatNeedsTrendUpdate()
+        .then(houses => housesToUpdate = houses)
+        .catch(reject);
+
+      if (!housesToUpdate || !housesToUpdate.length) {
+        console.log('There is nothing to update.');
+        resolve();
+        return;
+      }
       conn.enqueueHandshake()
-        .then(() => {
+        .then(async () => {
           let completed = 0;
-          this.realmRepository.getRealmsThatNeedsTrendUpdate()
-            .then(async (houses) => {
-              const regionMap = new Map<string, Map<number, TsmRegionalItemStats>>();
-              for (const house of houses.slice(0, 10)) {
-                if (DateUtil.timeSince(startTime, 's') < 50) {
-                  const gameVersion = house.gameBuild === 1 ? 'classic' : 'retail';
-                  const regionId = `${house.region}-${gameVersion}`;
-                  if (!regionMap.has(regionId)) {
-                    await tsmRepository.getFromS3(gameVersion, house.region)
-                      .then(map => regionMap.set(regionId, map))
-                      .catch(console.error);
-                  }
-                  await this.setRealmTrends(house, conn, regionMap.get(house.region))
-                    .then(async () => {
-                      completed++;
-                      await new RealmService().createLastModifiedFile(house.id, house.region)
-                        .catch(err => console.error('Could not createLastModifiedFile', err));
-                    })
-                    .catch(console.error);
-                }
+
+          const regionMap = new Map<string, Map<number, TsmRegionalItemStats>>();
+          for (const house of housesToUpdate.slice(0, 10)) {
+            if (DateUtil.timeSince(startTime, 's') < 50) {
+              const gameVersion = house.gameBuild === 1 ? 'classic' : 'retail';
+              const regionId = `${house.region}-${gameVersion}`;
+              if (!regionMap.has(regionId)) {
+                await tsmRepository.getFromS3(gameVersion, house.region)
+                  .then(map => regionMap.set(regionId, map))
+                  .catch(console.error);
               }
-              console.log(`Done updating for ${completed}/${houses.length} in ${DateUtil.timeSince(startTime, 's')} sec`);
-              conn.end();
-              resolve();
-            })
-            .catch(err => {
-              conn.end();
-              console.error(err);
-              reject(err);
-            });
+              await this.setRealmTrends(house, conn, regionMap.get(regionId))
+                .then(async () => {
+                  completed++;
+                  await new RealmService().createLastModifiedFile(house.id, house.region)
+                    .catch(err => console.error('Could not createLastModifiedFile', err));
+                })
+                .catch(console.error);
+            }
+          }
+          console.log(`Done updating for ${completed}/${housesToUpdate.length} in ${DateUtil.timeSince(startTime, 's')} sec`);
+          conn.end();
+          resolve();
         })
         .catch(err => {
           conn.end();
@@ -724,7 +727,9 @@ export class StatsService {
     });
   }
 
-  getRealmPriceTrends(house: AuctionHouse, tsmMap: Map<number, TsmRegionalItemStats>, db: DatabaseUtil): Promise<{ [key: number]: ItemStats[] }> {
+  getRealmPriceTrends(
+    house: AuctionHouse, tsmMap: Map<number, TsmRegionalItemStats>, db: DatabaseUtil
+  ): Promise<{ [key: number]: ItemStats[] }> {
     const start = +new Date();
     const repo = new StatsRepository(db);
     let hourlyData: { [key: number]: ItemPriceEntry[] } = {},
@@ -885,7 +890,7 @@ export class StatsService {
     item.tsm = {
       // TSM API Data
       avgSalePrice: tsmData?.avgSalePrice || 0,
-      salePct: tsmData?.salePct || 0,
+      salePct: tsmData?.salePct ? tsmData?.salePct / 100 : 0,
       soldPerDay: tsmData?.soldPerDay || 0,
       historical: tsmData?.historical || 0,
     };

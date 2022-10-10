@@ -65,6 +65,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
         tooltip: 'Price trend per day, the past 7 days'
       }
     },
+    {key: 'salePct', title: 'Sale rate', dataType: 'percent', hideOnMobile: true},
     {
       key: 'past60DaysSaleRate',
       title: 'Pers. sale rate(60)',
@@ -211,6 +212,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
           ...recipe,
           priceAvg24: stat ? stat.past24Hours.price.avg : 0,
           priceTrend: stat ? stat.past7Days.price.trend : 0,
+          salePct: stat && stat.tsm?.salePct ? stat.tsm?.salePct : 0,
           past60DaysSaleRate,
           inventoryQuantity,
         };

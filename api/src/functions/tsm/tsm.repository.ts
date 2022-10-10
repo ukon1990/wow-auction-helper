@@ -95,7 +95,7 @@ export class TsmRepository {
   public getFromS3(gameVersion: 'classic' | 'retail', region: string): Promise<Map<number, TsmRegionalItemStats>> {
 
     return new Promise<Map<number, TsmRegionalItemStats>>((resolve, reject) => {
-      this.s3.get<TsmRegionalItemStats[]>('wah-data-eu', `tsm/${region}/${gameVersion}.json.gz`)
+      this.s3.getAndDecompress<TsmRegionalItemStats[]>('wah-data-eu', `tsm/${region}/${gameVersion}.json.gz`)
         .then(items => {
           const map = new Map<number, TsmRegionalItemStats>();
 

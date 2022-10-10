@@ -15,7 +15,7 @@ export interface ItemStats {
     salePct: number;
     historical: number;
     soldPerDay: number;
-    avgSalePrice: number
+    avgSalePrice: number;
   };
   itemId: number;
   petSpeciesId?: number;
