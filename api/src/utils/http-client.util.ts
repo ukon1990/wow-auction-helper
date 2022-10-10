@@ -1,5 +1,11 @@
-const request: any = require('request');
+import {HttpResponse} from "@models/http-response.model";
 import fetch from 'node-fetch';
+
+const request: any = require('request');
+
+interface Headers {
+  [key: string]: string;
+}
 
 export class HttpClientUtil {
   private readonly timeout?: number;
@@ -7,25 +13,17 @@ export class HttpClientUtil {
   constructor(timeout?: number) {
     this.timeout = timeout;
   }
-  get(url: string, expectJSON: boolean = true, headers: any = {}): Promise<any> {
+
+  get<T = any>(url: string, expectJSON: boolean = true, headers: Headers): Promise<T> {
     return new Promise<any>((resolve, reject) => {
       // timeout: this.timeout || undefined,
       fetch(url, {
-        headers: {
+        headers: headers || {
           'User-Agent': 'Mozilla/5.0',
-          ...headers
         },
       })
         .then(async response => {
-
-          (expectJSON ? response.json() : response.text())
-            .then(body => {
-              resolve({
-                ...response,
-                body,
-              });
-            })
-            .catch(reject);
+          this.handleResponse(expectJSON, response, resolve, reject);
         })
         .catch(error => {
           console.error('Http error for', url, error);
@@ -34,11 +32,12 @@ export class HttpClientUtil {
     });
   }
 
-  head(url: string): Promise<any> {
+  head(url: string, headers?: any): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       request({
           method: 'HEAD',
           url,
+          headers,
         },
         (error, response) => {
           try {
@@ -53,30 +52,38 @@ export class HttpClientUtil {
     });
   }
 
-  post(url: string, requestBody: any, ignoreHttpResponse?: boolean): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      request.post({
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          url: url,
-          body: JSON.stringify(requestBody)
+  post<T = any>(url: string, requestBody: any, ignoreHttpResponse?: boolean, headers?: Headers): Promise<HttpResponse<T>> {
+    return new Promise((resolve, reject) => {
+      fetch(url, {
+        headers: headers || {
+          'User-Agent': 'Mozilla/5.0',
         },
-        (error, response, body) => {
-          try {
-            if (error || !body || response.statusCode === 404) {
-              reject(error);
-            }
-            if (ignoreHttpResponse) {
-              resolve('success');
-            } else {
-              response.body = JSON.parse(body);
-              resolve(response);
-            }
-          } catch (e) {
-            reject(e);
+        body: JSON.stringify(requestBody),
+        method: 'POST',
+      })
+        .then(async response => {
+          if (!ignoreHttpResponse) {
+            this.handleResponse(true, response, resolve, reject);
+            return;
           }
+          resolve(undefined);
+        })
+        .catch(error => {
+          console.error('Http error for', url, error);
+          reject(error);
         });
     });
+  }
+
+  private handleResponse(expectJSON: boolean, response: any, resolve: (value: any) => void, reject: (reason?: any) => void) {
+    (expectJSON ? response.json() : response.text())
+      .then(body => {
+        resolve({
+          ...response,
+          headers: response?.headers?.raw(),
+          body,
+        });
+      })
+      .catch(reject);
   }
 }

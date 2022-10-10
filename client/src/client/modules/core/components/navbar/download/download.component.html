@@ -20,8 +20,8 @@
       <small *ngIf="realmStatus">(~{{ realmStatus?.lowestDelay - timeSinceUpdate }} min left)</small>
       <br/>
 
-      <small class="sub-text-small">
-        <span class="d-none d-sm-inline">Region: </span>{{ timeSinceRegionalUpdate }} minutes ago
+      <small class="sub-text-small" *ngIf="!realmStatus.gameBuild">
+        <span class="d-none d-sm-inline">Commodity: </span>{{ timeSinceRegionalUpdate }} minutes ago
         <small *ngIf="regionalStatus">(~{{ regionalStatus?.lowestDelay - timeSinceRegionalUpdate }} min left)</small>
       </small>
       <!--

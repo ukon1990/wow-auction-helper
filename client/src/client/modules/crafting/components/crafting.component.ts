@@ -24,6 +24,7 @@ interface FormModel {
   professionId: number;
   profit: number;
   demand: number;
+  personalSaleRate: number;
   minSold: number;
   itemClass: number;
   itemSubClass: number;
@@ -65,6 +66,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
         tooltip: 'Price trend per day, the past 7 days'
       }
     },
+    {key: 'regionSaleRate', title: 'Sale rate (TSM)', dataType: 'percent', hideOnMobile: true},
     {
       key: 'past60DaysSaleRate',
       title: 'Pers. sale rate(60)',
@@ -110,6 +112,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
       professionId: query && query.professionId ? query.professionId : 0,
       profit: query && query.profit !== null ? parseFloat(query.profit) : null,
       demand: query && query.demand !== null ? parseFloat(query.demand) : null,
+      personalSaleRate: query && query.personalSaleRate !== null ? parseFloat(query.personalSaleRate) : null,
       minSold: query && query.minSold !== null ? parseFloat(query.minSold) : null,
       itemClass: query ? query.itemClass : '-1',
       itemSubClass: query ? query.itemSubClass : '-1',
@@ -188,7 +191,8 @@ export class CraftingComponent implements OnInit, OnDestroy {
           return this.isKnownRecipe(recipe)
             && this.isNameMatch(recipe, changes.searchQuery)
             && Filters.isProfitMatch(recipe, undefined, changes.profit)
-            && Filters.isSaleRateMatch(recipe.itemID, changes.demand, false)
+            && Filters.isPersonalSaleRateMatch(recipe.itemID, changes.demand, false)
+            && Filters.isXSmallerThanOrEqualToY(changes.demand, recipe.regionSaleRate)
             && Filters.isDailySoldMatch(recipe.itemID, changes.minSold, false)
             && Filters.recipeIsProfessionMatch(recipe.id, changes.professionId)
             && Filters.isItemClassMatch(recipe.itemID, changes.itemClass, changes.itemSubClass)
@@ -211,6 +215,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
           ...recipe,
           priceAvg24: stat ? stat.past24Hours.price.avg : 0,
           priceTrend: stat ? stat.past7Days.price.trend : 0,
+          regionSaleRate: stat && stat.tsm?.salePct ? stat.tsm?.salePct : 0,
           past60DaysSaleRate,
           inventoryQuantity,
         };

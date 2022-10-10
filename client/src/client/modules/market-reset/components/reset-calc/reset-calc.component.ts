@@ -9,6 +9,7 @@ import {ItemReset} from '../../models/item-reset.model';
 import {ColumnDescription} from '@shared/models';
 import {ItemResetBreakpoint} from '../../models/item-reset-breakpoint.model';
 import {RowClickEvent} from '../../../table/models/row-click-event.model';
+import {getEstimatedSellTime} from "../../utils/reset.util";
 
 @Component({
   selector: 'wah-reset-calc',
@@ -56,6 +57,19 @@ export class ResetCalcComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.formChanges.unsubscribe();
+  }
+
+  get timeToSell(): number {
+    return getEstimatedSellTime(this.auctionItem, this.resetPrice.numOfItems);
+  }
+
+  get timeToBreakEven(): number {
+    const salePct = this.auctionItem.stats.tsm.salePct;
+    const numberOfItems = this.resetPrice.breakEvenQuantity;
+    const avgDailySold = this.auctionItem.stats ?
+      this.auctionItem.stats.tsm.soldPerDay : 0;
+
+    return numberOfItems / salePct / avgDailySold;
   }
 
   getShoppingString(): string {

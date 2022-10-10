@@ -109,7 +109,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
   private filter({id}: DroppedItem | VendorItem) {
     const {minSaleRate, minAvgDailySold} = this.form.value;
-    return Filters.isSaleRateMatch(id, minSaleRate) &&
+    return Filters.isPersonalSaleRateMatch(id, minSaleRate) &&
       Filters.isDailySoldMatch(id, minAvgDailySold);
   }
 

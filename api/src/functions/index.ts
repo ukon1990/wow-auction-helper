@@ -10,3 +10,4 @@ export {default as realm} from './realm';
 export {default as recipe} from './recipe';
 export {default as updates} from './updates';
 export {default as user} from './user';
+export {default as tsm} from './tsm';

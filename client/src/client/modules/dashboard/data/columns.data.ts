@@ -121,11 +121,20 @@ export const columnConfig = {
       title: 'Market value',
       dataType: 'gold'
     },
-    /* TODO: If TSM is public again
     regionSaleAvg: {
-      key: 'regionSaleAvg', title: 'Avg sales price', dataType: 'gold'
+      key: 'stats.tsm.avgSalePrice', title: 'Avg sales price(TSM)', dataType: 'gold',
+      options: {tooltip: `This is regional data from TSM's API`}
     },
-    */
+    regionSoldPerDay: {
+      key: 'stats.tsm.soldPerDay', title: 'Avg sold per day(TSM)', dataType: 'number',
+      options: {tooltip: `This is regional data from TSM's API`}
+    },
+    regionSalePct: {
+      key: 'stats.tsm.salePct',
+      title: 'Sale rate (TSM)',
+      dataType: 'percent',
+      options: {tooltip: `This is regional data from TSM's API`}
+    },
     past24HoursSaleRate: {
       key: 'past24HoursSaleRate', title: '24h Sale rate', dataType: 'percent'
     },

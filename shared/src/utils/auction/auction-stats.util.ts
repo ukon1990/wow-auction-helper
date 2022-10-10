@@ -192,6 +192,12 @@ export class AuctionStatsUtil {
         },
         totalEntries: 0,
       },
+      tsm: {
+        salePct: 0,
+        historical: 0,
+        soldPerDay: 0,
+        avgSalePrice: 0,
+      },
     };
 
     if (!isMinimal) {
