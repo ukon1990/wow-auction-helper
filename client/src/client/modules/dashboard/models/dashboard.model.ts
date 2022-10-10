@@ -1,4 +1,4 @@
-import {ColumnDescription, Remains} from '@shared/models';
+import {ColumnDescription, Remains, TSM} from '@shared/models';
 import {SharedService} from '../../../services/shared.service';
 import {Notification} from '../../../models/user/notification';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
@@ -10,7 +10,6 @@ import {DefaultDashboardSettings} from './default-dashboard-settings.model';
 import {CraftingUtil} from '../../crafting/utils/crafting.util';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {TradeVendorItem} from '../../../models/item/trade-vendor';
-import {TSM} from '@shared/models';
 import {CraftingService} from '../../../services/crafting.service';
 import {TsmService} from '../../tsm/tsm.service';
 import {WatchlistItem} from './watchlist-item.model';
@@ -362,7 +361,7 @@ export class DEPRICATEDDashboard {
 
     group.items.forEach(item => {
       if (SharedService.user.watchlist.isTargetMatch(item) &&
-        Filters.isSaleRateMatch(item.itemID, group.matchSaleRate) &&
+        Filters.isPersonalSaleRateMatch(item.itemID, group.matchSaleRate) &&
         Filters.isDailySoldMatch(item.itemID, group.matchDailySold)) {
         const wlVal = SharedService.user.watchlist.getTSMStringValues(item),
           obj = {itemID: item.itemID, name: item.name, criteria: this.getWatchlistString(item, wlVal), compareTo: item.compareTo};

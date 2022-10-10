@@ -12,6 +12,7 @@ import {ItemClass} from '../../../item/models/item-class.model';
 import {RealmService} from '../../../../services/realm.service';
 import {Report} from "../../../../utils/report.util";
 import {TextUtil} from "@ukon1990/js-utilities";
+import {columnConfig} from "../../../dashboard/data/columns.data";
 
 @Component({
   selector: 'wah-auctions',
@@ -38,7 +39,10 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       }, hideOnMobile: true
     },
     {key: 'buyout', title: 'Buyout', dataType: 'gold'},
-    {key: 'salePct', title: 'Sale rate', dataType: 'percent', hideOnMobile: true},
+    {
+      key: 'salePct', title: 'Sale rate(TSM)', dataType: 'percent', hideOnMobile: true,
+      options: columnConfig.auction.regionSalePct.options,
+    },
     {
       key: 'priceTrend24', title: '24H trend', dataType: 'gold', options: {
         tooltip: 'Price trend per hour, the past ~24 hours'
@@ -48,6 +52,10 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       key: 'priceTrend', title: '7 Day trend', dataType: 'gold', options: {
         tooltip: 'Price trend per day, the past 7 days'
       }, hideOnMobile: true
+    },
+    {
+      key: 'soldPerDay', title: 'Sold per day(TSM)', dataType: 'number', hideOnMobile: true,
+      options: columnConfig.auction.regionSalePct.options,
     },
     {key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true},
     {
@@ -60,9 +68,6 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
         idName: 'id',
       }, hideOnMobile: true
     },
-    // {key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true}
-    // {key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true}
-    // {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true}
   ];
   tableData = [];
   isClassic = false;
@@ -159,27 +164,31 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
           priceTrend: i.stats ? i.stats.past7Days.price.trend : 0,
           priceTrend24: i.stats ? i.stats.past24Hours.price.trend : 0,
           salePct: i.stats ? i.stats.tsm?.salePct : 0,
+          soldPerDay: i.stats ? i.stats.tsm?.soldPerDay : 0,
         };
       });
     Report.debug('this.tableData', this.tableData);
   }
 
   isMatch({
-    id,
-    itemID,
-    petSpeciesId,
-    name,
-    }: AuctionItem,
-    {
-      name: searchName,
-      itemClass,
-      itemSubClass,
-      mktPrice,
-      onlyVendorSellable,
-      minItemQuality,
-      minItemLevel,
-      expansion,
-    } = this.form.value
+            id,
+            itemID,
+            petSpeciesId,
+            name,
+            stats,
+          }: AuctionItem,
+          {
+            name: searchName,
+            itemClass,
+            itemSubClass,
+            mktPrice,
+            onlyVendorSellable,
+            minItemQuality,
+            minItemLevel,
+            expansion,
+            saleRate,
+            avgDailySold,
+          } = this.form.value
   ): boolean {
     return TextUtil.contains(name, searchName) &&
       Filters.isItemClassMatch(itemID, +(itemClass === null ? -1 : itemClass), +(itemSubClass === null ? -1 : itemSubClass)) &&
@@ -187,9 +196,8 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       Filters.isBelowSellToVendorPrice(itemID, onlyVendorSellable) &&
       Filters.isItemAboveQuality(itemID, minItemQuality) &&
       Filters.isAboveItemLevel(itemID, minItemLevel) &&
-      Filters.isExpansionMatch(itemID, expansion, this.isClassic);
-
-    // Filters.isSaleRateMatch(itemID, changes.saleRate) &&
-    // Filters.isDailySoldMatch(itemID, avgDailySold) &&
+      Filters.isExpansionMatch(itemID, expansion, this.isClassic) &&
+      Filters.isXSmallerThanOrEqualToY(saleRate / 100, stats?.tsm?.salePct) &&
+      Filters.isXSmallerThanOrEqualToY(avgDailySold, stats?.tsm?.soldPerDay);
   }
 }

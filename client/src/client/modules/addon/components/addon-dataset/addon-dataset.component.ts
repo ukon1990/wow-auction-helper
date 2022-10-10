@@ -4,8 +4,7 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
 import {SharedService} from '../../../../services/shared.service';
 import {TsmLuaUtil} from '../../../../utils/tsm/tsm-lua.util';
-import {Item, ItemInventory} from '@shared/models';
-import {TSM} from '@shared/models';
+import {Item, ItemInventory, TSM} from '@shared/models';
 import {ActivatedRoute, Router} from '@angular/router';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 import {Filters} from '../../../../utils/filtering';
@@ -412,7 +411,7 @@ export class AddonDatasetComponent implements OnDestroy, OnInit {
 
   private filterInventory(formData: { saleRate: number, avgDailySold: number }, data: ItemInventory[]) {
     return data.filter(item =>
-      Filters.isSaleRateMatch(item.id, formData.saleRate) &&
+      Filters.isPersonalSaleRateMatch(item.id, formData.saleRate) &&
       Filters.isDailySoldMatch(item.id, formData.avgDailySold));
   }
 
