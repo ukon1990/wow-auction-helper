@@ -21,7 +21,7 @@ import {S3} from 'aws-sdk';
 import {LogRepository} from '../../logs/repository';
 import {RealmLogRepository} from '../../realm/repositories/realm-log.repository';
 import {TsmRegionalItemStats} from "@functions/tsm/tsm.model";
-import {TsmRepository} from "@functions/tsm/tsm.repository";
+import {getPetFriendlyTSMId, TsmRepository} from "@functions/tsm/tsm.repository";
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -697,7 +697,7 @@ export class StatsService {
         .then(async () => {
           let completed = 0;
 
-          const regionMap = new Map<string, Map<number, TsmRegionalItemStats>>();
+          const regionMap = new Map<string, Map<string, TsmRegionalItemStats>>();
           for (const house of housesToUpdate.slice(0, 10)) {
             if (DateUtil.timeSince(startTime, 's') < 50) {
               const gameVersion = house.gameBuild === 1 ? 'classic' : 'retail';
@@ -728,7 +728,7 @@ export class StatsService {
   }
 
   getRealmPriceTrends(
-    house: AuctionHouse, tsmMap: Map<number, TsmRegionalItemStats>, db: DatabaseUtil
+    house: AuctionHouse, tsmMap: Map<string, TsmRegionalItemStats>, db: DatabaseUtil
   ): Promise<{ [key: number]: ItemStats[] }> {
     const start = +new Date();
     const repo = new StatsRepository(db);
@@ -782,7 +782,7 @@ export class StatsService {
   private getProcessedAndCombineHourlyAndDailyTrends(
     hourlyData: { [key: number]: ItemPriceEntry[] },
     dailyData: { [key: number]: ItemDailyPriceEntry[] },
-    tsmMap: Map<number, TsmRegionalItemStats>,
+    tsmMap: Map<string, TsmRegionalItemStats>,
   ) {
     const processedData: { [key: number]: ItemStats[] } = {};
     /*
@@ -848,7 +848,7 @@ export class StatsService {
     ahTypeId: string,
     map: Map<string, ItemStats>,
     processedData: { [p: number]: ItemStats[] },
-    tsmMap: Map<number, TsmRegionalItemStats>,
+    tsmMap: Map<string, TsmRegionalItemStats>,
     dailyData: { [p: number]: ItemDailyPriceEntry[] }
   ) {
     AuctionStatsUtil.processHours(hourlyData[ahTypeId]).forEach(item => {
@@ -885,8 +885,8 @@ export class StatsService {
    * @param item
    * @private
    */
-  private setTsmDataOnItem(tsmMap: Map<number, TsmRegionalItemStats>, item: ItemStats) {
-    const tsmData = tsmMap.get(item.itemId);
+  private setTsmDataOnItem(tsmMap: Map<string, TsmRegionalItemStats>, item: ItemStats) {
+    const tsmData = tsmMap.get(getPetFriendlyTSMId(item.itemId, item.petSpeciesId));
     item.tsm = {
       // TSM API Data
       avgSalePrice: tsmData?.avgSalePrice || 0,
@@ -896,7 +896,7 @@ export class StatsService {
     };
   }
 
-  setRealmTrends(house: AuctionHouse, db: DatabaseUtil, tsmMap: Map<number, TsmRegionalItemStats>): Promise<void> {
+  setRealmTrends(house: AuctionHouse, db: DatabaseUtil, tsmMap: Map<string, TsmRegionalItemStats>): Promise<void> {
     const start = +new Date();
     console.log('Starting setRealmTrends for', house.region, house.id);
     return new Promise<void>(async (resolve, reject) => {
