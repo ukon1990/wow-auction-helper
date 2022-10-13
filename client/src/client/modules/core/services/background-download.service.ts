@@ -17,7 +17,6 @@ import {ErrorReport} from '../../../utils/error-report.util';
 import {HttpClient} from '@angular/common/http';
 import {Endpoints} from '../../../services/endpoints';
 import {ProfessionService} from '../../crafting/services/profession.service';
-import {TsmService} from '../../tsm/tsm.service';
 import {LogRocketUtil} from '../../../utils/log-rocket.util';
 import {SettingsService} from '../../user/services/settings/settings.service';
 import {UserUtil} from '../../../utils/user/user.util';
@@ -36,7 +35,6 @@ export class BackgroundDownloadService {
     recipes: localStorage['timestamp_recipes'],
     auctions: localStorage['timestamp_auctions'],
     regionalAuctions: localStorage['timestamp_regionalAuctions'],
-    tsm: localStorage['timestamp_tsm'],
     npc: localStorage.getItem('timestamp_npcs'),
     zone: localStorage.getItem('timestamp_zone'),
     professions: localStorage.getItem('timestamp_professions')
@@ -58,7 +56,6 @@ export class BackgroundDownloadService {
     private npcService: NpcService,
     private zoneService: ZoneService,
     private professionService: ProfessionService,
-    private tsmService: TsmService,
     private settingsService: SettingsService,
     private dbService: DatabaseService) {
 
@@ -83,7 +80,6 @@ export class BackgroundDownloadService {
       this.timestamps.recipes = localStorage['timestamp_recipes'];
       this.timestamps.auctions = localStorage['timestamp_auctions'];
       this.timestamps.regionalAuctions = localStorage['timestamp_regionalAuctions'];
-      this.timestamps.tsm = localStorage['timestamp_tsm'];
       this.timestamps.npc = localStorage.getItem('timestamp_npcs');
       this.timestamps.zone = localStorage.getItem('timestamp_zone');
       this.timestamps.professions = localStorage.getItem('timestamp_professions');

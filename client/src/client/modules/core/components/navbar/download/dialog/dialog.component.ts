@@ -8,7 +8,6 @@ import {PetsService} from '../../../../../../services/pets.service';
 import {NpcService} from '../../../../../npc/services/npc.service';
 import {ZoneService} from '../../../../../zone/service/zone.service';
 import {DatabaseService} from '../../../../../../services/database.service';
-import {TsmService} from '../../../../../tsm/tsm.service';
 import {ProfessionService} from '../../../../../crafting/services/profession.service';
 import {BackgroundDownloadService} from '../../../../services/background-download.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
@@ -100,7 +99,6 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
     private npcService: NpcService,
     private zoneService: ZoneService,
     private dbService: DatabaseService,
-    private tsmService: TsmService,
     private professionService: ProfessionService,
     private service: BackgroundDownloadService,
     public dialog: MatDialog,
@@ -158,7 +156,6 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
     this.downloadRows = [
       {id: 'auctions', name: 'Realm auctions', lastModified: this.timestamps.auctions},
       {id: 'regionalAuctions', name: 'Region auctions', lastModified: this.timestamps.regionalAuctions},
-      {id: 'tsm', name: 'TSM', lastModified: this.timestamps.tsm},
       {id: 'items', name: 'Items', lastModified: this.timestamps.items},
       {id: 'classicItems', name: 'Classic items', lastModified: this.timestamps.classicItems},
       {id: 'pets', name: 'Pets', lastModified: this.timestamps.pets},
@@ -194,7 +191,6 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
       classicRecipes: this.getValue('timestamp_recipes_classic'),
       auctions: this.getValue('timestamp_auctions'),
       regionalAuctions: this.getValue('timestamp_regionalAuctions'),
-      tsm: this.getValue('timestamp_tsm'),
       npc: this.getValue('timestamp_npcs'),
       zone: this.getValue('timestamp_zone'),
       professions: this.getValue('timestamp_professions')
@@ -219,10 +215,6 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
 
     Report.send(id, 'Manual download');
     switch (id) {
-      case 'tsm':
-        await this.downloadTSM()
-          .catch(console.error);
-        break;
       case 'auctions':
         await this.downloadAuctions(false)
           .catch(console.error);
@@ -276,12 +268,6 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
       await this.realmService.getStatus();
       await this.auctionsService.getAuctions();
     }
-  }
-
-  private async downloadTSM() {
-    await this.tsmService.get(this.realmService.events.realmStatus.value)
-      .catch(console.error);
-    await this.auctionsService.organize();
   }
 
   private async downloadPets(forceUpdate: boolean) {

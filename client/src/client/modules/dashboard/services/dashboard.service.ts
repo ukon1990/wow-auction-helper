@@ -1,6 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {Dashboard} from '@shared/models';
+import {Dashboard, DashboardMinimal} from '@shared/models';
 import {DashboardCalculateUtil} from '../utils/dashboard-calculate.util';
 import {AuctionsService} from '../../../services/auctions.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
@@ -20,7 +20,6 @@ import {Endpoints} from '../../../services/endpoints';
 import {HttpClient} from '@angular/common/http';
 import {SettingsService} from '../../user/services/settings/settings.service';
 import {DashboardAppsyncUtil} from '../utils/dashboard-appsync.util';
-import {DashboardMinimal} from "@shared/models";
 
 @Injectable({
   providedIn: 'root'
@@ -72,14 +71,6 @@ export class DashboardService {
 
     this.sm.add(settingsService.dashboards,
       boards => this.saveAll(boards, true, false));
-
-    /*
-    this.sm.add(TsmService.list, () => {
-      if (this.isInitiated && this.backgroundService.isInitialLoadCompleted.value) {
-        this.calculateAll();
-      }
-    });
-    */
   }
 
   async init(): Promise<void> {

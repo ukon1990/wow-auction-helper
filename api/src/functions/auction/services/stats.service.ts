@@ -20,8 +20,8 @@ import {AuctionHouse} from '../../realm/model';
 import {S3} from 'aws-sdk';
 import {LogRepository} from '../../logs/repository';
 import {RealmLogRepository} from '../../realm/repositories/realm-log.repository';
-import {TsmRegionalItemStats} from "@functions/tsm/tsm.model";
-import {getPetFriendlyTSMId, TsmRepository} from "@functions/tsm/tsm.repository";
+import {TsmRegionalItemStats} from '@functions/tsm/tsm.model';
+import {getPetFriendlyTSMId, TsmRepository} from '@functions/tsm/tsm.repository';
 
 const PromiseThrottle: any = require('promise-throttle');
 

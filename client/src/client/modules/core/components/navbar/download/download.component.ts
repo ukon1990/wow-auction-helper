@@ -12,8 +12,7 @@ import {BackgroundDownloadService} from '../../../services/background-download.s
 import {ThemeUtil} from '../../../utils/theme.util';
 import {NpcService} from '../../../../npc/services/npc.service';
 import {ZoneService} from '../../../../zone/service/zone.service';
-import {faDownload, faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
-import {TsmService} from '../../../../tsm/tsm.service';
+import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
 import {ProfessionService} from '../../../../crafting/services/profession.service';
 import {MatDialog} from '@angular/material/dialog';
 import {DownloadDialogComponent} from './dialog/dialog.component';
@@ -27,10 +26,8 @@ export class DownloadComponent {
   theme = ThemeUtil.current;
   timeSinceUpdate = 0;
   timeSinceRegionalUpdate = 0;
-  downloadProgress = '';
   subs = new SubscriptionManager();
   faExclamationCircle = faExclamationCircle;
-  faDownload = faDownload;
 
   private realmStatus: RealmStatus;
   private regionalStatus: RealmStatus;
@@ -45,7 +42,6 @@ export class DownloadComponent {
     private npcService: NpcService,
     private zoneService: ZoneService,
     private _dbService: DatabaseService,
-    private tsmService: TsmService,
     private professionService: ProfessionService,
     private service: BackgroundDownloadService) {
 

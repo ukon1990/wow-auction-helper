@@ -1,8 +1,6 @@
 import {Recipe} from '../modules/crafting/models/recipe';
 import {SharedService} from '../services/shared.service';
-import {Item} from '@shared/models';
-import {Profession} from '@shared/models';
-import {TsmService} from '../modules/tsm/tsm.service';
+import {Item, Profession} from '@shared/models';
 
 export class SummaryUtil {
   public static isProfitMatch(recipe: Recipe): boolean {
@@ -13,8 +11,7 @@ export class SummaryUtil {
   }
 
   public static isProfitAndDailySoldMatch(recipe: Recipe): boolean {
-    const tsm = TsmService.getById(recipe.itemID);
-    if (!tsm) {
+    if (!recipe.avgDailySold && !recipe.regionSaleRate) {
       return false;
     }
 

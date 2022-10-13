@@ -4,13 +4,13 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
 import {SharedService} from '../../../../services/shared.service';
 import {TsmLuaUtil} from '../../../../utils/tsm/tsm-lua.util';
-import {Item, ItemInventory, TSM} from '@shared/models';
+import {Item, ItemInventory} from '@shared/models';
 import {ActivatedRoute, Router} from '@angular/router';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 import {Filters} from '../../../../utils/filtering';
 import {Report} from '../../../../utils/report.util';
 import {AuctionsService} from '../../../../services/auctions.service';
-import {TsmService} from '../../../tsm/tsm.service';
+import {AuctionItem} from '../../../auction/models/auction-item.model';
 
 @Component({
   selector: 'wah-tsm-dataset',
@@ -155,7 +155,12 @@ export class AddonDatasetComponent implements OnDestroy, OnInit {
   inventoryValueOnlyInDemand: number;
   currentGold = 0;
 
-  constructor(private formBuilder: FormBuilder, private router: Router, private route: ActivatedRoute, private auctionService: AuctionsService) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private route: ActivatedRoute,
+    private auctionService: AuctionsService
+  ) {
     this.form = this.formBuilder.group({
       dataset: new FormControl(0),
       realm: new FormControl(),
@@ -388,11 +393,11 @@ export class AddonDatasetComponent implements OnDestroy, OnInit {
     list = this.filterInventory(formData, list);
 
     list.forEach((iv: ItemInventory) => {
-      const tsm: TSM = TsmService.mapped.value.get(iv.id);
+      const auctionItem: AuctionItem = this.auctionService.mapped.value.get('' + iv.id);
       if (!this.isSoldByVendor(SharedService.items[iv.id])) {
         this.inventoryValue += iv.sumBuyout;
 
-        if (tsm && tsm.RegionAvgDailySold > 1) {
+        if (auctionItem?.stats?.tsm?.soldPerDay && auctionItem.stats.tsm.soldPerDay > 1) {
           this.inventoryValueOnlyInDemand += iv.sumBuyout;
         }
       }

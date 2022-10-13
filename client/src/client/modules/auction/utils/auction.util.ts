@@ -6,7 +6,6 @@ import {AuctionPet} from '../models/auction-pet.model';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
 import {Report} from '../../../utils/report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';
-import {TsmService} from '../../tsm/tsm.service';
 import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
 import {ItemService} from '../../../services/item.service';
@@ -317,10 +316,6 @@ export class AuctionUtil {
       auction.bonusLists ? auction.bonusLists.map(b => b.bonusListId) : undefined
     );
 
-    if (TsmService.mapped.value.has(auction.item)) {
-      AuctionUtil.setTSMData(auction, tmpAuc);
-    }
-
     if (stats.has(statId)) {
       const stat = stats.get(statId);
       tmpAuc.mktPrice = stat.past7Days.price.avg;
@@ -339,14 +334,6 @@ export class AuctionUtil {
     if (profitSummary) {
       profitSummary.setSaleRateForItem(auction.itemID, auction);
     }
-  }
-
-  private static setTSMData(auction: Auction, tmpAuc) {
-    const tsmItem = TsmService.mapped.value.get(auction.item);
-    tmpAuc.regionSaleRate = tsmItem.RegionSaleRate;
-    tmpAuc.mktPrice = tsmItem.MarketValue;
-    tmpAuc.avgDailySold = tsmItem.RegionAvgDailySold;
-    tmpAuc.regionSaleAvg = tsmItem.RegionSaleAvg;
   }
 
   private static getTempAuctionItem(auction: Auction, addAuction = true, id: string) {

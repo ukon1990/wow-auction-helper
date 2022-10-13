@@ -1,18 +1,25 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  SimpleChanges
+} from '@angular/core';
 import {PageEvent} from '@angular/material/paginator';
 import {FormControl} from '@angular/forms';
 import {Report} from '../../../utils/report.util';
-import {ColumnDescription} from '@shared/models';
+import {ColumnDescription, Item, Profession} from '@shared/models';
 import {Sorter} from '../../../models/sorter';
 import {SharedService} from '../../../services/shared.service';
 import {User} from '../../../models/user/user';
-import {Item} from '@shared/models';
 import {ThemeUtil} from '../../core/utils/theme.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {RowClickEvent} from '../models/row-click-event.model';
 import {ProfessionService} from '../../crafting/services/profession.service';
-import {Profession} from '@shared/models';
 import {faCartPlus, faExternalLinkSquareAlt, faEye, faTrashAlt} from '@fortawesome/free-solid-svg-icons';
 import {AuctionsService} from '../../../services/auctions.service';
 import {ItemLocale} from '../../../language/item.locale';
@@ -184,14 +191,6 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   getItem(itemID: number): Item {
     return SharedService.items[itemID] ?
       SharedService.items[itemID] : new Item();
-  }
-
-  removeGroup(index: number): void {
-    const pagignationIndex = this.pageEvent.pageIndex * this.pageEvent.pageSize;
-    SharedService.user.watchlist.removeGroup(pagignationIndex + index);
-
-    this.pageEvent.pageIndex = 0;
-    Report.send('Removed group', 'Watchlist');
   }
 
   /* istanbul ignore next */

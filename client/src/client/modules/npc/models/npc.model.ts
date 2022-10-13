@@ -1,11 +1,10 @@
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SharedService} from '../../../services/shared.service';
-import {Currency, Item, TSM} from '@shared/models';
+import {Currency, Item} from '@shared/models';
 import {TradeVendor, TradeVendorItem} from '../../../models/item/trade-vendor';
 import {TRADE_VENDORS} from '../../../data/trade-vendors';
 import {currencyMap} from '../../../data/currency.data';
 import {Report} from '../../../utils/report.util';
-import {TsmService} from '../../tsm/tsm.service';
 import {AuctionsService} from '../../../services/auctions.service';
 
 export interface NPCCoordinate {
@@ -31,12 +30,11 @@ export class DroppedItem {
   static getScoredItem(dropped: DroppedItem, itemMap: Map<string, AuctionItem>) {
     const item: Item = SharedService.items[dropped.id],
       auctionItem: AuctionItem = itemMap.get('' + dropped.id),
-      tsmItem: TSM = TsmService.getById(dropped.id),
       buyout = auctionItem ? auctionItem.buyout : 0,
       vendorValue = item ? item.sellPrice * dropped.dropChance : 0,
       buyoutValue = buyout * dropped.dropChance,
-      saleRate = tsmItem ? tsmItem.RegionSaleRate : 0,
-      mktValue = tsmItem ? tsmItem.MarketValue || tsmItem.RegionMarketAvg : 0,
+      saleRate = auctionItem?.stats?.tsm?.salePct || 0,
+      mktValue = auctionItem?.mktPrice || 0,
       score = (vendorValue / buyoutValue) * 100;
 
     return {
@@ -134,14 +132,13 @@ export class NPC {
 
   static calculateSellerVendorItemROI(item: VendorItem, roi: number = 0) {
     const auctionItem: AuctionItem = this.auctionService.getById(item.id),
-      tsm: TSM = TsmService.getById(item.id),
       currencyAuctionItem: AuctionItem = this.auctionService.getById(item.currency);
     const unitPrice = currencyAuctionItem ?
-      (currencyAuctionItem.buyout || currencyAuctionItem.regionSaleAvg) * item.unitPrice : item.unitPrice;
+      (currencyAuctionItem.buyout || currencyAuctionItem?.stats?.tsm?.avgSalePrice) * item.unitPrice : item.unitPrice;
     if (auctionItem && unitPrice < auctionItem.buyout) {
       roi += auctionItem.buyout - unitPrice;
-    } else if (!auctionItem && tsm && unitPrice < tsm.RegionMarketAvg) {
-      roi += tsm.RegionMarketAvg - unitPrice;
+    } else if (auctionItem?.mktPrice && unitPrice < auctionItem?.mktPrice) {
+      roi += auctionItem?.mktPrice - unitPrice;
     }
     return {
       roi,

@@ -13,7 +13,6 @@ import {Auction, AuctionItemStat, ItemStats} from '@shared/models';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {RealmService} from './realm.service';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
-import {TsmService} from '../modules/tsm/tsm.service';
 import {CharacterService} from '../modules/character/services/character.service';
 import {CraftingUtil} from '../modules/crafting/utils/crafting.util';
 import {SettingsService} from '../modules/user/services/settings/settings.service';
@@ -32,7 +31,6 @@ export class AuctionsService {
     isDownloading: new BehaviorSubject<boolean>(true),
   };
   subs = new SubscriptionManager();
-  doNotOrganize = false;
   isReady = false;
 
 
@@ -41,7 +39,6 @@ export class AuctionsService {
     public snackBar: MatSnackBar,
     private dbService: DatabaseService,
     private itemService: ItemService,
-    private tsmService: TsmService,
     private settingsSync: SettingsService,
     private characterService: CharacterService,
     private realmService: RealmService) {
@@ -58,23 +55,6 @@ export class AuctionsService {
           this.getRegionalAuctions(status);
         }
       });
-
-    this.subs.add(
-      this.realmService.events.realmChanged,
-      (status) => {
-        if (this.isReady) {
-          this.tsmService.get(status)
-            .then(async () => await this.organize())
-            .catch(console.error);
-        }
-      }
-    );
-
-    this.subs.add(TsmService.list, async () => {
-      if (this.list.value.length > 0) {
-        await this.organize();
-      }
-    });
   }
 
   private isNotClassic() {
@@ -113,7 +93,7 @@ export class AuctionsService {
      * So in these cases, we will need to use the ahTypeId to get the correct URL.
      */
     const url = typeof realmStatus.url === 'string' ? realmStatus.url : realmStatus.url[ahTypeId || 2];
-    const statusUrl = isStatusAvailable ? (
+    const statsUrl = isStatusAvailable ? (
       typeof realmStatus.stats.url === 'string' ? realmStatus.stats.url : realmStatus.stats.url[ahTypeId]
     ) : undefined;
 
@@ -136,30 +116,8 @@ export class AuctionsService {
     /**
      * Downloading stats data if available
      */
-    if (isStatusAvailable && statusUrl) {
-      promises.push(new Promise((resolve, reject) => {
-        this.http
-          .get(`${statusUrl}?lastModified=${realmStatus.stats.lastModified}`)
-          .toPromise()
-          .then(({data}: { data: ItemStats[] }) => {
-            const variations = new Map<number, ItemStats[]>();
-            data.forEach(stat => {
-              statsMap.set(AuctionItemStat.getId(
-                stat.itemId, stat.petSpeciesId, (stat.bonusIds as number[])
-              ), stat);
-              if (!variations.has(stat.itemId)) {
-                variations.set(stat.itemId, []);
-              }
-              variations.get(stat.itemId).push(stat);
-            });
-            this.statsVariations.next(variations);
-            this.stats.next(statsMap);
-            resolve(statsMap);
-          })
-          .catch(error => {
-            reject(error);
-          });
-      }));
+    if (isStatusAvailable && statsUrl) {
+      promises.push(this.getStats(statsUrl, realmStatus, statsMap));
     }
     return new Promise<OrganizedAuctionResult>((resolve, reject) => {
       Promise.all(promises)
@@ -196,6 +154,30 @@ export class AuctionsService {
           }
 
           ErrorReport.sendHttpError(error);
+          reject(error);
+        });
+    });
+  }
+
+  private getStats(statsUrl: string, realmStatus: AuctionHouseStatus, statsMap: Map<string, ItemStats>) {
+    return new Promise((resolve, reject) => {
+      firstValueFrom(this.http.get(`${statsUrl}?lastModified=${realmStatus.stats.lastModified}`))
+        .then(({data}: { data: ItemStats[] }) => {
+          const variations = new Map<number, ItemStats[]>();
+          data.forEach(stat => {
+            statsMap.set(AuctionItemStat.getId(
+              stat.itemId, stat.petSpeciesId, (stat.bonusIds as number[])
+            ), stat);
+            if (!variations.has(stat.itemId)) {
+              variations.set(stat.itemId, []);
+            }
+            variations.get(stat.itemId).push(stat);
+          });
+          this.statsVariations.next(variations);
+          this.stats.next(statsMap);
+          resolve(statsMap);
+        })
+        .catch(error => {
           reject(error);
         });
     });
