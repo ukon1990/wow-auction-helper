@@ -189,8 +189,9 @@ export class AuctionService {
    * Exponential backoff function for attempting new AH requests.
    * This is an attempt at reducing costs in periods where the AH and/or API is down
    * @param updateAttempts
+   * @param isRegional
    */
-  private getNextAttemptTime(updateAttempts: number = 0) {
+  private getNextAttemptTime(updateAttempts: number = 0, isRegional = false) {
     let delay = 0;
     const minute = 60_000;
     switch (updateAttempts) {
@@ -202,7 +203,7 @@ export class AuctionService {
       default: delay = minute * 60; break;
     }
 
-    if (updateAttempts >= 60) {
+    if (updateAttempts >= 60 && !isRegional) {
       delay = minute * 60 * 6;
     }
 
@@ -230,7 +231,7 @@ export class AuctionService {
           const {
             nextUpdate,
             updateAttempts,
-          } = this.getNextAttemptTime(house.updateAttempts);
+          } = this.getNextAttemptTime(house.updateAttempts, house.realmSlugs === 'regional');
           await this.realmRepository.update(house.id, {
             nextUpdate,
             updateAttempts,

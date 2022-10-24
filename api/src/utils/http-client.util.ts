@@ -1,4 +1,4 @@
-import {HttpResponse} from "@models/http-response.model";
+import {HttpResponse} from '@models/http-response.model';
 import fetch from 'node-fetch';
 
 const request: any = require('request');
