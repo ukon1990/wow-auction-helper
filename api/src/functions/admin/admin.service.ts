@@ -6,6 +6,7 @@ export class AdminService {
   constructor() {
     this.repository = new AdminRepository();
   }
+
   optimizeTable(table: string) {
     return this.repository.optimizeTable(table);
   }

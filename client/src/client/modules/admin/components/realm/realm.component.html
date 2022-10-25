@@ -3,9 +3,18 @@
 </span>
 
 <ng-template #tableTemplate>
-    <button mat-raised-button color="accent" (click)="getAllAuctionHouses()">
-        Refresh
-    </button>
+    <div class="row">
+       <div class="col">
+           <button mat-raised-button color="primary" (click)="getAllAuctionHouses()">
+               Refresh
+           </button>
+       </div>
+        <div class="col">
+            <button mat-raised-button color="accent" (click)="service.addMissingRealms()">
+                Add missing realms
+            </button>
+        </div>
+    </div>
     <wah-data-table
             [columns]="columns"
             [data]="tableData"

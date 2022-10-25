@@ -28,7 +28,7 @@ export class RealmComponent implements OnInit {
   tableData: AuctionHouseStatus[] = [];
   isLoading = false;
 
-  constructor(private service: AdminService) {
+  constructor(public service: AdminService) {
     this.getAllAuctionHouses();
   }
 

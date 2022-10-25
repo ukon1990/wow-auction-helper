@@ -60,4 +60,9 @@ export class AdminService {
     return firstValueFrom(this.http.get(
       Endpoints.getLambdaUrl(`admin/realm/statuses`)));
   }
+
+  addMissingRealms(): Promise<any> {
+    return firstValueFrom(this.http.get(
+      Endpoints.getLambdaUrl(`admin/realm/add-missing-realms`)));
+  }
 }
