@@ -11,6 +11,13 @@ export class TooltipService {
   isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   tooltips: BehaviorSubject<Map<string, Tooltip>> = new BehaviorSubject<Map<string, Tooltip>>(new Map());
   activeTooltip: BehaviorSubject<Tooltip> = new BehaviorSubject<Tooltip>(undefined);
+  /*
+    TODO: Update tooltips to use the latest endpoint:
+    Example url: https://nether.wowhead.com/tooltip/item/199686?dataEnv=1&locale=0
+    - Need to get all the locale id's etc
+   */
+  private getUrl = (isClassic: boolean, id: number, type: string = 'item', localeId: string) =>
+      `https://nether.wowhead.com${isClassic ? '/wotlk' : ''}/tooltip/${type}/${id}?dataEnv=1&locale=${localeId}`
 
   constructor(
     private http: HttpClient,
@@ -24,7 +31,7 @@ export class TooltipService {
   get(type: string, id: number, bonusIds: number[], isClassic: boolean, event: MouseEvent, item: any, extra: string): Promise<Element> {
     const map = this.tooltips.value;
     const locale = (localStorage.getItem('locale') || 'en').split('_')[0];
-    let url = `https://www.wowhead.com${isClassic ? '/wotlk' : ''}/tooltip/${type}/${id}?locale=${locale}`;
+    let url = this.getUrl(isClassic, id, type, locale);
     if (bonusIds && bonusIds.length) {
       url += '&bonus=' + bonusIds.join(':');
     }
