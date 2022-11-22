@@ -26,7 +26,10 @@ export class RecipeV2Util {
             })
             .catch(reject);
         })
-        .catch(reject);
+        .catch(error => {
+            console.error('RecipeV2Util.getRecipeFromAPI.get', url, id, error);
+            reject(error);
+        });
     });
   }
 
@@ -139,7 +142,7 @@ export class RecipeV2Util {
                 skillTiers: [], // profession.skill_tiers
               };
               result.push(res);
-              /*
+
               await db.query(format(`INSERT INTO professions
                                      VALUES (?, ?, ?)`, [
                 res.id,
@@ -155,13 +158,12 @@ export class RecipeV2Util {
                 await this.insertLocale(res.id, 'professionsDescription', res.description, db)
                   .catch(console.error);
               }
-              */
 
               if (profession && profession.skill_tiers) {
                 for (const skill of profession.skill_tiers) {
                   const skillUrl = new Endpoints().getPath(
                     `profession/${profession.id}/skill-tier/${skill.id}`, 'us', NameSpace.STATIC_RETAIL);
-                  console.log('skillUrl', skillUrl);
+
                   await http.get(skillUrl)
                     .then(async ({body: s}) => {
                       const skillTier = {
@@ -171,7 +173,7 @@ export class RecipeV2Util {
                         max: s.maximum_skill_level,
                         recipes: []
                       };
-                      /*
+
                       await db.query(format(`
                         INSERT INTO professionSkillTiers
                         VALUES (?, ?, ?, ?)`, [
@@ -180,12 +182,13 @@ export class RecipeV2Util {
                         .catch(console.error);
                       await this.insertLocale(s.id, 'professionSkillTiersName', skillTier.name, db)
                         .catch(console.error);
-                      */
 
                       // Skipping over it if it's not shadowlands recipes
+                      /*
                       if (skillTier.name.en_GB.indexOf('Shadowlands') === -1) {
                         return;
                       }
+                      */
 
                       (s.categories || []).forEach(c =>
                         c.recipes.forEach(async r => {
@@ -199,7 +202,8 @@ export class RecipeV2Util {
                             WHERE id = ?`, [
                             s.id, c.name.en_GB, r.id
                           ]))
-                            .catch(console.error);
+                            .catch(error =>
+                                console.error('Could not get recipe', r, error));
                         }));
                       res.skillTiers.push(skillTier);
                     })
@@ -246,23 +250,6 @@ export class RecipeV2Util {
     const icon = this.getIcon(recipe.id);
 
     return undefined;
-  }
-
-  static update(id: any, conn: DatabaseUtil) {
-    return new Promise((resolve, reject) => {
-      RecipeV2Util.getRecipeFromAPI(id)
-        .then(async recipe => {
-          const sql = format(`
-                      UPDATE recipe
-                      SET data = ?
-                      WHERE id = ?;`,
-            [JSON.stringify(recipe), recipe.id]);
-          conn.query(sql)
-            .then(() => resolve(recipe))
-            .catch(reject);
-        })
-        .catch(reject);
-    });
   }
 
   static getIcon(id: number, type = 'recipe'): Promise<string> {

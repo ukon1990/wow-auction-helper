@@ -204,33 +204,13 @@ describe('Recipev2Util', () => {
       expect(completed).toBe(ids.length);
     });
 
-    xit('map all recipe keys', async () => {
-      const recipes: Recipev2[] = [],
-        keyMap = {};
-      await new DatabaseUtil().query(`
-          SELECT data
-          FROM recipe;`)
-        .then(r => {
-          r.forEach(recipe => {
-            const res: Recipev2 = JSON.parse(recipe.data);
-            recipes.push(res);
-            setKeyMap(res, keyMap);
-          });
-        })
-        .catch(console.error);
-      console.log('Map is', JSON.stringify(keyMap));
-      expect(keyMap['crafted_quantity'].maximum).toBeTruthy();
-      expect(keyMap['crafted_quantity'].minimum).toBeTruthy();
-      expect(recipes.length).toBe(7339);
-    });
-
     xit('getIcon', async () => {
       const icon = await RecipeV2Util.getIcon(1631);
       expect(icon).toBe('https://render-eu.worldofwarcraft.com/icons/56/inv_stone_sharpeningstone_01.jpg');
     });
 
 
-    xit('getAndMapProfessions', async () => {
+    it('getAndMapProfessions', async () => {
       jest.setTimeout(9999999);
       environment.test = false;
       const mapped = await RecipeV2Util.getAndMapProfessions();

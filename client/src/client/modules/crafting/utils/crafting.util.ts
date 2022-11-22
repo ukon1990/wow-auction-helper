@@ -7,7 +7,6 @@ import {BaseCraftingUtil} from './base-crafting.util';
 import {OptimisticCraftingUtil} from './optimistic-crafting.util';
 import {NeededCraftingUtil} from './needed-crafting.util';
 import {Report} from '../../../utils/report.util';
-import {TsmService} from '../../tsm/tsm.service';
 import {NpcService} from '../../npc/services/npc.service';
 import {AuctionsService} from '../../../services/auctions.service';
 import {AuctionItem} from '../../auction/models/auction-item.model';
@@ -63,9 +62,8 @@ export class CraftingUtil {
       return (SharedService.tradeVendorItemMap[id].value * count);
     } else if (this.auctionService.getById(id) && !CraftingUtil.isBelowMktBuyoutValue(id)) {
       return this.auctionService.getById(id).buyout * count;
-    } else if (CraftingUtil.existsInTSM(id)) {
-      // Using the tsm list, so that we can get mktPrice if an item is not @ AH
-      return (TsmService.getById(id).MarketValue * count);
+    } else if (this.auctionService.getById(id)?.mktPrice) {
+      return (this.auctionService.getById(id)?.mktPrice * count);
     }
     return 0;
   }
@@ -102,13 +100,13 @@ export class CraftingUtil {
   }
 
   private static existsInTSM(id: number): boolean {
-    return Filters.isUsingAPI() && !!TsmService.getById(id);
+    return Filters.isUsingAPI() && !!this.auctionService.getById(id)?.stats?.tsm?.avgSalePrice;
   }
 
   private static isBelowMktBuyoutValue(id: number): boolean {
-    return CraftingUtil.existsInTSM(id) &&
+    return this.auctionService.getById(id)?.mktPrice &&
       this.auctionService.getById(id).buyout /
-      TsmService.getById(id).MarketValue * 100 >=
+      this.auctionService.getById(id)?.mktPrice * 100 >=
       SharedService.user.buyoutLimit;
   }
 }

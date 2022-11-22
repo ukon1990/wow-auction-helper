@@ -7,18 +7,28 @@
     <button mat-stroked-button (click)="printData()">Print data</button>
   </div>
 
-  <button (click)="adminService.updateRealmStatuses()">Click</button>
+  <button (click)="adminService.updateRealmStatuses()">
+    Update realm statuses
+  </button>
+
+  <form [formGroup]="form">
+    <mat-checkbox formControlName="isClassic">Classic API</mat-checkbox>
+  </form>
 
   <div class="row col-md-12">
     <div class="col-md-4">
       <mat-card>
         <mat-card-title>
           Recipes
-          <button mat-stroked-button (click)="updateRecipes()" [disabled]="updated.recipes.completed.length  !== 0 || updated.recipes.completed.length > this.updated.recipes.list.length">
+          <button mat-stroked-button
+                  (click)="updateRecipes()" [disabled]="isProcessingRecipes">
             Update
           </button>
         </mat-card-title>
         <mat-card-content>
+          <mat-progress-bar *ngIf="isProcessingRecipes" color="primary" mode="indeterminate"></mat-progress-bar>
+
+          <!--
           <ul class="list-group">
             <li class="list-group-item list-group-item-primary">
               <strong>Progress:</strong> {{ updated.recipes.completed.length }}/{{ getRecipeCount() }} ({{ getRecipeProgress() / 100
@@ -33,6 +43,7 @@
               <strong>Errors:</strong> {{ updated.recipes.failed.length }} ({{ updated.recipes.failed.length / getRecipeCount() | percent }})
             </li>
           </ul>
+          -->
         </mat-card-content>
       </mat-card>
     </div>
@@ -45,6 +56,8 @@
           </button>
         </mat-card-title>
         <mat-card-content>
+          <mat-progress-bar *ngIf="isUpdatingItems" color="primary" mode="indeterminate"></mat-progress-bar>
+          <!--
           <ul class="list-group">
             <li class="list-group-item list-group-item-primary">
               <strong>Progress:</strong> {{ updated.items.completed.length }}/{{ getItemCount() }} ({{ getItemProgress() / 100
@@ -59,6 +72,7 @@
               <strong>Errors:</strong> {{ updated.items.failed.length }} ({{ updated.items.failed.length / getItemCount() | percent }})
             </li>
           </ul>
+          -->
         </mat-card-content>
       </mat-card>
     </div>
@@ -66,7 +80,7 @@
       <mat-card>
         <mat-card-title>
           Pets
-          <button mat-stroked-button (click)="updateRecipes()" [disabled]="updated.recipes.completed.length  !== 0 || updated.recipes.completed.length > this.updated.recipes.list.length">
+          <button mat-stroked-button (click)="updatePets()" [disabled]="updated.recipes.completed.length  !== 0 || updated.recipes.completed.length > this.updated.recipes.list.length">
             Update
           </button>
         </mat-card-title>

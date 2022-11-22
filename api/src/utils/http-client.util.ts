@@ -1,4 +1,4 @@
-import {HttpResponse} from "@models/http-response.model";
+import {HttpResponse} from '@models/http-response.model';
 import fetch from 'node-fetch';
 
 const request: any = require('request');
@@ -14,7 +14,7 @@ export class HttpClientUtil {
     this.timeout = timeout;
   }
 
-  get<T = any>(url: string, expectJSON: boolean = true, headers: Headers): Promise<T> {
+  get<T = any>(url: string, expectJSON: boolean = true, headers?: Headers): Promise<T> {
     return new Promise<any>((resolve, reject) => {
       // timeout: this.timeout || undefined,
       fetch(url, {

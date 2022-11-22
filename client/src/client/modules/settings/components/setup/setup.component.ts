@@ -71,9 +71,6 @@ export class SetupComponent {
     const reader = new FileReader();
     reader.onload = () => {
       try {
-        SharedService.user.watchlist
-          .attemptRestoreFromString(reader.result);
-
         UserUtil.import(reader.result as string);
 
         Report.send('Imported existing setup from file', 'User registration');

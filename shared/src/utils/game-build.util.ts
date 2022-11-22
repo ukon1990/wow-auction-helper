@@ -23,7 +23,8 @@ export class GameBuild {
     'Warlords of Draenor',
     'Legion',
     'Battle for Azeroth',
-    'Shadowlands'
+    'Shadowlands',
+    'Dragonflight',
   ];
 
   static expansionMaxLevel = [

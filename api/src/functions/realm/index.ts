@@ -45,6 +45,24 @@ export default {
       },
     }]
   },
+  addMissingRealms: {
+    handler: `${handlerPath(__dirname)}/controller.addMissingRealms`,
+    memorySize: 128,
+    timeout: 10,
+    tags: {
+      Function: 'Wah-addMissingRealms',
+      Project: 'WAH',
+    },
+    events: [{
+      http: {
+        method: 'get',
+        path: 'admin/realm/add-missing-realms',
+        cors: {
+          origin: 'http://localhost:4200,https://wah.jonaskf.net',
+        }
+      },
+    }]
+  },
   getAllAuctionHouses: {
     handler: `${handlerPath(__dirname)}/controller.getAllAuctionHouses`,
     memorySize: 128,

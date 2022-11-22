@@ -3,7 +3,6 @@ import {CommonModule} from '@angular/common';
 import {DashboardComponent} from './components/dashboard.component';
 import {DashboardItemComponent} from './components/dashboard-item/dashboard-item.component';
 import {DashboardItemsComponent} from './components/dashboard-items/dashboard-items.component';
-import {DashboardSellersComponent} from './components/dashboard-sellers/dashboard-sellers.component';
 import {AhSummaryComponent} from './components/ah-summary/ah-summary.component';
 import {SummaryCardComponent} from './components/ah-summary/summary-card/summary-card.component';
 import {MatButtonModule} from '@angular/material/button';
@@ -32,14 +31,13 @@ import {RuleComponent} from './components/configure/rules/rule/rule.component';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatListModule} from '@angular/material/list';
-import { MigrationComponent } from './components/migration/migration.component';
 import {CoreModule} from '../core/core.module';
 import {MatStepperModule} from '@angular/material/stepper';
-import { DetailsDialogComponent } from './components/dashboard-item/details-dialog/details-dialog.component';
+import {DetailsDialogComponent} from './components/dashboard-item/details-dialog/details-dialog.component';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatIconModule} from '@angular/material/icon';
-import { TagsComponent } from './components/configure/tags/tags.component';
-import { SearchComponent } from './components/search/search.component';
+import {TagsComponent} from './components/configure/tags/tags.component';
+import {SearchComponent} from './components/search/search.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
@@ -47,7 +45,6 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     DashboardComponent,
     DashboardItemComponent,
     DashboardItemsComponent,
-    DashboardSellersComponent,
     AhSummaryComponent,
     SummaryCardComponent,
     ConfigureComponent,
@@ -55,7 +52,6 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     ItemRulesComponent,
     ColumnsComponent,
     RuleComponent,
-    MigrationComponent,
     DetailsDialogComponent,
     TagsComponent,
     SearchComponent,

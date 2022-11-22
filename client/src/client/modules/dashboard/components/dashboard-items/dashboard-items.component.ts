@@ -6,8 +6,6 @@ import {FormControl, FormGroup} from '@angular/forms';
 import {ConfigureComponent} from '../configure/configure.component';
 import {MatDialog} from '@angular/material/dialog';
 import {CdkDragDrop} from '@angular/cdk/drag-drop';
-import {MigrationComponent} from '../migration/migration.component';
-import {NewsUtil} from '../../../about/utils/news.util';
 import {CharacterService} from '../../../character/services/character.service';
 import {Report} from '../../../../utils/report.util';
 import {ErrorReport} from '../../../../utils/error-report.util';
@@ -65,7 +63,6 @@ export class DashboardItemsComponent implements OnDestroy, AfterContentInit {
       this.dashboards = [...boards];
       this.filter();
     });
-    this.sm.add(NewsUtil.events, isDisplaying => this.renderMigration(isDisplaying));
     this.sm.add(this.service.calculatedBoardEvent, () =>
       this.setTabTitleNumbers());
     this.sm.add(this.characterService.charactersForRealmWithRecipes,
@@ -125,16 +122,6 @@ export class DashboardItemsComponent implements OnDestroy, AfterContentInit {
       return 0;
     }
     return (this.pageEvent.pageSize * (this.pageEvent.pageIndex + 1)) - this.pageEvent.pageSize;
-  }
-
-  private renderMigration(isDisplaying: boolean) {
-    if (!localStorage.getItem('completedMigration') && localStorage.getItem('watchlist') && !isDisplaying) {
-      this.dialog.open(MigrationComponent, {
-        width: '95%',
-        maxWidth: '100%',
-        data: localStorage.getItem('watchlist')
-      });
-    }
   }
 
   openImportBoardDialog() {

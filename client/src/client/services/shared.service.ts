@@ -2,9 +2,7 @@ import {EventEmitter, Injectable} from '@angular/core';
 import {User} from '../models/user/user';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {Recipe} from '../modules/crafting/models/recipe';
-import {Item, Pet} from '@shared/models';
-import {Realm} from '@shared/models';
-import {DEPRICATEDDashboard} from '../modules/dashboard/models/dashboard.model';
+import {Item, Pet, Realm} from '@shared/models';
 import {AuctionResponse} from '../modules/auction/models/auctions-response.model';
 import {TradeVendor, TradeVendorItemValue} from '../models/item/trade-vendor';
 import {UserAuctions} from '../modules/auction/models/user-auctions.model';
@@ -12,7 +10,6 @@ import {CustomPrice} from '../modules/crafting/models/custom-price';
 import {AuctionPet} from '../modules/auction/models/auction-pet.model';
 import {Notification} from '../models/user/notification';
 import {CustomProc} from '../modules/crafting/models/custom-proc.model';
-import {DefaultDashboardSettings} from '../modules/dashboard/models/default-dashboard-settings.model';
 import {TSMCSV} from '../utils/tsm/tsm-lua.util';
 import {BehaviorSubject} from 'rxjs';
 
@@ -48,8 +45,6 @@ export class SharedService {
   };
   public static preScrollPosition = 0;
 
-  public static defaultDashboardSettingsListMap = new Map<string, DefaultDashboardSettings>();
-
   public static customPricesMap: Map<number, CustomPrice> = new Map<number, CustomPrice>();
   public static customProcsMap: Map<number, CustomProc> = new Map<number, CustomProc>();
   public static auctionResponse: AuctionResponse = {
@@ -69,9 +64,6 @@ export class SharedService {
 
   public static realms: Map<string, Realm> = new Map<string, Realm>();
   public static userRealms: Array<Realm> = new Array<Realm>();
-
-  public static itemDashboards: Array<DEPRICATEDDashboard> = new Array<DEPRICATEDDashboard>();
-  public static sellerDashboards: Array<DEPRICATEDDashboard> = new Array<DEPRICATEDDashboard>();
 
   public static notifications: Array<Notification> = new Array<Notification>();
 

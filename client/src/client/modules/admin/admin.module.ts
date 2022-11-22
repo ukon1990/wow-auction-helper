@@ -22,6 +22,7 @@ import {UserModule} from '../user/user.module';
 import {UsersComponent} from './components/users/users.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { RealmComponent } from './components/realm/realm.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 
 @NgModule({
@@ -34,23 +35,24 @@ import { RealmComponent } from './components/realm/realm.component';
     UsersComponent,
     RealmComponent,
   ],
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatProgressBarModule,
-    MatButtonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule,
-    MatTabsModule,
-    TableModule,
-    UtilModule,
-    MatListModule,
-    ItemModule,
-    UserModule,
-    MatProgressSpinnerModule
-  ],
+    imports: [
+        CommonModule,
+        MatCardModule,
+        MatProgressBarModule,
+        MatButtonModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatInputModule,
+        MatTabsModule,
+        TableModule,
+        UtilModule,
+        MatListModule,
+        ItemModule,
+        UserModule,
+        MatProgressSpinnerModule,
+        MatCheckboxModule
+    ],
   providers: [AdminService]
 })
 export class AdminModule {

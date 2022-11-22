@@ -272,10 +272,10 @@ export abstract class BaseCraftingUtil {
     if (auctionItem) {
       recipe.buyout = auctionItem.buyout;
       recipe.mktPrice = auctionItem.mktPrice;
-      recipe.avgDailySold = auctionItem.avgDailySold;
-      recipe.regionSaleRate = auctionItem.regionSaleRate;
+      recipe.avgDailySold = auctionItem.stats?.tsm?.soldPerDay;
+      recipe.regionSaleRate = auctionItem.stats?.tsm?.salePct;
       recipe.quantityTotal = auctionItem.quantityTotal;
-      recipe.regionSaleAvg = auctionItem.regionSaleAvg;
+      recipe.regionSaleAvg = auctionItem.stats?.tsm?.avgSalePrice;
     }
   }
 

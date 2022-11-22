@@ -219,7 +219,7 @@ export class RecipeRepository extends Repository<APIRecipe> {
   getModifiedCraftingSlotQueries(recipe: Recipev2, queries: string[]) {
     if (recipe.modified_crafting_slots) {
       recipe.modified_crafting_slots.forEach(slot => queries.push(
-        new RDSQueryUtil('recipesModifiedCraftingSlot', false).insert({
+        new RDSQueryUtil('recipesModifiedCraftingSlot', false).insertOrUpdate({
           id: slot.slot_type.id,
           recipeId: recipe.id,
           sortOrder: slot.display_order,

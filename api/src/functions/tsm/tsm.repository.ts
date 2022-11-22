@@ -4,6 +4,14 @@ import {TsmRegionalItemStats, TsmRegions} from '@functions/tsm/tsm.model';
 import {S3Handler} from '@functions/handlers/s3.handler';
 import {TsmGameVersion} from '@functions/tsm/tsm.enum';
 
+export const getPetFriendlyTSMId = (itemId: number, speciesId: number): string => {
+  const isPet = speciesId && speciesId > -1;
+  if (isPet && !itemId) {
+    itemId = 82800;
+  }
+  return `${itemId}-${speciesId || -1}`;
+};
+
 export class TsmRepository {
   private readonly http = new HttpClientUtil();
   private readonly s3 = new S3Handler();
@@ -92,15 +100,14 @@ export class TsmRepository {
     );
   }
 
-  public getFromS3(gameVersion: 'classic' | 'retail', region: string): Promise<Map<number, TsmRegionalItemStats>> {
-
-    return new Promise<Map<number, TsmRegionalItemStats>>((resolve, reject) => {
+  public getFromS3(gameVersion: 'classic' | 'retail', region: string): Promise<Map<string, TsmRegionalItemStats>> {
+    return new Promise<Map<string, TsmRegionalItemStats>>((resolve, reject) => {
       this.s3.getAndDecompress<TsmRegionalItemStats[]>('wah-data-eu', `tsm/${region}/${gameVersion}.json.gz`)
         .then(items => {
-          const map = new Map<number, TsmRegionalItemStats>();
+          const map = new Map<string, TsmRegionalItemStats>();
 
           items.forEach(item => {
-            map.set(item.itemId, item);
+            map.set(getPetFriendlyTSMId(item.itemId, item.petSpeciesId), item);
           });
 
           resolve(map);

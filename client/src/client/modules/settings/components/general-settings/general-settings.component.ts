@@ -105,10 +105,6 @@ export class GeneralSettingsComponent implements OnDestroy {
       ])
         .catch(console.error);
 
-      // Updating the watchlist names
-      this.updateWatchlistItemNamesToNewLocale();
-
-
       if (this.hasNotChangedRealmOrRegion()) {
         await this._auctionService.organize();
       }
@@ -128,16 +124,6 @@ export class GeneralSettingsComponent implements OnDestroy {
     return !this.userChanges.has('region') && !this.userChanges.has('realm');
   }
 
-  private updateWatchlistItemNamesToNewLocale() {
-    SharedService.user.watchlist.groups.forEach(g => {
-      g.items.forEach(i => {
-        if (SharedService.items[i.itemID]) {
-          i.name = SharedService.items[i.itemID].name;
-        }
-      });
-    });
-    SharedService.user.watchlist.save();
-  }
 
   private setOriginalUserObject() {
     const user: User = SharedService.user;
@@ -170,8 +156,6 @@ export class GeneralSettingsComponent implements OnDestroy {
 */
   importUser(): void {
     if (this.isImportStringNotEmpty()) {
-      SharedService.user.watchlist
-        .attemptRestoreFromString(this.form.value.importString);
       UserUtil.import(this.form.value.importString);
       Report.send(
         'Imported existing setup',
@@ -192,9 +176,6 @@ export class GeneralSettingsComponent implements OnDestroy {
 
   private onFileLoaded(reader) {
     try {
-      SharedService.user.watchlist
-        .attemptRestoreFromString(reader.result);
-
       UserUtil.import(reader.result.toString());
 
       Report.send('Imported existing setup from file', 'General settings');

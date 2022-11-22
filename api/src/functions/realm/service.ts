@@ -211,7 +211,6 @@ export class RealmService {
           existingMap.set(house.connectedId, house);
         }
       });
-      console.log('URL', url);
       http.get(url)
         .then(async ({body: parentBody}: HttpResponse<{connected_realms: {href: string}[]}>) => {
           const newRealms = [];
@@ -304,15 +303,47 @@ export class RealmService {
     });
   }
 
-  updateActiveRealms() {
+  /**
+   * Updating and adding new active realms
+   */
+  addMissingRealms() {
     return new Promise<any>(async (resolve, reject) => {
       const regions = ['eu', 'us', 'kr', 'tw'];
-      Promise.all([
+      Promise.all<AuctionHouse[]>([
         ...regions.map(region => this.getAllRealmsFromAPI(region, NameSpace.DYNAMIC_CLASSIC)),
         ...regions.map(region => this.getAllRealmsFromAPI(region, NameSpace.DYNAMIC_RETAIL))
       ])
-        .then(resolve)
+        .then(async newRealmsByRegion => {
+          for (const regionHouses of newRealmsByRegion) {
+            for (const house of regionHouses) {
+              if (house.id && house.connectedId && house.realmSlugs.length) {
+                // Adding new realms to the database
+                await this.repository.add(house)
+                  .catch(console.error);
+              }
+            }
+          }
+          resolve(newRealmsByRegion);
+        })
         .catch(reject);
+    });
+  }
+
+  updateActiveRealms() {
+    return new Promise<any>(async (_, reject) => {
+      // TODO: Implement!
+      reject('Not implemented');
+      /*
+      const regions = ['eu', 'us', 'kr', 'tw'];
+      Promise.all<AuctionHouse[]>([
+        ...regions.map(region => this.getAllRealmsFromAPI(region, NameSpace.DYNAMIC_CLASSIC)),
+        ...regions.map(region => this.getAllRealmsFromAPI(region, NameSpace.DYNAMIC_RETAIL))
+      ])
+        .then(async newRealmsByRegion => {
+
+          resolve(newRealmsByRegion);
+        })
+        .catch(reject);*/
     });
   }
 }

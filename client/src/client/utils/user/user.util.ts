@@ -154,11 +154,6 @@ export class UserUtil {
         case 'notifications':
           user.notifications = new NotificationSettings(JSON.parse(entry));
           break;
-        case 'watchlist':
-          if (isExport) {
-            user.watchlist = JSON.parse(entry);
-          }
-          break;
         case ProspectingAndMillingUtil.TYPES.MILLING:
           if (isExport) {
             user[ProspectingAndMillingUtil.TYPES.MILLING] = ProspectingAndMillingUtil.mills;

@@ -48,6 +48,8 @@ export class RecipeService {
     return new Promise<void>((resolve, reject) => {
       this.getById(id, 'en_GB', db)
         .then(async existingRecipe => {
+          // Comment out temporarily for updates relating to patches or expansions?
+          // So that there is less API spam?
           await RecipeV2Util.getRecipeFromAPI(id)
             .then((recipe: Recipev2) => {
               this.repository.insertData(recipe, db)

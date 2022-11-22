@@ -37,12 +37,4 @@ export class DashboardComponent implements OnDestroy {
         break;
     }
   }
-
-  getSellersCount(): number {
-    return SharedService.sellerDashboards.length;
-  }
-
-  getitemCount(): number {
-    return SharedService.itemDashboards.length;
-  }
 }

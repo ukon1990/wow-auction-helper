@@ -23,7 +23,7 @@ import {PlatformModule} from '@angular/cdk/platform';
 import {SettingsModule} from './modules/settings/settings.module';
 import {TableModule} from './modules/table/table.module';
 import {CoreModule} from './modules/core/core.module';
-import { MatCardModule } from '@angular/material/card';
+import {MatCardModule} from '@angular/material/card';
 import {AboutModule} from './modules/about/about.module';
 import {DashboardModule} from './modules/dashboard/dashboard.module';
 import {CraftingModule} from './modules/crafting/crafting.module';
@@ -40,7 +40,6 @@ import {ItemModule} from './modules/item/item.module';
 import {AdminModule} from './modules/admin/admin.module';
 import {NpcModule} from './modules/npc/npc.module';
 import {ProfessionService} from './modules/crafting/services/profession.service';
-import {TsmService} from './modules/tsm/tsm.service';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatNativeDateModule} from '@angular/material/core';
 import {AuthService} from './modules/user/services/auth.service';
@@ -97,7 +96,6 @@ Amplify.configure(APP_SYNC);
     ZoneService,
     NpcService,
     ProfessionService,
-    TsmService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true},
     AuthService,
     DashboardService,
