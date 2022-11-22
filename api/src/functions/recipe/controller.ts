@@ -2,8 +2,9 @@ import {RecipeService} from './service/service';
 import {DatabaseUtil} from '../../utils/database.util';
 import {middyfy} from '@libs/lambda';
 import {formatErrorResponse, formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from '@libs/api-gateway';
-import {AuthService} from "@shared/services/auth.service";
-import {ClassicRecipeService} from "@functions/recipe/service/classic-recipe.service";
+import {AuthService} from '@shared/services/auth.service';
+import {ClassicRecipeService} from '@functions/recipe/service/classic-recipe.service';
+import {RecipeV2Util} from "@functions/recipe/util/recipev2.util";
 
 export const getById = middyfy(async ({body}): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
   let response;
@@ -32,7 +33,7 @@ export const getAfter = middyfy(async ({body}): Promise<ValidatedEventAPIGateway
 
 export const updateRecipes = middyfy(async (event): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
   const isClassic = event['isClassic'] || event.body.isClassic || false;
-  // const retailService = new RecipeService(); // isClassic
+  // const retailService = new RecipeService();
   const classicService = new ClassicRecipeService();
   const authService = new AuthService(event.headers);
   const isAdmin = await authService.isAdmin();
@@ -46,9 +47,10 @@ export const updateRecipes = middyfy(async (event): Promise<ValidatedEventAPIGat
         .then((result) => response = formatJSONResponse(result as any))
         .catch(err => response = formatErrorResponse(err.code, err.message, err));
     } else {
-      /*await retailService.
+      await RecipeV2Util.getAndMapProfessions()
+      // await RecipeV2Util.getRecipeFromAPI(36452)
         .then((result) => response = formatJSONResponse(result as any))
-        .catch(err => response = formatErrorResponse(err.code, err.message, err));*/
+        .catch(err => response = formatErrorResponse(err.code, err.message, err));
     }
   }
   return response;

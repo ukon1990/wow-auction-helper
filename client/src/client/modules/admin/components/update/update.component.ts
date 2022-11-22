@@ -8,6 +8,8 @@ import {Item} from '@shared/models';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {AdminService} from '../../services/admin.service';
 import {AuctionsService} from '../../../../services/auctions.service';
+import {FormControl, FormGroup} from '@angular/forms';
+import {ThemeUtil} from '../../../core/utils/theme.util';
 
 @Component({
   selector: 'wah-update',
@@ -15,7 +17,7 @@ import {AuctionsService} from '../../../../services/auctions.service';
   styleUrls: ['./update.component.scss']
 })
 export class UpdateComponent implements OnInit {
-  private isClassic = false;
+  theme = ThemeUtil.current;
   isUpdatingItems = false;
   inProd = environment.production;
   updated = {
@@ -39,6 +41,11 @@ export class UpdateComponent implements OnInit {
     }
   };
 
+  isProcessingRecipes = false;
+  form: FormGroup = new FormGroup({
+    isClassic: new FormControl(false)
+  });
+
   constructor(
     private _craftingService: CraftingService,
     private _itemService: ItemService,
@@ -59,10 +66,12 @@ export class UpdateComponent implements OnInit {
     return this.updated.recipes.completed.length / this.getRecipeCount() * 100;
   }
 
-  updateRecipes(i?: number): void {
-    this.adminService.updateRecipes(true)
+  updateRecipes(): void {
+    this.isProcessingRecipes = true;
+    this.adminService.updateRecipes(this.form.value.isClassic)
       .then(console.log)
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => this.isProcessingRecipes = false);
     /*
     if (!i) {
       i = 0;
@@ -120,7 +129,7 @@ export class UpdateComponent implements OnInit {
 
   updateItems(): void {
     this.isUpdatingItems = true;
-    this.adminService.updateMissingItemsAtAH(true)
+    this.adminService.updateMissingItemsAtAH(this.form.value.isClassic)
       .finally(() => this.isUpdatingItems = false);
     /*if (!i) {
       i = 0;
@@ -169,7 +178,7 @@ export class UpdateComponent implements OnInit {
 
   printData() {
     const recipes = CraftingService.list.value.filter(r =>
-      Filters.isExpansionMatch(r.itemID, 7, this.isClassic)).slice(0, 99);
+      Filters.isExpansionMatch(r.itemID, 7, this.form.value.isClassic)).slice(0, 99);
     const pets = Object.keys(SharedService.pets)
       .map(k =>
         SharedService.pets[k]).slice(0, 99);
@@ -208,5 +217,9 @@ export class UpdateComponent implements OnInit {
     console.log('Pets:', pets);
     console.log('Items:', items);
     console.log('Auctions:', auctions);
+  }
+
+  updatePets() {
+    console.error('NOT IMPLEMENTED!');
   }
 }
