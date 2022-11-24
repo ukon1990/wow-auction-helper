@@ -9,8 +9,8 @@ import {ThemeUtil} from '../../utils/theme.util';
 import {Report} from '../../../../utils/report.util';
 import {CraftingService} from '../../../../services/crafting.service';
 import {Theme} from "../../models/theme.model";
-import {AuctionsService} from "../../../../services/auctions.service";
-import {AuctionItemStat, ItemStats} from "@shared/models";
+import {AuctionsService} from '../../../../services/auctions.service';
+import {AuctionItemStat, ItemStats} from '@shared/models';
 
 @Component({
   selector: 'wah-tooltip',
