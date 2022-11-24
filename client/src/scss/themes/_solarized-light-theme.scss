@@ -29,6 +29,30 @@ $light-theme: mat.define-light-theme((
   outline-color: mat.get-color-from-palette($light-accent, lighter);
   border-color: mat.get-color-from-palette($light-primary, '100-contrast');
 
+  .mat-bg-primary {
+    background-color: mat.get-color-from-palette($light-primary);
+  }
+
+  .mat-text-primary {
+    color: mat.get-color-from-palette($light-primary);
+  }
+
+  .mat-bg-accent {
+    background-color: mat.get-color-from-palette($light-accent);
+  }
+
+  .mat-text-accent {
+    color: mat.get-color-from-palette($light-accent);
+  }
+
+  .mat-bg-warn {
+    background-color: mat.get-color-from-palette($light-warn);
+  }
+
+  .mat-text-warn {
+    color: mat.get-color-from-palette($light-warn);
+  }
+
   wah-character {
     /*
         .mat-raised-button{

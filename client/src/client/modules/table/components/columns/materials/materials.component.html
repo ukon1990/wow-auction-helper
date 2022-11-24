@@ -11,7 +11,7 @@
            wahItemTooltip
            [item]="r.recipe"
            linkType="item"
-           [ngClass]="{'not-found': !isEnoughAtAH(r.id, r.quantity) }">
+           [ngClass]="{'mat-text-warn': !isEnoughAtAH(r.id, r.quantity) }">
           <wah-icon *ngIf="r.id" class="float-left" size="22" [id]="r.id"></wah-icon>
           {{ r.quantity / getMinCount(recipe) | number : '1.2' }} x {{ r.recipe.name }} -
           <span class="float-right">
@@ -28,7 +28,7 @@
         <a
            wahItemTooltip
            [item]="subR"
-           [ngClass]="{'not-found': !isEnoughAtAH(subR.id, subR.quantity) }"
+           [ngClass]="{'mat-text-warn': !isEnoughAtAH(subR.id, subR.quantity) }"
            [extra]="getAhCountTooltip(subR)">
           <wah-icon *ngIf="subR.id" class="float-left" size="22" [id]="subR.id"></wah-icon>
           {{ subR.quantity * r.quantity / getMinCount(recipe) / getMinCount(r.recipe) | number : '1.2' }}
@@ -46,14 +46,14 @@
     <div (click)="setSelectedItem(r)">
       <a wahItemTooltip
          [item]="r"
-         [ngClass]="{'not-found': !isEnoughAtAH(r.id, r.quantity) }"
+         [ngClass]="{'mat-text-warn': !isEnoughAtAH(r.id, r.quantity) }"
          [extra]="getAhCountTooltip(r)">
         <wah-icon *ngIf="r.id"
                   class="float-left"
                   size="22"
                   [id]="r.id"></wah-icon>
         {{ r.quantity / getMinCount(recipe) | number : '1.2' }} x {{ getItemName(r.id) }} -
-        <span class="float-right" [ngClass]="{'not-found': !vendorHasEnough(r) && usingVendor(r)}">
+        <span class="float-right" [ngClass]="{'mat-text-warn': !vendorHasEnough(r) && usingVendor(r)}">
           {{ getPriceString(r) }}
         </span>
       </a>

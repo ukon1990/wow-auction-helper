@@ -5,6 +5,7 @@ import {SafeHtml} from '@angular/platform-browser';
 
 export interface Tooltip {
   id: number;
+  speciesId?: number;
   bonusIds?: number[];
   x: number;
   y: number;

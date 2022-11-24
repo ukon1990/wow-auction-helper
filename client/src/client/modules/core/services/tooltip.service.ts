@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, firstValueFrom} from 'rxjs';
 import {Tooltip} from '../models/tooltip.model';
 import {DomSanitizer} from '@angular/platform-browser';
 
@@ -28,7 +28,7 @@ export class TooltipService {
     this.activeTooltip.next(undefined);
   }
 
-  get(type: string, id: number, bonusIds: number[], isClassic: boolean, event: MouseEvent, item: any, extra: string): Promise<Element> {
+  get(type: string, id: number, speciesId: number, bonusIds: number[], isClassic: boolean, event: MouseEvent, item: any, extra: string): Promise<Element> {
     const map = this.tooltips.value;
     const locale = (localStorage.getItem('locale') || 'en').split('_')[0];
     let url = this.getUrl(isClassic, id, type, locale);
@@ -47,12 +47,12 @@ export class TooltipService {
         this.activeTooltip.next(tip);
         resolve(map.get(url).body as Element);
       } else {
-        this.http.get(url)
-          .toPromise()
+        firstValueFrom(this.http.get(url))
           .then(({tooltip}: {tooltip: any}) => {
             const tip: Tooltip = {
               id,
               bonusIds,
+              speciesId,
               x,
               y,
               type: type,

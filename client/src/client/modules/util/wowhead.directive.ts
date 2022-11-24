@@ -6,12 +6,13 @@ import {TableUtil} from '../table/utils/table.util';
 import {SharedService} from '../../services/shared.service';
 import {Recipe} from '../crafting/models/recipe';
 import {TooltipService} from '../core/services/tooltip.service';
+import {Reagent} from '../crafting/models/reagent';
 
 @Directive({
   selector: '[wahItemTooltip]'
 })
 export class WowheadDirective {
-  @Input() item: AuctionItem | Item | Auction | Pet | Recipe;
+  @Input() item: AuctionItem | Item | Auction | Pet | Recipe | Reagent;
   @Input() column: ColumnDescription;
   @Input() idName = 'id';
   @Input() extra: string;
@@ -72,15 +73,22 @@ export class WowheadDirective {
     } = this.getWHRelations();
 
     let bonusIds;
-    if ((this.item as AuctionItem)) {
-
+    let speciesId;
+    if (this.item) {
       if ((this.item as AuctionItem).bonusIds) {
         bonusIds = (this.item as AuctionItem).bonusIds;
+      }
+      if ((this.item as AuctionItem).petSpeciesId) {
+        speciesId = (this.item as AuctionItem).petSpeciesId;
+      }
+
+      if ((this.item as Pet).speciesId) {
+        speciesId = (this.item as Pet).speciesId;
       }
     }
 
     if (id) {
-      this.service.get(type, id, bonusIds, this.realmService.isClassic, event, this.item, this.extra)
+      this.service.get(type, id, speciesId, bonusIds, this.realmService.isClassic, event, this.item, this.extra)
         .catch(console.error);
     }
   }

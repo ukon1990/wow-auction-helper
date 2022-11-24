@@ -15,7 +15,7 @@
         </p>
       </div>
       <div class="row col-md-12 slim-sm pr-0">
-        <wah-crafting-config class="col"></wah-crafting-config>
+        <wah-crafting-config></wah-crafting-config>
         <div class="col">
           <button class="float-right"
                   mat-stroked-button
@@ -61,7 +61,7 @@
         >
         </mat-paginator>
       </form>
-      <div class="row col-md-12 pr-0">
+      <div class="row pr-0">
         <wah-dashboard-item
                 class="col-xxxl-4 col-xl-6 mb-3 slim-sm"
                 *ngFor="let board of filteredBoards | slice: fromValue : toValue"

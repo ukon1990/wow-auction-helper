@@ -8,7 +8,9 @@ import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {ThemeUtil} from '../../utils/theme.util';
 import {Report} from '../../../../utils/report.util';
 import {CraftingService} from '../../../../services/crafting.service';
-import {faTimes} from '@fortawesome/free-solid-svg-icons';
+import {Theme} from "../../models/theme.model";
+import {AuctionsService} from "../../../../services/auctions.service";
+import {AuctionItemStat, ItemStats} from "@shared/models";
 
 @Component({
   selector: 'wah-tooltip',
@@ -17,8 +19,8 @@ import {faTimes} from '@fortawesome/free-solid-svg-icons';
 })
 export class TooltipComponent implements OnInit, OnDestroy {
   private activeTooltipSub: Subscription = new Subscription();
-  faTimes = faTimes;
-  currentTheme = ThemeUtil.current;
+  theme: Theme = ThemeUtil.current;
+  itemStats: ItemStats;
   locale = 'en';
   isClassic = false;
   activeTooltip: Tooltip;
@@ -29,6 +31,7 @@ export class TooltipComponent implements OnInit, OnDestroy {
   constructor(
     private service: TooltipService,
     private realmService: RealmService,
+    private auctionService: AuctionsService,
     private element: ElementRef
   ) {
   }
@@ -47,6 +50,8 @@ export class TooltipComponent implements OnInit, OnDestroy {
     this.recipeId = undefined;
     if (tooltip) {
       try {
+        this.itemStats = this.auctionService.stats.value.get(
+          AuctionItemStat.getId(tooltip.id, tooltip.speciesId, tooltip.bonusIds));
         if ((tooltip.data as Recipe).reagents && (tooltip.data as Recipe).reagents.length) {
           this.recipes = [tooltip.data as Recipe];
         } else if (this.hasRecipeSource(tooltip.data as AuctionItem)) {
@@ -110,15 +115,11 @@ export class TooltipComponent implements OnInit, OnDestroy {
   }
 
   private hasRecipeSource(data: AuctionItem) {
-    if (
-      (data as AuctionItem).source &&
+    return !!((data as AuctionItem).source &&
       (data as AuctionItem).source.recipe &&
       (data as AuctionItem).source.recipe.all &&
-      (data as AuctionItem).source.recipe.all.length
-    ) {
-      return true;
-    }
-    return false;
+      (data as AuctionItem).source.recipe.all.length);
+
   }
 
   close() {

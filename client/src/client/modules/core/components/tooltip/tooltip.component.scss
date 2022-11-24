@@ -25,6 +25,11 @@
     color: #fff;
 
     padding: .5rem;
+    margin: 0 -0.5rem -0.5rem;
+
+    & > div:not(:first-child) {
+    margin-top: .5rem;
+  }
 
     .recipe-container {
       border-top: 1px white !important;
