@@ -219,7 +219,7 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
         await this.downloadAuctions(false)
           .catch(console.error);
         break;
-      case 'regionAuctions':
+      case 'regionalAuctions':
         await this.downloadAuctions(true)
           .catch(console.error);
         break;
