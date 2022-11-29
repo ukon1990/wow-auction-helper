@@ -3,6 +3,9 @@ import {DatabaseUtil} from '../../utils/database.util';
 import {StatsService} from './services/stats.service';
 import {middyfy} from '@libs/lambda';
 import {formatErrorResponse, formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from '@libs/api-gateway';
+import {AuthService} from '@shared/services/auth.service';
+import {APIGatewayEvent} from 'aws-lambda';
+import {AuctionHouse} from '@functions/realm/model';
 
 /* istanbul ignore next */
 export const deactivateInactiveHouses = middyfy(async (): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
@@ -199,6 +202,24 @@ export const updateNextRealmsDailyPrices = middyfy(async (): Promise<ValidatedEv
       response = formatErrorResponse(500, err.message, err);
     });
 
+  return response;
+});
+
+/* istanbul ignore next */
+export const adminManualUpdateHouse = middyfy(async (event: APIGatewayEvent): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
+  const auctionHouse = event.body as any as AuctionHouse;
+  const authService = new AuthService(event.headers);
+  const isAdmin = await authService.isAdmin();
+  let response;
+
+  if (!isAdmin) {
+    response = authService.getUnauthorizedResponse();
+  } else {
+    const service = new AuctionService();
+    await service.updateHouse(auctionHouse)
+      .then(res => response = formatJSONResponse(res as any))
+      .catch(error => formatErrorResponse(error.code, error.message, error));
+  }
   return response;
 });
 

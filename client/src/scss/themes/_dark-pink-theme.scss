@@ -14,6 +14,30 @@ $dark-theme:   mat.define-dark-theme($dark-primary, $dark-accent, $dark-warn);
   background: #424242;
   color: white;
 
+  .mat-bg-primary {
+    background-color: mat.get-color-from-palette($dark-primary);
+  }
+
+  .mat-text-primary {
+    color: mat.get-color-from-palette($dark-primary);
+  }
+
+  .mat-bg-accent {
+    background-color: mat.get-color-from-palette($dark-accent);
+  }
+
+  .mat-text-accent {
+    color: mat.get-color-from-palette($dark-accent);
+  }
+
+  .mat-bg-warn {
+    background-color: mat.get-color-from-palette($dark-warn);
+  }
+
+  .mat-text-warn {
+    color: mat.get-color-from-palette($dark-warn);
+  }
+
   wah-character {
     .mat-raised-button{
       color: white !important;

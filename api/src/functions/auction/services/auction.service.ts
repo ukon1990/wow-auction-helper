@@ -46,18 +46,20 @@ export class AuctionService {
         'If-Modified-Since': 'Sat, 14 Mar 3000 20:07:10 GMT'
       })
         .then(({headers}) => {
-          let newLastModified = (headers['Last-Modified'] || headers['last-modified']);
+          let newLastModified = (headers['date'] || headers['Last-Modified'] || headers['last-modified']);
 
           if (Array.isArray(newLastModified)) {
             // Keeping it like this, in case they decide to move it back to being non-array.
             newLastModified = newLastModified[0];
           }
 
-          resolve({
+          const response = {
             lastModified: +new Date(newLastModified),
             url: url.replace(`access_token=${BLIZZARD.ACCESS_TOKEN}&`, ''),
             gameBuild,
-          });
+          };
+
+          resolve(response);
         })
         .catch(reject);
     });
@@ -214,8 +216,10 @@ export class AuctionService {
     };
   }
 
-  private async updateHouse(house: AuctionHouse): Promise<boolean> {
+  async updateHouse(house: AuctionHouse): Promise<AHDumpResponse> {
     let error, ahDumpResponse: AHDumpResponse;
+    const isCommodity = house.connectedId < 0;
+    console.log('Connected id', house.connectedId);
     return new Promise<any>(async (resolve, reject) => {
       await this.getLatestDumpPath(house.connectedId, house.region, house.gameBuild)
         .then((r: AHDumpResponse) => {
@@ -239,6 +243,15 @@ export class AuctionService {
             .catch(console.error);
         });
 
+      if (!ahDumpResponse.lastModified) {
+        reject({
+          code: 426,
+          message: `Could not update due to missing last modified timestamp for ${house.id}`,
+          data: ahDumpResponse,
+        });
+        return;
+      }
+
       /**
        * used to be:  !error  && ahDumpResponse && ahDumpResponse.lastModified > house.lastModified
        * Changed it, since there seemed to be some issues with it.
@@ -246,11 +259,13 @@ export class AuctionService {
        */
       if (!error) {
         console.log('Starting upload');
-        new S3Handler().save(ahDumpResponse, `auctions/${house.region}/${house.id}/dump-path.json.gz`,
+        new S3Handler().save(
+          ahDumpResponse,
+          `auctions${isCommodity ? '/commodity' : ''}/${house.region}/${house.id}/dump-path.json.gz`,
           {region: house.region})
           .then(() => {
-            console.log('Successfully uploaded:', house.id);
-            resolve(true);
+            console.log('Successfully uploaded:', house.id, ahDumpResponse.lastModified);
+            resolve(ahDumpResponse ? ahDumpResponse : undefined);
           })
           .catch((err) => {
             console.error(err);
@@ -415,7 +430,14 @@ export class AuctionService {
           await new S3Handler().get(s3.bucket.name, s3.object.key)
             .then(async ({Body}) => {
               const splitted = s3.object.key.split('/');
-              const [_, region, ahId] = splitted;
+              let region, ahId;
+              if (splitted[1] === 'commodity') {
+                region = splitted[2];
+                ahId = splitted[3];
+              } else {
+                region = splitted[1];
+                ahId = splitted[2];
+              }
               const ahDumpResponse: AuctionResponse = await new GzipUtil().decompress(Body);
 
               console.log(`Updating id=${ahId}`, ahDumpResponse);

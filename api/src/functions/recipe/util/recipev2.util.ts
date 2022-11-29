@@ -5,9 +5,12 @@ import {Recipev2} from '../recipev2.model';
 import {AuthHandler} from '../../handlers/auth.handler';
 import {DatabaseUtil} from '../../../utils/database.util';
 import {RDSQueryUtil} from '../../../utils/query.util';
-import {ItemLocale} from '../../../shared/models';
+import {APIReagent, APIRecipe, ItemLocale} from '../../../shared/models';
 import {NameSpace} from '../../../enums/name-space.enum';
 import {RecipeService} from '../service/service';
+import {ClassicRecipeUtil} from '@functions/recipe/util/classic-recipe.util';
+import {SharedRecipeUtil} from '@functions/recipe/util/shared.util';
+import PromiseThrottle from 'promise-throttle';
 
 export class RecipeV2Util {
 
@@ -16,6 +19,7 @@ export class RecipeV2Util {
       await AuthHandler.getToken();
       // TODO: Fetch media
       const url = new Endpoints().getPath(`recipe/${id}`, 'us', NameSpace.STATIC_RETAIL);
+      console.log('URL', url);
       new HttpClientUtil().get(url)
         .then(({body}) => {
           this.getIcon(id)
@@ -27,8 +31,28 @@ export class RecipeV2Util {
             .catch(reject);
         })
         .catch(error => {
-            console.error('RecipeV2Util.getRecipeFromAPI.get', url, id, error);
-            reject(error);
+          console.error('RecipeV2Util.getRecipeFromAPI.get', url, id, error);
+          reject(error);
+        });
+    });
+  }
+
+  /**
+   * Gets recipe snot related to a profession from WoWHead
+   */
+  static getOnUseRecipes(): Promise<APIRecipe[]> {
+    return new Promise<APIRecipe[]>((resolve) => {
+      const url = 'https://www.wowhead.com/spells?filter=20:25;1:3;0:0';
+      new HttpClientUtil().get(url, false)
+        .then(async ({body}) => {
+          const list = ClassicRecipeUtil.getList('', body);
+          const recipes = await SharedRecipeUtil.mapResultToRecipe(list, -1, false);
+          console.log('Found', recipes.length, 'recipes');
+          resolve(recipes);
+        })
+        .catch((error) => {
+          console.log('getOnUseRecipes.error', error);
+          resolve([]);
         });
     });
   }
@@ -54,32 +78,29 @@ export class RecipeV2Util {
       this.getIcon(recipe.id)
         .then(icon => {
           const queries = [
-            `INSERT INTO recipes(
-                        id,
-                        icon,
-                        rank,
-                        craftedItemId,
-                        hordeCraftedItemId,
-                        allianceCraftedItemId,
-                        minCount,
-                        maxCount,
-                        procRate,
-                        timestamp,
-                        professionSkillTierId
-            )
-            VALUES (
-                    ${recipe.id},
-                    "${icon}",
-                    ${recipe.rank || 0},
-                    ${recipe.crafted_item ? recipe.crafted_item.id : null},
-                    ${recipe.horde_crafted_item ? recipe.horde_crafted_item.id : null},
-                    ${recipe.alliance_crafted_item ? recipe.alliance_crafted_item.id : null},
-                    ${recipe.crafted_quantity ? recipe.crafted_quantity.minimum || recipe.crafted_quantity.value : 0},
-                    ${recipe.crafted_quantity ? recipe.crafted_quantity.maximum || recipe.crafted_quantity.value : 0},
-                    1,
-                    CURRENT_TIMESTAMP,
-                    null);
-              `,
+            `INSERT INTO recipes(id,
+																 icon,
+																 rank,
+																 craftedItemId,
+																 hordeCraftedItemId,
+																 allianceCraftedItemId,
+																 minCount,
+																 maxCount,
+																 procRate,
+																 timestamp,
+																 professionSkillTierId)
+						 VALUES (${recipe.id},
+										 "${icon}",
+										 ${recipe.rank || 0},
+										 ${recipe.crafted_item ? recipe.crafted_item.id : null},
+										 ${recipe.horde_crafted_item ? recipe.horde_crafted_item.id : null},
+										 ${recipe.alliance_crafted_item ? recipe.alliance_crafted_item.id : null},
+										 ${recipe.crafted_quantity ? recipe.crafted_quantity.minimum || recipe.crafted_quantity.value : 0},
+										 ${recipe.crafted_quantity ? recipe.crafted_quantity.maximum || recipe.crafted_quantity.value : 0},
+										 1,
+										 CURRENT_TIMESTAMP,
+										 NULL);
+            `,
             new RDSQueryUtil('recipesName', false).insert({
               id: recipe.id,
               ...recipe.name
@@ -88,8 +109,8 @@ export class RecipeV2Util {
 
           if (recipe.reagents) {
             queries.push(...recipe.reagents.map(r => format(`
-                INSERT INTO reagents
-                VALUES (?, ?, ?, ?);
+							INSERT INTO reagents
+							VALUES (?, ?, ?, ?);
             `, [
               recipe.id,
               r.reagent.id,
@@ -122,12 +143,18 @@ export class RecipeV2Util {
         db = new DatabaseUtil(false);
       await db.enqueueHandshake()
         .catch(reject);
-      const recipeMap = {};
+      // const recipeMap = {};
       try {
         const result = [];
         const url = new Endpoints().getPath('profession/index', 'us', NameSpace.STATIC_RETAIL);
         console.log('URL is', url);
         const {body} = await http.get(url);
+        const throttle = new PromiseThrottle({
+          requestsPerSecond: 2,
+          promiseImplementation: Promise
+        });
+        const recipePromises: Promise<any>[] = [];
+        let completed = 0;
 
         for (const p of (body.professions || [])) {
           await http.get(
@@ -144,7 +171,7 @@ export class RecipeV2Util {
               result.push(res);
 
               await db.query(format(`INSERT INTO professions
-                                     VALUES (?, ?, ?)`, [
+																		 VALUES (?, ?, ?)`, [
                 res.id,
                 res.icon,
                 res.type
@@ -175,8 +202,8 @@ export class RecipeV2Util {
                       };
 
                       await db.query(format(`
-                        INSERT INTO professionSkillTiers
-                        VALUES (?, ?, ?, ?)`, [
+												INSERT INTO professionSkillTiers
+												VALUES (?, ?, ?, ?)`, [
                         s.id, res.id, s.minimum_skill_level, s.maximum_skill_level
                       ]))
                         .catch(console.error);
@@ -193,17 +220,25 @@ export class RecipeV2Util {
                       (s.categories || []).forEach(c =>
                         c.recipes.forEach(async r => {
                           skillTier.recipes.push(r.id);
-                          await RecipeService.getAndInsert(r.id, db)
-                            .catch(console.error);
-                          await db.query(format(`
-                            UPDATE recipes
-                            SET professionSkillTierId = ?,
-                                type                  = ?
-                            WHERE id = ?`, [
-                            s.id, c.name.en_GB, r.id
-                          ]))
-                            .catch(error =>
-                                console.error('Could not get recipe', r, error));
+                          recipePromises.push(throttle.add(() =>
+                            new Promise<void>(async (success) => {
+                              await RecipeService.getAndInsert(r.id, db)
+                                .catch(console.error);
+                              await db.query(format(`
+																UPDATE recipes
+																SET professionSkillTierId = ?,
+																		type                  = ?
+																WHERE id = ?`, [
+                                s.id, c.name.en_GB, r.id
+                              ]))
+                                .catch(error =>
+                                  console.error('Could not get recipe', r, error));
+                              completed++;
+                              console.log(`Attempting to insert, ${r.id}, ${r.name.en_GB
+                              }, ${completed} / ${recipePromises.length} = ${
+                                Math.round((completed / recipePromises.length) * 100)} % completed`);
+                              success();
+                            })));
                         }));
                       res.skillTiers.push(skillTier);
                     })
@@ -213,8 +248,13 @@ export class RecipeV2Util {
             })
             .catch(console.error);
         }
-        db.end();
-        resolve(result);
+        console.log('Inserting recipes');
+        Promise.all(recipePromises)
+          .then(() => {
+            db.end();
+            resolve(result);
+          })
+          .catch(reject);
       } catch (e) {
         db.end();
         console.error(e);
@@ -224,8 +264,8 @@ export class RecipeV2Util {
   }
 
   private static insertLocale(id: number, table: string, locale: ItemLocale, db: DatabaseUtil): Promise<void> {
-    const sql = format(`INSERT INTO ${table} VALUES(
-                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
+    const sql = format(`INSERT INTO ${table}
+												VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
       id,
       locale.en_GB,
       locale.en_US,
@@ -242,14 +282,7 @@ export class RecipeV2Util {
       locale.zh_TW,
       locale.zh_CN,
     ]);
-    console.log('sql', sql);
     return db.query(sql);
-  }
-
-  static mapToRecipe(recipe: Recipev2) {
-    const icon = this.getIcon(recipe.id);
-
-    return undefined;
   }
 
   static getIcon(id: number, type = 'recipe'): Promise<string> {
@@ -262,7 +295,8 @@ export class RecipeV2Util {
         .then(({body}) => {
           if (body.assets && body.assets.length) {
             resolve(body.assets[0].value);
-          } {
+          }
+          {
             reject({message: 'Missing', body});
           }
         })
@@ -271,4 +305,44 @@ export class RecipeV2Util {
   }
 
 
+  /**
+   * Mapping recipes from WoWHead into regular API Recipe Objects
+   * @param recipes
+   */
+  static mapAPIRecipesToV2Recipes(recipes: APIRecipe[]): Recipev2[] {
+    console.log('mapAPIRecipeToV2Recipe is', recipes);
+    return (recipes || [])
+      .filter(recipe =>
+        !!recipe?.reagents && !!recipe?.reagents?.length)
+      .map(this.mapAPIRecipeToV2Recipe);
+  }
+
+  private static mapAPIRecipeToV2Recipe(recipe: APIRecipe) {
+    const getItem = (id: number) => id ? ({
+      id,
+      key: undefined,
+      name: undefined,
+    }) : null;
+    const getReagent = (reagent: APIReagent) => ({
+      reagent: getItem(reagent.id),
+      quantity: reagent.quantity
+    });
+
+    return ({
+      id: recipe.id,
+      name: recipe.name as ItemLocale,
+      description: undefined,
+      media: null,
+      reagents: recipe.reagents.map(getReagent),
+      crafted_item: getItem(recipe.craftedItemId),
+      horde_crafted_item: getItem(recipe.hordeCraftedItemId),
+      alliance_crafted_item: getItem(recipe.allianceCraftedItemId),
+      crafted_quantity: {
+        value: Math.round((recipe.minCount + recipe.maxCount) / 2),
+        minimum: recipe.minCount,
+        maximum: recipe.maxCount,
+      },
+      modified_crafting_slots: [],
+    });
+  }
 }

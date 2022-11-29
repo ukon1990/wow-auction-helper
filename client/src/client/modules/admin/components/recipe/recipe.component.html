@@ -1,0 +1,43 @@
+<form [formGroup]="form">
+    <mat-checkbox formControlName="isClassic">Is classic</mat-checkbox>
+</form>
+
+<mat-accordion>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            Diff changes
+        </mat-expansion-panel-header>
+        <mat-card>
+            <mat-card-actions>
+                <form [formGroup]="form">
+                    <mat-form-field>
+                        <input
+                                matInput
+                                formControlName="recipeId"
+                                placeholder="Recipe id"
+                        />
+                    </mat-form-field>
+                </form>
+                <button
+                        mat-raised-button
+                        type="button"
+                        (click)="getComparison()"
+                        color="primary"
+                >
+                    Get
+                </button>
+            </mat-card-actions>
+            <mat-grid-list cols="2" rowHeight="2:1" *ngIf="comparison.value">
+                <mat-grid-tile>
+                    {{comparison.value.api | json}}
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    {{comparison.value.db | json}}
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    asd
+                </mat-grid-tile>
+            </mat-grid-list>
+        </mat-card>
+    </mat-expansion-panel>
+</mat-accordion>

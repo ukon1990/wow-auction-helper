@@ -3,8 +3,8 @@
 */
 @use '@angular/material' as mat;
 
-
 @import '../../../node_modules/@angular/material/theming';
+
 @include mat.core();
 @import 'solarized-light-theme';
 @import 'dark-unicorn-theme';
@@ -13,58 +13,83 @@
 
 // Define the default theme (same as the example above).
 $candy-app-primary: mat.define-palette(mat.$indigo-palette);
-$candy-app-accent:  mat.define-palette(mat.$pink-palette, A200, A100, A400);
-$candy-app-theme:   mat.define-light-theme($candy-app-primary, $candy-app-accent);
+$candy-app-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$candy-app-warn: mat.define-palette(mat.$red-palette);
+$candy-app-theme: mat.define-light-theme($candy-app-primary, $candy-app-accent);
 
 // Include the default theme styles.
 @include mat.all-component-themes($candy-app-theme);
 
+.pink-blue {
+	.mat-bg-primary {
+		background-color: mat.get-color-from-palette($candy-app-primary);
+	}
 
+	.mat-text-primary {
+		color: mat.get-color-from-palette($candy-app-primary);
+	}
+
+	.mat-bg-accent {
+		background-color: mat.get-color-from-palette($candy-app-accent);
+	}
+
+	.mat-text-accent {
+		color: mat.get-color-from-palette($candy-app-accent);
+	}
+
+	.mat-bg-warn {
+		background-color: mat.get-color-from-palette($candy-app-warn);
+	}
+
+	.mat-text-warn {
+		color: mat.get-color-from-palette($candy-app-warn);
+	}
+}
 
 wah-dashboard-item > mat-card:not(.full-screen),
 wah-watchlist-item > mat-card:not(.full-screen),
-wah-general-settings mat-card:not(.full-screen)  {
-  background-color: #f8f2ea1a !important;
+wah-general-settings mat-card:not(.full-screen) {
+	background-color: #f8f2ea1a !important;
 }
 
 wah-character {
-  .mat-raised-button {
-    color: black !important;
-  }
+	.mat-raised-button {
+		color: black !important;
+	}
 
-  .mat-card-subtitle {
-    color: white !important;
-  }
+	.mat-card-subtitle {
+		color: white !important;
+	}
 }
 
 .mat-button {
-  margin: .25em !important;
-  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12);
-  transition: box-shadow .5s;
+	margin: .25em !important;
+	box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12);
+	transition: box-shadow .5s;
 
-  &:hover {
-    box-shadow: 0px 0px 0px 0px;
-    transition: box-shadow .5s;
-  }
+	&:hover {
+		box-shadow: 0px 0px 0px 0px;
+		transition: box-shadow .5s;
+	}
 }
 
 .mat-step-icon .mat-icon {
-  display: none;
+	display: none;
 }
 
 .mat-card-header-text {
-  margin-left: 0 !important;
+	margin-left: 0 !important;
 }
 
 .mat-tab-link-container {
-  /* If not, it will cover the shopping cart partially */
-  z-index: 0 !important;
+	/* If not, it will cover the shopping cart partially */
+	z-index: 0 !important;
 }
 
 .pink-blue {
-  wah-tooltip .wah-tooltip .wowhead-tooltip.custom {
-    b.q3, .q3 {
-      /*color: #ff4081 !important;*/
-    }
-  }
+	wah-tooltip .wah-tooltip .wowhead-tooltip.custom {
+		b.q3, .q3 {
+			/*color: #ff4081 !important;*/
+		}
+	}
 }

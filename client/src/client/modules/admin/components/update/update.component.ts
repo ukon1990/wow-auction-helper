@@ -66,6 +66,13 @@ export class UpdateComponent implements OnInit {
     return this.updated.recipes.completed.length / this.getRecipeCount() * 100;
   }
 
+  updateOnUseRecipes(): void {
+    this.adminService.updateOnUseRecipes()
+      .then(console.log)
+      .catch(console.error)
+      .finally(() => this.isProcessingRecipes = false);
+  }
+
   updateRecipes(): void {
     this.isProcessingRecipes = true;
     this.adminService.updateRecipes(this.form.value.isClassic)

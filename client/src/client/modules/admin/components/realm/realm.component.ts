@@ -23,6 +23,17 @@ export class RealmComponent implements OnInit {
     {key: 'lastHistoryDeleteEventDaily', title: 'Daily price deletion', dataType: 'date'},
     {key: 'firstRequested', title: 'First requested', dataType: 'date'},
     {key: 'lastRequested', title: 'Last requested', dataType: 'date'},
+    {
+      key: '',
+      title: 'Update',
+      dataType: 'row-actions'
+      , actions: [{
+        icon: 'fa fa-download',
+        text: 'Update',
+        tooltip: 'Manually update an auction house',
+        callback: (house: AuctionHouseStatus, index) => this.service.updateHouse(house),
+      }]
+    },
   ];
   houses: AuctionHouseStatus[] = [];
   tableData: AuctionHouseStatus[] = [];

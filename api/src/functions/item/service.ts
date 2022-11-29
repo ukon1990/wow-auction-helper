@@ -39,6 +39,7 @@ export class ItemServiceV2 {
 
     return new Promise<UpdateProgressModel>((resolve, reject) => {
       const db = new DatabaseUtil(false);
+      console.log('Checking for new items to add');
       (this.isClassic ? this.repository.findMissingItemsFromAuctionsClassic(db) : this.repository.findMissingItemsFromAuctions(db))
         .then(ids => {
           console.log(`There are ${ids.length} new items to add.`);

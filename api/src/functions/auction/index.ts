@@ -18,6 +18,15 @@ export default {
       Project: 'WAH',
     }
   },
+  auctionsDownloadAndSaveCommodity: {
+    handler: `${handlerPath(__dirname)}/controller.auctionsDownloadAndSave`,
+    memorySize: 1024,
+    timeout: 600,
+    tags: {
+      Function: 'Wah-auctionsDownloadAndSaveCommodity',
+      Project: 'WAH',
+    }
+  },
   updateAllRealmDailyData: {
     handler: `${handlerPath(__dirname)}/controller.updateAllRealmDailyData`,
     memorySize: 1024,
@@ -95,16 +104,25 @@ export default {
     tags: {
       Function: 'Wah-auctionsUpdateRealmTrends',
       Project: 'WAH',
-    }, /*
+    },
+  },
+  adminManualUpdateHouse: {
+    handler: `${handlerPath(__dirname)}/controller.adminManualUpdateHouse`,
+    memorySize: 1344,
+    timeout: 300,
+    tags: {
+      Function: 'Wah-adminManualUpdateHouse',
+      Project: 'WAH',
+    },
     events: [{
       http: {
-        method: 'get',
-        path: 'test/trends',
+        method: 'post',
+        path: 'admin/auction-house/realm/update',
         cors: {
           origin: 'http://localhost:4200,https://wah.jonaskf.net',
         }
       },
-    }]*/
+    }]
   },
   deleteOldPriceForRealmHourly: {
     handler: `${handlerPath(__dirname)}/controller.deleteOldPriceForRealmHourly`,

@@ -1,9 +1,9 @@
 import {GameBuild} from '../../../shared/utils';
-import {APIReagent, APIRecipe, ItemLocale} from '../../../shared/models';
+import {APIReagent, APIRecipe} from '../../../shared/models';
 import {HttpClientUtil} from '../../../utils/http-client.util';
 import {WoWHeadUtil} from '../../../utils/wowhead.util';
-import {languages} from '../../../static-data/language.data';
 import {ProfessionRepository} from '../../profession/repository';
+import {SharedRecipeUtil} from "@functions/recipe/util/shared.util";
 
 export class ClassicRecipeUtil {
 
@@ -69,15 +69,15 @@ export class ClassicRecipeUtil {
     gameVersion?: string,
     professionToIdMap?: { [key: string]: number }
   ): Promise<APIRecipe[]> {
-    return new Promise<APIRecipe[]>((resolve, reject) => {
+    return new Promise<APIRecipe[]>((resolve) => {
       const urlName = this.getUrlName(this.slugifyString(profession), gameVersion);
-      const url = profession === 'None' ? 'https://www.wowhead.com/wotlk/spells?filter=20:25;1:3;0:0#50' : this.getUrl(urlName);
+      const url = profession === 'None' ? 'https://www.wowhead.com/wotlk/spells?filter=20:25;1:3;0:0' : this.getUrl(urlName);
       new HttpClientUtil().get(url, false)
         .then(async ({body}) => {
           const list = this.getList('', body);
           console.log(profession, list.length);
           const professionId = (profession === 'First aid' ? 1 : professionToIdMap[profession]) || null;
-          resolve(this.mapResultToRecipe(list, professionId, gameVersion));
+          resolve(SharedRecipeUtil.mapResultToRecipe(list, professionId, true));
         })
         .catch((error) => {
           console.log(error);
@@ -86,7 +86,7 @@ export class ClassicRecipeUtil {
     });
   }
 
-  private static getList(gameVersion: string, body) {
+  static getList(gameVersion: string, body) {
     return gameVersion ?
       WoWHeadUtil.getNewListViewData(body, 'spell', 'recipes') :
       WoWHeadUtil.getArrayVariable('listviewspells', body);
@@ -105,63 +105,5 @@ export class ClassicRecipeUtil {
 
   private static getUrl(urlName: string) {
     return `https://www.wowhead.com/wotlk/spells/${urlName.toLocaleLowerCase()}?filter=20;1;0`;
-  }
-
-  private static async mapResultToRecipe(list, professionId: number, gameVersion?: string) {
-    const recipes: APIRecipe[] = [];
-    for (const recipe of list) {
-      const {id, creates, reagents} = recipe;
-      await this.setRankAndNameForRecipe(id, recipe);
-
-      const minCount = creates ? creates[1] : 1,
-        maxCount = creates ? creates[1] : 1;
-      recipes.push({
-        id: +id * -1,
-        spellId: id,
-        craftedItemId: creates ? +creates[0] : -1,
-        name: recipe.name as ItemLocale,
-        minCount: minCount ? minCount : 1,
-        maxCount: maxCount ? maxCount : 1,
-        rank: recipe.rank || 0,
-        professionId,
-        reagents: (reagents || []).map(reagent => ({
-          id: +reagent[0],
-          quantity: +reagent[1]
-        }))
-      } as APIRecipe);
-      console.log(recipes[recipes.length - 1]);
-    }
-    return recipes;
-  }
-
-  private static async setRankAndNameForRecipe(id: number, recipe): Promise<any> {
-    recipe.name = new ItemLocale();
-    for (const language of languages) {
-      await this.getRecipeTooltip(id, language, recipe);
-    }
-    return recipe;
-  }
-
-  private static async getRecipeTooltip(id, language, recipe): Promise<void> {
-    await new Promise<void>((resolve, reject) => {
-      const locale = language.key === 'en' ? '' : `${language.key}/`;
-      new HttpClientUtil().get(
-        `https://www.wowhead.com/wotlk/${locale}tooltip/spell/${id}`)
-        .then(({body}) => {
-          if (language.key === 'en') {
-            const regexResult = (/Rank [\d]{0,1}/g).exec(body.tooltip);
-            if (regexResult && regexResult[0]) {
-              recipe.rank = +regexResult[0].replace(/Rank /g, '');
-            }
-          }
-
-          for (const locale of language.locales) {
-            recipe.name[locale] = body.name;
-          }
-
-          resolve();
-        })
-        .catch(() => resolve());
-    });
   }
 }

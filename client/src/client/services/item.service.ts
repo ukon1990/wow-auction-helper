@@ -18,7 +18,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {ItemOverrides} from '../overrides/item.overrides';
 import {Platform} from '@angular/cdk/platform';
 import {Report} from '../utils/report.util';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, firstValueFrom} from 'rxjs';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
 
 class ItemResponse {
@@ -224,10 +224,9 @@ export class ItemService {
   }
 
   updateItem(itemID: number): Promise<any> {
-    return this._http.patch(
+    return firstValueFrom(this._http.patch(
       Endpoints.getLambdaUrl(`item/${itemID}`),
-      {locale: 'en_GB'})
-      .toPromise() as Promise<any>;
+      {locale: 'en_GB'})) as Promise<any>;
   }
 
   getLocalPriceHistoryForRealm(ahId): Map<string, ItemPriceEntryResponse> {
@@ -340,7 +339,7 @@ export class ItemService {
 
     console.log('Input', items);
     return new Promise((resolve, reject) => {
-      this._http.post(Endpoints.getLambdaUrl('item/history/compare'), items).toPromise()
+      firstValueFrom(this._http.post(Endpoints.getLambdaUrl('item/history/compare'), items))
         .then((result: ItemPriceCompareEntry[]) => {
           const map = this.priceCompareMap.value;
           map.set(storeId, result);

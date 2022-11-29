@@ -34,4 +34,38 @@ export default {
       },
     }]
   },
+  getOnUseRecipes: {
+    handler: `${handlerPath(__dirname)}/controller.updateOnUse`,
+    memorySize: 128,
+    tags: {
+      Function: 'Wah-updateOnUse',
+      Project: 'WAH',
+    },
+    events: [{
+      http: {
+        method: 'get',
+        path: 'admin/recipes/update-on-use',
+        cors: {
+          origin: 'http://localhost:4200,https://wah.jonaskf.net',
+        }
+      },
+    }]
+  },
+  compareRecipeAPI: {
+    handler: `${handlerPath(__dirname)}/controller.compareRecipeAPI`,
+    memorySize: 128,
+    tags: {
+      Function: 'Wah-updateOnUse',
+      Project: 'WAH',
+    },
+    events: [{
+      http: {
+        method: 'get',
+        path: 'admin/recipes/{id}',
+        cors: {
+          origin: 'http://localhost:4200,https://wah.jonaskf.net',
+        }
+      },
+    }]
+  },
 };

@@ -56,6 +56,17 @@ export class AdminService {
     ));
   }
 
+  getCompareRecipeAPI(id: number): Promise<any> {
+    return firstValueFrom(this.http.get(
+      Endpoints.getLambdaUrl(`admin/recipes/${id}`)));
+  }
+
+  updateOnUseRecipes(): Promise<any> {
+    return firstValueFrom(this.http.get(
+      Endpoints.getLambdaUrl(`admin/recipes/update-on-use`)
+    ));
+  }
+
   updateRealmStatuses(): Promise<any> {
     return firstValueFrom(this.http.get(
       Endpoints.getLambdaUrl(`admin/realm/statuses`)));
@@ -64,5 +75,10 @@ export class AdminService {
   addMissingRealms(): Promise<any> {
     return firstValueFrom(this.http.get(
       Endpoints.getLambdaUrl(`admin/realm/add-missing-realms`)));
+  }
+
+  updateHouse(house: AuctionHouseStatus) {
+    return firstValueFrom(this.http.post(
+      Endpoints.getLambdaUrl(`admin/auction-house/realm/update`), house));
   }
 }

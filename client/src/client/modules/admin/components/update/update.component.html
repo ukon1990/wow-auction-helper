@@ -24,6 +24,10 @@
                   (click)="updateRecipes()" [disabled]="isProcessingRecipes">
             Update
           </button>
+          <button mat-stroked-button
+                  (click)="updateOnUseRecipes()" [disabled]="isProcessingRecipes">
+            Update on use
+          </button>
         </mat-card-title>
         <mat-card-content>
           <mat-progress-bar *ngIf="isProcessingRecipes" color="primary" mode="indeterminate"></mat-progress-bar>
