@@ -1,5 +1,5 @@
 import {HttpResponse} from '@models/http-response.model';
-import fetch from 'node-fetch';
+import fetch, {Response} from 'node-fetch';
 
 const request: any = require('request');
 
@@ -8,6 +8,7 @@ interface Headers {
 }
 
 export class HttpClientUtil {
+  // @ts-ignore
   private readonly timeout?: number;
 
   constructor(timeout?: number) {
@@ -22,7 +23,7 @@ export class HttpClientUtil {
           'User-Agent': 'Mozilla/5.0',
         },
       })
-        .then(async response => {
+        .then(async (response: Response) => {
           this.handleResponse(expectJSON, response, resolve, reject);
         })
         .catch(error => {
@@ -75,7 +76,7 @@ export class HttpClientUtil {
     });
   }
 
-  private handleResponse(expectJSON: boolean, response: any, resolve: (value: any) => void, reject: (reason?: any) => void) {
+  private handleResponse(expectJSON: boolean, response: Response, resolve: (value: any) => void, reject: (reason?: any) => void) {
     (expectJSON ? response.json() : response.text())
       .then(body => {
         resolve({
@@ -84,6 +85,16 @@ export class HttpClientUtil {
           body,
         });
       })
-      .catch(reject);
+      .catch(error => {
+        if (response?.status && response.status >= 400) {
+          reject({
+            status: response.status,
+            statusText: response.statusText,
+            error,
+          });
+          return;
+        }
+        reject(error);
+      });
   }
 }

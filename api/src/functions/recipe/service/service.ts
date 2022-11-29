@@ -4,6 +4,7 @@ import {Recipev2} from '../recipev2.model';
 import {RecipeRepository} from '../repository/repository';
 import {RecipeV2Util} from '../util/recipev2.util';
 import {APIRecipe} from '../../../shared/models';
+import {UpdatesService} from "@functions/updates/service";
 
 export class RecipeService {
   private static repository = new RecipeRepository();
@@ -41,6 +42,52 @@ export class RecipeService {
           })
         }))
         .catch(reject);
+    });
+  }
+
+  /**
+   * Gets recipe snot related to a profession from WoWHead
+   */
+  static getOnUseRecipes(): Promise<APIRecipe[]> {
+    return new Promise<APIRecipe[]>((resolve, reject) => {
+      RecipeV2Util.getOnUseRecipes()
+        .then(async recipes => {
+          const db = new DatabaseUtil(false);
+          await db.enqueueHandshake()
+            .catch(console.error);
+          const mappedRecipes: Recipev2[] = RecipeV2Util.mapAPIRecipesToV2Recipes(recipes);
+          let completed = 0;
+          for (const recipe of mappedRecipes) {
+            await this.repository.insertData(recipe, db)
+              .then(() => completed++)
+              .catch(console.error);
+            console.log(`getOnUseRecipes progress: ${completed} / ${mappedRecipes.length} = ${
+              Math.round((completed / mappedRecipes.length) * 100)}`);
+          }
+          db.end();
+          await UpdatesService.getAndSetRecipes()
+            .then(() => console.log('Done uploading recipes'))
+            .catch(console.error);
+          await UpdatesService.getAndSetTimestamps()
+            .then(() => console.log('Done updating the timestamps'))
+            .catch(console.error);
+          resolve(recipes);
+        })
+        .catch(reject);
+    });
+  }
+
+  static compareRecipeAPI(id: number) {
+    return new Promise((resolve, reject) => {
+      RecipeV2Util.getRecipeFromAPI(id)
+        .then(api => {
+          this.getById(id, 'en_GB')
+            .then(db => {
+              resolve({
+                api, db
+              });
+            }).catch(reject);
+        }).catch(reject);
     });
   }
 

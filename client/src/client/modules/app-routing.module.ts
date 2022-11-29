@@ -31,6 +31,7 @@ import {ProfitSummaryComponent} from './addon/components/profit-summary2/profit-
 import {AdminCanActivateGuard} from './admin/admin-can-activate.guard';
 import {UsersComponent} from './admin/components/users/users.component';
 import {RealmComponent} from "./admin/components/realm/realm.component";
+import {RecipeComponent} from "./admin/components/recipe/recipe.component";
 
 export const ROUTE_HIDDEN_FLAGS = {
   IS_NOT_REGISTERED: 'IS_NOT_REGISTERED',
@@ -191,6 +192,11 @@ const ADMIN_ROUTE: TitledRoute = {
       component: UpdateComponent,
       isHidden: ROUTE_HIDDEN_FLAGS.ADMIN_ONLY,
       path: 'update-or-add'
+    }, {
+      title: 'Recipes',
+      component: RecipeComponent,
+      isHidden: ROUTE_HIDDEN_FLAGS.ADMIN_ONLY,
+      path: 'recuoe'
     },
     {
       title: 'Add NPCs',

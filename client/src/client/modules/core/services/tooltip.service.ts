@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, firstValueFrom} from 'rxjs';
 import {Tooltip} from '../models/tooltip.model';
 import {DomSanitizer} from '@angular/platform-browser';
+import {getWowHeadTooltipUrl} from '@shared/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -11,13 +12,6 @@ export class TooltipService {
   isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   tooltips: BehaviorSubject<Map<string, Tooltip>> = new BehaviorSubject<Map<string, Tooltip>>(new Map());
   activeTooltip: BehaviorSubject<Tooltip> = new BehaviorSubject<Tooltip>(undefined);
-  /*
-    TODO: Update tooltips to use the latest endpoint:
-    Example url: https://nether.wowhead.com/tooltip/item/199686?dataEnv=1&locale=0
-    - Need to get all the locale id's etc
-   */
-  private getUrl = (isClassic: boolean, id: number, type: string = 'item', localeId: string) =>
-      `https://nether.wowhead.com${isClassic ? '/wotlk' : ''}/tooltip/${type}/${id}?dataEnv=1&locale=${localeId}`
 
   constructor(
     private http: HttpClient,
@@ -28,10 +22,19 @@ export class TooltipService {
     this.activeTooltip.next(undefined);
   }
 
-  get(type: string, id: number, bonusIds: number[], isClassic: boolean, event: MouseEvent, item: any, extra: string): Promise<Element> {
+  get(
+    type: string,
+    id: number,
+    speciesId: number,
+    bonusIds: number[],
+    isClassic: boolean,
+    event: MouseEvent,
+    item: any,
+    extra: string
+  ): Promise<Element> {
     const map = this.tooltips.value;
     const locale = (localStorage.getItem('locale') || 'en').split('_')[0];
-    let url = this.getUrl(isClassic, id, type, locale);
+    let url = getWowHeadTooltipUrl(isClassic, id, type, locale);
     if (bonusIds && bonusIds.length) {
       url += '&bonus=' + bonusIds.join(':');
     }
@@ -47,12 +50,12 @@ export class TooltipService {
         this.activeTooltip.next(tip);
         resolve(map.get(url).body as Element);
       } else {
-        this.http.get(url)
-          .toPromise()
+        firstValueFrom(this.http.get(url))
           .then(({tooltip}: {tooltip: any}) => {
             const tip: Tooltip = {
               id,
               bonusIds,
+              speciesId,
               x,
               y,
               type: type,

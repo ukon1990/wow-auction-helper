@@ -33,7 +33,7 @@ export class RecipeRepository extends Repository<APIRecipe> {
                                 LEFT JOIN professions ON professions.id = skillTier.professionId`;
   }
 
-  delete(id: number): Promise<APIRecipe> {
+  delete(_id: number): Promise<APIRecipe> {
     return Promise.resolve(undefined);
   }
 
@@ -149,7 +149,7 @@ export class RecipeRepository extends Repository<APIRecipe> {
     // this.getIcon(recipe.id)
     return new Promise(async (resolve, reject) => {
           const queries = [
-            new RDSQueryUtil('recipesName', false).insert({
+            new RDSQueryUtil('recipesName', false).insertOrUpdate({
               id: recipe.id,
               ...recipe.name
             })
@@ -170,17 +170,17 @@ export class RecipeRepository extends Repository<APIRecipe> {
           }
 
           if (recipe.description && recipe.description.en_GB) {
-            queries.push(new RDSQueryUtil('recipesDescription', false).insert({
+            queries.push(new RDSQueryUtil('recipesDescription', false).insertOrUpdate({
               id: recipe.id,
               ...recipe.description
             }));
           }
 
           this.getModifiedCraftingSlotQueries(recipe, queries);
-          await db.query(`INSERT INTO recipes(
+          const insertRecipes = `INSERT INTO recipes(
                         id,
                         icon,
-                        rank,
+                        \`rank\`,
                         craftedItemId,
                         hordeCraftedItemId,
                         allianceCraftedItemId,
@@ -192,7 +192,7 @@ export class RecipeRepository extends Repository<APIRecipe> {
             )
             VALUES (
                     ${recipe.id},
-                    "${recipe.media.icon}",
+										${recipe.media ? `"${recipe.media.icon}"` : null},
                     ${recipe.rank || 0},
                     ${recipe.crafted_item ? recipe.crafted_item.id : null},
                     ${recipe.horde_crafted_item ? recipe.horde_crafted_item.id : null},
@@ -206,12 +206,14 @@ export class RecipeRepository extends Repository<APIRecipe> {
                 minCount = ${recipe.crafted_quantity ? recipe.crafted_quantity.minimum || recipe.crafted_quantity.value : 0},
                 maxCount = ${recipe.crafted_quantity ? recipe.crafted_quantity.maximum || recipe.crafted_quantity.value : 0},
                 timestamp = CURRENT_TIMESTAMP;
-              `)
-            .catch(console.error);
-          Promise.all(
-            queries.map(q =>
-              db.query(q).catch(console.error)))
-            .then(() => resolve())
+              `;
+          await db.query(insertRecipes)
+            .then(() =>
+              Promise.all(
+                queries.map(q =>
+                  db.query(q).catch(console.error)))
+                .then(() => resolve())
+                .catch(reject))
             .catch(reject);
         });
   }
@@ -228,11 +230,11 @@ export class RecipeRepository extends Repository<APIRecipe> {
     }
   }
 
-  update(data: APIRecipe): Promise<APIRecipe> {
+  update(_data: APIRecipe): Promise<APIRecipe> {
     return Promise.resolve(undefined);
   }
 
-  insert(data: APIRecipe): Promise<any> {
+  insert(_data: APIRecipe): Promise<any> {
     return Promise.resolve(undefined);
   }
 

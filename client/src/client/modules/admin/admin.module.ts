@@ -21,8 +21,11 @@ import {ItemModule} from '../item/item.module';
 import {UserModule} from '../user/user.module';
 import {UsersComponent} from './components/users/users.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import { RealmComponent } from './components/realm/realm.component';
+import {RealmComponent} from './components/realm/realm.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import {RecipeComponent} from './components/recipe/recipe.component';
+import {MatExpansionModule} from "@angular/material/expansion";
+import {MatGridListModule} from "@angular/material/grid-list";
 
 
 @NgModule({
@@ -34,25 +37,28 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
     TestComponent,
     UsersComponent,
     RealmComponent,
+    RecipeComponent,
   ],
-    imports: [
-        CommonModule,
-        MatCardModule,
-        MatProgressBarModule,
-        MatButtonModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatInputModule,
-        MatTabsModule,
-        TableModule,
-        UtilModule,
-        MatListModule,
-        ItemModule,
-        UserModule,
-        MatProgressSpinnerModule,
-        MatCheckboxModule
-    ],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatProgressBarModule,
+    MatButtonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatTabsModule,
+    TableModule,
+    UtilModule,
+    MatListModule,
+    ItemModule,
+    UserModule,
+    MatProgressSpinnerModule,
+    MatCheckboxModule,
+    MatExpansionModule,
+    MatGridListModule
+  ],
   providers: [AdminService]
 })
 export class AdminModule {

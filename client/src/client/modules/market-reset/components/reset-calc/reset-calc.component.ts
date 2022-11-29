@@ -64,7 +64,7 @@ export class ResetCalcComponent implements OnInit, OnDestroy {
   }
 
   get timeToBreakEven(): number {
-    const salePct = this.auctionItem.stats.tsm.salePct;
+    const salePct = this.auctionItem.stats?.tsm.salePct || 0;
     const numberOfItems = this.resetPrice.breakEvenQuantity;
     const avgDailySold = this.auctionItem.stats ?
       this.auctionItem.stats.tsm.soldPerDay : 0;
