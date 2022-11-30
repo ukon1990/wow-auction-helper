@@ -46,7 +46,7 @@ export class AuctionService {
         'If-Modified-Since': 'Sat, 14 Mar 3000 20:07:10 GMT'
       })
         .then(({headers}) => {
-          let newLastModified = (headers['date'] || headers['Last-Modified'] || headers['last-modified']);
+          let newLastModified = (headers['Last-Modified'] || headers['last-modified'] || headers['date']);
 
           if (Array.isArray(newLastModified)) {
             // Keeping it like this, in case they decide to move it back to being non-array.

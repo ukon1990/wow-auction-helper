@@ -1,7 +1,7 @@
 import {format} from 'sqlstring';
 import {Endpoints} from '../../../utils/endpoints.util';
 import {HttpClientUtil} from '../../../utils/http-client.util';
-import {Recipev2} from '../recipev2.model';
+import {ReagentSlotType, Recipev2} from '../recipev2.model';
 import {AuthHandler} from '../../handlers/auth.handler';
 import {DatabaseUtil} from '../../../utils/database.util';
 import {RDSQueryUtil} from '../../../utils/query.util';
@@ -18,17 +18,37 @@ export class RecipeV2Util {
     return new Promise(async (resolve, reject) => {
       await AuthHandler.getToken();
       // TODO: Fetch media
-      const url = new Endpoints().getPath(`recipe/${id}`, 'us', NameSpace.STATIC_RETAIL);
+      const endpoints = new Endpoints();
+      const url = endpoints.getPath(`recipe/${id}`, 'us', NameSpace.STATIC_RETAIL);
       console.log('URL', url);
-      new HttpClientUtil().get(url)
-        .then(({body}) => {
-          this.getIcon(id)
-            .then(icon => {
-              const recipe: Recipev2 = body;
+      const http = new HttpClientUtil();
+      http.get(url)
+        .then(async ({body}) => {
+          const recipe: Recipev2 = body;
+
+          await this.getIcon(id)
+            .then(async icon => {
               recipe.media.icon = icon;
-              resolve(recipe);
             })
-            .catch(reject);
+            .catch(console.error);
+          for (const slot of (recipe.modified_crafting_slots || [])) {
+            try {
+              if (slot?.slot_type.key?.href) {
+                await http.get<ReagentSlotType>(endpoints.getForKey(slot.slot_type.key.href))
+                  .then(({body: slotType}) => {
+                    slot.slot_type = {
+                      ...slot.slot_type,
+                      ...slotType,
+                    };
+                  })
+                  .catch(console.error);
+              }
+            } catch (error) {
+              console.error('Could not get slot type', endpoints.getForKey(slot.slot_type.key.href), error);
+            }
+          }
+
+          resolve(recipe);
         })
         .catch(error => {
           console.error('RecipeV2Util.getRecipeFromAPI.get', url, id, error);
@@ -170,12 +190,13 @@ export class RecipeV2Util {
               };
               result.push(res);
 
-              await db.query(format(`INSERT INTO professions
-																		 VALUES (?, ?, ?)`, [
-                res.id,
-                res.icon,
-                res.type
-              ]))
+              await db.query(
+                new RDSQueryUtil('professions', false).insertOrUpdate({
+                  id: res.id,
+                  icon: res.icon,
+                  type: res.type,
+                })
+              )
                 .catch(console.error);
 
               await this.insertLocale(res.id, 'professionsName', res.name, db)
@@ -203,19 +224,19 @@ export class RecipeV2Util {
 
                       await db.query(format(`
 												INSERT INTO professionSkillTiers
-												VALUES (?, ?, ?, ?)`, [
+												VALUES (?, ?, ?, ?)
+												ON DUPLICATE KEY UPDATE id = id
+                      `, [
                         s.id, res.id, s.minimum_skill_level, s.maximum_skill_level
                       ]))
                         .catch(console.error);
                       await this.insertLocale(s.id, 'professionSkillTiersName', skillTier.name, db)
                         .catch(console.error);
 
-                      // Skipping over it if it's not shadowlands recipes
-                      /*
-                      if (skillTier.name.en_GB.indexOf('Shadowlands') === -1) {
+                      // Skipping over it if it's not Dragonflight recipes
+                      if (skillTier.name.en_GB.indexOf('Dragon') === -1) {
                         return;
                       }
-                      */
 
                       (s.categories || []).forEach(c =>
                         c.recipes.forEach(async r => {
@@ -224,13 +245,14 @@ export class RecipeV2Util {
                             new Promise<void>(async (success) => {
                               await RecipeService.getAndInsert(r.id, db)
                                 .catch(console.error);
-                              await db.query(format(`
-																UPDATE recipes
-																SET professionSkillTierId = ?,
-																		type                  = ?
-																WHERE id = ?`, [
-                                s.id, c.name.en_GB, r.id
-                              ]))
+
+                              await db.query(
+                                new RDSQueryUtil('recipes', false)
+                                  .update(r.id, {
+                                    professionSkillTierId: s.id,
+                                    type: c.name.en_GB
+                                  })
+                              )
                                 .catch(error =>
                                   console.error('Could not get recipe', r, error));
                               completed++;
@@ -264,24 +286,8 @@ export class RecipeV2Util {
   }
 
   private static insertLocale(id: number, table: string, locale: ItemLocale, db: DatabaseUtil): Promise<void> {
-    const sql = format(`INSERT INTO ${table}
-												VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
-      id,
-      locale.en_GB,
-      locale.en_US,
-      locale.de_DE,
-      locale.es_ES,
-      locale.es_MX,
-      locale.fr_FR,
-      locale.it_IT,
-      locale.pl_PL,
-      locale.pt_PT,
-      locale.pt_BR,
-      locale.ru_RU,
-      locale.ko_KR,
-      locale.zh_TW,
-      locale.zh_CN,
-    ]);
+    const sql = new RDSQueryUtil(table, false)
+      .insertOrUpdate({...locale, id});
     return db.query(sql);
   }
 
@@ -343,6 +349,25 @@ export class RecipeV2Util {
         maximum: recipe.maxCount,
       },
       modified_crafting_slots: [],
+    });
+  }
+
+  static updateRecipe(recipe: APIRecipe): Promise<APIRecipe> {
+    return new Promise<APIRecipe>((resolve, reject) => {
+      if (recipe.id) {
+        const query = new RDSQueryUtil('recipe')
+          .update(recipe.id, recipe);
+        new DatabaseUtil()
+          .query(query)
+          .then(() => resolve(recipe))
+          .catch(reject);
+
+        if (recipe.reagents && recipe.reagents.length) {
+          console.warn('Updating reagents is not implemented yet');
+        }
+      } else {
+        reject({code: 404, message: 'Could not find recipe with id ' + id});
+      }
     });
   }
 }

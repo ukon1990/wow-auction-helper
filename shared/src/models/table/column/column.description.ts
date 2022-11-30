@@ -1,8 +1,9 @@
 import {RowAction} from '../../../models';
+import {ColumnTypeEnum} from '../../../enum';
 
 export interface ColumnDescription {
   title: string;
-  dataType: string;
+  dataType: ColumnTypeEnum | string;
   key?: string;
   actions?: string[] | RowAction[];
   hideOnMobile?: boolean;

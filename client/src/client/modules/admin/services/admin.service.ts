@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {GlobalStatus, SQLProcess, TableSize} from '@shared/models';
+import {APIRecipe, GlobalStatus, SQLProcess, TableSize} from '@shared/models';
 import {Endpoints} from '../../../services/endpoints';
 import {firstValueFrom} from 'rxjs';
 import {AuctionHouseStatus} from '../../auction/models/auction-house-status.model';
@@ -47,6 +47,19 @@ export class AdminService {
       Endpoints.getLambdaUrl(`admin/item/find-missing-items`),
       {isClassic}
     ));
+  }
+
+  getAllRecipes(): Promise<{recipes: APIRecipe[]}> {
+    return firstValueFrom(this.http.get(
+      Endpoints.getLambdaUrl(`admin/recipes`)
+    )) as Promise<{recipes: APIRecipe[]}>;
+  }
+
+  updateRecipe(recipe: APIRecipe): Promise<APIRecipe> {
+    return firstValueFrom(this.http.patch(
+      Endpoints.getLambdaUrl(`admin/recipes`),
+      recipe
+    )) as Promise<APIRecipe>;
   }
 
   updateRecipes(isClassic): Promise<any> {

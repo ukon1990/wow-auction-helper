@@ -15,8 +15,8 @@ export class HttpClientUtil {
     this.timeout = timeout;
   }
 
-  get<T = any>(url: string, expectJSON: boolean = true, headers?: Headers): Promise<T> {
-    return new Promise<any>((resolve, reject) => {
+  get<T = any>(url: string, expectJSON: boolean = true, headers?: Headers): Promise<HttpResponse<T>> {
+    return new Promise<HttpResponse<T>>((resolve, reject) => {
       // timeout: this.timeout || undefined,
       fetch(url, {
         headers: headers || {

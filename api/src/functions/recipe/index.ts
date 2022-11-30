@@ -8,6 +8,32 @@ export default {
       Function: 'Wah-getAllRecipesAfter',
       Project: 'WAH',
     },
+    events: [{
+      http: {
+        method: 'get',
+        path: 'admin/recipes',
+        cors: {
+          origin: 'http://localhost:4200,https://wah.jonaskf.net',
+        }
+      },
+    }]
+  },
+  updateRecipe: {
+    handler: `${handlerPath(__dirname)}/controller.updateRecipe`,
+    memorySize: 128,
+    tags: {
+      Function: 'Wah-updateRecipe',
+      Project: 'WAH',
+    },
+    events: [{
+      http: {
+        method: 'patch',
+        path: 'admin/recipes',
+        cors: {
+          origin: 'http://localhost:4200,https://wah.jonaskf.net',
+        }
+      },
+    }]
   },
   getRecipeById: {
     handler: `${handlerPath(__dirname)}/controller.getById`,

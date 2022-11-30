@@ -8,7 +8,7 @@ export const findMissingItemsAndImport = middyfy(async (event): Promise<Validate
   // If it is a CloudEvent then the parameters are set directly onto the event. If not it is in the body
   let clientId = event['clientId'];
   let clientSecret = event['clientSecret'];
-  const isClassic = event['isClassic'] || event.body.isClassic || false;
+  const isClassic = event['isClassic'] || event.body?.isClassic || false;
   const service = new ItemServiceV2(isClassic);
   const authService = new AuthService(event.headers);
   const isAdmin = await authService.isAdmin();

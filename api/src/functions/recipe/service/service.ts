@@ -31,13 +31,15 @@ export class RecipeService {
     });
   }
 
-  static getAllAfter(timestamp: number, locale: string, db: DatabaseUtil): Promise<RecipeAPIResponse> {
-    return new Promise((resolve, reject) => {
+  static getAllAfter(timestamp: number, locale: string, db: DatabaseUtil, keepTimestamp = false): Promise<RecipeAPIResponse> {
+    return new Promise<RecipeAPIResponse>((resolve, reject) => {
       this.repository.getAllAfter(timestamp, locale, db)
         .then((recipes: APIRecipe[]) => resolve({
           timestamp: recipes[0] ? recipes[0].timestamp : timestamp,
           recipes: recipes.map(recipe => {
-            delete recipe.timestamp;
+            if (!keepTimestamp) {
+              delete recipe.timestamp;
+            }
             return recipe;
           })
         }))

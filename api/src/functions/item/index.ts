@@ -3,7 +3,7 @@ import {handlerPath} from '@libs/handler-resolver';
 export default {
   findMissingItemsAndImport: {
     handler: `${handlerPath(__dirname)}/controller.findMissingItemsAndImport`,
-    memorySize: 200,
+    memorySize: 700,
     timeout: 600,
     tags: {
       Function: 'Wah-findMissingItemsAndImport',

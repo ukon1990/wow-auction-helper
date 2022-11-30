@@ -24,9 +24,9 @@ export class ItemServiceV2 {
   private nameSpace: NameSpace;
 
   constructor(private isClassic = false) {
-  this.table = isClassic ? 'itemsClassic' : 'items';
-  this.localeTable = isClassic ? 'itemClassic_name_locale' : 'item_name_locale';
-  this.nameSpace = isClassic ? NameSpace.STATIC_CLASSIC : NameSpace.STATIC_RETAIL;
+    this.table = isClassic ? 'itemsClassic' : 'items';
+    this.localeTable = isClassic ? 'itemClassic_name_locale' : 'item_name_locale';
+    this.nameSpace = isClassic ? NameSpace.STATIC_CLASSIC : NameSpace.STATIC_RETAIL;
   }
 
   findMissingItemsAndImport(clientId?: string, clientSecret?: string): Promise<UpdateProgressModel> {
@@ -40,10 +40,13 @@ export class ItemServiceV2 {
     return new Promise<UpdateProgressModel>((resolve, reject) => {
       const db = new DatabaseUtil(false);
       console.log('Checking for new items to add');
+      const start = +new Date();
       (this.isClassic ? this.repository.findMissingItemsFromAuctionsClassic(db) : this.repository.findMissingItemsFromAuctions(db))
         .then(ids => {
+          console.log(`Query took: ${DateUtil.timeSince(start, 's')}s`);
+          const timeLimit = 500 - DateUtil.timeSince(start, 's');
           console.log(`There are ${ids.length} new items to add.`);
-          this.addOrUpdateItemsByIds(ids, db)
+          this.addOrUpdateItemsByIds(ids, db, timeLimit)
             .then((response) => {
               db.end();
               resolve(response);
@@ -63,10 +66,12 @@ export class ItemServiceV2 {
   updateExistingItemsForCurrentExpansion(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       const db = new DatabaseUtil(false);
+      const start = +new Date();
       this.repository.getAllItemIdsFromCurrentExpansion(db)
         .then(ids => {
+          const timeLimit = 55 - DateUtil.timeSince(start, 's');
           console.log('Items to update', ids.length);
-          this.addOrUpdateItemsByIds(ids, db)
+          this.addOrUpdateItemsByIds(ids, db, timeLimit)
             .then(() => {
               db.end();
               resolve();
@@ -83,7 +88,7 @@ export class ItemServiceV2 {
     });
   }
 
-  addOrUpdateItemsByIds(ids: number[], db: DatabaseUtil): Promise<UpdateProgressModel> {
+  addOrUpdateItemsByIds(ids: number[], db: DatabaseUtil, timeLimit: number): Promise<UpdateProgressModel> {
     return new Promise<UpdateProgressModel>(async (resolve) => {
       const progress = new UpdateProgressModel('items', ids.length);
       /*const promiseThrottle = new PromiseThrottle({
@@ -93,7 +98,7 @@ export class ItemServiceV2 {
       const startTime = +new Date();
       /*const promises: Promise<any>[] = [];*/
       for (const id of ids) {
-        if (!isOffline && DateUtil.timeSince(startTime, 's') > 55) {
+        if (!isOffline && DateUtil.timeSince(startTime, 's') > timeLimit) {
           continue;
         }
 
@@ -105,7 +110,11 @@ export class ItemServiceV2 {
                 Math.round(progress.completed / ids.length * 100)}%)`);
             })
             .catch(async error => {
-              await db.query(`insert into missing_items(id, classic) values(${id}, 1)`).catch(console.error);
+              await db.query(`
+								INSERT INTO missing_items(id, classic)
+								VALUES (${id}, ${this.isClassic ? 1 : 0})
+								ON DUPLICATE KEY UPDATE id = id
+              `).catch(console.error);
               console.error(error);
             })
             .finally(() => progress.addCompleted());
@@ -251,26 +260,30 @@ export class ItemServiceV2 {
 
       ItemUtil.getFromBlizzard(id, locale, undefined, namespace)
         .then(async (it: Item) => {
-          let item: Item = new Item();
-          item = it;
+          try {
+            let item: Item = new Item();
+            item = it;
 
-          if (!isClassic) {
-            await ItemUtil.getWowDBData(id)
-              .then(i =>
-                WoWDBItem.setItemWithWoWDBValues(i, item))
+            if (!isClassic) {
+              await ItemUtil.getWowDBData(id)
+                .then(i =>
+                  WoWDBItem.setItemWithWoWDBValues(i, item))
+                .catch(console.error);
+            }
+
+            await WoWHeadUtil.getWowHeadData(id, isClassic)
+              .then((wowHead: WoWHead) => {
+                item.setDataFromWoWHead(wowHead);
+              })
               .catch(console.error);
-          }
 
-          await WoWHeadUtil.getWowHeadData(id, isClassic)
-            .then((wowHead: WoWHead) => {
-              item.setDataFromWoWHead(wowHead);
-            })
-            .catch(console.error);
-
-          if (item.id > 175264 && (item.expansionId < 8 || !item.expansionId)) {
-            item.expansionId = 8;
+            if (item.id > 175264 && (item.expansionId < 8 || !item.expansionId)) {
+              item.expansionId = 8;
+            }
+            resolve(item);
+          } catch (err) {
+            reject(err);
           }
-          resolve(item);
         })
         .catch(error => {
           reject(error);

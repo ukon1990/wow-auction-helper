@@ -22,8 +22,10 @@ describe('RDSQueryUtil', () => {
         new Date()
       );
       expect(util.insert(obj))
-        .toBe('INSERT INTO test_table(id,name,isTrue,list,date,timestamp) ' +
-          'VALUES(0,\"Testing\",0,\"[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]\",' + +obj.date + ',CURRENT_TIMESTAMP);');
+        .toBe(
+          'INSERT INTO test_table(id,name,isTrue,list,date,timestamp) ' +
+          'VALUES(0,\'Testing\',0,\'[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]\',' + +obj.date + ',CURRENT_TIMESTAMP);'
+        );
     });
 
     it('insert with true bool', () => {
@@ -36,7 +38,7 @@ describe('RDSQueryUtil', () => {
       );
       expect(util.insert(obj))
         .toBe('INSERT INTO test_table(id,name,isTrue,list,date,timestamp) ' +
-          'VALUES(0,\"Testing\",1,\"[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]\",' + +obj.date + ',CURRENT_TIMESTAMP);');
+          `VALUES(0,'Testing',1,'[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]',${+obj.date},CURRENT_TIMESTAMP);`);
     });
 
     it('insert with undefined', () => {
@@ -49,7 +51,7 @@ describe('RDSQueryUtil', () => {
       );
       expect(util.insert(obj))
         .toBe('INSERT INTO test_table(id,name,isTrue,list,date,timestamp) ' +
-          'VALUES(0,\"Testing\",1,\"[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]\",null,CURRENT_TIMESTAMP);');
+          `VALUES(0,'Testing',1,'[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]',NULL,CURRENT_TIMESTAMP);`);
     });
 
     it('insert with object', () => {
@@ -62,7 +64,7 @@ describe('RDSQueryUtil', () => {
       );
       expect(util.insert(obj))
         .toBe('INSERT INTO test_table(id,name,isTrue,list,date,timestamp) ' +
-          'VALUES(0,\"Testing\",1,\"[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]\",\"{\\\"name\\\":\\\"test\\\"}\",CURRENT_TIMESTAMP);');
+          `VALUES(0,'Testing',1,'[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]','{\\\"name\\\":\\\"test\\\"}',CURRENT_TIMESTAMP);`);
     });
   });
 
@@ -78,9 +80,9 @@ describe('RDSQueryUtil', () => {
       expect(util.update(obj.id, obj))
         .toBe('UPDATE test_table ' +
           'SET id = 0,' +
-          'name = "Testing",' +
+          'name = \'Testing\',' +
           'isTrue = 0,' +
-          'list = \"[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]\",' +
+          'list = \'[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]\',' +
           'date = ' + +obj.date + ',' +
           'timestamp = CURRENT_TIMESTAMP ' +
           'WHERE id = 0;');

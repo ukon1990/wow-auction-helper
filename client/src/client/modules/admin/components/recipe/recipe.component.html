@@ -29,15 +29,25 @@
             </mat-card-actions>
             <mat-grid-list cols="2" rowHeight="2:1" *ngIf="comparison.value">
                 <mat-grid-tile>
-                    {{comparison.value.api | json}}
+                    {{ comparison.value.api | json }}
                 </mat-grid-tile>
                 <mat-grid-tile>
-                    {{comparison.value.db | json}}
+                    {{ comparison.value.db | json }}
                 </mat-grid-tile>
                 <mat-grid-tile>
                     asd
                 </mat-grid-tile>
             </mat-grid-list>
         </mat-card>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            Recipes
+        </mat-expansion-panel-header>
+        <wah-data-table
+                filterParameter="name"
+                [columns]="recipeColumns"
+                [data]="recipes"
+        ></wah-data-table>
     </mat-expansion-panel>
 </mat-accordion>
