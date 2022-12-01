@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {CognitoUser} from 'amazon-cognito-identity-js';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {UserSettings} from '../../models/settings.model';
 import {SettingsService} from '../../services/settings/settings.service';
 import {faSyncAlt} from '@fortawesome/free-solid-svg-icons/faSyncAlt';
@@ -20,25 +20,25 @@ export class ProfileComponent implements OnInit {
   isSavingEmail: boolean;
   emailCodeExpired: boolean;
   settings: UserSettings;
-  form: FormGroup = new FormGroup({
-    username: new FormControl({value: null, disabled: true}),
-    email: new FormControl({value: null, disabled: true}, [Validators.email]),
-    emailVerified: new FormControl({value: null, disabled: true}, [Validators.email]),
+  form: UntypedFormGroup = new UntypedFormGroup({
+    username: new UntypedFormControl({value: null, disabled: true}),
+    email: new UntypedFormControl({value: null, disabled: true}, [Validators.email]),
+    emailVerified: new UntypedFormControl({value: null, disabled: true}, [Validators.email]),
   });
-  passwordForm: FormGroup = new FormGroup({
-    oldPassword: new FormControl(null, ValidatorsUtil.password),
-    password: new FormControl(null, ValidatorsUtil.password),
-    confirmPassword: new FormControl(
+  passwordForm: UntypedFormGroup = new UntypedFormGroup({
+    oldPassword: new UntypedFormControl(null, ValidatorsUtil.password),
+    password: new UntypedFormControl(null, ValidatorsUtil.password),
+    confirmPassword: new UntypedFormControl(
       null,
       [(control) =>
         ValidatorsUtil.confirmPassword(control, this.passwordForm), Validators.required]
     )
   });
-  emailForm: FormGroup = new FormGroup({
-    email: new FormControl(null, Validators.email),
+  emailForm: UntypedFormGroup = new UntypedFormGroup({
+    email: new UntypedFormControl(null, Validators.email),
   });
-  verifyEmailForm: FormGroup = new FormGroup({
-    confirmationCode: new FormControl(
+  verifyEmailForm: UntypedFormGroup = new UntypedFormGroup({
+    confirmationCode: new UntypedFormControl(
       null,
       [
         Validators.minLength(1),

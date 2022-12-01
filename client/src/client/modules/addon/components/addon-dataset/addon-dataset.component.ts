@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
 import {SharedService} from '../../../../services/shared.service';
@@ -148,29 +148,29 @@ export class AddonDatasetComponent implements OnDestroy, OnInit {
     columns: [],
     data: []
   };
-  form: FormGroup;
-  inventoryFilterForm: FormGroup;
+  form: UntypedFormGroup;
+  inventoryFilterForm: UntypedFormGroup;
   sm = new SubscriptionManager();
   inventoryValue: number;
   inventoryValueOnlyInDemand: number;
   currentGold = 0;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private router: Router,
     private route: ActivatedRoute,
     private auctionService: AuctionsService
   ) {
     this.form = this.formBuilder.group({
-      dataset: new FormControl(0),
-      realm: new FormControl(),
-      character: new FormControl(),
-      faction: new FormControl(SharedService.user.faction)
+      dataset: new UntypedFormControl(0),
+      realm: new UntypedFormControl(),
+      character: new UntypedFormControl(),
+      faction: new UntypedFormControl(SharedService.user.faction)
     });
 
     this.inventoryFilterForm = this.formBuilder.group({
-      saleRate: new FormControl(0),
-      avgDailySold: new FormControl(0)
+      saleRate: new UntypedFormControl(0),
+      avgDailySold: new UntypedFormControl(0)
     });
   }
 

@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {ItemService} from '../../../../../services/item.service';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {SharedService} from '../../../../../services/shared.service';
 import {NpcService} from '../../../../npc/services/npc.service';
 import {Item} from '@shared/models';
 import {CraftingService} from '../../../../../services/crafting.service';
+import {AdminService} from "../../../services/admin.service";
 
 @Component({
   selector: 'wah-add-items',
@@ -23,7 +24,7 @@ export class AddItemsComponent implements OnInit {
     existing: [],
     failed: []
   };
-  input: FormControl = new FormControl();
+  input: UntypedFormControl = new UntypedFormControl();
   columns = [
     {title: 'ID', key: 'id', dataType: 'string'},
     {title: 'Name', key: 'name', dataType: 'name'},
@@ -37,16 +38,17 @@ export class AddItemsComponent implements OnInit {
     {title: 'ID', key: 'spellID', dataType: 'string'},
     {title: 'Message', key: 'message', dataType: 'string'},
   ];
-  form: FormGroup;
+  form: UntypedFormGroup;
 
   constructor(
     private service: ItemService,
-    private fb: FormBuilder,
+    private adminService: AdminService,
+    private fb: UntypedFormBuilder,
     private npcService: NpcService
   ) {
     this.form = this.fb.group({
-      input: new FormControl(),
-      action: new FormControl(this.dbActions[0])
+      input: new UntypedFormControl(),
+      action: new UntypedFormControl(this.dbActions[0])
     });
   }
 
@@ -75,7 +77,7 @@ export class AddItemsComponent implements OnInit {
       this.progress[key] = [];
     });
     this.progress.ids = this.form.getRawValue().input.replace(/[ a-zA-z]/g, '').split(',');
-    // this.addItem(0);
+    this.addItem(0);
   }
 
   async addItem(index: number) {
@@ -91,7 +93,7 @@ export class AddItemsComponent implements OnInit {
 
   private async processItem(id) {
     if (this.shouldUpdate()) {
-      await this.service.updateItem(id)
+      await this.adminService.updateItemFromAPI(id)
         .then((item) =>
           this.handleServiceResult(item, id))
         .catch((error) => {

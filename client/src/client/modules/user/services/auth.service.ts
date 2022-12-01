@@ -8,12 +8,12 @@ import {BehaviorSubject} from 'rxjs';
 import {FederatedProvider} from '../enums/federated-provider.enum';
 import {AppSyncService} from './app-sync.service';
 import {SettingsService} from './settings/settings.service';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {EmptyUtil, TextUtil} from '@ukon1990/js-utilities';
 import {DatabaseService} from '../../../services/database.service';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {RoutingUtil} from '../../core/utils/routing.util';
-import {MatSnackBar} from "@angular/material/snack-bar";
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'

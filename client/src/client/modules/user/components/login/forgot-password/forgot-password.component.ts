@@ -1,8 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {AuthService} from '../../../services/auth.service';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {HttpErrorResponse} from '@angular/common/http';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ValidatorsUtil} from '../../../utils/validators.util';
 
 @Component({
@@ -11,11 +11,11 @@ import {ValidatorsUtil} from '../../../utils/validators.util';
 })
 export class ForgotPasswordComponent {
   error: HttpErrorResponse;
-  forgotForm: FormGroup = new FormGroup({
-    username: new FormControl(null, [Validators.minLength(3)]),
-    code: new FormControl(null, [Validators.minLength(3), Validators.required]),
-    password: new FormControl(null, [ValidatorsUtil.password, Validators.required]),
-    confirmPassword: new FormControl(null,
+  forgotForm: UntypedFormGroup = new UntypedFormGroup({
+    username: new UntypedFormControl(null, [Validators.minLength(3)]),
+    code: new UntypedFormControl(null, [Validators.minLength(3), Validators.required]),
+    password: new UntypedFormControl(null, [ValidatorsUtil.password, Validators.required]),
+    confirmPassword: new UntypedFormControl(null,
       [(control) => ValidatorsUtil.confirmPassword(control, this.forgotForm), Validators.required]),
   });
 

@@ -8,7 +8,7 @@ import {
   WoWHeadSoldBy
 } from '../models/item/wowhead';
 import {ArrayUtil} from '@ukon1990/js-utilities';
-import {HttpClientUtil} from "./http-client.util";
+import {HttpClientUtil} from './http-client.util';
 
 export class WoWHeadUtil {
 
@@ -185,7 +185,8 @@ export class WoWHeadUtil {
   public static getWowHeadData(id: number, isClassic = false): Promise<WoWHead> {
     return new Promise<WoWHead>(((resolve, reject) => {
       const http = new HttpClientUtil();
-      http.get(`http://www.wowhead.com${isClassic ? '/wotlk' : ''}/item=${id}`)
+      const url = `https://www.wowhead.com${isClassic ? '/wotlk' : ''}/item=${id}`;
+      http.get(url, false)
         .then(({body}) => {
           try {
             const formatted = WoWHeadUtil.setValuesAll(body);
@@ -194,7 +195,9 @@ export class WoWHeadUtil {
             reject(`Could not find the item with id=${id} on WoWHead`);
           }
         })
-        .catch(() => reject(`Could not find the item with id=${id} on WoWHead`));
+        .catch(() => {
+          reject(`Could not find the item with id=${id} on WoWHead`);
+        });
     }));
   }
 

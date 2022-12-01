@@ -14,7 +14,7 @@ import {NpcService} from '../../../../npc/services/npc.service';
 import {ZoneService} from '../../../../zone/service/zone.service';
 import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
 import {ProfessionService} from '../../../../crafting/services/profession.service';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {DownloadDialogComponent} from './dialog/dialog.component';
 
 @Component({

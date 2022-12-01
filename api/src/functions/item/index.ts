@@ -27,5 +27,22 @@ export default {
         }
       },
     }]
-  }
+  },
+  updateItem: {
+    handler: `${handlerPath(__dirname)}/controller.updateItem`,
+    memorySize: 128,
+    tags: {
+      Function: 'Wah-updateItem',
+      Project: 'WAH',
+    },
+    events: [{
+      http: {
+        method: 'get',
+        path: 'admin/items/update/{id}',
+        cors: {
+          origin: 'http://localhost:4200,https://wah.jonaskf.net',
+        }
+      },
+    }]
+  },
 };

@@ -4,7 +4,7 @@ import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {faEye} from '@fortawesome/free-solid-svg-icons';
 import {CustomPrices} from '../../../crafting/models/custom-price';
 import {CustomProcUtil} from '../../../crafting/utils/custom-proc.util';
-import {PageEvent} from '@angular/material/paginator';
+import {LegacyPageEvent as PageEvent} from '@angular/material/legacy-paginator';
 
 @Component({
   selector: 'wah-base-actions',

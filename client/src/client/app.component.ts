@@ -1,8 +1,7 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
 import {SharedService} from './services/shared.service';
-import {Angulartics2GoogleAnalytics} from 'angulartics2';
-import {Angulartics2} from 'angulartics2';
+import {Angulartics2, Angulartics2GoogleAnalytics} from 'angulartics2';
 import {ProspectingAndMillingUtil} from './utils/prospect-milling.util';
 import {ErrorReport} from './utils/error-report.util';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -21,7 +20,7 @@ import {NPC} from './modules/npc/models/npc.model';
 import {TsmLuaUtil} from './utils/tsm/tsm-lua.util';
 import {Filters} from './utils/filtering';
 import {InventoryUtil} from './utils/tsm/inventory.util';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {NewsUtil} from './modules/about/utils/news.util';
 import {NewsComponent} from './modules/about/components/news/news.component';
 import {ItemComponent} from './modules/item/components/item.component';

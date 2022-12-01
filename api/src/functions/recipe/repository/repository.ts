@@ -192,8 +192,8 @@ export class RecipeRepository extends Repository<APIRecipe> {
         craftedItemId: recipe.crafted_item ? recipe.crafted_item.id : undefined,
         hordeCraftedItemId: recipe.horde_crafted_item ? recipe.horde_crafted_item.id : undefined,
         allianceCraftedItemId: recipe.alliance_crafted_item ? recipe.alliance_crafted_item.id : undefined,
-        minCount: recipe.crafted_quantity ? recipe.crafted_quantity.minimum || recipe.crafted_quantity.value : 0,
-        maxCount: recipe.crafted_quantity ? recipe.crafted_quantity.maximum || recipe.crafted_quantity.value : 0,
+        minCount: recipe.crafted_quantity ? recipe.crafted_quantity.minimum || recipe.crafted_quantity.value : 1,
+        maxCount: recipe.crafted_quantity ? recipe.crafted_quantity.maximum || recipe.crafted_quantity.value : 1,
         procRate: 1,
         professionSkillTierId: null // This and type is defined from another call
       });

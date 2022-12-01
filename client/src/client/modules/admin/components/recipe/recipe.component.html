@@ -44,10 +44,57 @@
         <mat-expansion-panel-header>
             Recipes
         </mat-expansion-panel-header>
+        <form [formGroup]="recipeFilter" class="row">
+            <mat-form-field class="col">
+                <input matInput
+                       placeholder="Name"
+                       formControlName="name"
+                />
+            </mat-form-field>
+            <mat-form-field class="col">
+                <mat-select
+                        formControlName="professionId"
+                        placeholder="Profession"
+                >
+                    <mat-option
+                            *ngFor="let profession of professionColumn.options.data"
+                            [value]="profession.id"
+                    >
+                        {{profession.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-checkbox class="col"
+                          formControlName="isMissingCraftedId"
+            >
+                Is missing item reference
+            </mat-checkbox>
+            <mat-checkbox class="col"
+                          formControlName="hasAutoAddedItemId"
+            >
+                Has auto added item reference
+            </mat-checkbox>
+            <button mat-stroked-button
+                    (click)="updateRecipeJSONFilesRetail()"
+                    [disabled]="isUpdatingJSONFiles"
+            >
+                Update JSON
+                <mat-progress-spinner *ngIf="isUpdatingJSONFiles" size="1rem" color="accent">
+                </mat-progress-spinner>
+            </button>
+            <button mat-stroked-button
+                    (click)="getRecipes()"
+                    [disabled]="isLoadingRecipes"
+            >
+                Refresh recipes
+                <mat-progress-spinner *ngIf="isLoadingRecipes" size="1rem" color="accent">
+                </mat-progress-spinner>
+            </button>
+        </form>
         <wah-data-table
-                filterParameter="name"
                 [columns]="recipeColumns"
-                [data]="recipes"
+                [data]="filteredRecipes"
+                [isScrollableAlongXAxis]="true"
         ></wah-data-table>
     </mat-expansion-panel>
 </mat-accordion>

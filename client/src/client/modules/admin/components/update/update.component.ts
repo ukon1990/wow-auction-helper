@@ -8,7 +8,7 @@ import {Item} from '@shared/models';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {AdminService} from '../../services/admin.service';
 import {AuctionsService} from '../../../../services/auctions.service';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {ThemeUtil} from '../../../core/utils/theme.util';
 
 @Component({
@@ -42,8 +42,8 @@ export class UpdateComponent implements OnInit {
   };
 
   isProcessingRecipes = false;
-  form: FormGroup = new FormGroup({
-    isClassic: new FormControl(false)
+  form: UntypedFormGroup = new UntypedFormGroup({
+    isClassic: new UntypedFormControl(false)
   });
 
   constructor(

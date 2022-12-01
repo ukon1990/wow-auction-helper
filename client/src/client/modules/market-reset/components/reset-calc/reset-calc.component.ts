@@ -1,6 +1,6 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
@@ -20,7 +20,7 @@ export class ResetCalcComponent implements OnInit, OnDestroy {
   @Input() auctionItem: AuctionItem;
   @Input() dialogId:  string;
   pipe: GoldPipe = new GoldPipe();
-  form: FormControl = new FormControl(0);
+  form: UntypedFormControl = new UntypedFormControl(0);
   resetPrice = {
     numOfAuctions: 0,
     numOfItems: 0,

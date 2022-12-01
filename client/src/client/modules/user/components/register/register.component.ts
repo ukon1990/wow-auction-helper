@@ -1,7 +1,7 @@
 import {Component, OnDestroy} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ValidatorsUtil} from '../../utils/validators.util';
 import {HttpErrorResponse} from '@angular/common/http';
 import {RegistrationConfirmationComponent} from './registration-confirmation/registration-confirmation.component';
@@ -15,11 +15,11 @@ import {ErrorReport} from '../../../../utils/error-report.util';
 })
 export class RegisterComponent implements OnDestroy {
   error: HttpErrorResponse;
-  registerForm: FormGroup = new FormGroup({
-    username: new FormControl(null, [Validators.minLength(3)]),
-    email: new FormControl(null, [Validators.minLength(3), Validators.email, Validators.required]),
-    password: new FormControl(null, [ValidatorsUtil.password, Validators.required]),
-    confirmPassword: new FormControl(null,
+  registerForm: UntypedFormGroup = new UntypedFormGroup({
+    username: new UntypedFormControl(null, [Validators.minLength(3)]),
+    email: new UntypedFormControl(null, [Validators.minLength(3), Validators.email, Validators.required]),
+    password: new UntypedFormControl(null, [ValidatorsUtil.password, Validators.required]),
+    confirmPassword: new UntypedFormControl(null,
       [(control) => ValidatorsUtil.confirmPassword(control, this.registerForm), Validators.required]),
   });
   sm = new SubscriptionManager();

@@ -3,7 +3,7 @@ import {AuctionsService} from '../../../../services/auctions.service';
 import {OrganizedAuctionResult} from '../../utils/auction.util';
 import {RealmService} from '../../../../services/realm.service';
 import {ColumnDescription, itemQualities, RealmStatus} from '@shared/models';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {AuctionItem} from '../../models/auction-item.model';
 import {AuctionHouseStatus} from '../../models/auction-house-status.model';
@@ -50,7 +50,7 @@ export class AuctionComparisonComponent implements OnInit, OnDestroy {
     this.otherBuyoutColumn,
     this.otherQuantityTotalColumn,
   ];
-  form: FormGroup;
+  form: UntypedFormGroup;
   subs: Subscription = new Subscription();
   itemClasses: ItemClass[] = ItemClassService.classes.value;
   itemQualities = itemQualities;
@@ -59,7 +59,7 @@ export class AuctionComparisonComponent implements OnInit, OnDestroy {
   constructor(
     private auctionService: AuctionsService,
     private realmService: RealmService,
-    private formBuilder: FormBuilder
+    private formBuilder: UntypedFormBuilder
   ) {
 
     this.subs.add(ItemClassService.classes.subscribe(

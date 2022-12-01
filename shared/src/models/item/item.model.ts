@@ -26,6 +26,8 @@ export class Item {
   patch: string;
   nameLocales?: ItemLocale;
   classicPhase?: number;
+  modifiedCraftingId: number;
+  modifiedCraftingCategoryId: number;
 
   inventory: ItemInventory;
 
@@ -50,6 +52,10 @@ export class Item {
       item.preview_item.requirements.reputation.faction) {
       this.minFactionId = item.preview_item.requirements.reputation.faction.id;
       this.minReputation = item.preview_item.requirements.reputation.min_reputation_level;
+    }
+    if (item.modified_crafting) {
+      this.modifiedCraftingId = item.modified_crafting.id;
+      this.modifiedCraftingCategoryId = item.modified_crafting.category.id;
     }
     // TODO: this.itemSpells = this.getItemSpellsFromGameData(item.preview_item.spells);
     return this;

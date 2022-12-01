@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, Input, OnChanges, OnDestroy} from '@angular/core';
-import {AbstractControl, FormBuilder, FormGroup} from '@angular/forms';
+import {AbstractControl, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {HttpErrorResponse} from '@angular/common/http';
 import {CharacterService} from '../services/character.service';
@@ -28,7 +28,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
 
   regions: any;
   downloading: boolean;
-  form: FormGroup;
+  form: UntypedFormGroup;
   private sm = new SubscriptionManager();
   shouldRecalculateDashboards: boolean;
   private lastCalculationTime: number;
@@ -41,7 +41,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
               private professionService: ProfessionService,
               private auctionService: AuctionsService,
               private dashboardService: DashboardService,
-              private formBuilder: FormBuilder
+              private formBuilder: UntypedFormBuilder
   ) {
     this.form = this.formBuilder.group({
       region: SharedService.user.region,

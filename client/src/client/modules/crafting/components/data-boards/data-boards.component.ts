@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { PageEvent } from '@angular/material/paginator';
+import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import {SharedService} from '../../../../services/shared.service';
 import {ColumnDescription} from '@shared/models';
 import {Remains} from '@shared/models';

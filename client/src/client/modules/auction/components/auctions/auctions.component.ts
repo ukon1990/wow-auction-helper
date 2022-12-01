@@ -1,6 +1,6 @@
 import {AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {AuctionItem} from '../../models/auction-item.model';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {Filters} from '../../../../utils/filtering';
 import {GameBuild} from '@shared/utils';
 import {ColumnDescription, itemQualities} from '@shared/models';
@@ -20,7 +20,7 @@ import {columnConfig} from "../../../dashboard/data/columns.data";
   styleUrls: ['./auctions.component.scss']
 })
 export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, AfterContentInit {
-  form: FormGroup;
+  form: UntypedFormGroup;
   itemClasses: ItemClass[] = ItemClassService.classes.value;
   itemQualities = itemQualities;
 
@@ -76,7 +76,7 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
   private subs = new SubscriptionManager();
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private auctionService: AuctionsService,
     private realmService: RealmService
   ) {

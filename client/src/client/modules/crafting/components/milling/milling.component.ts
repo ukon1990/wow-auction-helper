@@ -3,7 +3,7 @@ import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util
 import {ColumnDescription} from '@shared/models';
 import {Remains} from '@shared/models';
 import {SharedService} from '../../../../services/shared.service';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Filters} from '../../../../utils/filtering';
 import {EmptyUtil} from '@ukon1990/js-utilities';
@@ -32,18 +32,18 @@ export class MillingComponent implements OnInit, OnDestroy {
     MILLING: 'MILLING',
     PROSPECTING: 'PROSPECTING'
   };
-  form: FormGroup;
+  form: UntypedFormGroup;
   data = {
     milling: ProspectingAndMillingUtil.mills,
     prospecting: ProspectingAndMillingUtil.prospecting
   };
   sm = new SubscriptionManager();
 
-  constructor(private fb: FormBuilder, private auctionService: AuctionsService) {
+  constructor(private fb: UntypedFormBuilder, private auctionService: AuctionsService) {
     const filter = JSON.parse(localStorage.getItem('query_destroy')) || undefined;
     this.form = fb.group({
       minROI: filter && filter.minROI ? filter.minROI : null,
-      type: new FormControl(0)
+      type: new UntypedFormControl(0)
     });
   }
 

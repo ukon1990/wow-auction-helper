@@ -51,15 +51,29 @@ export const updateRecipe = middyfy(async ({body, headers}): Promise<ValidatedEv
     await RecipeV2Util.updateRecipe(body as APIRecipe)
     // await RecipeV2Util.getRecipeFromAPI(36452)
     .then(async (result) => {
-      await UpdatesService.getAndSetRecipes()
-        .then(() => console.log('Done uploading recipes'))
-        .catch(console.error);
-      await UpdatesService.getAndSetTimestamps()
-        .then(() => console.log('Done updating the timestamps'))
-        .catch(console.error);
       response = formatJSONResponse(result as any);
     })
     .catch(err => response = formatErrorResponse(err.code, err.message, err));
+  }
+  return response;
+});
+
+export const updateJSONFilesRetail = middyfy(async ({headers}): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
+  // const retailService = new RecipeService();
+  const authService = new AuthService(headers);
+  const isAdmin = await authService.isAdmin();
+  let response;
+
+  if (!isAdmin) {
+    response = authService.getUnauthorizedResponse();
+  } else {
+    await UpdatesService.getAndSetRecipes()
+      .then(() => console.log('Done uploading recipes'))
+      .catch(console.error);
+    await UpdatesService.getAndSetTimestamps()
+      .then(() => console.log('Done updating the timestamps'))
+      .catch(console.error);
+    response = formatJSONResponse({message: 'success'} as any);
   }
   return response;
 });

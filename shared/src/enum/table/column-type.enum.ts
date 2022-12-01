@@ -32,6 +32,8 @@ export enum ColumnTypeEnum {
   FormControlText = 'form-control-text',
   FormControlNumber = 'form-control-number',
   FormControlSelect = 'form-control-select',
+  FormControlSelectMulti = 'form-control-select-multi',
   FormControlAutoComplete = 'form-control-autocomplete',
-  FormControlCheckbox = 'form-control-checkbox'
+  FormControlCheckbox = 'form-control-checkbox',
+  FormControlDate = 'form-control-date',
 }

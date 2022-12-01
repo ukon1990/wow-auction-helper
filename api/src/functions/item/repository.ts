@@ -53,55 +53,9 @@ export class RDSItemRepository {
   findMissingItemsFromAuctions(conn: DatabaseUtil): Promise<number[]> {
     return new Promise<number[]>(((resolve, reject) => {
       conn.query(`
-          SELECT tbl.id AS id
-          FROM (
-                   SELECT craftedItemId AS id
-                   FROM recipes
-                   WHERE craftedItemId NOT IN (
-                       SELECT id
-                       FROM items
-                   )
-                   UNION ALL
-                   SELECT hordeCraftedItemId AS id
-                   FROM recipes
-                   WHERE hordeCraftedItemId NOT IN (
-                       SELECT id
-                       FROM items
-                   )
-                   UNION ALL
-                   SELECT allianceCraftedItemId AS id
-                   FROM recipes
-                   WHERE allianceCraftedItemId NOT IN (
-                       SELECT id
-                       FROM items
-                   )
-                   UNION ALL
-                   SELECT itemId AS id
-                   FROM reagents
-                   WHERE itemId NOT IN (
-                       SELECT id
-                       FROM items
-                   )
-                   UNION ALL
-                   SELECT itemId AS id
-                   FROM itemPriceHistoryPerDay
-                   WHERE date >= NOW() - INTERVAL 30 DAY
-                     AND itemId NOT IN (
-                       SELECT id
-                       FROM items
-                       )
-                   UNION ALL
-                   SELECT itemId AS id
-                   FROM itemPriceHistoryPerHour
-                   WHERE date >= NOW() - INTERVAL 1 DAY
-                     AND itemId NOT IN (
-                       SELECT id
-                       FROM items
-                       )) as tbl
-          LEFT JOIN missing_items mi ON mi.id = tbl.id AND mi.classic = 0
-          WHERE mi.id IS NULL
-          GROUP BY tbl.id
-          ORDER BY tbl.id DESC;`)
+				select id
+				from items
+				where timestamp > '2022-12-01' AND timestamp <= '2022-12-1 22:00' AND id > 190631`)
         .then(res => {
           resolve(res.map(({id}) => id));
         })

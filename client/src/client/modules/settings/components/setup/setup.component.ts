@@ -1,11 +1,11 @@
 import {Component} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {SharedService} from '../../../../services/shared.service';
 import {Router} from '@angular/router';
 import {Report} from '../../../../utils/report.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {UserUtil} from '../../../../utils/user/user.util';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {SettingsService} from '../../../user/services/settings/settings.service';
 import {CharacterService} from '../../../character/services/character.service';
 import {UserSettings} from '../../../user/models/settings.model';
@@ -22,14 +22,14 @@ const version = require('../../../../../../package.json').version;
   styleUrls: ['./setup.component.scss']
 })
 export class SetupComponent {
-  form: FormGroup;
+  form: UntypedFormGroup;
   locales = SharedService.locales;
   selectedGameBuild = 0;
 
   sm = new SubscriptionManager();
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private router: Router,
     private settingsSync: SettingsService,
     private characterService: CharacterService,

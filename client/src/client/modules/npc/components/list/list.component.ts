@@ -8,7 +8,7 @@ import {ZoneService} from '../../../zone/service/zone.service';
 import {Zone} from '../../../zone/models/zone.model';
 import {RowClickEvent} from '../../../table/models/row-click-event.model';
 import {Router} from '@angular/router';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {Filters} from '../../../../utils/filtering';
 
 @Component({
@@ -44,10 +44,10 @@ export class ListComponent implements OnInit, OnDestroy {
     }
   };
   sm = new SubscriptionManager();
-  form: FormGroup;
+  form: UntypedFormGroup;
 
   constructor(private service: NpcService, private auctionService: AuctionsService, private zoneService: ZoneService,
-              private router: Router, private fb: FormBuilder) {
+              private router: Router, private fb: UntypedFormBuilder) {
     this.form = fb.group({
       minSaleRate: null,
       minAvgDailySold: null,

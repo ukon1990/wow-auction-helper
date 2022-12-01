@@ -1,10 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ValidatorsUtil} from '../../utils/validators.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {RegisterComponent} from '../register/register.component';
 import {RegistrationConfirmationComponent} from '../register/registration-confirmation/registration-confirmation.component';
 import {ForgotPasswordComponent} from './forgot-password/forgot-password.component';
@@ -17,8 +17,8 @@ import {ErrorReport} from '../../../../utils/error-report.util';
 })
 export class LoginComponent implements OnInit, OnDestroy {
   error: HttpErrorResponse;
-  signupConfirmation = new FormGroup({
-    code: new FormControl(),
+  signupConfirmation = new UntypedFormGroup({
+    code: new UntypedFormControl(),
   });
   signup = {
     isInSignup: false,
@@ -27,9 +27,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     message: undefined,
   };
 
-  loginForm: FormGroup = new FormGroup({
-    username: new FormControl(null, [Validators.minLength(3)]),
-    password: new FormControl(null, [ValidatorsUtil.password]),
+  loginForm: UntypedFormGroup = new UntypedFormGroup({
+    username: new UntypedFormControl(null, [Validators.minLength(3)]),
+    password: new UntypedFormControl(null, [ValidatorsUtil.password]),
   });
   user;
   isAuthenticated;

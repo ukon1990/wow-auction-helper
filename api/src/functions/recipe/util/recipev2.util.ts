@@ -355,7 +355,7 @@ export class RecipeV2Util {
   static updateRecipe(recipe: APIRecipe): Promise<APIRecipe> {
     return new Promise<APIRecipe>((resolve, reject) => {
       if (recipe.id) {
-        const query = new RDSQueryUtil('recipe')
+        const query = new RDSQueryUtil('recipes')
           .update(recipe.id, recipe);
         new DatabaseUtil()
           .query(query)

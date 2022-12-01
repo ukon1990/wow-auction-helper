@@ -1,0 +1,72 @@
+<ng-container [ngSwitch]="column.dataType">
+    <mat-form-field *ngSwitchCase="ColumnTypeEnum.FormControlNumber" color="primary">
+        <!-- Can't use disabled here, you need to specify this via the FormControl -->
+        <input
+                matInput
+                type="number"
+                [formControl]="row[column.key]"
+        />
+    </mat-form-field>
+    <mat-form-field *ngSwitchCase="ColumnTypeEnum.FormControlDate">
+        <!-- Can't use disabled here, you need to specify this via the FormControl -->
+        <input matInput
+               [matDatepicker]="picker1"
+               [formControl]="row[column.key]"
+        >
+        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
+
+    <ng-container *ngSwitchCase="ColumnTypeEnum.FormControlSelect">
+        <ng-container *ngIf="column.options">
+            <mat-form-field>
+                <mat-select
+                        [formControl]="row[column.key]"
+                        (selectionChange)="onSelectionChange($event)"
+                >
+                    <mat-option *ngFor="let option of column.options.data" [value]="option.id">
+                        {{column.options.key && option[column.options.key]}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </ng-container>
+    </ng-container>
+    <ng-container *ngSwitchCase="ColumnTypeEnum.FormControlSelectMulti">
+        <ng-container *ngIf="column.options">
+            <mat-form-field>
+                <mat-select
+                        multiple
+                        [formControl]="row.controls[column.key]"
+                        (selectionChange)="onSelectionChange($event)"
+                >
+                    <mat-option *ngFor="let option of column.options.data" [value]="option.id">
+                        {{column.options.key && option[column.options.key]}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </ng-container>
+    </ng-container>
+    <!-- TODO: Implement?
+    <ng-container *ngSwitchCase="ColumnType.SELECT">
+        <ng-container *ngIf="column.extraData">
+            <mat-select [disabled]="column.extraData.disabled"
+                        [value]="row[column.key] && row[column.key].id && column.extraData.useIdColumn ?
+            row[column.key].id : row[column.key]"
+                        (selectionChange)="onSelectionChange($event)"
+            >
+                <mat-option *ngFor="let option of column.extraData.data" [value]="option.id">
+                    {{column.extraData.key && option[column.extraData.key]}}
+                </mat-option>
+            </mat-select>
+        </ng-container>
+    </ng-container>
+    -->
+    <mat-form-field *ngSwitchDefault>
+        <!-- Can't use disabled here, you need to specify this via the FormControl -->
+        <input
+                matInput
+                type="text"
+                [formControl]="row[column.key]"
+        />
+    </mat-form-field>
+</ng-container>

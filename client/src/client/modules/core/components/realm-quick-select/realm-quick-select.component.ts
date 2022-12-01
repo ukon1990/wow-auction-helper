@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SharedService} from '../../../../services/shared.service';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {RealmService} from '../../../../services/realm.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {CharacterService} from '../../../character/services/character.service';
@@ -26,11 +26,11 @@ interface Realm extends AuctionHouseStatus {
   styleUrls: ['./realm-quick-select.component.scss']
 })
 export class RealmQuickSelectComponent implements OnInit, OnDestroy {
-  form: FormGroup = new FormGroup({
-    ahTypeId: new FormControl(),
-    region: new FormControl(),
-    realm: new FormControl(),
-    faction: new FormControl()
+  form: UntypedFormGroup = new UntypedFormGroup({
+    ahTypeId: new UntypedFormControl(),
+    region: new UntypedFormControl(),
+    realm: new UntypedFormControl(),
+    faction: new UntypedFormControl()
   });
   realmListAll: Realm[] = [];
   realmList: Realm[] = [];

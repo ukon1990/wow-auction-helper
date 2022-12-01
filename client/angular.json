@@ -109,7 +109,6 @@
       }
     }
   },
-  "defaultProject": "wah",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "wah",

@@ -55,11 +55,21 @@ export class AdminService {
     )) as Promise<{recipes: APIRecipe[]}>;
   }
 
+  updateItemFromAPI(id: number): Promise<any> {
+    return firstValueFrom(this.http.get(
+      Endpoints.getLambdaUrl('admin/items/update/' + id)
+    )) as Promise<any>;
+  }
   updateRecipe(recipe: APIRecipe): Promise<APIRecipe> {
     return firstValueFrom(this.http.patch(
       Endpoints.getLambdaUrl(`admin/recipes`),
       recipe
     )) as Promise<APIRecipe>;
+  }
+
+  updateRecipeJSONFilesRetail(): Promise<any> {
+    return firstValueFrom(
+      this.http.get(Endpoints.getLambdaUrl('admin/recipes/update-json'))) as Promise<any>;
   }
 
   updateRecipes(isClassic): Promise<any> {

@@ -18,6 +18,23 @@ export default {
       },
     }]
   },
+  updateRecipeJSONFilesRetail: {
+    handler: `${handlerPath(__dirname)}/controller.updateJSONFilesRetail`,
+    memorySize: 128,
+    tags: {
+      Function: 'Wah-updateRecipeJSONFilesRetail',
+      Project: 'WAH',
+    },
+    events: [{
+      http: {
+        method: 'get',
+        path: 'admin/recipes/update-json',
+        cors: {
+          origin: 'http://localhost:4200,https://wah.jonaskf.net',
+        }
+      },
+    }]
+  },
   updateRecipe: {
     handler: `${handlerPath(__dirname)}/controller.updateRecipe`,
     memorySize: 128,

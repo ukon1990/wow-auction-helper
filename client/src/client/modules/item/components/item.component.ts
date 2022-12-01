@@ -1,6 +1,6 @@
 import {AfterContentInit, AfterViewInit, Component, Inject, OnDestroy, ViewChild} from '@angular/core';
-import {MatTabChangeEvent, MatTabGroup} from '@angular/material/tabs';
-import {FormControl} from '@angular/forms';
+import {MatLegacyTabChangeEvent as MatTabChangeEvent, MatLegacyTabGroup as MatTabGroup} from '@angular/material/legacy-tabs';
+import {UntypedFormControl} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Recipe} from '../../crafting/models/recipe';
 import {ColumnDescription, Item, Pet} from '@shared/models';
@@ -15,7 +15,7 @@ import {ZoneService} from '../../zone/service/zone.service';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {CraftingService} from '../../../services/crafting.service';
 import {AuctionsService} from '../../../services/auctions.service';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {ItemDetailsUtil} from '../utils/item-details.util';
 import {ShoppingCartService} from '../../shopping-cart/services/shopping-cart.service';
 import {ErrorReport} from '../../../utils/error-report.util';
@@ -31,7 +31,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   wowheadBaseUrl: string;
 
   ignoreNextSelectionHistoryFormChange = false;
-  itemSelectionHistoryForm: FormControl = new FormControl(0);
+  itemSelectionHistoryForm: UntypedFormControl = new UntypedFormControl(0);
   selectionHistory: any[] = [];
   targetBuyoutValue: number;
   materialFor: Recipe[] = [];
@@ -51,7 +51,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   };
   auctionItems: AuctionItem[] = [];
   itemNpcDetails: ItemNpcDetails;
-  shoppingCartQuantityField: FormControl = new FormControl(1);
+  shoppingCartQuantityField: UntypedFormControl = new UntypedFormControl(1);
   sm = new SubscriptionManager();
 
   droppedByColumns: ColumnDescription[] = [

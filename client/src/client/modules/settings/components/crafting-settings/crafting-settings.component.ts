@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {SharedService} from '../../../../services/shared.service';
 import {CraftingUtil} from '../../../crafting/utils/crafting.util';
 import {UserUtil} from '../../../../utils/user/user.util';
@@ -11,14 +11,14 @@ import {AuctionsService} from '../../../../services/auctions.service';
   styleUrls: ['./crafting-settings.component.scss']
 })
 export class CraftingSettingsComponent {
-  buyoutController: FormControl = new FormControl();
-  form: FormGroup;
+  buyoutController: UntypedFormControl = new UntypedFormControl();
+  form: UntypedFormGroup;
 
-  constructor(private formBuilder: FormBuilder, private auctionService: AuctionsService) {
+  constructor(private formBuilder: UntypedFormBuilder, private auctionService: AuctionsService) {
     this.form = this.formBuilder.group({
-      buyoutLimit: new FormControl(
+      buyoutLimit: new UntypedFormControl(
         SharedService.user.buyoutLimit),
-      useVendorPriceForCraftingIfAvailable: new FormControl(
+      useVendorPriceForCraftingIfAvailable: new UntypedFormControl(
         SharedService.user.useVendorPriceForCraftingIfAvailable)
     });
     this.form.valueChanges
