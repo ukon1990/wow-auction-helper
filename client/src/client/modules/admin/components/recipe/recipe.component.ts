@@ -11,7 +11,16 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'wah-recipe',
-  templateUrl: './recipe.component.html'
+  templateUrl: './recipe.component.html',
+  styles: [`
+      ::ng-deep .column-xs .mat-mdc-form-field {
+          width: 5rem !important;
+      }
+
+      ::ng-deep .column-s .mat-mdc-form-field {
+          width: 8rem !important;
+      }
+  `]
 })
 export class RecipeComponent implements OnDestroy {
   isUpdatingJSONFiles = false;
@@ -39,14 +48,24 @@ export class RecipeComponent implements OnDestroy {
   recipeColumns: ColumnDescription[] = [
     {key: 'id', title: 'ID', dataType: ColumnTypeEnum.FormControlNumber, options: {disabled: true}},
     {key: 'name', title: 'Name', dataType: ColumnTypeEnum.FormControlText, options: {disabled: true}},
-    {key: 'itemName', title: 'ItemName', dataType: ColumnTypeEnum.FormControlAutoComplete},
-    {key: 'rank', title: 'Rank', dataType: ColumnTypeEnum.FormControlNumber},
-    {key: 'craftedItemId', title: 'Item Id', dataType: ColumnTypeEnum.FormControlNumber},
-    {key: 'hordeCraftedItemId', title: 'Horde item Id', dataType: ColumnTypeEnum.FormControlNumber},
-    {key: 'allianceCraftedItemId', title: 'Alliance item Id', dataType: ColumnTypeEnum.FormControlNumber},
-    {key: 'procRate', title: 'Proc rate', dataType: ColumnTypeEnum.FormControlNumber},
-    {key: 'minCount', title: 'Min created', dataType: ColumnTypeEnum.FormControlNumber},
-    {key: 'maxCount', title: 'Max created', dataType: ColumnTypeEnum.FormControlNumber},
+    {key: 'itemName', title: 'ItemName', dataType: ColumnTypeEnum.Name},
+    {key: 'rank', title: 'Rank', dataType: ColumnTypeEnum.FormControlNumber, cssClass: 'column-xs'},
+    {key: 'craftedItemId', title: 'Item Id', dataType: ColumnTypeEnum.FormControlNumber, cssClass: 'column-s'},
+    {
+      key: 'hordeCraftedItemId',
+      title: 'Horde item Id',
+      dataType: ColumnTypeEnum.FormControlNumber,
+      cssClass: 'column-s'
+    },
+    {
+      key: 'allianceCraftedItemId',
+      title: 'Alliance item Id',
+      dataType: ColumnTypeEnum.FormControlNumber,
+      cssClass: 'column-s'
+    },
+    {key: 'procRate', title: 'Proc rate', dataType: ColumnTypeEnum.FormControlNumber, cssClass: 'column-xs'},
+    {key: 'minCount', title: 'Min created', dataType: ColumnTypeEnum.FormControlNumber, cssClass: 'column-xs'},
+    {key: 'maxCount', title: 'Max created', dataType: ColumnTypeEnum.FormControlNumber, cssClass: 'column-xs'},
     this.professionColumn,
     {key: 'timestamp', title: 'Updated', dataType: ColumnTypeEnum.FormControlText, options: {disabled: true}},
     {
@@ -107,19 +126,36 @@ export class RecipeComponent implements OnDestroy {
     this.subs.unsubscribe();
   }
 
-  findRecipesWithMissingValueAndUpdate() {
-    console.debug('findRecipesWithMissingValueAndUpdate start');
-    this.recipesMissingCraftedId.controls.forEach((group: FormGroup) => {
-      const {name} = group.getRawValue();
-      const itemsWithMatchingNames = ItemService.list.value.filter(item => TextUtil.contains(item.name, name));
+  addMissingValue(group: FormGroup) {
+    const {name, minCount, maxCount} = group.getRawValue();
+    const recipe = group.getRawValue() as APIRecipe;
+    if (
+      !recipe.craftedItemId && !recipe.allianceCraftedItemId && !recipe.hordeCraftedItemId ||
+      !recipe.minCount || !recipe.maxCount
+    ) {
+      const itemsWithMatchingNames = ItemService.list.value
+        .filter(item =>
+          !TextUtil.contains(item.name, 'Pattern') &&
+          !TextUtil.contains(item.name, 'Design') &&
+          TextUtil.contains(item.name, name)
+        )
+        // Having the smallest item id first (as this will likely be a quality 1 version over 2 or 3
+        .sort((a, b) => a.id - b.id);
       if (itemsWithMatchingNames.length) {
         const firstItem = itemsWithMatchingNames[0];
         group.controls.itemName.setValue(firstItem.name);
         group.controls.craftedItemId.setValue(firstItem.id);
         group.controls.craftedItemId.markAsDirty();
       }
-    });
-    console.debug('findRecipesWithMissingValueAndUpdate end');
+
+      if (!minCount || !maxCount) {
+        group.controls.minCount.setValue(1);
+        group.controls.minCount.markAsDirty();
+        group.controls.maxCount.setValue(1);
+        group.controls.maxCount.markAsDirty();
+      }
+
+    }
   }
 
   getComparison(): void {
@@ -156,16 +192,12 @@ export class RecipeComponent implements OnDestroy {
             professionId: new FormControl<number>({value: recipe.professionId, disabled: true}),
             timestamp: new FormControl<string>({value: new Date(recipe.timestamp).toJSON(), disabled: true}),
           });
-          if (!recipe.craftedItemId && !recipe.allianceCraftedItemId && !recipe.hordeCraftedItemId) {
-            withMissingIds.push(formGroup);
-          }
           formArray.push(formGroup);
+          this.addMissingValue(formGroup);
         });
 
         this.recipeForm = formArray;
         this.recipesMissingCraftedId = withMissingIds;
-
-        this.findRecipesWithMissingValueAndUpdate();
         this.filterRecipes();
       })
       .finally(() => this.isLoadingRecipes = false);
@@ -214,11 +246,11 @@ export class RecipeComponent implements OnDestroy {
   }
 
   private filterRecipes({
-    name: nameMatch,
-    isMissingCraftedId,
-    professionId: professionIdMatch,
-    hasAutoAddedItemId,
-  }: any = this.recipeFilter.getRawValue()) {
+                          name: nameMatch,
+                          isMissingCraftedId,
+                          professionId: professionIdMatch,
+                          hasAutoAddedItemId,
+                        }: any = this.recipeFilter.getRawValue()) {
     this.filteredRecipes = this.recipeForm.controls.filter((group: FormGroup) => {
       const {
         name, craftedItemId, allianceCraftedItemId, hordeCraftedItemId, professionId

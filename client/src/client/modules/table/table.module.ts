@@ -25,9 +25,9 @@ import {CartCountComponent} from './components/columns/cart-count/cart-count.com
 import {
   FormControllerColumnComponent
 } from './components/columns/form-controller-column/form-controller-column.component';
-import {MatDatepickerModule} from "@angular/material/datepicker";
-import {MatInputModule} from "@angular/material/input";
-import {MatSelectModule} from "@angular/material/select";
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatInputModule} from '@angular/material/input';
+import {MatSelectModule} from '@angular/material/select';
 
 @NgModule({
   declarations: [
