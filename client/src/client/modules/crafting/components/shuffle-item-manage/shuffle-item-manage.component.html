@@ -25,6 +25,8 @@
       <mat-autocomplete #auto="matAutocomplete">
         <mat-option *ngFor="let item of filteredItems | async"
                     class="h-2em"
+                    wahItemTooltip
+                    [item]="item"
                     (click)="setItemSource(item)"
                     [value]="item.name">
           <wah-icon size="36" [id]="item.id"></wah-icon>
@@ -57,7 +59,9 @@
       <mat-autocomplete #searchTarget="matAutocomplete">
         <mat-option *ngFor="let item of filteredItems | async"
                     class="h-2em"
+                    wahItemTooltip
                     (click)="addSource(item)"
+                    [item]="item"
                     [value]="item.name">
           <wah-icon size="36" [id]="item.id"></wah-icon>
           {{ item.name }}
