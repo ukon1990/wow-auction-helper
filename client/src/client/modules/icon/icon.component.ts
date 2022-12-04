@@ -1,6 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import {SharedService} from '../../services/shared.service';
+import {ItemService} from "../../services/item.service";
 
 @Component({
   selector: 'wah-icon',
@@ -13,6 +14,11 @@ export class IconComponent {
   @Input() petSpeciesId: number;
   @Input() size = 32;
   @Input() icon = 'inv_scroll_03';
+
+  get tierIcon() {
+    return ItemService.mapped.value.get(+this.id)?.tier
+      ? `quality-tier tier-${ItemService.mapped.value.get(+this.id)?.tier}` : '';
+  }
 
   constructor(private _sanitizer: DomSanitizer) {
   }

@@ -11,7 +11,7 @@ import {TableUtil} from '../../../utils/table.util';
 import {AuctionsService} from '../../../../../services/auctions.service';
 import {PetsService} from '../../../../../services/pets.service';
 import {Router} from '@angular/router';
-import {FormControl} from "@angular/forms";
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'wah-name',
@@ -26,7 +26,8 @@ export class NameComponent extends BaseComponent implements OnInit {
   @Input() useAuctionItemForName: boolean;
 
   get rowValue() {
-    return this.row && this.row.getRawValue ? this.row.getRawValue() : this.row;
+    return this.row && this.row.getRawValue ?
+      this.row.getRawValue() : this.row;
   }
 
   get columnValue() {
@@ -95,6 +96,7 @@ export class NameComponent extends BaseComponent implements OnInit {
       const item: Item = ItemService.mapped.value.get(+this.itemId);
       this.name = item ? item.name : '';
     }
+
   }
 
   getSource(recipe: Recipe): number {

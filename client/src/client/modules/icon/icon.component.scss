@@ -1,0 +1,17 @@
+.quality-tier {
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 13px;
+  height: 13px;
+  position: absolute;
+
+  &.tier-1 {
+    background-image: url('~assets/icons/quality-tier1.png');
+  }
+  &.tier-2 {
+    background-image: url('~assets/icons/quality-tier2.png');
+  }
+  &.tier-3 {
+    background-image: url('~assets/icons/quality-tier3.png');
+  }
+}

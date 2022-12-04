@@ -20,6 +20,7 @@ export class WoWHeadUtil {
     const patchAndExpansion = WoWHeadUtil.getExpansion(body);
     wh.expansionId = patchAndExpansion.expansionId;
     wh.patch = patchAndExpansion.patch;
+    wh.tier = WoWHeadUtil.getItemTier(body);
     // wh.createdBy = undefined;
     wh.containedInItem = WoWHeadUtil.getContainedInItem(body);
     wh.containedInObject = WoWHeadUtil.getContainedInObject(body); // contained-in-object
@@ -275,6 +276,23 @@ export class WoWHeadUtil {
     if (phase && phase[0]) {
       const p = phase[0].replace('Phase ', '');
       return +p;
+    }
+    return 0;
+  }
+
+  private static getItemTier(body: string): number {
+    const tierImage = (tier: number) => `quality-tier${tier}.png`;
+    if (body.indexOf(tierImage(1)) > -1) {
+      return 1;
+    }
+    if (body.indexOf(tierImage(2)) > -1) {
+      return 2;
+    }
+    if (body.indexOf(tierImage(3)) > -1) {
+      return 3;
+    }
+    if (body.indexOf(tierImage(4)) > -1) {
+      return 4;
     }
     return 0;
   }

@@ -26,6 +26,7 @@ export class Item {
   patch: string;
   nameLocales?: ItemLocale;
   classicPhase?: number;
+  tier?: number;
   modifiedCraftingId: number;
   modifiedCraftingCategoryId: number;
 
@@ -63,6 +64,7 @@ export class Item {
 
   setDataFromWoWHead(wowHead: any) {
     this.expansionId = wowHead?.expansionId;
+    this.tier = wowHead?.tier;
     this.patch = wowHead?.patch;
     delete wowHead?.expansionId;
     this.itemSource = wowHead as WoWHead;

@@ -138,7 +138,11 @@ export class ItemQuery {
          minReputation,
          isDropped,
          expansionId,
-         ${table === 'items' ? '' : `
+         ${table === 'items' ? `
+				 tier,
+				 modifiedCraftingCategoryId,
+				 modifiedCraftingId,
+         ` : `
          classicPhase,
          patch,
          `}

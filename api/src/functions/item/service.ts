@@ -276,9 +276,10 @@ export class ItemServiceV2 {
               })
               .catch(console.error);
 
-            if (item.id > 175264 && (item.expansionId < 8 || !item.expansionId)) {
-              item.expansionId = 8;
+            if (item.id > 199183 && (item.expansionId < 9 || !item.expansionId)) {
+              item.expansionId = 199183;
             }
+
             resolve(item);
           } catch (err) {
             reject(err);
