@@ -120,6 +120,7 @@ export class RDSQueryUtil<T> {
 
   private getSQLFriendlyString(value: any): string | number | boolean {
     const type = typeof value;
+
     switch (type) {
       case 'number':
         return value;
@@ -128,6 +129,9 @@ export class RDSQueryUtil<T> {
       case 'object':
         return this.handleObject(value);
       default:
+        if (value && (`${value || ''}`).indexOf(',') > -1 && !isNaN(value.split(',')[0])) {
+          return `'${value}'`;
+        }
         return value; // `"${safeifyString(value)}"`;
     }
   }
