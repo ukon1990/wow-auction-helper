@@ -4,11 +4,12 @@ import {APIRecipe, GlobalStatus, SQLProcess, TableSize} from '@shared/models';
 import {Endpoints} from '../../../services/endpoints';
 import {firstValueFrom} from 'rxjs';
 import {AuctionHouseStatus} from '../../auction/models/auction-house-status.model';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable()
 export class AdminService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private snackBar: MatSnackBar) {
   }
 
   getCurrentQueries(): Promise<SQLProcess[]> {
@@ -101,7 +102,24 @@ export class AdminService {
   }
 
   updateHouse(house: AuctionHouseStatus) {
-    return firstValueFrom(this.http.post(
-      Endpoints.getLambdaUrl(`admin/auction-house/realm/update`), house));
+    firstValueFrom(this.http.post(
+      Endpoints.getLambdaUrl(`admin/auction-house/realm/update`), house))
+      .then(() => {
+        this.snackBar.open(`Successfully updated ${house.id}`, 'Ok');
+      })
+      .catch((error) => {
+        this.snackBar.open(`Failed with updating ${house.id} - ${error?.message}`, 'Ok');
+      });
+  }
+
+  updateHouseStats(house: AuctionHouseStatus) {
+    firstValueFrom(this.http.post(
+      Endpoints.getLambdaUrl(`admin/auction-house/realm/stats/update`), house))
+      .then(() => {
+        this.snackBar.open(`Successfully updated ${house.id}`, 'Ok');
+      })
+      .catch((error) => {
+        this.snackBar.open(`Failed with updating ${house.id} - ${error?.message}`, 'Ok');
+      });
   }
 }

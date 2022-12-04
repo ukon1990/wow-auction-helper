@@ -6,7 +6,7 @@ import {formatErrorResponse, formatJSONResponse, ValidatedEventAPIGatewayProxyEv
 import {AuthService} from '@shared/services/auth.service';
 import {APIGatewayEvent} from 'aws-lambda';
 import {AuctionHouse} from '@functions/realm/model';
-import {AuthHandler} from "@functions/handlers/auth.handler";
+import {AuthHandler} from '@functions/handlers/auth.handler';
 
 /* istanbul ignore next */
 export const deactivateInactiveHouses = middyfy(async (): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
@@ -220,6 +220,28 @@ export const adminManualUpdateHouse = middyfy(async (event: APIGatewayEvent): Pr
       .catch(console.error);
     const service = new AuctionService();
     await service.updateHouse(auctionHouse)
+      .then(res => response = formatJSONResponse(res as any))
+      .catch(error => formatErrorResponse(error.code, error.message, error));
+  }
+  return response;
+});
+/* istanbul ignore next */
+export const adminManualUpdateHouseStats = middyfy(async (event: APIGatewayEvent): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
+  const auctionHouse = event.body as any as AuctionHouse;
+  const authService = new AuthService(event.headers);
+  const isAdmin = await authService.isAdmin();
+  let response;
+
+  if (!isAdmin) {
+    response = authService.getUnauthorizedResponse();
+  } else {
+    await AuthHandler.getToken()
+      .catch(console.error);
+    const service = new StatsService();
+    const db = new DatabaseUtil(false);
+    await db.enqueueHandshake()
+      .catch(console.error);
+    await service.updateRealmTrendsAndTsmDataForHouse(auctionHouse, db)
       .then(res => response = formatJSONResponse(res as any))
       .catch(error => formatErrorResponse(error.code, error.message, error));
   }

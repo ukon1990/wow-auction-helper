@@ -27,11 +27,13 @@ const PromiseThrottle: any = require('promise-throttle');
 
 export class StatsService {
   realmRepository: RealmRepository;
+  tsmRepository: TsmRepository;
   realmLogRepository: RealmLogRepository;
 
   constructor() {
     this.realmRepository = new RealmRepository();
     this.realmLogRepository = new RealmLogRepository();
+    this.tsmRepository = new TsmRepository('');
   }
 
   getComparablePricesFor(items: AhStatsRequest[]): Promise<any> {
@@ -682,7 +684,6 @@ export class StatsService {
     return new Promise(async (resolve, reject) => {
       const startTime = +new Date();
       const conn = new DatabaseUtil(false);
-      const tsmRepository = new TsmRepository(''); // Can't fetch directly for tsm api
       let housesToUpdate: AuctionHouse[];
       await this.realmRepository.getRealmsThatNeedsTrendUpdate()
         .then(houses => housesToUpdate = houses)
@@ -700,18 +701,9 @@ export class StatsService {
           const regionMap = new Map<string, Map<string, TsmRegionalItemStats>>();
           for (const house of housesToUpdate.slice(0, 10)) {
             if (DateUtil.timeSince(startTime, 's') < 50) {
-              const gameVersion = house.gameBuild === 1 ? 'classic' : 'retail';
-              const regionId = `${house.region}-${gameVersion}`;
-              if (!regionMap.has(regionId)) {
-                await tsmRepository.getFromS3(gameVersion, house.region)
-                  .then(map => regionMap.set(regionId, map))
-                  .catch(console.error);
-              }
-              await this.setRealmTrends(house, conn, regionMap.get(regionId))
-                .then(async () => {
+              await this.updateRealmTrendsAndTsmDataForHouse(house, conn, regionMap)
+                .then(() => {
                   completed++;
-                  await new RealmService().createLastModifiedFile(house.id, house.region)
-                    .catch(err => console.error('Could not createLastModifiedFile', err));
                 })
                 .catch(console.error);
             }
@@ -725,6 +717,31 @@ export class StatsService {
           reject(err);
         });
     });
+  }
+
+  async updateRealmTrendsAndTsmDataForHouse(
+    house: AuctionHouse,
+    conn: DatabaseUtil,
+    regionMap= new Map<string, Map<string, TsmRegionalItemStats>>()
+  ) {
+    const gameVersion = house.gameBuild === 1 ? 'classic' : 'retail';
+    const regionId = `${house.region}-${gameVersion}`;
+    if (!regionMap.has(regionId)) {
+      await this.tsmRepository.getFromS3(gameVersion, house.region)
+        .then(map => {
+          regionMap.set(regionId, map);
+          console.log('Successfully loaded TSM data');
+        })
+        .catch(error => {
+          console.error('tsmRepository.getFromS3', error);
+        });
+    }
+    await this.setRealmTrends(house, conn, regionMap.get(regionId))
+      .then(async () => {
+        await new RealmService().createLastModifiedFile(house.id, house.region)
+          .catch(err => console.error('Could not createLastModifiedFile', err));
+      })
+      .catch(console.error);
   }
 
   getRealmPriceTrends(
@@ -911,6 +928,8 @@ export class StatsService {
             url: hasMultipleAH ? {} : ''
           };
 
+          console.log('Starting setRealmTrends for', house.region, house.id, '. Initiating upload');
+
           Promise.all(
             Object.keys(results)
               .map(ahTypeId => new Promise<void>((success, failed) => {
@@ -941,6 +960,7 @@ export class StatsService {
               }))
           )
             .then(() => {
+              console.log('Done uploading trends for', house.region, house.id);
               this.realmRepository.updateEntry(house.id, {
                 id: house.id,
                 stats: updatedStats,

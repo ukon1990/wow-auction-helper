@@ -124,6 +124,24 @@ export default {
       },
     }]
   },
+  adminManualUpdateHouseStats: {
+    handler: `${handlerPath(__dirname)}/controller.adminManualUpdateHouseStats`,
+    memorySize: 1344,
+    timeout: 300,
+    tags: {
+      Function: 'Wah-adminManualUpdateHouseStats',
+      Project: 'WAH',
+    },
+    events: [{
+      http: {
+        method: 'post',
+        path: 'admin/auction-house/realm/stats/update',
+        cors: {
+          origin: 'http://localhost:4200,https://wah.jonaskf.net',
+        }
+      },
+    }]
+  },
   deleteOldPriceForRealmHourly: {
     handler: `${handlerPath(__dirname)}/controller.deleteOldPriceForRealmHourly`,
     memorySize: 250,

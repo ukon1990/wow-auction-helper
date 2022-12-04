@@ -32,6 +32,16 @@ export class RealmComponent implements OnInit {
         text: 'Update',
         tooltip: 'Manually update an auction house',
         callback: (house: AuctionHouseStatus, index) => this.service.updateHouse(house),
+      }, {
+        icon: 'fa fa-download',
+        text: 'Stats',
+        tooltip: 'Manually stats for an auction house',
+        callback: (house: AuctionHouseStatus, index) => this.service.updateHouseStats(house),
+      }, {
+        icon: 'fa fa-download',
+        text: 'Inserts',
+        tooltip: 'Manually stats for an auction house',
+        callback: (house: AuctionHouseStatus, index) => this.service.updateHouseStats(house),
       }]
     },
   ];
