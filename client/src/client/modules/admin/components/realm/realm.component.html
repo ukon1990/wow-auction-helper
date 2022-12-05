@@ -4,6 +4,16 @@
             Restore historical data
         </mat-expansion-panel-header>
         <form [formGroup]="historyPeriodForm">
+            <mat-form-field>
+                <mat-select formControlName="period">
+                    <mat-option [value]="'hourly'">
+                        Hourly
+                    </mat-option>
+                    <mat-option [value]="'daily'">
+                        Daily
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
             <mat-form-field appearance="fill">
                 <mat-label>From</mat-label>
                 <input matInput formControlName="fromDate" [matDatepicker]="fromPicker">

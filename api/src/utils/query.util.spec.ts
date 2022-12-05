@@ -66,6 +66,27 @@ describe('RDSQueryUtil', () => {
         .toBe('INSERT INTO test_table(id,name,isTrue,list,date,timestamp) ' +
           `VALUES(0,'Testing',1,'[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]','{\\\"name\\\":\\\"test\\\"}',CURRENT_TIMESTAMP);`);
     });
+
+    it('Can handle string arrays and date', () => {
+      const list = [
+        {
+          ahId: 111,
+          bonusIds: '1698,6652',
+          ahTypeId: 0,
+          petSpeciesId: -1,
+          itemId: 199023,
+          date: '2022-12-4',
+          quantity17: 1,
+          price17: 700000
+        }
+      ];
+      const rdsUtil = new RDSQueryUtil('itemPriceHistoryPerHour');
+      expect(rdsUtil.multiInsert(list)).toBe(
+        'INSERT INTO itemPriceHistoryPerHour' +
+        '(ahId,bonusIds,ahTypeId,petSpeciesId,itemId,date,quantity17,price17) ' +
+        `VALUES(111,'1698,6652',0,-1,199023,'2022-12-4',1,700000);`
+      );
+    });
   });
 
   describe('update', () => {
@@ -87,23 +108,6 @@ describe('RDSQueryUtil', () => {
           'timestamp = CURRENT_TIMESTAMP ' +
           'WHERE id = 0;');
     });
-  });
-
-  it('asd', () => {
-    const list = [
-      {
-        ahId: 111,
-        bonusIds: '1698,6652',
-        ahTypeId: 0,
-        petSpeciesId: -1,
-        itemId: 199023,
-        date: '2022-12-4',
-        quantity17: 1,
-        price17: 700000
-      }
-    ];
-    const util = new RDSQueryUtil('test');
-    expect(util.multiInsert(list)).toBe('1');
   });
 });
 

@@ -36,7 +36,7 @@ export class StatsRepository {
           .map(data => this.conn.query(`
               SELECT date, itemId, ahTypeId, petSpeciesId, bonusIds, ${data.columns.join(', ')}
               FROM itemPriceHistoryPerHour
-              WHERE (ahId = ${house.id} OR ahId = ${this.getRegionId()})
+              WHERE (ahId = ${house.id} OR ahId = ${this.getRegionId(house.region)})
                 AND date = ${data.date};`)
             .then(res => {
               result = [...result, ...res];
@@ -94,8 +94,7 @@ export class StatsRepository {
       maxQuantity${day} = VALUES(maxQuantity${day});`;
   }
 
-  private getRegionId(): number {
-    const region = (process.env.AWS_REGION || 'eu').split('-')[0];
+  private getRegionId(region = (process.env.AWS_REGION || 'eu').split('-')[0]): number {
     switch (region) {
       case 'us': return 1002;
       case 'tw': return 1003;
@@ -105,17 +104,16 @@ export class StatsRepository {
   }
 
   getPriceHistoryHourly(items: AhStatsRequest[]): any {
-    return this.conn.query(`SELECT *
-                            FROM itemPriceHistoryPerHour
-                            WHERE (
-                                      ${
-                                              items.map(({
-                                                             ahId,
-                                                             itemId,
-                                                             petSpeciesId = '-1',
-                                                             bonusIds,
-                                                             ahTypeId = 0
-                                                         }) => `
+    const query = `SELECT *
+									 FROM itemPriceHistoryPerHour
+									 WHERE (${
+                     items.map(({
+                                  ahId,
+                                  itemId,
+                                  petSpeciesId = '-1',
+                                  bonusIds,
+                                  ahTypeId = 0
+                                }) => `
                   (
                     (ahId = ${ahId} OR ahId = ${this.getRegionId()})
                     AND ahTypeId = ${ahTypeId}
@@ -124,8 +122,9 @@ export class StatsRepository {
                     AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}'
                     AND date > NOW() - INTERVAL 15 DAY
                     )
-                  `).join(' OR ')}
-                                      );`);
+                  `).join(' OR ')});`;
+
+    return this.conn.query(query);
   }
 
   getComparePrices(items: AhStatsRequest[]): Promise<AuctionItemStat[]> {

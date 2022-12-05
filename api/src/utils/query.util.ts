@@ -129,7 +129,9 @@ export class RDSQueryUtil<T> {
       case 'object':
         return this.handleObject(value);
       default:
-        if (value && (`${value || ''}`).indexOf(',') > -1 && !isNaN(value.split(',')[0])) {
+        const isCSV = value && (`${value || ''}`).indexOf(',') > -1 && !isNaN(value.split(',')[0]);
+        const isDateString = typeof value === 'string' && !isNaN(+new Date(value));
+        if (isCSV || isDateString) {
           return `'${value}'`;
         }
         return value; // `"${safeifyString(value)}"`;

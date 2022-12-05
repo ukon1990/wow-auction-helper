@@ -7,7 +7,7 @@
     "node": ">=14.15.0"
   },
   "scripts": {
-    "start": "sls offline start",
+    "start": "sls offline start --region eu-west-1",
     "build": "sls package",
     "package": "sls package",
     "test": "jest",

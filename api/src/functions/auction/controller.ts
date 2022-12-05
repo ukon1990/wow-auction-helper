@@ -162,22 +162,29 @@ export const adminAuctionsRestoreHourlyHistoricalDataFromS3 = middyfy(async ({
   let response;
   const authService = new AuthService(headers);
   const isAdmin = await authService.isAdmin();
-  const {fromDate, toDate} = body;
+  const {fromDate, toDate, period} = body;
 
   if (!isAdmin) {
     response = formatErrorResponse(401, '');
   } else {
     try {
-     /* const day = 30; // Startet på 21-22
-      const startDay = new Date(`11/${day}/2022`),
-        endDay = new Date(`12/${day + 2}/2022`);*/
-      await new AuctionRestoreService().restoreHourly(new Date(fromDate), new Date(toDate))
-        .then(() => {
-          response = formatJSONResponse();
-        })
-        .catch(err => {
-          response = formatErrorResponse(500, err.message, err);
-        });
+      if (period === 'daily') {
+        await new AuctionRestoreService().restoreDaily(new Date(fromDate))
+          .then(() => {
+            response = formatJSONResponse();
+          })
+          .catch(err => {
+            response = formatErrorResponse(500, err.message, err);
+          });
+      } else {
+        await new AuctionRestoreService().restoreHourly(new Date(fromDate), new Date(toDate))
+          .then(() => {
+            response = formatJSONResponse();
+          })
+          .catch(err => {
+            response = formatErrorResponse(500, err.message, err);
+          });
+      }
     } catch (error) {
       response = formatErrorResponse(500, error.message, error);
     }

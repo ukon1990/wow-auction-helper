@@ -58,9 +58,6 @@ export class AuctionRestoreService {
                         .then(() => {
                           processed++;
                           try {
-                            /*const date = new Date(+fileName
-                              .replace('-lastModified', '')
-                              .replace('.json.gz', '').toString());*/
                             console.log(`region=${region} ah=${id} date=${file.LastModified}`);
                           } catch (error) {
                             console.error(error, fileName);
@@ -89,8 +86,9 @@ export class AuctionRestoreService {
     });
   }
 
-  restoreDaily(date: Date) {
+  restoreDaily(date: Date): Promise<void> {
     const conn = new DatabaseUtil(false);
+    const realmRepository = new RealmRepository();
     const promiseThrottle = new PromiseThrottle({
       requestsPerSecond: 1,
       promiseImplementation: Promise
@@ -98,14 +96,15 @@ export class AuctionRestoreService {
     const promises = [];
     let processed = 0;
 
-    return new Promise(async (resolve) => {
-      for (let id = 1; id <= 260; id++) {// 242
+    return new Promise<void>(async (resolve) => {
+      const houses = await realmRepository.getAll();
+      for (const {id} of houses) {
         promises.push(promiseThrottle.add(() =>
           new Promise<void>((success) => {
             new StatsService().compileDailyAuctionData(id, conn, new Date(date))
               .then(() => {
                 processed++;
-                console.log(`Processed count: ${processed} of ${260}`);
+                console.log(`Processed count: ${processed} of ${houses.length}`);
                 success();
               })
               .catch((error) => {

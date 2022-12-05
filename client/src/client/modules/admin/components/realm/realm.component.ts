@@ -51,8 +51,9 @@ export class RealmComponent implements OnInit {
   isLoading = false;
   isRestoringHistoricalData: boolean;
   historyPeriodForm = new FormGroup({
+    period: new FormControl<'daily' | 'hourly'>('hourly', Validators.required),
     fromDate: new FormControl<Date>(null, Validators.required),
-    toDate: new FormControl<Date>(null, Validators.required)
+    toDate: new FormControl<Date>(null)
   });
 
   constructor(public service: AdminService) {
