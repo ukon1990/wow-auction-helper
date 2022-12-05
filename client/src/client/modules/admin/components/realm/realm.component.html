@@ -1,3 +1,34 @@
+<mat-accordion>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            Restore historical data
+        </mat-expansion-panel-header>
+        <form [formGroup]="historyPeriodForm">
+            <mat-form-field appearance="fill">
+                <mat-label>From</mat-label>
+                <input matInput formControlName="fromDate" [matDatepicker]="fromPicker">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle [for]="fromPicker"></mat-datepicker-toggle>
+                <mat-datepicker #fromPicker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>To</mat-label>
+                <input matInput formControlName="toDate" [matDatepicker]="toPicker">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle [for]="toPicker"></mat-datepicker-toggle>
+                <mat-datepicker #toPicker></mat-datepicker>
+            </mat-form-field>
+            <button mat-raised-button
+                    type="button"
+                    (click)="restoreHistoricalData()"
+                    [disabled]="isRestoringHistoricalData"
+            >
+                Restore
+            </button>
+        </form>
+    </mat-expansion-panel>
+</mat-accordion>
+
 <span *ngIf="isLoading; else tableTemplate">
     <mat-progress-spinner></mat-progress-spinner> Loading auction houses…
 </span>

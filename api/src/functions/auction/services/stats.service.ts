@@ -2,7 +2,7 @@ import {S3Handler} from '../../handlers/s3.handler';
 import {DatabaseUtil} from '../../../utils/database.util';
 import {EventSchema} from '@models/s3/event-record.model';
 import {GzipUtil} from '../../../utils/gzip.util';
-import {AuctionProcessorUtil, AuctionStatsUtil, NumberUtil} from '../../../shared/utils';
+import {AuctionProcessorUtil, AuctionStatsUtil} from '../../../shared/utils';
 import {StatsRepository} from '../repository/stats.repository';
 import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
 import {RealmRepository} from '../../realm/repositories/realm.repository';
@@ -313,7 +313,9 @@ export class StatsService {
     return new Promise<void>((resolve, reject) => {
       if (!record || !record.object || !record.object.key) {
         resolve();
+        return;
       }
+
       const regex = /auctions\/[a-z]{1,4}\/[\d]{1,4}\/[\d]{1,4}\/[\d]{13,999}-lastModified.json.gz/gi;
       if (regex.exec(record.object.key)) {
         const splitted = record.object.key.split('/');
@@ -334,6 +336,12 @@ export class StatsService {
                 } = AuctionProcessorUtil.process(auctions, lastModified, +ahId, +ahTypeId);
                 const queries = list.filter(subList => subList.length)
                   .map(dataset => StatsRepository.multiInsertOrUpdate(dataset, hour));
+                /*const db = new DatabaseUtil(false);
+                db.enqueueHandshake()
+                  .then(() => {
+                    Promise.all(queries.map(q => db.query(q)))
+                      .finally(resolve);
+                  });*/
                 const s3 = new S3Handler();
 
                 Promise.all(
@@ -572,74 +580,6 @@ export class StatsService {
 
   private getYesterday(days = 1): Date {
     return new Date(+new Date() - 1000 * 60 * 60 * 24 * days);
-  }
-
-  /**
-   TODO: Delete?
-   * Add a new column to the AH table indicating when the last delete was ran
-   * Run once each 6-10 minute
-   * Limit 1 order by time since asc (to get the oldest first)
-   * @deprecated
-   */
-  deleteOldPriceHistoryForRealm(conn = new DatabaseUtil(false)): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      const repository = new StatsRepository(conn);
-      const [status]: { activeQueries: number }[] = await repository.getActiveQueries()
-        .catch(error => console.error(`StatsService.deleteOldPriceHistoryForRealm`, error));
-
-      if (status.activeQueries < 1) {
-        const day = 1000 * 60 * 60 * 24;
-        const now = new Date();
-        /*
-        now.setUTCHours(0);
-        now.setUTCMinutes(0);
-
-        now.setUTCMilliseconds(0);
-        */
-
-
-        repository.getNextHouseInTheDeleteQueue()
-          .then(async (res) => {
-            if (res.length) {
-              const {id} = res[0];
-
-              repository.deleteOldAuctionHouseData(id, now, day)
-                .then((deleteResult) => {
-                  deleteResult.affectedRows = NumberUtil.format(deleteResult.affectedRows);
-                  repository
-                    .updateLastDeleteEvent(id)
-                    .then(() => {
-                      console.log('Successfully deleted old price data', deleteResult);
-                      conn.end();
-                      resolve();
-                    })
-                    .catch(error => {
-                      console.error(error);
-                      conn.end();
-                      reject(error);
-                    });
-                })
-                .catch(error => {
-                  console.error(error);
-                  conn.end();
-                  reject(error);
-                });
-            } else {
-              conn.end();
-              resolve();
-            }
-          })
-          .catch(error => {
-            console.error(error);
-            conn.end();
-            reject(error);
-          });
-      } else {
-        conn.end();
-        console.log('Too many active queries', status.activeQueries);
-        resolve();
-      }
-    });
   }
 
   deleteOldPriceForRealm(table: string, olderThan: number, period: string): Promise<void> {

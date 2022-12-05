@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AdminService} from '../../services/admin.service';
 import {AuctionHouseStatus} from '../../../auction/models/auction-house-status.model';
 import {ColumnDescription} from '@shared/models';
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'wah-realm',
@@ -41,16 +42,30 @@ export class RealmComponent implements OnInit {
         icon: 'fa fa-download',
         text: 'Inserts',
         tooltip: 'Manually stats for an auction house',
-        callback: (house: AuctionHouseStatus, index) => this.service.updateHouseStats(house),
+        callback: (house: AuctionHouseStatus, index) => this.service.triggerAuctionsUpdateStaticS3Data(),
       }]
     },
   ];
   houses: AuctionHouseStatus[] = [];
   tableData: AuctionHouseStatus[] = [];
   isLoading = false;
+  isRestoringHistoricalData: boolean;
+  historyPeriodForm = new FormGroup({
+    fromDate: new FormControl<Date>(null, Validators.required),
+    toDate: new FormControl<Date>(null, Validators.required)
+  });
 
   constructor(public service: AdminService) {
     this.getAllAuctionHouses();
+  }
+
+  restoreHistoricalData() {
+    if (this.historyPeriodForm.invalid) {
+      return;
+    }
+    this.isRestoringHistoricalData = true;
+    this.service.auctionsRestoreHourlyHistoricalDataFromS3(this.historyPeriodForm.getRawValue())
+      .finally(() => this.isRestoringHistoricalData = false);
   }
 
   getAllAuctionHouses() {

@@ -14,6 +14,7 @@ module.exports = {
     },
     testMatch: ["**/src/**/*.spec.ts"],
     testPathIgnorePatterns: ["/node_modules/"],
+    transformIgnorePatterns: ["node_modules/node-fetch"],
     testEnvironment: "node",
     collectCoverageFrom: ["**/src/**/*.ts", "!**/node_modules/**"],
     preset: "ts-jest",

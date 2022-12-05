@@ -88,6 +88,23 @@ describe('RDSQueryUtil', () => {
           'WHERE id = 0;');
     });
   });
+
+  it('asd', () => {
+    const list = [
+      {
+        ahId: 111,
+        bonusIds: '1698,6652',
+        ahTypeId: 0,
+        petSpeciesId: -1,
+        itemId: 199023,
+        date: '2022-12-4',
+        quantity17: 1,
+        price17: 700000
+      }
+    ];
+    const util = new RDSQueryUtil('test');
+    expect(util.multiInsert(list)).toBe('1');
+  });
 });
 
 describe('NoSQLQueryUtil', () => {

@@ -26,6 +26,7 @@ import {MatLegacyCheckboxModule as MatCheckboxModule} from '@angular/material/le
 import {RecipeComponent} from './components/recipe/recipe.component';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatGridListModule} from '@angular/material/grid-list';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 
 @NgModule({
@@ -57,7 +58,8 @@ import {MatGridListModule} from '@angular/material/grid-list';
     MatProgressSpinnerModule,
     MatCheckboxModule,
     MatExpansionModule,
-    MatGridListModule
+    MatGridListModule,
+    MatDatepickerModule
   ],
   providers: [
     AdminService

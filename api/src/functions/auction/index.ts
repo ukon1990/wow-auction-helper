@@ -96,6 +96,33 @@ export default {
       Function: 'Wah-auctionsUpdateStaticS3Data',
       Project: 'WAH',
     },
+    events: [{
+      http: {
+        method: 'post',
+        path: 'admin/auctions/s3-trigger/manual',
+        cors: {
+          origin: 'http://localhost:4200,https://wah.jonaskf.net',
+        }
+      },
+    }]
+  },
+  adminAuctionsRestoreHourlyHistoricalDataFromS3: {
+    handler: `${handlerPath(__dirname)}/controller.adminAuctionsRestoreHourlyHistoricalDataFromS3`,
+    memorySize: 1024,
+    timeout: 600,
+    tags: {
+      Function: 'Wah-adminAuctionsRestoreHourlyHistoricalDataFromS3',
+      Project: 'WAH',
+    },
+    events: [{
+      http: {
+        method: 'post',
+        path: 'admin/auctions/history-restore',
+        cors: {
+          origin: 'http://localhost:4200,https://wah.jonaskf.net',
+        }
+      },
+    }]
   },
   auctionsUpdateRealmTrends: {
     handler: `${handlerPath(__dirname)}/controller.updateRealmTrends`,

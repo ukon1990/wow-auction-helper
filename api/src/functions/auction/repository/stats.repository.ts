@@ -22,7 +22,9 @@ export class StatsRepository {
         quantity${formattedHour} = VALUES(quantity${formattedHour});`;
   }
 
-  constructor(private conn: DatabaseUtil = new DatabaseUtil(true, true), autoClose: boolean = true) {
+  constructor(
+    private conn: DatabaseUtil = new DatabaseUtil(true, true)
+  ) {
   }
 
   getAllStatsForRealmDate(house: AuctionHouse): Promise<AuctionItemStat[]> {
@@ -159,7 +161,14 @@ export class StatsRepository {
               quantity${previousHour}
        FROM itemPriceHistoryPerHour
        WHERE (
-                 ${list.map(({ahId, itemId, petSpeciesId = '-1', bonusIds, ahTypeId = 0, date = now}) => `
+                 ${list.map(({
+                               ahId,
+                               itemId,
+                               petSpeciesId = '-1',
+                               bonusIds,
+                               ahTypeId = 0,
+                               // date = now
+                 }) => `
                   (
                     ahId = ${ahId}
                     AND itemId = ${itemId}
@@ -188,27 +197,6 @@ export class StatsRepository {
                     )
                   `).join(' OR ')}
                  );`);
-  }
-
-  getNextHouseInTheDeleteQueue(): Promise<any> {
-    return this.conn.query(`SELECT *
-                            FROM auction_houses
-                            ORDER BY lastHistoryDeleteEvent LIMIT 1;`);
-  }
-
-  deleteOldAuctionHouseData(ahId: number, now: Date, day: number): Promise<any> {
-    return this.conn.query(`
-        DELETE
-        FROM itemPriceHistoryPerHour
-        WHERE ahId = ${ahId}
-          AND UNIX_TIMESTAMP(date) < ${+new Date(+now - day * 15) / 1000} LIMIT 100000;`);
-  }
-
-  updateLastDeleteEvent(id: number): Promise<any> {
-    return this.conn.query(`
-        UPDATE auction_houses
-        SET lastHistoryDeleteEvent = ${+new Date()}
-        WHERE id = ${id};`);
   }
 
   getActiveQueries(table = 'itemPriceHistoryPerHour'): Promise<any> {

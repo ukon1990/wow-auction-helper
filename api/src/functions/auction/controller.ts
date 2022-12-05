@@ -7,6 +7,8 @@ import {AuthService} from '@shared/services/auth.service';
 import {APIGatewayEvent} from 'aws-lambda';
 import {AuctionHouse} from '@functions/realm/model';
 import {AuthHandler} from '@functions/handlers/auth.handler';
+import {EventSchema} from "@models/s3/event-record.model";
+import {AuctionRestoreService} from "@functions/auction/services/auction-restore.service";
 
 /* istanbul ignore next */
 export const deactivateInactiveHouses = middyfy(async (): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
@@ -112,17 +114,74 @@ export const insertStatisticsData = middyfy(async (): Promise<ValidatedEventAPIG
 });
 
 /* istanbul ignore next */
-export const updateStaticS3Data = middyfy(async (event): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
+export const updateStaticS3Data = middyfy(async ({
+  Records,
+  body,
+  headers,
+}): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
   const service = new AuctionService();
 
   let response;
-  await service.updateStaticS3Data(event['Records'])
-    .then(() => {
-      response = formatJSONResponse();
-    })
-    .catch(err => {
-      response = formatErrorResponse(500, err.message, err);
-    });
+
+  if (body) {
+    const authService = new AuthService(headers);
+    const isAdmin = await authService.isAdmin();
+
+    if (!isAdmin) {
+      response = formatErrorResponse(401, '');
+    } else {
+      try {
+        await new StatsService().processRecord(body as EventSchema)
+          .then(() => {
+            response = formatJSONResponse();
+          })
+          .catch(err => {
+            response = formatErrorResponse(500, err.message, err);
+          });
+      } catch (error) {
+        response = formatErrorResponse(500, error.message, error);
+      }
+    }
+  } else {
+    await service.updateStaticS3Data(Records || body)
+      .then(() => {
+        response = formatJSONResponse();
+      })
+      .catch(err => {
+        response = formatErrorResponse(500, err.message, err);
+      });
+  }
+  return response;
+});
+
+/* istanbul ignore next */
+export const adminAuctionsRestoreHourlyHistoricalDataFromS3 = middyfy(async ({
+  body,
+  headers,
+}): Promise<ValidatedEventAPIGatewayProxyEvent<any>> => {
+  let response;
+  const authService = new AuthService(headers);
+  const isAdmin = await authService.isAdmin();
+  const {fromDate, toDate} = body;
+
+  if (!isAdmin) {
+    response = formatErrorResponse(401, '');
+  } else {
+    try {
+     /* const day = 30; // Startet på 21-22
+      const startDay = new Date(`11/${day}/2022`),
+        endDay = new Date(`12/${day + 2}/2022`);*/
+      await new AuctionRestoreService().restoreHourly(new Date(fromDate), new Date(toDate))
+        .then(() => {
+          response = formatJSONResponse();
+        })
+        .catch(err => {
+          response = formatErrorResponse(500, err.message, err);
+        });
+    } catch (error) {
+      response = formatErrorResponse(500, error.message, error);
+    }
+  }
 
   return response;
 });

@@ -122,4 +122,40 @@ export class AdminService {
         this.snackBar.open(`Failed with updating ${house.id} - ${error?.message}`, 'Ok');
       });
   }
+
+  auctionsRestoreHourlyHistoricalDataFromS3(input: any) {
+    return firstValueFrom(this.http.post(
+      Endpoints.getLambdaUrl(`admin/auctions/history-restore`), input))
+      .then(() => {
+        this.snackBar.open(`Successfully updated`, 'Ok');
+      })
+      .catch((error) => {
+        this.snackBar.open(`Failed with updating - ${error?.message}`, 'Ok');
+      });
+  }
+
+  triggerAuctionsUpdateStaticS3Data() {
+    firstValueFrom(this.http.post(
+      Endpoints.getLambdaUrl(`admin/auctions/s3-trigger/manual`), {
+        s3SchemaVersion: '1.0',
+        configurationId: 'On object created events EU',
+        bucket: {
+          name: 'wah-data-eu',
+          ownerIdentity: { principalId: 'A3T4FIE3YBFKBO' },
+          arn: 'arn:aws:s3:::wah-data-eu'
+        },
+        object: {
+          key: 'auctions/eu/111/0/1670175485000-lastModified.json.gz',
+          size: 443853,
+          eTag: '9f85d3090b339e75a71b541c2916aad0',
+          sequencer: '00638CE92DA969337E'
+        }
+      }))
+      .then(() => {
+        this.snackBar.open(`Successfully updated `, 'Ok');
+      })
+      .catch((error) => {
+        this.snackBar.open(`Failed with updating - ${error?.message}`, 'Ok');
+      });
+  }
 }
