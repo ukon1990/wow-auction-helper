@@ -4,11 +4,13 @@
   position: relative !important;
 }
 
+/*TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.
+ */
 .mat-tab-body-wrapper {
   padding-top: 1em;
 }
 
-.mat-tab-nav-bar.mat-primary {
+.mat-mdc-tab-nav-bar.mat-primary {
   margin-bottom: 1em;
 }
 
@@ -99,7 +101,7 @@ This is placed here, as the wowhead content is not a component, but HTML that is
   width: 98%;
   position: fixed !important;
 
-  .mat-card-content .mat-tab-body {
+  .mat-card-content .mat-mdc-tab-body {
     overflow-y: scroll;
   }
 
@@ -180,7 +182,7 @@ mat-spinner {
 td {
 
   a.mat-mdc-icon-button,
-  button.mat-icon-button {
+  button.mat-mdc-icon-button {
     height: auto !important;
     line-height: unset !important;
   }

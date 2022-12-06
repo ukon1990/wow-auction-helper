@@ -99,6 +99,8 @@ wah-character {
 	margin-left: 0 !important;
 }
 
+/*TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.
+*/
 .mat-tab-link-container {
 	/* If not, it will cover the shopping cart partially */
 	z-index: 0 !important;
