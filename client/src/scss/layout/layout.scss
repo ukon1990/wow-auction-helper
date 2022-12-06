@@ -103,11 +103,11 @@ This is placed here, as the wowhead content is not a component, but HTML that is
     overflow-y: scroll;
   }
 
-  & .dropped-by .mat-list {
+  & .dropped-by .mat-mdc-list {
     overflow-y: auto;
     max-height: 25em;
 
-    .mat-list-item {
+    .mat-mdc-list-item {
       height: 45px !important;
     }
   }
@@ -205,7 +205,7 @@ td {
 
 wah-character {
   mat-card,
-  .mat-list-item {
+  .mat-mdc-list-item {
     color: white !important;
   }
 
@@ -274,7 +274,7 @@ wah-materials,
   flex-direction: column;
   flex-flow: wrap;
 
-  .mat-list-item,
+  .mat-mdc-list-item,
   div {
     height: auto !important;
     flex: 1 1;
