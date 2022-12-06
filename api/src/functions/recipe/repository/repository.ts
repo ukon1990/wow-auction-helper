@@ -24,6 +24,7 @@ export class RecipeRepository extends Repository<APIRecipe> {
 							minCount,
 							maxCount,
 							procRate,
+							recipes.\`type\`      AS type,
 							professions.id        AS professionId,
 							skillTier.id          AS skillTierId,
 							recipes.timestamp     AS timestamp

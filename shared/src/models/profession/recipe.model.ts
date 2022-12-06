@@ -17,6 +17,7 @@ export class APIRecipe {
   skillTierId?: number;
   reagents: APIReagent[];
   modifiedSlots?: ModifiedSlot[];
+  type?: string;
   bonusIds?: number[];
 
   timestamp?: number;

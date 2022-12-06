@@ -695,7 +695,7 @@ export class StatsService {
     return new Promise((resolve, reject) => {
       Promise.all([
         new Promise<void>((success, fail) => {
-          repo.getRealmPriceHistoryDailyPastDays(house.id, 8)
+          repo.getRealmPriceHistoryDailyPastDays(house.id, house.region, 8)
             .then(rows => {
               const downloadAndQueryTime = +new Date() - start;
               dailyData = AuctionProcessorUtil.processDailyPriceData(rows);

@@ -26,25 +26,38 @@ export class RealmComponent implements OnInit {
     {key: 'lastRequested', title: 'Last requested', dataType: 'date'},
     {
       key: '',
-      title: 'Update',
+      title: 'AH',
       dataType: 'row-actions'
       , actions: [{
         icon: 'fa fa-download',
-        text: 'Update',
+        text: '',
         tooltip: 'Manually update an auction house',
         callback: (house: AuctionHouseStatus, index) => this.service.updateHouse(house),
-      }, {
+      }]
+    },
+    {
+      key: '',
+      title: 'Stats',
+      dataType: 'row-actions'
+      , actions: [{
         icon: 'fa fa-download',
-        text: 'Stats',
+        text: '',
         tooltip: 'Manually stats for an auction house',
         callback: (house: AuctionHouseStatus, index) => this.service.updateHouseStats(house),
-      }, {
+      }]
+    },
+    /* TODO: Make a more re-usable version of this?
+    {
+      key: '',
+      title: 'Insert',
+      dataType: 'row-actions',
+      actions: [{
         icon: 'fa fa-download',
         text: 'Inserts',
         tooltip: 'Manually stats for an auction house',
         callback: (house: AuctionHouseStatus, index) => this.service.triggerAuctionsUpdateStaticS3Data(),
       }]
-    },
+    },*/
   ];
   houses: AuctionHouseStatus[] = [];
   tableData: AuctionHouseStatus[] = [];

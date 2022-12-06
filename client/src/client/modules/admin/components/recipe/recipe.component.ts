@@ -47,6 +47,7 @@ export class RecipeComponent implements OnDestroy {
   };
   recipeColumns: ColumnDescription[] = [
     {key: 'id', title: 'ID', dataType: ColumnTypeEnum.FormControlNumber, options: {disabled: true}},
+    {key: 'type', title: 'Type', dataType: ColumnTypeEnum.FormControlText, options: {disabled: true}},
     {key: 'name', title: 'Name', dataType: ColumnTypeEnum.FormControlText, options: {disabled: true}},
     {key: 'itemName', title: 'ItemName', dataType: ColumnTypeEnum.Name},
     {key: 'rank', title: 'Rank', dataType: ColumnTypeEnum.FormControlNumber, cssClass: 'column-xs'},
@@ -133,11 +134,15 @@ export class RecipeComponent implements OnDestroy {
       !recipe.craftedItemId && !recipe.allianceCraftedItemId && !recipe.hordeCraftedItemId ||
       !recipe.minCount || !recipe.maxCount
     ) {
+      const isNotRecipe = (text: string) =>
+        !TextUtil.contains(text, 'Pattern') &&
+        !TextUtil.contains(text, 'Design') &&
+        !TextUtil.contains(text, 'Formula') &&
+        !TextUtil.contains(text, 'Schematic') &&
+        !TextUtil.contains(text, 'Plans');
       const itemsWithMatchingNames = ItemService.list.value
         .filter(item =>
-          !TextUtil.contains(item.name, 'Pattern') &&
-          !TextUtil.contains(item.name, 'Design') &&
-          TextUtil.contains(item.name, name)
+          isNotRecipe(item.name) && TextUtil.contains(item.name, name)
         )
         // Having the smallest item id first (as this will likely be a quality 1 version over 2 or 3
         .sort((a, b) => a.id - b.id);
@@ -180,6 +185,7 @@ export class RecipeComponent implements OnDestroy {
 
           const formGroup = new FormGroup({
             id: new FormControl<number>({value: recipe.id, disabled: true}),
+            type: new FormControl<string>({value: recipe.type, disabled: true}),
             name: new FormControl<string>({value: recipe.name, disabled: true}),
             itemName: new FormControl<string>(null),
             rank: new FormControl<number>({value: recipe.rank, disabled: true}),
@@ -227,7 +233,7 @@ export class RecipeComponent implements OnDestroy {
     }
     this.service.updateRecipe(changes)
       .then(() => {
-        this.snackBar.open(`Successfully saved recipe: ${recipe.value.name}`, 'Ok');
+        this.snackBar.open(`Successfully saved recipe: ${recipe.getRawValue().name}`, 'Ok');
         recipe.controls.timestamp.enable();
         recipe.controls.timestamp.setValue(new Date(recipe.getRawValue().timestamp).toJSON());
         recipe.controls.timestamp.disable();

@@ -50,7 +50,7 @@ export class StatsRepository {
     });
   }
 
-  getRealmPriceHistoryDailyPastDays(ahId: number, daysSince: number) {
+  getRealmPriceHistoryDailyPastDays(ahId: number, region: string, daysSince: number) {
     const {
       columns,
       months
@@ -59,7 +59,7 @@ export class StatsRepository {
         SELECT date, itemId, ahTypeId, petSpeciesId, bonusIds, ${columns.join(', ')}
         FROM itemPriceHistoryPerDay
         WHERE ${months.map(month => `(
-          (ahId = ${ahId} OR ahId = ${this.getRegionId()})
+          (ahId = ${ahId} OR ahId = ${this.getRegionId(region)})
             AND date = ${month}
           )`).join(' OR ')};
     `);
