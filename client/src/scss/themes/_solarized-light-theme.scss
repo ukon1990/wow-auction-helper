@@ -20,8 +20,10 @@ $light-theme: mat.define-light-theme((
 // CSS class whatever you want. In this example, any component inside of an element with
 // `.unicorn-dark-theme` will be affected by this alternate dark theme instead of the default theme.
 .solarized-light-theme {
-
+  /* TODO(mdc-migration): Remove all-legacy-component-themes once all legacy components are migrated*/
   @include mat.all-legacy-component-themes($light-theme);
+
+  @include mat.all-component-themes($light-theme);
   background-color: #ffefde !important;
   color: black;
 

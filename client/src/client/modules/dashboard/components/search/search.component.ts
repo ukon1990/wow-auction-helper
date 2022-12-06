@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {UntypedFormControl} from '@angular/forms';
 import {Dashboard} from '@shared/models';
 import {DashboardService} from '../../services/dashboard.service';

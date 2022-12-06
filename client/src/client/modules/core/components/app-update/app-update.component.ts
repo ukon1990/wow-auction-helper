@@ -2,7 +2,7 @@ import {Component, Inject, OnDestroy} from '@angular/core';
 import {Report} from '../../../../utils/report.util';
 import {ChangeLog} from '../../../about/models/github/commit/changelog.model';
 import {GithubService} from '../../../about/services/github.service';
-import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 declare function require(moduleName: string): any;
 const version = require('../../../../../../package.json').version;

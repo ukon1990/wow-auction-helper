@@ -1,8 +1,8 @@
 import {Component, ElementRef, Input, ViewChild} from '@angular/core';
-import {MatLegacyAutocomplete as MatAutocomplete, MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent} from '@angular/material/legacy-autocomplete';
+import {MatAutocomplete, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {FormArray, UntypedFormControl} from '@angular/forms';
 import {map, startWith} from 'rxjs/operators';
-import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips';
+import { MatChipInputEvent } from '@angular/material/chips';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { Observable } from 'rxjs';
 import {DashboardService} from '../../../services/dashboard.service';

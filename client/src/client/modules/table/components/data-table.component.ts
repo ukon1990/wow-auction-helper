@@ -8,7 +8,7 @@ import {
   Output,
   SimpleChanges
 } from '@angular/core';
-import {LegacyPageEvent as PageEvent} from '@angular/material/legacy-paginator';
+import {PageEvent} from '@angular/material/paginator';
 import {UntypedFormControl} from '@angular/forms';
 import {Report} from '../../../utils/report.util';
 import {ColumnDescription, Item, Profession} from '@shared/models';

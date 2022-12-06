@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {SwUpdate, UpdateAvailableEvent} from '@angular/service-worker';
 import {GithubService} from '../modules/about/services/github.service';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {AppUpdateComponent} from '../modules/core/components/app-update/app-update.component';
 
 declare function require(moduleName: string): any;

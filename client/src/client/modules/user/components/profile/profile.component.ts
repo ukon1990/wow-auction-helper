@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {CognitoUser} from 'amazon-cognito-identity-js';
 import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {UserSettings} from '../../models/settings.model';

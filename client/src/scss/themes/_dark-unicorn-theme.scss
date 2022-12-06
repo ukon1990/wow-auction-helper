@@ -10,7 +10,9 @@ $dark-theme:   mat.define-dark-theme($dark-primary, $dark-accent, $dark-warn);
 // CSS class whatever you want. In this example, any component inside of an element with
 // `.unicorn-dark-theme` will be affected by this alternate dark theme instead of the default theme.
 .unicorn-dark-theme {
+  /* TODO(mdc-migration): Remove all-legacy-component-themes once all legacy components are migrated*/
   @include mat.all-legacy-component-themes($dark-theme);
+  @include mat.all-component-themes($dark-theme);
   background: #424242;
   color: white;
 

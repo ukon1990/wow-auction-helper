@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {ColumnDescription} from '@shared/models';
-import {LegacyPageEvent as PageEvent} from '@angular/material/legacy-paginator';
+import {PageEvent} from '@angular/material/paginator';
 import {BaseComponent} from './base.component';
 
 @Component({

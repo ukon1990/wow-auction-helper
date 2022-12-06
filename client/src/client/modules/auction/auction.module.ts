@@ -13,7 +13,7 @@ import {ShoppingCartModule} from '../shopping-cart/shopping-cart.module';
 import {AboutModule} from '../about/about.module';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
+import { MatMenuModule } from '@angular/material/menu';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import { AuctionComparisonComponent } from './components/auction-comparison/auction-comparison.component';
 

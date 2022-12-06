@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {faUserCircle} from '@fortawesome/free-solid-svg-icons/faUserCircle';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {ProfileComponent} from './profile.component';
 import {AuthService} from '../../services/auth.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';

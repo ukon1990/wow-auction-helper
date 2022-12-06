@@ -4,7 +4,7 @@ import {DashboardService} from '../../services/dashboard.service';
 import {Dashboard} from '@shared/models';
 import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {ConfigureComponent} from '../configure/configure.component';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {CdkDragDrop} from '@angular/cdk/drag-drop';
 import {CharacterService} from '../../../character/services/character.service';
 import {Report} from '../../../../utils/report.util';
@@ -12,7 +12,7 @@ import {ErrorReport} from '../../../../utils/error-report.util';
 import {SearchComponent} from '../search/search.component';
 import {faFileImport} from '@fortawesome/free-solid-svg-icons/faFileImport';
 import {faPlus} from '@fortawesome/free-solid-svg-icons/faPlus';
-import {LegacyPageEvent as PageEvent} from '@angular/material/legacy-paginator';
+import {PageEvent} from '@angular/material/paginator';
 import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 import {RealmService} from '../../../../services/realm.service';
 

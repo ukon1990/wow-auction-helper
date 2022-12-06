@@ -12,9 +12,15 @@
 //  If you specify typography styles for the components you use elsewhere, you should delete this line.
 //  If you don't need the default component typographies but still want the hierarchy styles,
 //  you can delete this line and instead use:
-//    `@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());`
+//    `@include mat.legacy-typography-hierarchy(mat.define-typography-config());`
+/*TODO(mdc-migration): Remove all-legacy-component-typographies once all legacy components are migrated
+*/
 @include mat.all-legacy-component-typographies();
+@include mat.all-component-typographies();
+/*TODO(mdc-migration): Remove legacy-core once all legacy components are migrated
+*/
 @include mat.legacy-core();
+@include mat.core();
 @import 'solarized-light-theme';
 @import 'dark-unicorn-theme';
 @import 'dark-blue-theme';
@@ -27,7 +33,10 @@ $candy-app-warn: mat.define-palette(mat.$red-palette);
 $candy-app-theme: mat.define-light-theme($candy-app-primary, $candy-app-accent);
 
 // Include the default theme styles.
+/*TODO(mdc-migration): Remove all-legacy-component-themes once all legacy components are migrated
+*/
 @include mat.all-legacy-component-themes($candy-app-theme);
+@include mat.all-component-themes($candy-app-theme);
 
 .pink-blue {
 	.mat-bg-primary {
