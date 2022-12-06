@@ -42,7 +42,7 @@ $dark-theme:   mat.define-dark-theme($dark-primary, $dark-accent, $dark-warn);
   }
 
   wah-character {
-    .mat-raised-button{
+    .mat-mdc-raised-button{
       color: white !important;
     }
   }
