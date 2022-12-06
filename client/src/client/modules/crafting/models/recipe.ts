@@ -1,5 +1,5 @@
 import {Reagent} from './reagent';
-import {APIRecipe} from '@shared/models';
+import {APIRecipe, ModifiedSlot} from '@shared/models';
 
 export class Recipe extends APIRecipe {
   // Added by the client
@@ -8,6 +8,7 @@ export class Recipe extends APIRecipe {
   reagents: Reagent[] = [];
   expansion?: number;
   flaggedAsBugged?: boolean;
+  modifiedSlots: ModifiedSlot[];
 
   // Applied after cost calculation
   cost = 0;

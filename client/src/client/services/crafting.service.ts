@@ -9,6 +9,7 @@ import {Platform} from '@angular/cdk/platform';
 import {BehaviorSubject} from 'rxjs';
 import {Item, ItemSpells} from '@shared/models';
 import {Reagent} from '../modules/crafting/models/reagent';
+import {ItemService} from "./item.service";
 
 class RecipeResponse {
   timestamp: Date;
@@ -23,6 +24,7 @@ export class CraftingService {
   static list: BehaviorSubject<Recipe[]> = new BehaviorSubject([]);
   static fullList: BehaviorSubject<Recipe[]> = new BehaviorSubject([]);
   static map: BehaviorSubject<Map<number, Recipe>> = new BehaviorSubject(new Map<number, Recipe>());
+  static recipesWithModifications: BehaviorSubject<Map<number, Recipe>> = new BehaviorSubject(new Map<number, Recipe>());
   static knownRecipeMap: BehaviorSubject<Map<number, Recipe>> = new BehaviorSubject(new Map<number, Recipe>());
   static itemRecipeMap: BehaviorSubject<Map<number, Recipe[]>> = new BehaviorSubject(new Map<number, Recipe[]>());
   static itemRecipeMapPerKnown: BehaviorSubject<Map<number, Recipe[]>> = new BehaviorSubject(new Map<number, Recipe[]>());
@@ -173,8 +175,14 @@ export class CraftingService {
   setItemRecipeMapPerKnown(map: Map<number, Recipe> = CraftingService.map.value, list: Recipe[] = CraftingService.list.value): void {
     const itemRecipeMapPerKnown = new Map<number, Recipe[]>();
     const knownRecipeMap = new Map<number, Recipe>();
+    const recipesWithModifications = new Map<number, Recipe>();
     list.forEach(recipe => {
       map.set(recipe.id, recipe);
+
+      if (recipe.modifiedSlots?.length) {
+        recipesWithModifications.set(recipe.id, recipe);
+      }
+
       if (CraftingService.recipesForUser.value.has(recipe.id)) {
         knownRecipeMap.set(recipe.id, recipe);
         if (!itemRecipeMapPerKnown.has(recipe.itemID)) {
@@ -184,6 +192,7 @@ export class CraftingService {
         }
       }
     });
+    CraftingService.recipesWithModifications.next(recipesWithModifications);
     CraftingService.knownRecipeMap.next(knownRecipeMap);
     CraftingService.itemRecipeMapPerKnown.next(itemRecipeMapPerKnown);
   }
@@ -262,5 +271,9 @@ export class CraftingService {
       });
     }
     return list;
+  }
+
+  handleModifiedCrafting() {
+    // ItemService.modifiedCraftingReagent.
   }
 }
