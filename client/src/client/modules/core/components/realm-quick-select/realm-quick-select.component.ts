@@ -38,7 +38,6 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   allianceCharacterCountForRealm = 0;
   hordeCharacterCountForRealm = 0;
   list = [];
-  faUserPlus = faUserPlus;
   private ignoreNextChange: boolean;
 
   sm = new SubscriptionManager();

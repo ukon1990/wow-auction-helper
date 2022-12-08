@@ -19,13 +19,13 @@
   <ng-template #contentTemplate>
     <mat-list class="mb-2">
       <mat-list-item *ngFor="let board of filteredBoards" class="mat-elevation-z5 mt-1 mb-1">
-        <h3 mat-line>
+        <h3 matListItemLine>
           {{board.title}} ({{board.lastModified | date: 'dd.MMM yyyy HH:mm'}})
         </h3>
-        <div mat-line>
+        <div matListItemLine>
           {{board.description}}
         </div>
-        <div mat-line>
+        <div matListItemLine>
           <div class="row pt-1">
             <div class="col">
               <strong>Created by:</strong> {{ board.createdBy }}

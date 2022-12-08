@@ -18,6 +18,7 @@
 	<mat-form-field
 			class="bg-transparent short-form-field"
 			matTooltip="Quick realm change, for those with characters on multiple realms. If a realm is missing, add a character in the settings.">
+		<mat-label>Realm</mat-label>
 		<mat-select placeholder="Realm" formControlName="realm">
 			<mat-optgroup label="With characters">
 				<mat-option *ngFor="let realm of realmList"
@@ -34,10 +35,4 @@
 			</mat-optgroup>
 		</mat-select>
 	</mat-form-field>
-	<a routerLink="/settings/characters"
-		 mat-icon-button
-		 color="accent"
-		 matTooltip="Add more characters">
-		<fa-icon [icon]="faUserPlus"></fa-icon>
-	</a>
 </form>

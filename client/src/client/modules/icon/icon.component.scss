@@ -4,14 +4,19 @@
   width: 13px;
   height: 13px;
   position: absolute;
+  /*transform: rotate(90deg);*/
 
   &.tier-1 {
-    background-image: url('~assets/icons/quality-tier1.png');
+    background-image: url('~assets/icons/quality-tier1.png');/*
+    width: 8px;
+    left: 2.7rem;*/
   }
   &.tier-2 {
     background-image: url('~assets/icons/quality-tier2.png');
+    /*left: 2.5rem;*/
   }
   &.tier-3 {
     background-image: url('~assets/icons/quality-tier3.png');
+    /*left: 2.7rem;*/
   }
 }
