@@ -4,6 +4,9 @@ export const columnConfig = {
       key: 'name',
       title: 'Name',
       dataType: 'name',
+      options: {
+        idName: 'id',
+      }
     },
     vendorSell: {
       key: 'vendorSell',

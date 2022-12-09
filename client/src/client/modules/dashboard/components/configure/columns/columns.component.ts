@@ -57,22 +57,10 @@ export class ColumnsComponent implements AfterViewInit, OnDestroy {
   }
 
   private addDefaultColumns() {
-    this.addColumn(undefined, {
-      key: 'name', title: 'Name', dataType: 'name', options: {idName: 'id'}
-    });
-    this.addColumn(undefined, {
-      key: 'buyout', title: 'Buyout', dataType: 'gold'
-    });
-    this.addColumn(undefined, {
-      key: 'mktPrice',
-      title: 'Market value',
-      dataType: 'gold'
-    });
-    this.addColumn(undefined, {
-      key: 'regionSaleRate',
-      title: 'Sale rate',
-      dataType: 'percent'
-    });
+    this.addColumn(undefined, columnConfig.item.name);
+    this.addColumn(undefined, columnConfig.auction.buyout);
+    this.addColumn(undefined, columnConfig.auction.mktPrice);
+    this.addColumn(undefined, columnConfig.auction.regionSalePct);
   }
 
   addColumn(formArray: UntypedFormArray = this.formArray,
