@@ -1,41 +1,41 @@
 <mat-list dense class="horizontal-item-list">
   <mat-list-item>
-    <div mat-line [style]="{color: theme.accentColorCode}">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
       Sum total value
     </div>
-    <div mat-line>
+    <div matListItemLine>
       {{ cart.totalValue | gold }}
     </div>
   </mat-list-item>
   <mat-list-item>
-    <div mat-line [style]="{color: theme.accentColorCode}">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
       Sum cost of materials
     </div>
-    <div mat-line>
+    <div matListItemLine>
       {{ cart.sumCost | gold }}
     </div>
   </mat-list-item>
   <mat-list-item>
-    <div mat-line [style]="{color: theme.accentColorCode}">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
       Estimated profit
     </div>
-    <div mat-line>
+    <div matListItemLine>
       {{ cart.profit | gold }}
     </div>
   </mat-list-item>
   <mat-list-item>
-    <div mat-line [style]="{color: theme.accentColorCode}">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
       Sum estimated cost, without inventory
     </div>
-    <div mat-line>
+    <div matListItemLine>
       {{ cart.sumEstimatedInventoryCost | gold }}
     </div>
   </mat-list-item>
   <mat-list-item>
-    <div mat-line [style]="{color: theme.accentColorCode}">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
       Estimated profit with inventory
     </div>
-    <div mat-line>
+    <div matListItemLine>
       {{ cart.profit - cart.sumEstimatedInventoryCost | gold }}
     </div>
   </mat-list-item>

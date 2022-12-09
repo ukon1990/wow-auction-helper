@@ -1,250 +1,250 @@
 <ng-container *ngIf="isActiveTab">
-  <ng-container *ngIf="isInitiated && !isLoading ; else loadingTemplate">
-    <form [formGroup]="form" *ngIf="auctionItem.source?.recipe?.all">
-      <mat-form-field class="w-100" *ngIf="auctionItem.source?.recipe?.all.length">
-        <mat-select
-                    formControlName="recipe"
-                    placeholder="Crafting cost by recipe"
-        >
-          <mat-option *ngFor="let recipe of auctionItem.source?.recipe?.all" [value]="recipe">
-            <ng-container *ngIf="professions && professions[recipe.professionId]">
-              [{{ professions[recipe.professionId].name }}]
-            </ng-container>
-            {{ recipe.name }}<span *ngIf="recipe.rank"> - Rank: {{ recipe.rank }}</span>
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </form>
+	<ng-container *ngIf="isInitiated && !isLoading ; else loadingTemplate">
+		<form [formGroup]="form" *ngIf="auctionItem.source?.recipe?.all">
+			<mat-form-field class="w-100" *ngIf="auctionItem.source?.recipe?.all.length">
+				<mat-select
+						formControlName="recipe"
+						placeholder="Crafting cost by recipe"
+				>
+					<mat-option *ngFor="let recipe of auctionItem.source?.recipe?.all" [value]="recipe">
+						<ng-container *ngIf="professions && professions[recipe.professionId]">
+							[{{ professions[recipe.professionId].name }}]
+						</ng-container>
+						{{ recipe.name }}<span *ngIf="recipe.rank"> - Rank: {{ recipe.rank }}</span>
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+		</form>
 
-    <h6>Hourly changes for the past 14 days or less</h6>
-    <mat-list dense class="horizontal-item-list mb-3" *ngIf="stats">
-      <mat-list-item>
-        <div mat-line [style]="{color: theme.accentColorCode}">
-          Past 12 hours
-        </div>
-        <div mat-line>
-          <span [style]="{color: theme.primaryColorCode}">Avg change</span>
-          {{ stats.past12Hours.price.trend | gold }}
-          <span [style]="{color: theme.primaryColorCode}">Avg price</span>
-          {{ stats.past12Hours.price.avg | gold }}
-        </div>
-        <div mat-line>
-          <span [style]="{color: theme.warnColorCode}">Avg change</span>
-          {{ stats.past12Hours.quantity.trend | number }}
-          <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
-          {{ stats.past12Hours.quantity.avg | number }}
-        </div>
-      </mat-list-item>
-      <mat-list-item>
-        <div mat-line [style]="{color: theme.accentColorCode}">
-          Past 24 hours
-        </div>
-        <div mat-line>
-          <span [style]="{color: theme.primaryColorCode}">Avg change</span>
-          {{ stats.past24Hours.price.trend | gold }}
-          <span [style]="{color: theme.primaryColorCode}">Avg price</span>
-          {{ stats.past24Hours.price.avg | gold }}
-        </div>
-        <div mat-line>
-          <span [style]="{color: theme.warnColorCode}">Avg change</span>
-          {{ stats.past24Hours.quantity.trend | number }}
-          <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
-          {{ stats.past24Hours.quantity.avg | number }}
-        </div>
-      </mat-list-item>
-      <mat-list-item>
-        <div mat-line [style]="{color: theme.accentColorCode}">
-          Past 7 days
-        </div>
-        <div mat-line>
-          <span [style]="{color: theme.primaryColorCode}">Avg change</span>
-          {{ stats.past7Days.price.trend | gold }}
-          <span [style]="{color: theme.primaryColorCode}">Avg price</span>
-          {{ stats.past7Days.price.avg | gold }}
-        </div>
-        <div mat-line>
-          <span [style]="{color: theme.warnColorCode}">Avg change</span>
-          {{ stats.past7Days.quantity.trend | number }}
-          <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
-          {{ stats.past7Days.quantity.avg | number }}
-        </div>
-      </mat-list-item>
-      <mat-list-item>
-        <div mat-line [style]="{color: theme.accentColorCode}">
-          Past 14 days
-        </div>
-        <div mat-line>
-          <span [style]="{color: theme.primaryColorCode}">Avg change</span>
-          {{ stats.past14Days.price.trend | gold }}
-          <span [style]="{color: theme.primaryColorCode}">Avg price</span>
-          {{ stats.past14Days.price.avg | gold }}
-        </div>
-        <div mat-line>
-          <span [style]="{color: theme.warnColorCode}">Avg change</span>
-          {{ stats.past14Days.quantity.trend | number }}
-          <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
-          {{ stats.past14Days.quantity.avg | number }}
-        </div>
-      </mat-list-item>
-    </mat-list>
-    <mat-tab-group class="mb-3">
-      <mat-tab label="Chart">
-        <wah-highcharts
-                title="Hourly prices and quantity for the past 14 days"
-                [series]="hourlyChart"
-                [xAxis]="xAxisHourly"
-                [(update)]="updateDailyChart"
-        >
-        </wah-highcharts>
+		<h6>Hourly changes for the past 14 days or less</h6>
+		<mat-list dense class="horizontal-item-list mb-3" *ngIf="stats">
+			<mat-list-item>
+				<div matListItemLine [style]="{color: theme.accentColorCode}">
+					Past 12 hours
+				</div>
+				<div matListItemLine>
+					<span [style]="{color: theme.primaryColorCode}">Avg change</span>
+					{{ stats.past12Hours.price.trend | gold }}
+					<span [style]="{color: theme.primaryColorCode}">Avg price</span>
+					{{ stats.past12Hours.price.avg | gold }}
+				</div>
+				<div matListItemLine>
+					<span [style]="{color: theme.warnColorCode}">Avg change</span>
+					{{ stats.past12Hours.quantity.trend | number }}
+					<span [style]="{color: theme.warnColorCode}">Avg quantity</span>
+					{{ stats.past12Hours.quantity.avg | number }}
+				</div>
+			</mat-list-item>
+			<mat-list-item>
+				<div matListItemLine [style]="{color: theme.accentColorCode}">
+					Past 24 hours
+				</div>
+				<div matListItemLine>
+					<span [style]="{color: theme.primaryColorCode}">Avg change</span>
+					{{ stats.past24Hours.price.trend | gold }}
+					<span [style]="{color: theme.primaryColorCode}">Avg price</span>
+					{{ stats.past24Hours.price.avg | gold }}
+				</div>
+				<div matListItemLine>
+					<span [style]="{color: theme.warnColorCode}">Avg change</span>
+					{{ stats.past24Hours.quantity.trend | number }}
+					<span [style]="{color: theme.warnColorCode}">Avg quantity</span>
+					{{ stats.past24Hours.quantity.avg | number }}
+				</div>
+			</mat-list-item>
+			<mat-list-item>
+				<div matListItemLine [style]="{color: theme.accentColorCode}">
+					Past 7 days
+				</div>
+				<div matListItemLine>
+					<span [style]="{color: theme.primaryColorCode}">Avg change</span>
+					{{ stats.past7Days.price.trend | gold }}
+					<span [style]="{color: theme.primaryColorCode}">Avg price</span>
+					{{ stats.past7Days.price.avg | gold }}
+				</div>
+				<div matListItemLine>
+					<span [style]="{color: theme.warnColorCode}">Avg change</span>
+					{{ stats.past7Days.quantity.trend | number }}
+					<span [style]="{color: theme.warnColorCode}">Avg quantity</span>
+					{{ stats.past7Days.quantity.avg | number }}
+				</div>
+			</mat-list-item>
+			<mat-list-item>
+				<div matListItemLine [style]="{color: theme.accentColorCode}">
+					Past 14 days
+				</div>
+				<div matListItemLine>
+					<span [style]="{color: theme.primaryColorCode}">Avg change</span>
+					{{ stats.past14Days.price.trend | gold }}
+					<span [style]="{color: theme.primaryColorCode}">Avg price</span>
+					{{ stats.past14Days.price.avg | gold }}
+				</div>
+				<div matListItemLine>
+					<span [style]="{color: theme.warnColorCode}">Avg change</span>
+					{{ stats.past14Days.quantity.trend | number }}
+					<span [style]="{color: theme.warnColorCode}">Avg quantity</span>
+					{{ stats.past14Days.quantity.avg | number }}
+				</div>
+			</mat-list-item>
+		</mat-list>
+		<mat-tab-group class="mb-3">
+			<mat-tab label="Chart">
+				<wah-highcharts
+						title="Hourly prices and quantity for the past 14 days"
+						[series]="hourlyChart"
+						[xAxis]="xAxisHourly"
+						[(update)]="updateDailyChart"
+				>
+				</wah-highcharts>
 
-      </mat-tab>
-      <mat-tab label="Table">
-        <wah-data-table
-                [columns]="fourteenDayByHourTable.columns"
-                [data]="fourteenDayByHourTable.data">
-        </wah-data-table>
-      </mat-tab>
-    </mat-tab-group>
+			</mat-tab>
+			<mat-tab label="Table">
+				<wah-data-table
+						[columns]="fourteenDayByHourTable.columns"
+						[data]="fourteenDayByHourTable.data">
+				</wah-data-table>
+			</mat-tab>
+		</mat-tab-group>
 
 
-    <ng-container *ngIf="groupedByDateTable.data.length > 0">
-      <h6>Daily changes for the past {{numberOfDays}} days</h6>
-      <mat-list dense class="horizontal-item-list mb-3" *ngIf="statsDaily">
-        <mat-list-item>
-          <div mat-line [style]="{color: theme.accentColorCode}">
-            Past {{numberOfDays < 7 ? numberOfDays : 7}} days
-          </div>
-          <div mat-line>
-            <span [style]="{color: theme.primaryColorCode}">Avg change</span>
-            {{ statsDaily.past7Days.price.trend | gold }}
-            <span [style]="{color: theme.primaryColorCode}">Avg price</span>
-            {{ statsDaily.past7Days.price.avg | gold }}
-          </div>
-          <div mat-line>
-            <span [style]="{color: theme.warnColorCode}">Avg change</span>
-            {{ statsDaily.past7Days.quantity.trend | number }}
-            <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
-            {{ statsDaily.past7Days.quantity.avg | number }}
-          </div>
-        </mat-list-item>
-        <mat-list-item *ngIf="numberOfDays >= 14">
-          <div mat-line [style]="{color: theme.accentColorCode}">
-            Past {{numberOfDays < 14 ? numberOfDays : 14}} days
-          </div>
-          <div mat-line>
-            <span [style]="{color: theme.primaryColorCode}">Avg change</span>
-            {{ statsDaily.past14Days.price.trend | gold }}
-            <span [style]="{color: theme.primaryColorCode}">Avg price</span>
-            {{ statsDaily.past14Days.price.avg | gold }}
-          </div>
-          <div mat-line>
-            <span [style]="{color: theme.warnColorCode}">Avg change</span>
-            {{ statsDaily.past14Days.quantity.trend | number }}
-            <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
-            {{ statsDaily.past14Days.quantity.avg | number }}
-          </div>
-        </mat-list-item>
-        <mat-list-item *ngIf="numberOfDays >= 20">
-          <div mat-line [style]="{color: theme.accentColorCode}">
-            Past {{numberOfDays > 20 && numberOfDays <= 30 ? numberOfDays : 30}} days
-          </div>
-          <div mat-line>
-            <span [style]="{color: theme.primaryColorCode}">Avg change</span>
-            {{ statsDaily.past30Days.price.trend | gold }}
-            <span [style]="{color: theme.primaryColorCode}">Avg price</span>
-            {{ statsDaily.past30Days.price.avg | gold }}
-          </div>
-          <div mat-line>
-            <span [style]="{color: theme.warnColorCode}">Avg change</span>
-            {{ statsDaily.past30Days.quantity.trend | number }}
-            <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
-            {{ statsDaily.past30Days.quantity.avg | number }}
-          </div>
-        </mat-list-item>
-        <mat-list-item *ngIf="numberOfDays >= 60">
-          <div mat-line [style]="{color: theme.accentColorCode}">
-            Past {{numberOfDays}} days
-          </div>
-          <div mat-line>
-            <span [style]="{color: theme.primaryColorCode}">Avg change</span>
-            {{ statsDaily.past90Days.price.trend | gold }}
-            <span [style]="{color: theme.primaryColorCode}">Avg price</span>
-            {{ statsDaily.past90Days.price.avg | gold }}
-          </div>
-          <div mat-line>
-            <span [style]="{color: theme.warnColorCode}">Avg change</span>
-            {{ statsDaily.past90Days.quantity.trend | number }}
-            <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
-            {{ statsDaily.past90Days.quantity.avg | number }}
-          </div>
-        </mat-list-item>
-      </mat-list>
-      <mat-tab-group>
-        <mat-tab label="Chart">
-          <wah-highcharts
-                  title="Daily prices and quantity"
-                  [series]="dailyChart"
-                  [(update)]="updateDailyChart"
-                  [xAxis]="xAxisDaily"
-                  (chartInstance)="setChartInstance($event)"
-          >
-          </wah-highcharts>
-        </mat-tab>
-        <mat-tab label="Table">
-          <wah-data-table
-                  [columns]="groupedByDateTable.columns"
-                  [data]="groupedByDateTable.data">
-          </wah-data-table>
-        </mat-tab>
-      </mat-tab-group>
-    </ng-container>
-    <ng-container *ngIf="statsMap">
-      <h6 class="mt-2">
-        Historical data, mapped out by weekday
-      </h6>
-      <form [formGroup]="form">
-        <div formGroupName="period">
-          <mat-form-field color="accent">
-            <mat-label>Enter a date range</mat-label>
-            <mat-date-range-input [rangePicker]="rangePicker">
-              <input formControlName="start"
-                     matStartDate
-                     placeholder="Start date"
-              >
-              <input formControlName="end"
-                     matEndDate
-                     placeholder="End date"
-              >
-            </mat-date-range-input>
-            <mat-datepicker-toggle matSuffix [for]="rangePicker"></mat-datepicker-toggle>
-            <mat-date-range-picker #rangePicker>
-              <mat-date-range-picker-actions>
-                <button mat-button matDateRangePickerCancel>Cancel</button>
-                <button mat-raised-button color="primary" matDateRangePickerApply>Apply</button>
-              </mat-date-range-picker-actions>
-            </mat-date-range-picker>
-          </mat-form-field>
-        </div>
-      </form>
-      <wah-data-table
-              [columns]="statsMap?.columns"
-              [data]="statsMap?.prices">
-        <div class="float-left history-in-table-toolbar">
-          Prices
-        </div>
-      </wah-data-table>
-      <wah-data-table *ngIf="statsMap?.roi.length"
-                      [columns]="statsMap?.columns"
-                      [data]="statsMap?.roi">
-        <div class="float-left history-in-table-toolbar">
-          ROI
-        </div>
-      </wah-data-table>
-    </ng-container>
-  </ng-container>
+		<ng-container *ngIf="groupedByDateTable.data.length > 0">
+			<h6>Daily changes for the past {{numberOfDays}} days</h6>
+			<mat-list dense class="horizontal-item-list mb-3" *ngIf="statsDaily">
+				<mat-list-item>
+					<div matListItemLine [style]="{color: theme.accentColorCode}">
+						Past {{numberOfDays < 7 ? numberOfDays : 7}} days
+					</div>
+					<div matListItemLine>
+						<span [style]="{color: theme.primaryColorCode}">Avg change</span>
+						{{ statsDaily.past7Days.price.trend | gold }}
+						<span [style]="{color: theme.primaryColorCode}">Avg price</span>
+						{{ statsDaily.past7Days.price.avg | gold }}
+					</div>
+					<div matListItemLine>
+						<span [style]="{color: theme.warnColorCode}">Avg change</span>
+						{{ statsDaily.past7Days.quantity.trend | number }}
+						<span [style]="{color: theme.warnColorCode}">Avg quantity</span>
+						{{ statsDaily.past7Days.quantity.avg | number }}
+					</div>
+				</mat-list-item>
+				<mat-list-item *ngIf="numberOfDays >= 14">
+					<div matListItemLine [style]="{color: theme.accentColorCode}">
+						Past {{numberOfDays < 14 ? numberOfDays : 14}} days
+					</div>
+					<div matListItemLine>
+						<span [style]="{color: theme.primaryColorCode}">Avg change</span>
+						{{ statsDaily.past14Days.price.trend | gold }}
+						<span [style]="{color: theme.primaryColorCode}">Avg price</span>
+						{{ statsDaily.past14Days.price.avg | gold }}
+					</div>
+					<div matListItemLine>
+						<span [style]="{color: theme.warnColorCode}">Avg change</span>
+						{{ statsDaily.past14Days.quantity.trend | number }}
+						<span [style]="{color: theme.warnColorCode}">Avg quantity</span>
+						{{ statsDaily.past14Days.quantity.avg | number }}
+					</div>
+				</mat-list-item>
+				<mat-list-item *ngIf="numberOfDays >= 20">
+					<div matListItemLine [style]="{color: theme.accentColorCode}">
+						Past {{numberOfDays > 20 && numberOfDays <= 30 ? numberOfDays : 30}} days
+					</div>
+					<div matListItemLine>
+						<span [style]="{color: theme.primaryColorCode}">Avg change</span>
+						{{ statsDaily.past30Days.price.trend | gold }}
+						<span [style]="{color: theme.primaryColorCode}">Avg price</span>
+						{{ statsDaily.past30Days.price.avg | gold }}
+					</div>
+					<div matListItemLine>
+						<span [style]="{color: theme.warnColorCode}">Avg change</span>
+						{{ statsDaily.past30Days.quantity.trend | number }}
+						<span [style]="{color: theme.warnColorCode}">Avg quantity</span>
+						{{ statsDaily.past30Days.quantity.avg | number }}
+					</div>
+				</mat-list-item>
+				<mat-list-item *ngIf="numberOfDays >= 60">
+					<div matListItemLine [style]="{color: theme.accentColorCode}">
+						Past {{numberOfDays}} days
+					</div>
+					<div matListItemLine>
+						<span [style]="{color: theme.primaryColorCode}">Avg change</span>
+						{{ statsDaily.past90Days.price.trend | gold }}
+						<span [style]="{color: theme.primaryColorCode}">Avg price</span>
+						{{ statsDaily.past90Days.price.avg | gold }}
+					</div>
+					<div matListItemLine>
+						<span [style]="{color: theme.warnColorCode}">Avg change</span>
+						{{ statsDaily.past90Days.quantity.trend | number }}
+						<span [style]="{color: theme.warnColorCode}">Avg quantity</span>
+						{{ statsDaily.past90Days.quantity.avg | number }}
+					</div>
+				</mat-list-item>
+			</mat-list>
+			<mat-tab-group>
+				<mat-tab label="Chart">
+					<wah-highcharts
+							title="Daily prices and quantity"
+							[series]="dailyChart"
+							[(update)]="updateDailyChart"
+							[xAxis]="xAxisDaily"
+							(chartInstance)="setChartInstance($event)"
+					>
+					</wah-highcharts>
+				</mat-tab>
+				<mat-tab label="Table">
+					<wah-data-table
+							[columns]="groupedByDateTable.columns"
+							[data]="groupedByDateTable.data">
+					</wah-data-table>
+				</mat-tab>
+			</mat-tab-group>
+		</ng-container>
+		<ng-container *ngIf="statsMap">
+			<h6 class="mt-2">
+				Historical data, mapped out by weekday
+			</h6>
+			<form [formGroup]="form">
+				<div formGroupName="period">
+					<mat-form-field color="accent">
+						<mat-label>Enter a date range</mat-label>
+						<mat-date-range-input [rangePicker]="rangePicker">
+							<input formControlName="start"
+										 matStartDate
+										 placeholder="Start date"
+							>
+							<input formControlName="end"
+										 matEndDate
+										 placeholder="End date"
+							>
+						</mat-date-range-input>
+						<mat-datepicker-toggle matSuffix [for]="rangePicker"></mat-datepicker-toggle>
+						<mat-date-range-picker #rangePicker>
+							<mat-date-range-picker-actions>
+								<button mat-button matDateRangePickerCancel>Cancel</button>
+								<button mat-raised-button color="primary" matDateRangePickerApply>Apply</button>
+							</mat-date-range-picker-actions>
+						</mat-date-range-picker>
+					</mat-form-field>
+				</div>
+			</form>
+			<wah-data-table
+					[columns]="statsMap?.columns"
+					[data]="statsMap?.prices">
+				<div class="float-left history-in-table-toolbar">
+					Prices
+				</div>
+			</wah-data-table>
+			<wah-data-table *ngIf="statsMap?.roi.length"
+											[columns]="statsMap?.columns"
+											[data]="statsMap?.roi">
+				<div class="float-left history-in-table-toolbar">
+					ROI
+				</div>
+			</wah-data-table>
+		</ng-container>
+	</ng-container>
 
-  <ng-template #loadingTemplate>
-    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
-    Loading historical price data. This might take a couple seconds.
-  </ng-template>
+	<ng-template #loadingTemplate>
+		<mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+		Loading historical price data. This might take a couple seconds.
+	</ng-template>
 </ng-container>

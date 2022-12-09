@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MatDialogRef} from '@angular/material/dialog';
 import {ShoppingCartService} from '../../services/shopping-cart.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {CartItem, CartRecipe, ShoppingCartV2} from '../../models/shopping-cart-v2.model';

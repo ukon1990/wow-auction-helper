@@ -2,7 +2,7 @@ import {AfterViewInit, Component, Input, OnChanges, OnDestroy, SimpleChanges} fr
 import {SharedService} from '../../../../services/shared.service';
 import {Report} from '../../../../utils/report.util';
 import {faCog} from '@fortawesome/free-solid-svg-icons/faCog';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {ConfigureComponent} from '../configure/configure.component';
 import {Dashboard} from '@shared/models';
 import {DashboardService} from '../../services/dashboard.service';

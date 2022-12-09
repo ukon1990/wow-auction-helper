@@ -1,110 +1,116 @@
 <form class="form-inline" [formGroup]="form">
-    <div class="row">
+	<mat-form-field>
+		<mat-label>Item name</mat-label>
+		<input matInput placeholder="Item name" formControlName="name">
+	</mat-form-field>
+	<mat-form-field
+			color="accent"
+	>
+		<mat-label>Item class</mat-label>
+		<mat-select [disableOptionCentering]="true"
+								placeholder="Item class"
+								formControlName="itemClass">
+			<mat-option [value]="-1">
+				All
+			</mat-option>
+			<mat-option *ngFor="let c of itemClasses; let i = index;"
+									[value]="c.id">
+				{{ c.name }}
+			</mat-option>
+		</mat-select>
+	</mat-form-field>
 
-        <mat-form-field class="col">
-            <input matInput placeholder="Item name" formControlName="name">
-        </mat-form-field>
-        <mat-form-field class="col"
-                        color="accent"
-        >
-            <mat-select [disableOptionCentering]="true"
-                        placeholder="Item class"
-                        formControlName="itemClass">
-                <mat-option [value]="-1">
-                    All
-                </mat-option>
-                <mat-option *ngFor="let c of itemClasses; let i = index;"
-                            [value]="c.id">
-                    {{ c.name }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
+	<mat-form-field *ngIf="itemClasses[form.value.itemClass]"
 
-        <mat-form-field *ngIf="itemClasses[form.value.itemClass]"
-                        class="col"
-                        color="accent"
-        >
-            <mat-select [disableOptionCentering]="true" placeholder="Item sub class" formControlName="itemSubClass">
-                <mat-option [value]="-1">
-                    All
-                </mat-option>
-                <mat-option *ngFor="let c of itemClasses[form.value['itemClass']].subClasses; let i = index;"
-                            [value]="c.id"
-                >
-                    {{ c.name }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
+									color="accent"
+	>
+		<mat-label>Item sub class</mat-label>
+		<mat-select [disableOptionCentering]="true" placeholder="Item sub class" formControlName="itemSubClass">
+			<mat-option [value]="-1">
+				All
+			</mat-option>
+			<mat-option *ngFor="let c of itemClasses[form.value['itemClass']].subClasses; let i = index;"
+									[value]="c.id"
+			>
+				{{ c.name }}
+			</mat-option>
+		</mat-select>
+	</mat-form-field>
 
-        <mat-form-field class="col"
-                        color="accent"
-        >
-            <input matInput type="number" placeholder="Minimum item level" formControlName="minItemLevel"
-                   matTooltip="Some items may appear with incorrect iLvL.">
-        </mat-form-field>
+	<mat-form-field
+			color="accent"
+	>
+		<mat-label>Minimum item level</mat-label>
+		<input matInput type="number" placeholder="Minimum item level" formControlName="minItemLevel"
+					 matTooltip="Some items may appear with incorrect iLvL.">
+	</mat-form-field>
 
-        <mat-form-field class="col"
-                        color="accent"
-        >
-            <mat-select [disableOptionCentering]="true"
-                        placeholder="Minimum item quality"
-                        formControlName="minItemQuality">
-                <mat-option [value]="null">Any</mat-option>
-                <mat-option *ngFor="let quality of itemQualities; let i = index" [value]="i">
-                    {{ quality }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
+	<mat-form-field
+			color="accent"
+	>
+		<mat-label>Minimum item quality</mat-label>
+		<mat-select [disableOptionCentering]="true"
+								placeholder="Minimum item quality"
+								formControlName="minItemQuality">
+			<mat-option [value]="null">Any</mat-option>
+			<mat-option *ngFor="let quality of itemQualities; let i = index" [value]="i">
+				{{ quality }}
+			</mat-option>
+		</mat-select>
+	</mat-form-field>
 
-        <mat-form-field class="col"
-                        color="accent"
-        >
-            <mat-select [disableOptionCentering]="true" placeholder="Expansion" formControlName="expansion">
-                <mat-option [value]="null">All</mat-option>
-                <mat-option *ngFor="let expansion of expansions; let i = index"
-                            [value]="i">
-                    {{ expansion }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
+	<mat-form-field
+			color="accent"
+	>
+		<mat-label>Expansion</mat-label>
+		<mat-select [disableOptionCentering]="true" placeholder="Expansion" formControlName="expansion">
+			<mat-option [value]="null">All</mat-option>
+			<mat-option *ngFor="let expansion of expansions; let i = index"
+									[value]="i">
+				{{ expansion }}
+			</mat-option>
+		</mat-select>
+	</mat-form-field>
 
-        <mat-form-field class="col"
-                        color="accent"
-        >
-            <input matInput type="number" placeholder="Below MV" matTooltip="Only items below x % of the market value"
-                   formControlName="mktPrice">
-        </mat-form-field>
-        <mat-form-field class="col"
-                        color="accent"
-        >
-            <input matInput type="number" placeholder="Sale rate % (default 0)" formControlName="saleRate"
-                   matTooltip="A value between 0 and 100 (instead of 0.04 as TSM displays, do 4 etc)">
-        </mat-form-field>
-        <mat-form-field class="col"
-                        color="accent"
-        >
-            <input matInput type="number" placeholder="Minimum daily sold" formControlName="avgDailySold">
-        </mat-form-field>
-        <mat-checkbox class="col" formControlName="onlyVendorSellable"
-                      matTooltip="Only display items below the vendor sell price">
-            Below vendor price
-        </mat-checkbox>
-        <div class="col">
-            <button mat-stroked-button
-                    type="button"
-                    (click)="form.reset()"
-                    color="warn"
-            >
-                Reset
-            </button>
-        </div>
-    </div>
+	<mat-form-field
+			color="accent"
+	>
+		<mat-label>Below MV</mat-label>
+		<input matInput type="number" placeholder="Below MV" matTooltip="Only items below x % of the market value"
+					 formControlName="mktPrice">
+	</mat-form-field>
+	<mat-form-field
+			color="accent"
+	>
+		<mat-label>Sale rate % (default 0)</mat-label>
+		<input matInput type="number" placeholder="Sale rate % (default 0)" formControlName="saleRate"
+					 matTooltip="A value between 0 and 100 (instead of 0.04 as TSM displays, do 4 etc)">
+	</mat-form-field>
+	<mat-form-field
+			color="accent"
+	>
+		<mat-label>Minimum daily sold</mat-label>
+		<input matInput type="number" placeholder="Minimum daily sold" formControlName="avgDailySold">
+	</mat-form-field>
+	<mat-checkbox formControlName="onlyVendorSellable"
+								matTooltip="Only display items below the vendor sell price">
+		Below vendor price
+	</mat-checkbox>
+	<div>
+		<button mat-stroked-button
+						type="button"
+						(click)="form.reset()"
+						color="warn"
+		>
+			Reset
+		</button>
+	</div>
 </form>
 <wah-data-table
-        *ngIf="tableData"
-        iconSize="22"
-        itemsPerPage="20"
-        id="itemID"
-        [columns]="columns"
-        [data]="tableData">
+		*ngIf="tableData"
+		iconSize="22"
+		itemsPerPage="20"
+		id="itemID"
+		[columns]="columns"
+		[data]="tableData">
 </wah-data-table>

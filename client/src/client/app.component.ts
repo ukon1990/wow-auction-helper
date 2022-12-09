@@ -20,7 +20,7 @@ import {NPC} from './modules/npc/models/npc.model';
 import {TsmLuaUtil} from './utils/tsm/tsm-lua.util';
 import {Filters} from './utils/filtering';
 import {InventoryUtil} from './utils/tsm/inventory.util';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {NewsUtil} from './modules/about/utils/news.util';
 import {NewsComponent} from './modules/about/components/news/news.component';
 import {ItemComponent} from './modules/item/components/item.component';

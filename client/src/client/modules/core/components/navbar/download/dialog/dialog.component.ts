@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {RealmService} from '../../../../../../services/realm.service';
 import {ItemService} from '../../../../../../services/item.service';
 import {CraftingService} from '../../../../../../services/crafting.service';

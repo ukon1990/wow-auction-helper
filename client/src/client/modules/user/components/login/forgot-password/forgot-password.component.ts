@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {AuthService} from '../../../services/auth.service';
-import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {HttpErrorResponse} from '@angular/common/http';
 import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ValidatorsUtil} from '../../../utils/validators.util';

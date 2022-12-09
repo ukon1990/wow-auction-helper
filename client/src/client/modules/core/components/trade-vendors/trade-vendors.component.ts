@@ -11,7 +11,7 @@ import {TRADE_VENDORS} from '../../../../data/trade-vendors';
 import {Zone} from '../../../zone/models/zone.model';
 import {ZoneService} from '../../../zone/service/zone.service';
 import {ErrorReport} from '../../../../utils/error-report.util';
-import {LegacyPageEvent as PageEvent} from '@angular/material/legacy-paginator';
+import {PageEvent} from '@angular/material/paginator';
 import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 import {ItemService} from '../../../../services/item.service';
 import { Item } from '@shared/models';

@@ -4,7 +4,7 @@ import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ValidatorsUtil} from '../../utils/validators.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {RegisterComponent} from '../register/register.component';
 import {RegistrationConfirmationComponent} from '../register/registration-confirmation/registration-confirmation.component';
 import {ForgotPasswordComponent} from './forgot-password/forgot-password.component';

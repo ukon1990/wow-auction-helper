@@ -1,5 +1,5 @@
 import {AfterContentInit, AfterViewInit, Component, Inject, OnDestroy, ViewChild} from '@angular/core';
-import {MatLegacyTabChangeEvent as MatTabChangeEvent, MatLegacyTabGroup as MatTabGroup} from '@angular/material/legacy-tabs';
+import {MatTabChangeEvent, MatTabGroup} from '@angular/material/tabs';
 import {UntypedFormControl} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Recipe} from '../../crafting/models/recipe';
@@ -15,7 +15,7 @@ import {ZoneService} from '../../zone/service/zone.service';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {CraftingService} from '../../../services/crafting.service';
 import {AuctionsService} from '../../../services/auctions.service';
-import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ItemDetailsUtil} from '../utils/item-details.util';
 import {ShoppingCartService} from '../../shopping-cart/services/shopping-cart.service';
 import {ErrorReport} from '../../../utils/error-report.util';

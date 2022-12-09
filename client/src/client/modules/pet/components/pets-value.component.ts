@@ -3,7 +3,7 @@ import {SharedService} from '../../../services/shared.service';
 import {CollectedPet, ColumnDescription} from '@shared/models';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionsService} from '../../../services/auctions.service';
-import {LegacyPageEvent as PageEvent} from '@angular/material/legacy-paginator';
+import {PageEvent} from '@angular/material/paginator';
 import {Report} from '../../../utils/report.util';
 import {PetTableData} from '../models/pet-table-data.model';
 

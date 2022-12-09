@@ -65,6 +65,12 @@
           (click)="doNotClose($event)">
   </wah-realm-quick-select>
 
+  <a routerLink="/settings/characters"
+     mat-icon-button
+     color="accent"
+     matTooltip="Add more characters">
+    <fa-icon [icon]="faUserPlus"></fa-icon>
+  </a>
   <wah-theme-select></wah-theme-select>
   <wah-show-profile></wah-show-profile>
 

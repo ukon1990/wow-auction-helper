@@ -5,7 +5,7 @@ import {Router} from '@angular/router';
 import {Report} from '../../../../utils/report.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {UserUtil} from '../../../../utils/user/user.util';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {SettingsService} from '../../../user/services/settings/settings.service';
 import {CharacterService} from '../../../character/services/character.service';
 import {UserSettings} from '../../../user/models/settings.model';
