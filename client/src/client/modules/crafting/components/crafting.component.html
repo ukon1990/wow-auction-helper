@@ -1,132 +1,131 @@
 <form [formGroup]="searchForm">
-	<mat-form-field color="accent">
-		<mat-label>Name</mat-label>
-		<input matInput placeholder="Name" formControlName="searchQuery" type="text">
-	</mat-form-field>
+    <mat-form-field color="accent">
+        <mat-label>Name</mat-label>
+        <input matInput placeholder="Name" formControlName="searchQuery" type="text">
+    </mat-form-field>
 
-	<mat-form-field color="accent">
-		<mat-label>Faction</mat-label>
-		<mat-select [disableOptionCentering]="true"
-								placeholder="Profession"
-								formControlName="professionId">
-			<mat-option
-					*ngFor="let profession of professions"
-					[value]="profession.id"
-			>
-				{{ profession.name }}
-			</mat-option>
-		</mat-select>
-	</mat-form-field>
+    <mat-form-field color="accent">
+        <mat-label>Faction</mat-label>
+        <mat-select [disableOptionCentering]="true"
+                    placeholder="Profession"
+                    formControlName="professionId">
+            <mat-option
+                    *ngFor="let profession of professions"
+                    [value]="profession.id"
+            >
+                {{ profession.name }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
 
-	<mat-form-field class="ml-2 mr-2 col" color="accent">
-		<mat-label>Item class</mat-label>
-		<mat-select
-				[disableOptionCentering]="true"
-				placeholder="Item class"
-				formControlName="itemClass">
-			<mat-option [value]="-1">
-				All
-			</mat-option>
-			<mat-option *ngFor="let c of itemClasses; let i = index;"
-									[value]="c.id">
-				{{ c.name }}
-			</mat-option>
-		</mat-select>
-	</mat-form-field>
+    <mat-form-field color="accent">
+        <mat-label>Item class</mat-label>
+        <mat-select
+                [disableOptionCentering]="true"
+                placeholder="Item class"
+                formControlName="itemClass">
+            <mat-option [value]="-1">
+                All
+            </mat-option>
+            <mat-option *ngFor="let c of itemClasses; let i = index;"
+                        [value]="c.id">
+                {{ c.name }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
 
-	<mat-form-field *ngIf="itemClasses[searchForm.value.itemClass]"
-									class="ml-2 mr-2 col"
-									color="accent"
-	>
-		<mat-label>Item sub class</mat-label>
-		<mat-select
-				[disableOptionCentering]="true"
-				placeholder="Item sub class"
-				formControlName="itemSubClass">
-			<mat-option
-					[value]="-1"
-			>
-				All
-			</mat-option>
-			<mat-option *ngFor="let c of itemClasses[searchForm.value['itemClass']].subClasses; let i = index;"
-									[value]="c.id"
-			>
-				{{ c.name }}
-			</mat-option>
-		</mat-select>
-	</mat-form-field>
+    <mat-form-field *ngIf="itemClasses[searchForm.value.itemClass]"
+                    color="accent"
+    >
+        <mat-label>Item sub class</mat-label>
+        <mat-select
+                [disableOptionCentering]="true"
+                placeholder="Item sub class"
+                formControlName="itemSubClass">
+            <mat-option
+                    [value]="-1"
+            >
+                All
+            </mat-option>
+            <mat-option *ngFor="let c of itemClasses[searchForm.value['itemClass']].subClasses; let i = index;"
+                        [value]="c.id"
+            >
+                {{ c.name }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
 
-	<mat-form-field color="accent">
-		<mat-label>Expansion</mat-label>
-		<mat-select
-				[disableOptionCentering]="true"
-				placeholder="Expansion"
-				formControlName="expansion">
-			<mat-option
-					[value]="null"
-			>
-				All
-			</mat-option>
-			<mat-option
-					*ngFor="let expansion of expansions; let i = index"
-					[value]="i"
-			>
-				{{ expansion }}
-			</mat-option>
-		</mat-select>
-	</mat-form-field>
-	<wah-crafting-config
-			(changed)="filter()">
-	</wah-crafting-config>
-	<mat-form-field color="accent">
-		<mat-label>Minimum profit %</mat-label>
-		<input
-				matInput
-				placeholder="Minimum profit %"
-				formControlName="profit"
-				type="number"
-				matTooltip="Minimum return on investment">
-	</mat-form-field>
+    <mat-form-field color="accent">
+        <mat-label>Expansion</mat-label>
+        <mat-select
+                [disableOptionCentering]="true"
+                placeholder="Expansion"
+                formControlName="expansion">
+            <mat-option
+                    [value]="null"
+            >
+                All
+            </mat-option>
+            <mat-option
+                    *ngFor="let expansion of expansions; let i = index"
+                    [value]="i"
+            >
+                {{ expansion }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <wah-crafting-config
+            (changed)="filter()">
+    </wah-crafting-config>
+    <mat-form-field color="accent">
+        <mat-label>Minimum profit %</mat-label>
+        <input
+                matInput
+                placeholder="Minimum profit %"
+                formControlName="profit"
+                type="number"
+                matTooltip="Minimum return on investment">
+    </mat-form-field>
 
-	<mat-form-field color="accent">
-		<mat-label>TSM sale rate % (default 0)</mat-label>
-		<input
-				matInput
-				placeholder="TSM Sale rate % (default 0)"
-				formControlName="demand"
-				type="number"
-				matTooltip="A value between 0 and 100.">
-	</mat-form-field>
+    <mat-form-field color="accent">
+        <mat-label>TSM sale rate % (default 0)</mat-label>
+        <input
+                matInput
+                placeholder="TSM Sale rate % (default 0)"
+                formControlName="demand"
+                type="number"
+                matTooltip="A value between 0 and 100.">
+    </mat-form-field>
 
-	<mat-form-field color="accent">
-		<mat-label>Personal sale rate & (default 0)</mat-label>
-		<input
-				matInput
-				placeholder="Personal Sale rate % (default 0)"
-				formControlName="personalSaleRate"
-				type="number"
-				matTooltip="A value between 0 and 100. This is calculated based in you importing your sale history via the Tools -> Addons section.">
-	</mat-form-field>
+    <mat-form-field color="accent">
+        <mat-label>Personal sale rate & (default 0)</mat-label>
+        <input
+                matInput
+                placeholder="Personal Sale rate % (default 0)"
+                formControlName="personalSaleRate"
+                type="number"
+                matTooltip="A value between 0 and 100. This is calculated based in you importing your sale history via the Tools -> Addons section.">
+    </mat-form-field>
 
-	<div *ngIf="!isClassic">
-		<mat-checkbox
-				formControlName="onlyKnownRecipes"
-				matTooltip="Displays only those recipes your character for this realm knows">
-			Only known recipes
-		</mat-checkbox>
-	</div>
-	<button
-			type="button"
-			(click)="resetForm()"
-			mat-stroked-button
-			color="warn"
-	>
-		Reset
-	</button>
+    <div *ngIf="!isClassic">
+        <mat-checkbox
+                formControlName="onlyKnownRecipes"
+                matTooltip="Displays only those recipes your character for this realm knows">
+            Only known recipes
+        </mat-checkbox>
+    </div>
+    <button
+            type="button"
+            (click)="resetForm()"
+            mat-stroked-button
+            color="warn"
+    >
+        Reset
+    </button>
 </form>
 <wah-data-table
-		id="itemID"
-		[data]="filtered"
-		[columns]="columns"
-		[isCrafting]="true">
+        id="itemID"
+        [data]="filtered"
+        [columns]="columns"
+        [isCrafting]="true">
 </wah-data-table>
