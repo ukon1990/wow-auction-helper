@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, Input, OnDestroy} from '@angular/core';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
-import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Item} from '@shared/models';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ItemService} from '../../../../../services/item.service';
@@ -14,9 +14,9 @@ import {ItemRule} from "@shared/models";
   styleUrls: ['./item-rules.component.scss']
 })
 export class ItemRulesComponent implements AfterViewInit, OnDestroy {
-  @Input() form: FormGroup;
+  @Input() form: UntypedFormGroup;
   @Input() rules: ItemRule[];
-  itemSearchForm: FormControl = new FormControl();
+  itemSearchForm: UntypedFormControl = new UntypedFormControl();
   filteredItems: Item[] = [];
   items: Map<number, Item>;
   faTrash = faTrashAlt;
@@ -24,8 +24,8 @@ export class ItemRulesComponent implements AfterViewInit, OnDestroy {
   selectedItem: Item;
   selectedPanelIndex = 0;
 
-  get formArray(): FormArray {
-    return this.form.get('itemRules') as FormArray;
+  get formArray(): UntypedFormArray {
+    return this.form.get('itemRules') as UntypedFormArray;
   }
 
   constructor() {
@@ -51,17 +51,17 @@ export class ItemRulesComponent implements AfterViewInit, OnDestroy {
     this.sm.unsubscribe();
   }
 
-  formGroup(group: AbstractControl): FormGroup {
-    return group as FormGroup;
+  formGroup(group: AbstractControl): UntypedFormGroup {
+    return group as UntypedFormGroup;
   }
 
-  addItemRule(formArray: FormArray = this.form.controls.itemRules as FormArray,
+  addItemRule(formArray: UntypedFormArray = this.form.controls.itemRules as UntypedFormArray,
               itemRule?: ItemRule, doNotSetSelectedIndex?: boolean): void {
-    const form = new FormGroup({
-      itemId: new FormControl(itemRule ? itemRule.itemId : this.selectedItem.id, Validators.required),
-      bonusIds: new FormControl(itemRule ? itemRule.bonusIds : null),
-      petSpecies: new FormControl(itemRule ? itemRule.petSpeciesId : null),
-      rules: new FormArray([]),
+    const form = new UntypedFormGroup({
+      itemId: new UntypedFormControl(itemRule ? itemRule.itemId : this.selectedItem.id, Validators.required),
+      bonusIds: new UntypedFormControl(itemRule ? itemRule.bonusIds : null),
+      petSpecies: new UntypedFormControl(itemRule ? itemRule.petSpeciesId : null),
+      rules: new UntypedFormArray([]),
     });
 
     formArray.push(form);

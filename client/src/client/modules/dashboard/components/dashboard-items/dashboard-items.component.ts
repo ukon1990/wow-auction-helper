@@ -2,7 +2,7 @@ import {AfterContentInit, Component, OnDestroy} from '@angular/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {DashboardService} from '../../services/dashboard.service';
 import {Dashboard} from '@shared/models';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {ConfigureComponent} from '../configure/configure.component';
 import {MatDialog} from '@angular/material/dialog';
 import {CdkDragDrop} from '@angular/cdk/drag-drop';
@@ -22,9 +22,9 @@ import {RealmService} from '../../../../services/realm.service';
   styleUrls: ['./dashboard-items.component.scss']
 })
 export class DashboardItemsComponent implements OnDestroy, AfterContentInit {
-  form: FormGroup = new FormGroup({
-    displayHidden: new FormControl(false),
-    search: new FormControl()
+  form: UntypedFormGroup = new UntypedFormGroup({
+    displayHidden: new UntypedFormControl(false),
+    search: new UntypedFormControl()
   });
   isClassic = true;
   dashboards: Dashboard[] = [];

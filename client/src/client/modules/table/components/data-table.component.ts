@@ -9,7 +9,7 @@ import {
   SimpleChanges
 } from '@angular/core';
 import {PageEvent} from '@angular/material/paginator';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {Report} from '../../../utils/report.util';
 import {ColumnDescription, Item, Profession} from '@shared/models';
 import {Sorter} from '../../../models/sorter';
@@ -24,6 +24,7 @@ import {faCartPlus, faExternalLinkSquareAlt, faEye, faTrashAlt} from '@fortaweso
 import {AuctionsService} from '../../../services/auctions.service';
 import {ItemLocale} from '../../../language/item.locale';
 import {ShoppingCartService} from '../../shopping-cart/services/shopping-cart.service';
+import {ColumnTypeEnum} from '@shared/enum';
 
 @Component({
   selector: 'wah-data-table',
@@ -37,7 +38,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() isCrafting: boolean;
   @Input() showOwner: boolean;
   @Input() columns: Array<ColumnDescription>;
-  @Input() data: Array<any>;
+  @Input() data: any[];
   @Input() numOfRows: number;
   @Input() hideCraftingDetails: boolean;
   @Input() useAuctionItemForName: boolean;
@@ -47,15 +48,18 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() disableItemsPerPage: boolean;
   @Input() filterParameter: string;
   @Input() alwaysDisplayCart: boolean;
+  @Input() isFormArray = false;
+  @Input() isScrollableAlongXAxis = false;
 
   @Output() rowClicked: EventEmitter<RowClickEvent<any>> = new EventEmitter();
 
+  ColumnTypeEnum = ColumnTypeEnum;
   filteredData = [];
   sm = new SubscriptionManager();
   professionIdMap: Map<number, Profession> = new Map<number, Profession>();
   itemQualities = ItemLocale.getQualities().map;
 
-  searchField: FormControl = new FormControl();
+  searchField: UntypedFormControl = new UntypedFormControl();
   pageRows: Array<number> = [10, 20, 40, 80, 100];
   pageEvent: PageEvent = {pageIndex: 0, pageSize: this.itemsPerPage, length: 0};
   sorter: Sorter;

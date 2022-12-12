@@ -3,8 +3,11 @@
                   color="accent"
                   [matTooltip]="strategies[form.controls.strategy.value]?.description"
   >
+    <mat-label>
+      Crafting strategy
+    </mat-label>
     <mat-select [disableOptionCentering]="true"
-                placeholder="Crafting strategy"
+                placeholder="Select crafting strategy"
                 formControlName="strategy">
       <mat-option *ngFor="let strategy of strategies"
                   [value]="strategy.id"

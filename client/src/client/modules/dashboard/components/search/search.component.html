@@ -19,23 +19,23 @@
   <ng-template #contentTemplate>
     <mat-list class="mb-2">
       <mat-list-item *ngFor="let board of filteredBoards" class="mat-elevation-z5 mt-1 mb-1">
-        <h3 mat-line>
+        <h3 matListItemLine>
           {{board.title}} ({{board.lastModified | date: 'dd.MMM yyyy HH:mm'}})
         </h3>
-        <div mat-line>
+        <div matListItemLine>
           {{board.description}}
         </div>
-        <div mat-line>
+        <div matListItemLine>
           <div class="row pt-1">
             <div class="col">
               <strong>Created by:</strong> {{ board.createdBy }}
             </div>
-            <mat-chip-list class="col d-none d-xl-block" aria-label="Board tags">
+            <mat-chip-listbox class="col d-none d-xl-block" aria-label="Board tags">
               Tags:
-              <mat-chip *ngFor="let tag of board.tags" color="primary">
+              <mat-chip-option *ngFor="let tag of board.tags" color="primary">
                 {{ tag }}
-              </mat-chip>
-            </mat-chip-list>
+              </mat-chip-option>
+            </mat-chip-listbox>
             <div *ngIf="!myDashboards.has(board.id)" class="col-md-4">
               <button
                       [disabled]="myCopiedDashboards.has(board.id) &&

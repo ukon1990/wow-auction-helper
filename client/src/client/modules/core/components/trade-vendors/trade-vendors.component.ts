@@ -4,7 +4,7 @@ import {ColumnDescription} from '@shared/models';
 import {SharedService} from '../../../../services/shared.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {Filters} from '../../../../utils/filtering';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {TRADE_VENDORS} from '../../../../data/trade-vendors';
@@ -24,7 +24,7 @@ import { Item } from '@shared/models';
 export class TradeVendorsComponent implements OnInit, OnDestroy, AfterViewInit {
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
   locale = localStorage['locale'].split('-')[0];
-  form: FormGroup;
+  form: UntypedFormGroup;
   sm = new SubscriptionManager();
   vendors = TRADE_VENDORS;
   filtered: any[];
@@ -51,7 +51,7 @@ export class TradeVendorsComponent implements OnInit, OnDestroy, AfterViewInit {
     return (this.pageEvent.pageSize * (this.pageEvent.pageIndex + 1)) - this.pageEvent.pageSize;
   }
 
-  constructor(private formBuilder: FormBuilder, private service: AuctionsService, private zoneService: ZoneService) {
+  constructor(private formBuilder: UntypedFormBuilder, private service: AuctionsService, private zoneService: ZoneService) {
     const filter = JSON.parse(localStorage.getItem('query_trade_vendors')) || undefined;
     this.form = formBuilder.group({
       name: filter && filter.name !== null ?

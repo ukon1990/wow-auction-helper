@@ -49,7 +49,7 @@ export class S3Handler {
       if (maxKeys > 1000) {
         const resultObjects: ObjectList = [];
         let baseObject: ListObjectsV2Output;
-        s3.listObjectsV2(params).eachPage((error, data, done) => {
+        s3.listObjectsV2(params).eachPage((_error, data, done) => {
           if (!data || !data.Contents) {
             resolve({
               ...baseObject,

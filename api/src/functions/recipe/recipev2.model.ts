@@ -1,9 +1,29 @@
 import {ItemLocale, Key} from '../../shared/models';
+import {Links} from '@models/character/character-game-data.model';
 
 export interface CreatedItem {
     id: number;
     key: Key;
     name: ItemLocale | string;
+}
+
+export interface CompatibleCategory {
+    key: Key;
+    name: ItemLocale;
+    id: number;
+}
+
+export interface ReagentSlotType {
+    _links: Links;
+    id: number;
+    name: ItemLocale;
+    description: ItemLocale;
+    compatible_categories: CompatibleCategory[];
+}
+
+interface SlotType extends ReagentSlotType {
+    key: Key;
+    id: number;
 }
 
 export interface Recipev2 {
@@ -33,10 +53,7 @@ export interface Recipev2 {
         minimum: number;
     };
     modified_crafting_slots: {
-        slot_type: {
-            key: Key;
-            id: number;
-        },
+        slot_type: SlotType,
         display_order: number;
     }[];
 }

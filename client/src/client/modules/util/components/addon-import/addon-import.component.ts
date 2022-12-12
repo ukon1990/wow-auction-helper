@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {DatabaseService} from '../../../../services/database.service';
@@ -27,9 +27,9 @@ export class AddonImportComponent implements OnInit {
   // Classic AH timer is 2, 8, 24
   lastModified: number;
   result = [];
-  realmControl = new FormControl();
+  realmControl = new UntypedFormControl();
   gameVersions = GameBuildVersion;
-  form: FormGroup;
+  form: UntypedFormGroup;
   sm = new SubscriptionManager();
   reader = new FileReader();
 
@@ -48,7 +48,7 @@ export class AddonImportComponent implements OnInit {
     private auctionsService: AuctionsService,
     private dbService: DatabaseService,
     private realmService: RealmService,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) {
     this.form = this.fb.group({
       realm: SharedService.user.realm,

@@ -13,6 +13,7 @@ export class WoWHead {
   patch: string;
   // objectiveOf: WoWHeadObjectiveOf[];
   classicPhase?: number;
+  tier?: number;
 }
 
 export class WoWHeadSoldBy {

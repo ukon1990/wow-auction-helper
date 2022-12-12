@@ -260,8 +260,8 @@ export class RealmService {
   }
 
   correctIncorrectAhIds() {
-    return new Promise<any>(async (resolve, reject) => {
-      const promises = [];
+    return new Promise<any>(async (resolve) => {
+      // const promises = [];
       const list = [];
       const duplicates = [];
       const connectedIDBased = [];

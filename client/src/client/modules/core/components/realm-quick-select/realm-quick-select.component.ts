@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SharedService} from '../../../../services/shared.service';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {RealmService} from '../../../../services/realm.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {CharacterService} from '../../../character/services/character.service';
@@ -12,7 +12,6 @@ import {RealmStatus} from '@shared/models';
 import {AuctionHouseStatus} from '../../../auction/models/auction-house-status.model';
 import {CraftingService} from '../../../../services/crafting.service';
 import {ErrorReport} from '../../../../utils/error-report.util';
-import {faUserPlus} from '@fortawesome/free-solid-svg-icons/faUserPlus';
 import {SettingsService} from '../../../user/services/settings/settings.service';
 import {UserSettings} from '../../../user/models/settings.model';
 
@@ -26,11 +25,11 @@ interface Realm extends AuctionHouseStatus {
   styleUrls: ['./realm-quick-select.component.scss']
 })
 export class RealmQuickSelectComponent implements OnInit, OnDestroy {
-  form: FormGroup = new FormGroup({
-    ahTypeId: new FormControl(),
-    region: new FormControl(),
-    realm: new FormControl(),
-    faction: new FormControl()
+  form: UntypedFormGroup = new UntypedFormGroup({
+    ahTypeId: new UntypedFormControl(),
+    region: new UntypedFormControl(),
+    realm: new UntypedFormControl(),
+    faction: new UntypedFormControl()
   });
   realmListAll: Realm[] = [];
   realmList: Realm[] = [];
@@ -38,7 +37,6 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   allianceCharacterCountForRealm = 0;
   hordeCharacterCountForRealm = 0;
   list = [];
-  faUserPlus = faUserPlus;
   private ignoreNextChange: boolean;
 
   sm = new SubscriptionManager();

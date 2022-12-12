@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AdminService} from '../../services/admin.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {getListOfUsers, getUserTableData, userColumns} from './users.util';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {Subscription} from "rxjs";
 
 @Component({
@@ -16,11 +16,11 @@ export class UsersComponent implements OnInit {
   tableData = [];
   statuses = [];
   userMap = new Map<string, any>();
-  searchForm = new FormGroup({
-    username: new FormControl(),
-    email: new FormControl(),
-    emailVerified: new FormControl(),
-    status: new FormControl(),
+  searchForm = new UntypedFormGroup({
+    username: new UntypedFormControl(),
+    email: new UntypedFormControl(),
+    emailVerified: new UntypedFormControl(),
+    status: new UntypedFormControl(),
   });
   subs = new Subscription();
 

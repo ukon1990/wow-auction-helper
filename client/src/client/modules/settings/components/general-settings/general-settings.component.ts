@@ -1,5 +1,5 @@
 import {Component, OnDestroy} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {SharedService} from '../../../../services/shared.service';
 import {User} from '../../../../models/user/user';
 import {RealmService} from '../../../../services/realm.service';
@@ -23,13 +23,13 @@ import {SettingsService} from '../../../user/services/settings/settings.service'
   styleUrls: ['./general-settings.component.scss']
 })
 export class GeneralSettingsComponent implements OnDestroy {
-  form: FormGroup;
+  form: UntypedFormGroup;
   originalUserObject: { realm: string; region: string; locale: string };
   userChanges: Map<string, Difference> = new Map<string, Difference>();
 
   subscriptions = new SubscriptionManager();
 
-  constructor(private _formBuilder: FormBuilder,
+  constructor(private _formBuilder: UntypedFormBuilder,
               private _realmService: RealmService,
               private dbServie: DatabaseService,
               private itemService: ItemService,

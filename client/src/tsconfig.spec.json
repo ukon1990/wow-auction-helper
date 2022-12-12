@@ -6,7 +6,6 @@
     "paths": {
       "@shared/*": ["../../shared/src/*"]
     },
-    "target": "es5",
     "types": [
       "jasmine",
       "node"

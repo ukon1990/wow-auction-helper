@@ -196,7 +196,7 @@ const ADMIN_ROUTE: TitledRoute = {
       title: 'Recipes',
       component: RecipeComponent,
       isHidden: ROUTE_HIDDEN_FLAGS.ADMIN_ONLY,
-      path: 'recuoe'
+      path: 'recipes'
     },
     {
       title: 'Add NPCs',

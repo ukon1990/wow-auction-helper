@@ -1,11 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {AuctionsService} from '../../../../services/auctions.service';
 import {SharedService} from '../../../../services/shared.service';
 import {Report} from '../../../../utils/report.util';
 import {MenuItem} from '../../models/menu-item.model';
 import {RoutingUtil} from '../../utils/routing.util';
-import {faBars, faEllipsisV} from '@fortawesome/free-solid-svg-icons';
+import {faBars, faEllipsisV, faUserPlus} from '@fortawesome/free-solid-svg-icons';
 
 declare function require(moduleName: string): any;
 
@@ -23,6 +22,7 @@ export class MenuComponent implements OnDestroy, OnInit {
   isUserSet: boolean;
   menuItems: MenuItem[] = [];
   faEllipsisV = faEllipsisV;
+  faUserPlus = faUserPlus;
   faBars = faBars;
 
   constructor() {

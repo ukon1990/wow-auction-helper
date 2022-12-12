@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {SummaryCard} from '../../../../models/summary-card.model';
 import {SharedService} from '../../../../services/shared.service';
 import {ChartData} from '../../../../models/chart-data.model';
@@ -20,7 +20,7 @@ import {ItemClassService} from '../../../item/service/item-class.service';
 export class AhSummaryComponent implements OnInit, OnDestroy {
   readonly LOCAL_STORAGE_NAME = 'ah-summary-display-as';
   initialValue = JSON.parse(localStorage.getItem(this.LOCAL_STORAGE_NAME));
-  displayAs = new FormControl(this.initialValue === null ? true : this.initialValue);
+  displayAs = new UntypedFormControl(this.initialValue === null ? true : this.initialValue);
   subs: SubscriptionManager = new SubscriptionManager();
   summaries: SummaryCard[] = [
     this.expansionSummary(),

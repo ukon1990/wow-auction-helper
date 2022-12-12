@@ -4,50 +4,50 @@
 
 <mat-list dense class="horizontal-item-list">
   <mat-list-item>
-    <div mat-line [style]="{color: theme.accentColorCode}">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
       Connected threads
     </div>
-    <div mat-line>
+    <div matListItemLine>
       {{ globalStatuses[globalStatuses?.length - 1]?.Threads_connected | number }}
     </div>
   </mat-list-item>
   <mat-list-item>
-    <div mat-line [style]="{color: theme.accentColorCode}">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
       Max connections
     </div>
-    <div mat-line>
+    <div matListItemLine>
       {{ globalStatuses[globalStatuses?.length - 1]?.Max_used_connections | number }}
     </div>
   </mat-list-item>
   <mat-list-item>
-    <div mat-line [style]="{color: theme.accentColorCode}">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
       Uptime
     </div>
-    <div mat-line>
+    <div matListItemLine>
       {{ globalStatuses[globalStatuses?.length - 1]?.Uptime / 60 / 60 | number }} hours
     </div>
   </mat-list-item>
   <mat-list-item>
-    <div mat-line [style]="{color: theme.accentColorCode}">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
       Fastest query time
     </div>
-    <div mat-line>
+    <div matListItemLine>
       {{ this.queryTime.min | number }} ms
     </div>
   </mat-list-item>
   <mat-list-item>
-    <div mat-line [style]="{color: theme.accentColorCode}">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
       Avg query time
     </div>
-    <div mat-line>
+    <div matListItemLine>
       {{ this.queryTime.avg | number }} ms
     </div>
   </mat-list-item>
   <mat-list-item>
-    <div mat-line [style]="{color: theme.accentColorCode}">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
       Max query time
     </div>
-    <div mat-line>
+    <div matListItemLine>
       {{ this.queryTime.max | number }} ms
     </div>
   </mat-list-item>
@@ -75,50 +75,50 @@
 
 <mat-list dense class="horizontal-item-list">
   <mat-list-item>
-    <div mat-line [style]="{color: theme.accentColorCode}">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
       Table size (MB)
     </div>
-    <div mat-line>
+    <div matListItemLine>
       {{ tableStatSummary.totalTableSize | number }}
     </div>
   </mat-list-item>
   <mat-list-item>
-    <div mat-line [style]="{color: theme.accentColorCode}">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
       Index size (MB)
     </div>
-    <div mat-line>
+    <div matListItemLine>
       {{ tableStatSummary.totalIndexSizeInMb | number }}
     </div>
   </mat-list-item>
   <mat-list-item>
-    <div mat-line [style]="{color: theme.accentColorCode}">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
       Total size (MB)
     </div>
-    <div mat-line>
+    <div matListItemLine>
       {{ tableStatSummary.totalSizeInMb | number }}
     </div>
   </mat-list-item>
   <mat-list-item>
-    <div mat-line [style]="{color: theme.accentColorCode}">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
       Available storage (MB)
     </div>
-    <div mat-line>
+    <div matListItemLine>
       {{ tableStatSummary.totalFreeTableSizeInMb | number }}
     </div>
   </mat-list-item>
   <mat-list-item>
-    <div mat-line [style]="{color: theme.accentColorCode}">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
       Total allocated storage (MB)
     </div>
-    <div mat-line>
+    <div matListItemLine>
       {{ tableStatSummary.totalAllocatedTableSize | number }}
     </div>
   </mat-list-item>
   <mat-list-item>
-    <div mat-line [style]="{color: theme.accentColorCode}">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
       Total number of rows
     </div>
-    <div mat-line>
+    <div matListItemLine>
       {{ tableStatSummary.totalNumberOfRows | number }}
     </div>
   </mat-list-item>

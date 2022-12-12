@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {TSMCSV, TsmLuaUtil} from '../../../../utils/tsm/tsm-lua.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ColumnDescription} from '@shared/models';
@@ -38,14 +38,14 @@ export class ProfitSummaryComponent implements OnInit, OnDestroy {
   xAxis: XAxisOptions = getXAxisDateLabel(true);
   private readonly previousPeriodKey = 'profit_summary_display_period';
   private readonly previousPeriod: string | undefined = localStorage.getItem(this.previousPeriodKey);
-  periodInput: FormControl = new FormControl(
+  periodInput: UntypedFormControl = new UntypedFormControl(
     this.previousPeriod ? +this.previousPeriod : 30);
-  form = new FormGroup({
-    realm: new FormControl(),
-    character: new FormControl(),
-    startDate: new FormControl(new Date(this.getDateAtPeriodStart(this.periodInput.value))),
-    period: new FormControl(30),
-    endDate: new FormControl(new Date()),
+  form = new UntypedFormGroup({
+    realm: new UntypedFormControl(),
+    character: new UntypedFormControl(),
+    startDate: new UntypedFormControl(new Date(this.getDateAtPeriodStart(this.periodInput.value))),
+    period: new UntypedFormControl(30),
+    endDate: new UntypedFormControl(new Date()),
   });
   columns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name', options: {idName: 'itemId'}},

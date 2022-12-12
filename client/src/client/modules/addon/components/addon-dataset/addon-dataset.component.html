@@ -1,5 +1,6 @@
 <form [formGroup]="form">
   <mat-form-field color="accent">
+    <mat-label>Dataset</mat-label>
     <mat-select placeholder="Dataset"
                 formControlName="dataset"
     >
@@ -12,6 +13,7 @@
   <mat-form-field
           color="accent"
   >
+    <mat-label>Realm</mat-label>
     <mat-select placeholder="Realm" formControlName="realm">
       <mat-option *ngFor="let realm of realms" [value]="realm">
         {{ realm }}
@@ -22,7 +24,8 @@
   <mat-form-field *ngIf="currentSetIsInventory()"
                   color="accent"
   >
-    <mat-select placeholder="Realm" formControlName="faction">
+    <mat-label>Faction</mat-label>
+    <mat-select placeholder="Faction" formControlName="faction">
       <mat-option [value]="0">
         Alliance
       </mat-option>
@@ -35,6 +38,7 @@
   <mat-form-field *ngIf="characters.length > 0"
                   color="accent"
   >
+    <mat-label>Character</mat-label>
     <mat-select placeholder="Character" formControlName="character">
       <mat-option *ngFor="let name of characters" [value]="name">
         {{ name }}
@@ -78,6 +82,7 @@
     <mat-form-field
             color="accent"
     >
+      <mat-label>Min sale rate</mat-label>
       <input
               type="number"
               formControlName="saleRate"
@@ -87,6 +92,7 @@
     <mat-form-field
             color="accent"
     >
+      <mat-label>Min avg daily sold</mat-label>
       <input
               type="number"
               formControlName="avgDailySold"

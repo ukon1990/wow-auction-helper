@@ -2,7 +2,7 @@ import {S3Handler} from '../../handlers/s3.handler';
 import {DatabaseUtil} from '../../../utils/database.util';
 import {EventSchema} from '@models/s3/event-record.model';
 import {GzipUtil} from '../../../utils/gzip.util';
-import {AuctionProcessorUtil, AuctionStatsUtil, NumberUtil} from '../../../shared/utils';
+import {AuctionProcessorUtil, AuctionStatsUtil} from '../../../shared/utils';
 import {StatsRepository} from '../repository/stats.repository';
 import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
 import {RealmRepository} from '../../realm/repositories/realm.repository';
@@ -27,11 +27,13 @@ const PromiseThrottle: any = require('promise-throttle');
 
 export class StatsService {
   realmRepository: RealmRepository;
+  tsmRepository: TsmRepository;
   realmLogRepository: RealmLogRepository;
 
   constructor() {
     this.realmRepository = new RealmRepository();
     this.realmLogRepository = new RealmLogRepository();
+    this.tsmRepository = new TsmRepository('');
   }
 
   getComparablePricesFor(items: AhStatsRequest[]): Promise<any> {
@@ -311,7 +313,9 @@ export class StatsService {
     return new Promise<void>((resolve, reject) => {
       if (!record || !record.object || !record.object.key) {
         resolve();
+        return;
       }
+
       const regex = /auctions\/[a-z]{1,4}\/[\d]{1,4}\/[\d]{1,4}\/[\d]{13,999}-lastModified.json.gz/gi;
       if (regex.exec(record.object.key)) {
         const splitted = record.object.key.split('/');
@@ -332,6 +336,12 @@ export class StatsService {
                 } = AuctionProcessorUtil.process(auctions, lastModified, +ahId, +ahTypeId);
                 const queries = list.filter(subList => subList.length)
                   .map(dataset => StatsRepository.multiInsertOrUpdate(dataset, hour));
+                /*const db = new DatabaseUtil(false);
+                db.enqueueHandshake()
+                  .then(() => {
+                    Promise.all(queries.map(q => db.query(q)))
+                      .finally(resolve);
+                  });*/
                 const s3 = new S3Handler();
 
                 Promise.all(
@@ -572,74 +582,6 @@ export class StatsService {
     return new Date(+new Date() - 1000 * 60 * 60 * 24 * days);
   }
 
-  /**
-   TODO: Delete?
-   * Add a new column to the AH table indicating when the last delete was ran
-   * Run once each 6-10 minute
-   * Limit 1 order by time since asc (to get the oldest first)
-   * @deprecated
-   */
-  deleteOldPriceHistoryForRealm(conn = new DatabaseUtil(false)): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      const repository = new StatsRepository(conn);
-      const [status]: { activeQueries: number }[] = await repository.getActiveQueries()
-        .catch(error => console.error(`StatsService.deleteOldPriceHistoryForRealm`, error));
-
-      if (status.activeQueries < 1) {
-        const day = 1000 * 60 * 60 * 24;
-        const now = new Date();
-        /*
-        now.setUTCHours(0);
-        now.setUTCMinutes(0);
-
-        now.setUTCMilliseconds(0);
-        */
-
-
-        repository.getNextHouseInTheDeleteQueue()
-          .then(async (res) => {
-            if (res.length) {
-              const {id} = res[0];
-
-              repository.deleteOldAuctionHouseData(id, now, day)
-                .then((deleteResult) => {
-                  deleteResult.affectedRows = NumberUtil.format(deleteResult.affectedRows);
-                  repository
-                    .updateLastDeleteEvent(id)
-                    .then(() => {
-                      console.log('Successfully deleted old price data', deleteResult);
-                      conn.end();
-                      resolve();
-                    })
-                    .catch(error => {
-                      console.error(error);
-                      conn.end();
-                      reject(error);
-                    });
-                })
-                .catch(error => {
-                  console.error(error);
-                  conn.end();
-                  reject(error);
-                });
-            } else {
-              conn.end();
-              resolve();
-            }
-          })
-          .catch(error => {
-            console.error(error);
-            conn.end();
-            reject(error);
-          });
-      } else {
-        conn.end();
-        console.log('Too many active queries', status.activeQueries);
-        resolve();
-      }
-    });
-  }
-
   deleteOldPriceForRealm(table: string, olderThan: number, period: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       const conn = new DatabaseUtil(false);
@@ -682,7 +624,6 @@ export class StatsService {
     return new Promise(async (resolve, reject) => {
       const startTime = +new Date();
       const conn = new DatabaseUtil(false);
-      const tsmRepository = new TsmRepository(''); // Can't fetch directly for tsm api
       let housesToUpdate: AuctionHouse[];
       await this.realmRepository.getRealmsThatNeedsTrendUpdate()
         .then(houses => housesToUpdate = houses)
@@ -700,18 +641,9 @@ export class StatsService {
           const regionMap = new Map<string, Map<string, TsmRegionalItemStats>>();
           for (const house of housesToUpdate.slice(0, 10)) {
             if (DateUtil.timeSince(startTime, 's') < 50) {
-              const gameVersion = house.gameBuild === 1 ? 'classic' : 'retail';
-              const regionId = `${house.region}-${gameVersion}`;
-              if (!regionMap.has(regionId)) {
-                await tsmRepository.getFromS3(gameVersion, house.region)
-                  .then(map => regionMap.set(regionId, map))
-                  .catch(console.error);
-              }
-              await this.setRealmTrends(house, conn, regionMap.get(regionId))
-                .then(async () => {
+              await this.updateRealmTrendsAndTsmDataForHouse(house, conn, regionMap)
+                .then(() => {
                   completed++;
-                  await new RealmService().createLastModifiedFile(house.id, house.region)
-                    .catch(err => console.error('Could not createLastModifiedFile', err));
                 })
                 .catch(console.error);
             }
@@ -727,6 +659,31 @@ export class StatsService {
     });
   }
 
+  async updateRealmTrendsAndTsmDataForHouse(
+    house: AuctionHouse,
+    conn: DatabaseUtil,
+    regionMap= new Map<string, Map<string, TsmRegionalItemStats>>()
+  ) {
+    const gameVersion = house.gameBuild === 1 ? 'classic' : 'retail';
+    const regionId = `${house.region}-${gameVersion}`;
+    if (!regionMap.has(regionId)) {
+      await this.tsmRepository.getFromS3(gameVersion, house.region)
+        .then(map => {
+          regionMap.set(regionId, map);
+          console.log('Successfully loaded TSM data');
+        })
+        .catch(error => {
+          console.error('tsmRepository.getFromS3', error);
+        });
+    }
+    await this.setRealmTrends(house, conn, regionMap.get(regionId))
+      .then(async () => {
+        await new RealmService().createLastModifiedFile(house.id, house.region)
+          .catch(err => console.error('Could not createLastModifiedFile', err));
+      })
+      .catch(console.error);
+  }
+
   getRealmPriceTrends(
     house: AuctionHouse, tsmMap: Map<string, TsmRegionalItemStats>, db: DatabaseUtil
   ): Promise<{ [key: number]: ItemStats[] }> {
@@ -738,7 +695,7 @@ export class StatsService {
     return new Promise((resolve, reject) => {
       Promise.all([
         new Promise<void>((success, fail) => {
-          repo.getRealmPriceHistoryDailyPastDays(house.id, 8)
+          repo.getRealmPriceHistoryDailyPastDays(house.id, house.region, 8)
             .then(rows => {
               const downloadAndQueryTime = +new Date() - start;
               dailyData = AuctionProcessorUtil.processDailyPriceData(rows);
@@ -911,6 +868,8 @@ export class StatsService {
             url: hasMultipleAH ? {} : ''
           };
 
+          console.log('Starting setRealmTrends for', house.region, house.id, '. Initiating upload');
+
           Promise.all(
             Object.keys(results)
               .map(ahTypeId => new Promise<void>((success, failed) => {
@@ -941,6 +900,7 @@ export class StatsService {
               }))
           )
             .then(() => {
+              console.log('Done uploading trends for', house.region, house.id);
               this.realmRepository.updateEntry(house.id, {
                 id: house.id,
                 stats: updatedStats,

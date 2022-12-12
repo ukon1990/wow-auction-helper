@@ -53,37 +53,37 @@ export class RDSItemRepository {
   findMissingItemsFromAuctions(conn: DatabaseUtil): Promise<number[]> {
     return new Promise<number[]>(((resolve, reject) => {
       conn.query(`
-          SELECT *
+          SELECT tbl.id AS id
           FROM (
-                   SELECT craftedItemId as id
+                   SELECT craftedItemId AS id
                    FROM recipes
                    WHERE craftedItemId NOT IN (
                        SELECT id
                        FROM items
                    )
                    UNION ALL
-                   SELECT hordeCraftedItemId as id
+                   SELECT hordeCraftedItemId AS id
                    FROM recipes
                    WHERE hordeCraftedItemId NOT IN (
                        SELECT id
                        FROM items
                    )
                    UNION ALL
-                   SELECT allianceCraftedItemId as id
+                   SELECT allianceCraftedItemId AS id
                    FROM recipes
                    WHERE allianceCraftedItemId NOT IN (
                        SELECT id
                        FROM items
                    )
                    UNION ALL
-                   SELECT itemId as id
+                   SELECT itemId AS id
                    FROM reagents
                    WHERE itemId NOT IN (
                        SELECT id
                        FROM items
                    )
                    UNION ALL
-                   SELECT itemId as id
+                   SELECT itemId AS id
                    FROM itemPriceHistoryPerDay
                    WHERE date >= NOW() - INTERVAL 30 DAY
                      AND itemId NOT IN (
@@ -91,15 +91,17 @@ export class RDSItemRepository {
                        FROM items
                        )
                    UNION ALL
-                   SELECT itemId as id
+                   SELECT itemId AS id
                    FROM itemPriceHistoryPerHour
                    WHERE date >= NOW() - INTERVAL 1 DAY
                      AND itemId NOT IN (
                        SELECT id
                        FROM items
                        )) as tbl
-          GROUP BY id
-          ORDER BY id DESC;`)
+          LEFT JOIN missing_items mi ON mi.id = tbl.id AND mi.classic = 0
+          WHERE mi.id IS NULL
+          GROUP BY tbl.id
+          ORDER BY tbl.id DESC;`)
         .then(res => {
           resolve(res.map(({id}) => id));
         })
@@ -110,33 +112,36 @@ export class RDSItemRepository {
   findMissingItemsFromAuctionsClassic(conn: DatabaseUtil): Promise<number[]> {
     return new Promise<number[]>(((resolve, reject) => {
       conn.query(`
-          SELECT *
-          FROM (SELECT craftedItemId AS id
-                FROM recipesClassic
-                WHERE craftedItemId NOT IN (SELECT id
-                                            FROM itemsClassic)
-                UNION ALL
-                SELECT itemId AS id
-                FROM reagentsClassic
-                WHERE itemId NOT IN (SELECT id
-                                     FROM items)
-                UNION ALL
-                SELECT id
-                FROM itemsClassic
-                WHERE id NOT IN (SELECT id
-                                     FROM itemClassic_name_locale)
-                UNION ALL
-                SELECT itemId AS id
-                FROM itemPriceHistoryPerDay
-                WHERE
-                    date >= NOW() - INTERVAL 14 DAY
-                  AND ahTypeId
-                    > 0
-                  AND itemId NOT IN (SELECT
-                    id
-                    FROM
-                    itemsClassic)) AS tbl
-          WHERE id NOT IN (SELECT id FROM missing_items WHERE classic = 1)
+          SELECT tbl.id
+          FROM (
+            SELECT craftedItemId AS id
+            FROM recipesClassic
+            WHERE craftedItemId NOT IN (SELECT id
+                                        FROM itemsClassic)
+            UNION ALL
+            SELECT itemId AS id
+            FROM reagentsClassic
+            WHERE itemId NOT IN (SELECT id
+                                 FROM items)
+            UNION ALL
+            SELECT id
+            FROM itemsClassic
+            WHERE id NOT IN (SELECT id
+                                 FROM itemClassic_name_locale)
+            UNION ALL
+            SELECT itemId AS id
+            FROM itemPriceHistoryPerDay
+            WHERE
+                date >= NOW() - INTERVAL 14 DAY
+              AND ahTypeId
+                > 0
+              AND itemId NOT IN (SELECT
+                id
+                FROM
+                itemsClassic)
+          ) AS tbl
+          LEFT JOIN missing_items mi ON mi.id = tbl.id AND mi.classic = 1
+					WHERE mi.id IS NULL
           GROUP BY id
           ORDER BY id DESC;`)
         .then(res => {

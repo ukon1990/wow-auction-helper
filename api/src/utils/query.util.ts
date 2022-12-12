@@ -1,7 +1,7 @@
-import {EmptyUtil} from '@ukon1990/js-utilities';
-import {safeifyString} from './string.util';
 import {S3} from 'aws-sdk';
 import {DynamoDbReturnValue} from '../enums/dynamo-db-return-value.enum';
+import {format} from 'sqlstring';
+import {EmptyUtil} from "@ukon1990/js-utilities";
 
 export class RDSQueryUtil<T> {
   static getSQLTimestamp(timestamp: S3.LastModified) {
@@ -24,24 +24,25 @@ export class RDSQueryUtil<T> {
     let query = `UPDATE ${this.table} SET `;
 
     query += cv.columns
-      .map((column, index) =>
-        `${column} = ${cv.values[index]}`)
+      .map((column) =>
+        `${column} = ?`)
       .join(',');
 
     if (this.setTimestamp) {
       query += ',timestamp = CURRENT_TIMESTAMP';
     }
 
-    return `${query} WHERE id = ${id};`;
+    return format(`${query} WHERE id = ?;`, [...cv.values, id]);
   }
 
   insert(object: T, terminate: boolean = true): string {
     const cv = this.getColumnsAndValues(object);
-    return `INSERT INTO ${this.table
-    }(${
+
+    return format(`INSERT INTO ${this.table}(${
       cv.columns.join(',')
-    }${this.setTimestamp ? ',timestamp' : ''}) VALUES(${cv.values.join(',')
-    }${this.setTimestamp ? ',CURRENT_TIMESTAMP' : ''})${terminate ? ';' : ' '}`;
+    }${this.setTimestamp ? ',timestamp' : ''}) VALUES(${cv.values.map(() => '?').join(',')
+    }${this.setTimestamp ? ',CURRENT_TIMESTAMP' : ''})${terminate ? ';' : ' '}`,
+      cv.values);
   }
 
   insertOrUpdate(object: T, updateTimestamp = false): string {
@@ -49,11 +50,13 @@ export class RDSQueryUtil<T> {
     delete clone['id'];
     const cv = this.getColumnsAndValues(clone);
     const insert = this.insert(object, false);
-    return insert + ` ON DUPLICATE KEY UPDATE ${
-      cv.columns.map((column, index) => `${column} = ${cv.values[index]}`).join(',')
+    return format(insert + ` ON DUPLICATE KEY UPDATE ${
+      cv.columns.map((column) => `${column} = ?`).join(',')
     } ${
       updateTimestamp ? ',timestamp = CURRENT_TIMESTAMP' : ''
-    }`;
+    }`,
+      cv.values
+    );
   }
 
   /* Need to have the same column count */
@@ -98,7 +101,7 @@ export class RDSQueryUtil<T> {
     } ${updateTimestamp ? ', timestamp = CURRENT_TIMESTAMP' : ''};`;
   }
 
-  private getColumnsAndValues(object: T) {
+  getColumnsAndValues(object: T) {
     const columns = [];
     const values = [];
 
@@ -117,6 +120,7 @@ export class RDSQueryUtil<T> {
 
   private getSQLFriendlyString(value: any): string | number | boolean {
     const type = typeof value;
+
     switch (type) {
       case 'number':
         return value;
@@ -125,24 +129,31 @@ export class RDSQueryUtil<T> {
       case 'object':
         return this.handleObject(value);
       default:
-        return `"${safeifyString(value)}"`;
+        const isCSV = value && (`${value || ''}`).indexOf(',') > -1 && !isNaN(value.split(',')[0]);
+        const isDateString = typeof value === 'string' && !isNaN(+new Date(value));
+        if (isCSV || isDateString) {
+          return `'${value}'`;
+        }
+        return value; // `"${safeifyString(value)}"`;
     }
   }
 
   private handleObject(value: any) {
     if (EmptyUtil.isNullOrUndefined(value)) {
-      return 'null';
+      return null;
     }
-    /* TODO: Until we get a better handler for arrays :)
-    if (ArrayUtil.isArray(value)) {
+    // TODO: Until we get a better handler for arrays :)
+    /*if (Array.isArray(value)) {
       return false;
     }*/
+
     if (value.getDate) {
       return +value;
     }
-    return `"${safeifyString(JSON.stringify(value))}"`;
+    return JSON.stringify(value); // `"${safeifyString(JSON.stringify(value))}"`;
   }
 }
+
 
 export class NoSQLQueryUtil {
 

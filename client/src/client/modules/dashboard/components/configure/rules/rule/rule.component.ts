@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ruleFields} from '../../../../data/rule-fields.data';
 import {GameBuild} from '@shared/utils';
 import {Profession, Rule} from '@shared/models';
@@ -23,9 +23,9 @@ import {columnConfig} from "../../../../data/columns.data";
   styleUrls: ['./rule.component.scss']
 })
 export class RuleComponent implements AfterViewInit, OnDestroy {
-  @Input() formGroup: FormGroup;
+  @Input() formGroup: UntypedFormGroup;
   @Input() rules: Rule[];
-  @Input() allRules: FormArray;
+  @Input() allRules: UntypedFormArray;
   @Input() index: number;
   @Input() isOrRule: boolean;
   @Output() remove: EventEmitter<void> = new EventEmitter<void>();
@@ -53,8 +53,8 @@ export class RuleComponent implements AfterViewInit, OnDestroy {
   faPlus = faPlus;
   private lastCharacterTyped: number;
 
-  get orRules(): FormArray {
-    return this.formGroup.get('or') as FormArray;
+  get orRules(): UntypedFormArray {
+    return this.formGroup.get('or') as UntypedFormArray;
   }
 
   get tooltipField(): string {
@@ -80,7 +80,7 @@ export class RuleComponent implements AfterViewInit, OnDestroy {
         this.addOrRule(rule));
     }
 
-    if (this.allRules && this.allRules instanceof FormArray) {
+    if (this.allRules && this.allRules instanceof UntypedFormArray) {
       this.setItemClassSelected(this.allRules.getRawValue());
       this.sm.add(this.allRules.valueChanges, value => this.setItemClassSelected(value));
     }
@@ -110,16 +110,16 @@ export class RuleComponent implements AfterViewInit, OnDestroy {
   }
 
   addOrRule(rule?: Rule) {
-    const form = new FormGroup({
-      condition: new FormControl(rule ? rule.condition : null, Validators.required),
-      targetValueType: new FormControl(rule ? rule.targetValueType : null, Validators.required),
-      field: new FormControl(rule ? rule.field : null, Validators.required),
-      toField: new FormControl(rule ? rule.toField : null),
-      toValue: new FormControl(rule ? rule.toValue : null),
-      or: new FormArray([]),
+    const form = new UntypedFormGroup({
+      condition: new UntypedFormControl(rule ? rule.condition : null, Validators.required),
+      targetValueType: new UntypedFormControl(rule ? rule.targetValueType : null, Validators.required),
+      field: new UntypedFormControl(rule ? rule.field : null, Validators.required),
+      toField: new UntypedFormControl(rule ? rule.toField : null),
+      toValue: new UntypedFormControl(rule ? rule.toValue : null),
+      or: new UntypedFormArray([]),
     });
 
-    (this.formGroup.controls.or as FormArray).push(form);
+    (this.formGroup.controls.or as UntypedFormArray).push(form);
   }
 
   private handleFieldChange(value: string): void {

@@ -83,6 +83,8 @@ export class Endpoints {
       return `${query}?${base}`;
     }
   }
+
+  getForKey(url: string) {
+    return `${url}&access_token=${BLIZZARD.ACCESS_TOKEN}`;
+  }
 }
-
-

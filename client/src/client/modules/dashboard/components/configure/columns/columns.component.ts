@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, Input, OnDestroy} from '@angular/core';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {ruleFields} from '../../../data/rule-fields.data';
 import {ColumnDescription} from '@shared/models';
@@ -16,22 +16,22 @@ import {SortRule} from "@shared/models";
   styleUrls: ['./columns.component.scss']
 })
 export class ColumnsComponent implements AfterViewInit, OnDestroy {
-  @Input() form: FormGroup;
+  @Input() form: UntypedFormGroup;
   @Input() columns: ColumnDescription[];
   @Input() sortOrder: SortRule;
   @Input() displayHeader: boolean;
   selectedColumns: ColumnDescription[] = [];
   faTrash = faTrashAlt;
   fields = ruleFields;
-  columnSelectionField: FormControl = new FormControl(columnConfig.item.name, Validators.required);
+  columnSelectionField: UntypedFormControl = new UntypedFormControl(columnConfig.item.name, Validators.required);
   sm = new SubscriptionManager();
 
-  get formArray(): FormArray {
-    return this.form.get('columns') as FormArray;
+  get formArray(): UntypedFormArray {
+    return this.form.get('columns') as UntypedFormArray;
   }
 
-  get sortRuleGroup(): FormGroup {
-    return this.form.get('sortRule') as FormGroup;
+  get sortRuleGroup(): UntypedFormGroup {
+    return this.form.get('sortRule') as UntypedFormGroup;
   }
 
   ngAfterViewInit(): void {
@@ -57,41 +57,29 @@ export class ColumnsComponent implements AfterViewInit, OnDestroy {
   }
 
   private addDefaultColumns() {
-    this.addColumn(undefined, {
-      key: 'name', title: 'Name', dataType: 'name', options: {idName: 'id'}
-    });
-    this.addColumn(undefined, {
-      key: 'buyout', title: 'Buyout', dataType: 'gold'
-    });
-    this.addColumn(undefined, {
-      key: 'mktPrice',
-      title: 'Market value',
-      dataType: 'gold'
-    });
-    this.addColumn(undefined, {
-      key: 'regionSaleRate',
-      title: 'Sale rate',
-      dataType: 'percent'
-    });
+    this.addColumn(undefined, columnConfig.item.name);
+    this.addColumn(undefined, columnConfig.auction.buyout);
+    this.addColumn(undefined, columnConfig.auction.mktPrice);
+    this.addColumn(undefined, columnConfig.auction.regionSalePct);
   }
 
-  addColumn(formArray: FormArray = this.formArray,
+  addColumn(formArray: UntypedFormArray = this.formArray,
             column: ColumnDescription = this.columnSelectionField.value as ColumnDescription): void {
-    const form = new FormGroup({
-      key: new FormControl({
+    const form = new UntypedFormGroup({
+      key: new UntypedFormControl({
         value: column ? column.key : null,
         disabled: true
       }, Validators.required),
-      title: new FormControl(column ? column.title : null, Validators.required),
-      dataType: new FormControl({
+      title: new UntypedFormControl(column ? column.title : null, Validators.required),
+      dataType: new UntypedFormControl({
         value: column ? column.dataType : null, disabled: true
       }, Validators.required),
-      hideOnMobile: new FormControl(column ? column.hideOnMobile || false : false),
+      hideOnMobile: new UntypedFormControl(column ? column.hideOnMobile || false : false),
     });
     formArray.push(form);
   }
 
-  drop(event: CdkDragDrop<FormGroup[]>) {
+  drop(event: CdkDragDrop<UntypedFormGroup[]>) {
     try {
       const {previousIndex, currentIndex} = event;
       Report.debug(`Moved column from ${previousIndex} to ${currentIndex}`, event);

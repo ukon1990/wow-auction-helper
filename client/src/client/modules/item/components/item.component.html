@@ -1,192 +1,193 @@
 <wah-close-btn (close)="close()"></wah-close-btn>
 
 <h1 mat-dialog-title>
-  <div class="row">
-    <a mat-card-avatar
-       class="col-md-12 item-name"
-       wahItemTooltip
-       [item]="getPet() ? getPet() : selected?.auctionItem || selected?.item"
-       [linkType]="getPet() ? 'npc' : 'item'"
-    >
-      <wah-icon *ngIf="selected?.item?.id"
-                size="36"
-                [id]="selected?.item?.id"
-                [petSpeciesId]="getSelectedPet()?.petSpeciesId">
-      </wah-icon>
-      {{ getPet() ? getPet().name : selected.auctionItem?.name || selected.item?.name }}
-    </a>
-  </div>
+	<div class="row">
+		<a mat-card-avatar
+			 class="col-md-12 item-name"
+			 wahItemTooltip
+			 [item]="getPet() ? getPet() : selected?.auctionItem || selected?.item"
+			 [linkType]="getPet() ? 'npc' : 'item'"
+		>
+			<wah-icon *ngIf="selected?.item?.id"
+								size="36"
+								[id]="selected?.item?.id"
+								[petSpeciesId]="getSelectedPet()?.petSpeciesId">
+			</wah-icon>
+			{{ getPet() ? getPet().name : selected.auctionItem?.name || selected.item?.name }}
+		</a>
+	</div>
 </h1>
 
 <mat-dialog-content *ngIf="selected && selected.item">
-  <div class="row">
-    <div class="col-md-12" *ngIf="selected.auctionItem">
-      <wah-auction-item-details
-              [baseItem]="selected.item"
-              [item]="selected.auctionItem">
-      </wah-auction-item-details>
-    </div>
-    <div class="col-md-12">
-      <mat-tab-group [selectedIndex]="selectedTab"
-                     (selectedIndexChange)="setTabChange($event, '')"
-                     color="accent"
+	<div class="row">
+		<div class="col-md-12" *ngIf="selected.auctionItem">
+			<wah-auction-item-details
+					[baseItem]="selected.item"
+					[item]="selected.auctionItem">
+			</wah-auction-item-details>
+		</div>
+		<div class="col-md-12">
+			<mat-tab-group [selectedIndex]="selectedTab"
+										 (selectedIndexChange)="setTabChange($event, '')"
+										 color="accent"
                      #tabs
-      >
-        <mat-tab label="Auctions" *ngIf="selected.auctionItem && selected.auctionItem?.auctions.length > 0">
-          <wah-item-detail-auctions
-                  [item]="selected.auctionItem"
-          >
-          </wah-item-detail-auctions>
-        </mat-tab>
+			>
+				<mat-tab label="Auctions" *ngIf="selected.auctionItem && selected.auctionItem?.auctions.length > 0">
+					<wah-item-detail-auctions
+							[item]="selected.auctionItem"
+					>
+					</wah-item-detail-auctions>
+				</mat-tab>
 
-        <mat-tab label="History" *ngIf="selected.auctionItem?.auctions">
-          <wah-item-price-history
-                  [isActiveTab]="selectedTab === 1"
-                  [item]="selected.item"
-                  [auctionItem]="selected.auctionItem">
-          </wah-item-price-history>
-        </mat-tab>
+				<mat-tab label="History" *ngIf="selected.auctionItem?.auctions">
+					<wah-item-price-history
+							[isActiveTab]="selectedTab === 1"
+							[item]="selected.item"
+							[auctionItem]="selected.auctionItem">
+					</wah-item-price-history>
+				</mat-tab>
 
-        <mat-tab label="Realm comparison" *ngIf="selected.auctionItem?.auctions">
-          <wah-item-price-compare *ngIf="selectedTab === 2 && selected?.item"
-                  [item]="selected.item"
-                  [auctionItem]="selected.auctionItem">
-          </wah-item-price-compare>
-        </mat-tab>
+				<mat-tab label="Realm comparison" *ngIf="selected.auctionItem?.auctions">
+					<wah-item-price-compare *ngIf="selectedTab === 2 && selected?.item"
+																	[item]="selected.item"
+																	[auctionItem]="selected.auctionItem">
+					</wah-item-price-compare>
+				</mat-tab>
 
-        <mat-tab label="Data from TSM">
-          <wah-tsm-tab *ngIf="selectedTab === 3 && selected?.item"
-                       [item]="selected?.item"
-                       [dialogId]="dialogRef.id"
-                       [auctionItem]="selected.auctionItem"></wah-tsm-tab>
-        </mat-tab>
+				<mat-tab label="Data from TSM">
+					<wah-tsm-tab *ngIf="selectedTab === 3 && selected?.item"
+											 [item]="selected?.item"
+											 [dialogId]="dialogRef.id"
+											 [auctionItem]="selected.auctionItem"></wah-tsm-tab>
+				</mat-tab>
 
-        <mat-tab label="Created by" *ngIf="createdBy">
-          <wah-crafting-config></wah-crafting-config>
-          <wah-data-table [id]="'itemID'"
-                          [columns]="recipeColumns"
-                          [data]="createdBy"
-                          [isCrafting]="true"
-                          [numOfRows]="20">
-          </wah-data-table>
-        </mat-tab>
-        <mat-tab label="Material for" *ngIf="materialFor.length > 0">
-          <wah-data-table [id]="'itemID'" iconSize="22"
-                          [columns]="recipeColumnsSimple"
-                          [data]="materialFor"
-                          [isCrafting]="false"
-                          filterParameter="name"
-                          [numOfRows]="20">
-          </wah-data-table>
-        </mat-tab>
-        <mat-tab label="Dropped by"
-                 *ngIf="itemNpcDetails.droppedBy.length">
-          <wah-dropped-by-tab [droppedBy]="itemNpcDetails.droppedBy"></wah-dropped-by-tab>
-        </mat-tab>
-        <mat-tab label="Sold by" *ngIf="itemNpcDetails.soldBy.length">
-          <wah-sold-by-tab [soldBy]="itemNpcDetails.soldBy"></wah-sold-by-tab>
-        </mat-tab>
+				<mat-tab label="Created by" *ngIf="createdBy">
+					<wah-crafting-config></wah-crafting-config>
+					<wah-data-table [id]="'itemID'"
+													[columns]="recipeColumns"
+													[data]="createdBy"
+													[isCrafting]="true"
+													[numOfRows]="20">
+					</wah-data-table>
+				</mat-tab>
+				<mat-tab label="Material for" *ngIf="materialFor.length > 0">
+					<wah-data-table [id]="'itemID'" iconSize="22"
+													[columns]="recipeColumnsSimple"
+													[data]="materialFor"
+													[isCrafting]="false"
+													filterParameter="name"
+													[numOfRows]="20">
+					</wah-data-table>
+				</mat-tab>
+				<mat-tab label="Dropped by"
+								 *ngIf="itemNpcDetails.droppedBy.length">
+					<wah-dropped-by-tab [droppedBy]="itemNpcDetails.droppedBy"></wah-dropped-by-tab>
+				</mat-tab>
+				<mat-tab label="Sold by" *ngIf="itemNpcDetails.soldBy.length">
+					<wah-sold-by-tab [soldBy]="itemNpcDetails.soldBy"></wah-sold-by-tab>
+				</mat-tab>
 
-        <mat-tab label="Contained in object"
-                 *ngIf="selected.item?.itemSource && selected.item?.itemSource.containedInObject && selected.item?.itemSource.containedInObject.length > 0">
-          <wah-contained-in-tab
-                  [isObjects]="true"
-                  [items]="selected.item?.itemSource.containedInObject"></wah-contained-in-tab>
-        </mat-tab>
-        <mat-tab label="Contained in item"
-                 *ngIf="selected.item?.itemSource && selected.item?.itemSource.containedInItem && selected.item?.itemSource?.containedInitem?.length > 0">
-          <wah-contained-in-tab
-                  [items]="selected.item?.itemSource.containedInItem"></wah-contained-in-tab>
-        </mat-tab>
-        <mat-tab label="Prospected from"
-                 *ngIf="selected.item?.itemSource && selected.item?.itemSource.prospectedFrom && selected.item?.itemSource.prospectedFrom.length > 0">
-          <wah-data-table linkType="item" [id]="'id'" iconSize="22" [columns]="droppedByColumns"
-                          [data]="selected.item?.itemSource.prospectedFrom" filterParameter="name" [numOfRows]="20">
-          </wah-data-table>
-        </mat-tab>
+				<mat-tab label="Contained in object"
+								 *ngIf="selected.item?.itemSource && selected.item?.itemSource.containedInObject && selected.item?.itemSource.containedInObject.length > 0">
+					<wah-contained-in-tab
+							[isObjects]="true"
+							[items]="selected.item?.itemSource.containedInObject"></wah-contained-in-tab>
+				</mat-tab>
+				<mat-tab label="Contained in item"
+								 *ngIf="selected.item?.itemSource && selected.item?.itemSource.containedInItem && selected.item?.itemSource?.containedInitem?.length > 0">
+					<wah-contained-in-tab
+							[items]="selected.item?.itemSource.containedInItem"></wah-contained-in-tab>
+				</mat-tab>
+				<mat-tab label="Prospected from"
+								 *ngIf="selected.item?.itemSource && selected.item?.itemSource.prospectedFrom && selected.item?.itemSource.prospectedFrom.length > 0">
+					<wah-data-table linkType="item" [id]="'id'" iconSize="22" [columns]="droppedByColumns"
+													[data]="selected.item?.itemSource.prospectedFrom" filterParameter="name" [numOfRows]="20">
+					</wah-data-table>
+				</mat-tab>
 
-        <mat-tab label="Milled from"
-                 *ngIf="selected.item?.itemSource && selected.item?.itemSource.milledFrom && selected.item?.itemSource.milledFrom.length > 0">
-          <wah-data-table linkType="item" [id]="'id'" iconSize="22" [columns]="droppedByColumns"
-                          [data]="selected.item?.itemSource.milledFrom" filterParameter="name" [numOfRows]="20">
-          </wah-data-table>
-        </mat-tab>
-        <mat-tab label="Reset cost calc" *ngIf="selected.auctionItem">
-          <wah-reset-calc
-                  [dialogId]="dialogRef.id"
-                  [auctionItem]="selected.auctionItem">¨
-          </wah-reset-calc>
-        </mat-tab>
-      </mat-tab-group>
-    </div>
-  </div>
-  <ng-template #inCaseNotFound>
-    This item was not found at the auction house.
-  </ng-template>
+				<mat-tab label="Milled from"
+								 *ngIf="selected.item?.itemSource && selected.item?.itemSource.milledFrom && selected.item?.itemSource.milledFrom.length > 0">
+					<wah-data-table linkType="item" [id]="'id'" iconSize="22" [columns]="droppedByColumns"
+													[data]="selected.item?.itemSource.milledFrom" filterParameter="name" [numOfRows]="20">
+					</wah-data-table>
+				</mat-tab>
+				<mat-tab label="Reset cost calc" *ngIf="selected.auctionItem">
+					<wah-reset-calc
+							[dialogId]="dialogRef.id"
+							[auctionItem]="selected.auctionItem">¨
+					</wah-reset-calc>
+				</mat-tab>
+			</mat-tab-group>
+		</div>
+	</div>
+	<ng-template #inCaseNotFound>
+		This item was not found at the auction house.
+	</ng-template>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <mat-select *ngIf="itemVariations && itemVariations.length > 1"
-              class="col"
-              placeholder="Item variations"
-  >
-    <mat-option *ngFor="let variation of itemVariations"
-                (click)="openVariation(variation)"
-    >
-      {{ variation.itemLevel }} - {{ variation.name }} -
-      {{ variation.buyout | gold }} - {{ variation.quantityTotal | number }} pcs
-    </mat-option>
-  </mat-select>
+	<div class="float-right">
+		<mat-select *ngIf="itemVariations && itemVariations.length > 1"
+								class="col"
+								placeholder="Item variations"
+		>
+			<mat-option *ngFor="let variation of itemVariations"
+									(click)="openVariation(variation)"
+			>
+				{{ variation.itemLevel }} - {{ variation.name }} -
+				{{ variation.buyout | gold }} - {{ variation.quantityTotal | number }} pcs
+			</mat-option>
+		</mat-select>
 
 
-  <button (click)="openInNewTab('https://www.wowdb.com/items/' + selected.item?.id, 'WoWDB')"
-          mat-stroked-button
-          color="primary"
-  >
-    WoWDB
-    <i class="fas fa-external-link-square-alt"></i>
-  </button>
-  <button (click)="openInNewTab(wowheadBaseUrl + selected.item?.id, 'WoWHead')"
-          mat-stroked-button
-          color="primary"
-  >
-    WoWHead
-    <i class="fas fa-external-link-square-alt"></i>
-  </button>
-  <button (click)="openInNewTab(getTUJUrl(), 'TUJ')"
-          mat-stroked-button
-          color="primary"
-  >
-    TUJ
-    <i class="fas fa-external-link-square-alt"></i>
-  </button>
+		<button (click)="openInNewTab('https://www.wowdb.com/items/' + selected.item?.id, 'WoWDB')"
+						mat-stroked-button
+						color="primary"
+		>
+			WoWDB
+			<i class="fas fa-external-link-square-alt"></i>
+		</button>
+		<button (click)="openInNewTab(wowheadBaseUrl + selected.item?.id, 'WoWHead')"
+						mat-stroked-button
+						color="primary"
+		>
+			WoWHead
+			<i class="fas fa-external-link-square-alt"></i>
+		</button>
+		<button (click)="openInNewTab(getTUJUrl(), 'TUJ')"
+						mat-stroked-button
+						color="primary"
+		>
+			TUJ
+			<i class="fas fa-external-link-square-alt"></i>
+		</button>
 
-  <!-- *ngIf="userHasRecipeForItem()" -->
-  <div class="float-right">
-    <mat-form-field
-            color="accent"
-    >
-      <input matInput
-             placeholder="Quantity"
-             type="number"
-             [formControl]="shoppingCartQuantityField">
-    </mat-form-field>
+		<!-- *ngIf="userHasRecipeForItem()" -->
+		<mat-form-field
+				class="short-form-field"
+				color="accent"
+		>
+			<input matInput
+						 placeholder="Quantity"
+						 type="number"
+						 [formControl]="shoppingCartQuantityField">
+		</mat-form-field>
 
-    <button mat-stroked-button
-            matTooltip="Add the cheapest known recipe to shopping list"
-            (click)="addEntryToCart()"
-            color="accent"
-    >
-      Add recipe cart
-      <i class="fas fa-cart-plus"></i>
-    </button>
-    <button mat-stroked-button
-            matTooltip="Add item to shopping list"
-            (click)="addEntryToCart(false)"
-            color="accent"
-    >
-      Add item cart
-      <i class="fas fa-cart-plus"></i>
-    </button>
-  </div>
+		<button mat-stroked-button
+						matTooltip="Add the cheapest known recipe to shopping list"
+						(click)="addEntryToCart()"
+						color="accent"
+		>
+			Add recipe cart
+			<i class="fas fa-cart-plus"></i>
+		</button>
+		<button mat-stroked-button
+						matTooltip="Add item to shopping list"
+						(click)="addEntryToCart(false)"
+						color="accent"
+		>
+			Add item cart
+			<i class="fas fa-cart-plus"></i>
+		</button>
+	</div>
 </mat-dialog-actions>

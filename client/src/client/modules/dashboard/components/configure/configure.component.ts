@@ -2,7 +2,7 @@ import {AfterViewInit, Component, EventEmitter, Inject, OnInit, Output} from '@a
 import {faSave} from '@fortawesome/free-solid-svg-icons/faSave';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {ObjectUtil} from '@ukon1990/js-utilities';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ruleFields} from '../../data/rule-fields.data';
 import {Profession} from '@shared/models';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
@@ -35,27 +35,27 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   faUndo = faUndo;
 
   hasChanges: boolean;
-  form: FormGroup = new FormGroup({
-    id: new FormControl(),
-    parentId: new FormControl(),
-    idParam: new FormControl(),
-    title: new FormControl(null, Validators.required),
-    description: new FormControl(null, [Validators.maxLength(128)]),
-    tags: new FormControl([]),
-    columns: new FormArray([]),
-    sortOrder: new FormControl(0),
-    onlyItemsWithRules: new FormControl(false),
-    isDisabled: new FormControl(false),
-    isPublic: new FormControl(false),
-    rules: new FormArray([], Validators.minLength(1)),
-    itemRules: new FormArray([]),
-    sortRule: new FormGroup({
-      field: new FormControl(null),
-      sortDesc: new FormControl(true)
+  form: UntypedFormGroup = new UntypedFormGroup({
+    id: new UntypedFormControl(),
+    parentId: new UntypedFormControl(),
+    idParam: new UntypedFormControl(),
+    title: new UntypedFormControl(null, Validators.required),
+    description: new UntypedFormControl(null, [Validators.maxLength(128)]),
+    tags: new UntypedFormControl([]),
+    columns: new UntypedFormArray([]),
+    sortOrder: new UntypedFormControl(0),
+    onlyItemsWithRules: new UntypedFormControl(false),
+    isDisabled: new UntypedFormControl(false),
+    isPublic: new UntypedFormControl(false),
+    rules: new UntypedFormArray([], Validators.minLength(1)),
+    itemRules: new UntypedFormArray([]),
+    sortRule: new UntypedFormGroup({
+      field: new UntypedFormControl(null),
+      sortDesc: new UntypedFormControl(true)
     }),
-    lastModified: new FormControl({value: new Date(), disabled: true}),
-    createdBy: new FormControl(),
-    createdById: new FormControl(),
+    lastModified: new UntypedFormControl({value: new Date(), disabled: true}),
+    createdBy: new UntypedFormControl(),
+    createdById: new UntypedFormControl(),
   });
   private sm = new SubscriptionManager();
   hasPanelBeenOpened = {
@@ -67,16 +67,16 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   lastCalculationTime: number;
 
 
-  get itemRules(): FormArray {
-    return this.form.get('itemRules') as FormArray;
+  get itemRules(): UntypedFormArray {
+    return this.form.get('itemRules') as UntypedFormArray;
   }
 
-  get rules(): FormArray {
-    return this.form.get('rules') as FormArray;
+  get rules(): UntypedFormArray {
+    return this.form.get('rules') as UntypedFormArray;
   }
 
-  get columns(): FormArray {
-    return this.form.get('columns') as FormArray;
+  get columns(): UntypedFormArray {
+    return this.form.get('columns') as UntypedFormArray;
   }
 
   constructor(

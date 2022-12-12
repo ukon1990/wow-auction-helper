@@ -8,7 +8,7 @@ import {
   Output,
   SimpleChanges
 } from '@angular/core';
-import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
+import {AbstractControl, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
@@ -36,14 +36,14 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
     realmStatus: RealmStatus
   }> = new EventEmitter();
 
-  form: FormGroup = new FormGroup({
-    ahTypeId: new FormControl(0),
-    region: new FormControl(),
-    realm: new FormControl(),
-    locale: new FormControl(),
-    realmStatus: new FormControl()
+  form: UntypedFormGroup = new UntypedFormGroup({
+    ahTypeId: new UntypedFormControl(0),
+    region: new UntypedFormControl(),
+    realm: new UntypedFormControl(),
+    locale: new UntypedFormControl(),
+    realmStatus: new UntypedFormControl()
   });
-  autocompleteField = new FormControl('');
+  autocompleteField = new UntypedFormControl('');
   locales = SharedService.locales;
   currentRealm: RealmStatus;
   ahTypes = ahTypes;

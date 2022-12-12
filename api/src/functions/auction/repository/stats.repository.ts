@@ -22,7 +22,9 @@ export class StatsRepository {
         quantity${formattedHour} = VALUES(quantity${formattedHour});`;
   }
 
-  constructor(private conn: DatabaseUtil = new DatabaseUtil(true, true), autoClose: boolean = true) {
+  constructor(
+    private conn: DatabaseUtil = new DatabaseUtil(true, true)
+  ) {
   }
 
   getAllStatsForRealmDate(house: AuctionHouse): Promise<AuctionItemStat[]> {
@@ -34,7 +36,7 @@ export class StatsRepository {
           .map(data => this.conn.query(`
               SELECT date, itemId, ahTypeId, petSpeciesId, bonusIds, ${data.columns.join(', ')}
               FROM itemPriceHistoryPerHour
-              WHERE (ahId = ${house.id} OR ahId = ${this.getRegionId()})
+              WHERE (ahId = ${house.id} OR ahId = ${this.getRegionId(house.region)})
                 AND date = ${data.date};`)
             .then(res => {
               result = [...result, ...res];
@@ -48,7 +50,7 @@ export class StatsRepository {
     });
   }
 
-  getRealmPriceHistoryDailyPastDays(ahId: number, daysSince: number) {
+  getRealmPriceHistoryDailyPastDays(ahId: number, region: string, daysSince: number) {
     const {
       columns,
       months
@@ -57,7 +59,7 @@ export class StatsRepository {
         SELECT date, itemId, ahTypeId, petSpeciesId, bonusIds, ${columns.join(', ')}
         FROM itemPriceHistoryPerDay
         WHERE ${months.map(month => `(
-          (ahId = ${ahId} OR ahId = ${this.getRegionId()})
+          (ahId = ${ahId} OR ahId = ${this.getRegionId(region)})
             AND date = ${month}
           )`).join(' OR ')};
     `);
@@ -92,8 +94,7 @@ export class StatsRepository {
       maxQuantity${day} = VALUES(maxQuantity${day});`;
   }
 
-  private getRegionId(): number {
-    const region = (process.env.AWS_REGION || 'eu').split('-')[0];
+  private getRegionId(region = (process.env.AWS_REGION || 'eu').split('-')[0]): number {
     switch (region) {
       case 'us': return 1002;
       case 'tw': return 1003;
@@ -103,17 +104,16 @@ export class StatsRepository {
   }
 
   getPriceHistoryHourly(items: AhStatsRequest[]): any {
-    return this.conn.query(`SELECT *
-                            FROM itemPriceHistoryPerHour
-                            WHERE (
-                                      ${
-                                              items.map(({
-                                                             ahId,
-                                                             itemId,
-                                                             petSpeciesId = '-1',
-                                                             bonusIds,
-                                                             ahTypeId = 0
-                                                         }) => `
+    const query = `SELECT *
+									 FROM itemPriceHistoryPerHour
+									 WHERE (${
+                     items.map(({
+                                  ahId,
+                                  itemId,
+                                  petSpeciesId = '-1',
+                                  bonusIds,
+                                  ahTypeId = 0
+                                }) => `
                   (
                     (ahId = ${ahId} OR ahId = ${this.getRegionId()})
                     AND ahTypeId = ${ahTypeId}
@@ -122,8 +122,9 @@ export class StatsRepository {
                     AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}'
                     AND date > NOW() - INTERVAL 15 DAY
                     )
-                  `).join(' OR ')}
-                                      );`);
+                  `).join(' OR ')});`;
+
+    return this.conn.query(query);
   }
 
   getComparePrices(items: AhStatsRequest[]): Promise<AuctionItemStat[]> {
@@ -159,7 +160,14 @@ export class StatsRepository {
               quantity${previousHour}
        FROM itemPriceHistoryPerHour
        WHERE (
-                 ${list.map(({ahId, itemId, petSpeciesId = '-1', bonusIds, ahTypeId = 0, date = now}) => `
+                 ${list.map(({
+                               ahId,
+                               itemId,
+                               petSpeciesId = '-1',
+                               bonusIds,
+                               ahTypeId = 0,
+                               // date = now
+                 }) => `
                   (
                     ahId = ${ahId}
                     AND itemId = ${itemId}
@@ -188,27 +196,6 @@ export class StatsRepository {
                     )
                   `).join(' OR ')}
                  );`);
-  }
-
-  getNextHouseInTheDeleteQueue(): Promise<any> {
-    return this.conn.query(`SELECT *
-                            FROM auction_houses
-                            ORDER BY lastHistoryDeleteEvent LIMIT 1;`);
-  }
-
-  deleteOldAuctionHouseData(ahId: number, now: Date, day: number): Promise<any> {
-    return this.conn.query(`
-        DELETE
-        FROM itemPriceHistoryPerHour
-        WHERE ahId = ${ahId}
-          AND UNIX_TIMESTAMP(date) < ${+new Date(+now - day * 15) / 1000} LIMIT 100000;`);
-  }
-
-  updateLastDeleteEvent(id: number): Promise<any> {
-    return this.conn.query(`
-        UPDATE auction_houses
-        SET lastHistoryDeleteEvent = ${+new Date()}
-        WHERE id = ${id};`);
   }
 
   getActiveQueries(table = 'itemPriceHistoryPerHour'): Promise<any> {

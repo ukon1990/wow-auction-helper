@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {SharedService} from '../../../../services/shared.service';
 import {Router} from '@angular/router';
 import {Report} from '../../../../utils/report.util';
@@ -22,14 +22,14 @@ const version = require('../../../../../../package.json').version;
   styleUrls: ['./setup.component.scss']
 })
 export class SetupComponent {
-  form: FormGroup;
+  form: UntypedFormGroup;
   locales = SharedService.locales;
   selectedGameBuild = 0;
 
   sm = new SubscriptionManager();
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private router: Router,
     private settingsSync: SettingsService,
     private characterService: CharacterService,

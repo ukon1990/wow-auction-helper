@@ -12,25 +12,27 @@ export class RecipeRepository extends Repository<APIRecipe> {
   }
 
   private geteBaseQuery(locale: string): string {
-    return `SELECT recipes.id        as id,
-                              recipes.icon      as icon,
-                              name.${locale}        as name,
-                              description.${locale} as decription,
-                              rank,
-                              craftedItemId,
-                              hordeCraftedItemId,
-                              allianceCraftedItemId,
-                              minCount,
-                              maxCount,
-                              procRate,
-                              professions.id    as professionId,
-                              skillTier.id      as skillTierId,
-                              recipes.timestamp as timestamp
-                       FROM recipes
-                                LEFT JOIN recipesName as name ON name.id = recipes.id
-                                LEFT JOIN recipesDescription as description ON description.id = recipes.id
-                                LEFT JOIN professionSkillTiers as skillTier ON skillTier.id = recipes.professionSkillTierId
-                                LEFT JOIN professions ON professions.id = skillTier.professionId`;
+    return `SELECT
+							recipes.id            AS id,
+							recipes.icon          AS icon,
+							name.${locale}        AS name,
+							description.${locale} AS decription,
+							rank,
+							craftedItemId,
+							hordeCraftedItemId,
+							allianceCraftedItemId,
+							minCount,
+							maxCount,
+							procRate,
+							recipes.\`type\`      AS type,
+							professions.id        AS professionId,
+							skillTier.id          AS skillTierId,
+							recipes.timestamp     AS timestamp
+						FROM recipes
+								 LEFT JOIN recipesName AS name ON name.id = recipes.id
+								 LEFT JOIN recipesDescription AS description ON description.id = recipes.id
+								 LEFT JOIN professionSkillTiers AS skillTier ON skillTier.id = recipes.professionSkillTierId
+								 LEFT JOIN professions ON professions.id = skillTier.professionId`;
   }
 
   delete(_id: number): Promise<APIRecipe> {
@@ -50,7 +52,7 @@ export class RecipeRepository extends Repository<APIRecipe> {
     return new Promise<APIRecipe[]>((resolve, reject) => {
       const unix = +new Date(timestamp);
       console.log('unix', unix);
-      const date = isNaN(unix) ? 0 : Math.round( unix / 1000);
+      const date = isNaN(unix) ? 0 : Math.round(unix / 1000);
       db.query(`${this.geteBaseQuery(locale)}
           WHERE UNIX_TIMESTAMP(recipes.timestamp) > ${date}
           ORDER BY recipes.timestamp DESC;`)
@@ -61,10 +63,10 @@ export class RecipeRepository extends Repository<APIRecipe> {
           });
 
           db.query(`
-            SELECT *
-            FROM reagents
-                LEFT JOIN recipes ON recipes.id = reagents.recipeId
-            WHERE UNIX_TIMESTAMP(timestamp) > ${date};`)
+						SELECT *
+						FROM reagents
+								 LEFT JOIN recipes ON recipes.id = reagents.recipeId
+						WHERE UNIX_TIMESTAMP(timestamp) > ${date};`)
             .then((reagents: any[]) => {
               reagents.forEach(r => {
                 if (!map[r['recipeId']].reagents) {
@@ -76,10 +78,13 @@ export class RecipeRepository extends Repository<APIRecipe> {
                 });
               });
               db.query(`
-                SELECT id, sortOrder, recipeId
-                FROM recipesModifiedCraftingSlot;
+								SELECT
+									id,
+									sortOrder,
+									recipeId
+								FROM recipesModifiedCraftingSlot;
               `)
-                .then((modifiers: {id, sortOrder, recipeId}[]) => {
+                .then((modifiers: { id, sortOrder, recipeId }[]) => {
                   modifiers.forEach(modifier => {
                     if (!map[modifier.recipeId].modifiedSlots) {
                       map[modifier.recipeId].modifiedSlots = [];
@@ -91,21 +96,23 @@ export class RecipeRepository extends Repository<APIRecipe> {
                   });
 
 
-                db.query(`
-                  SELECT bonusId, recipeId
-                  FROM recipesBonusId;
-                `)
-                      .then((bonusIds: {bonusId, recipeId}[]) => {
-                        bonusIds.forEach(bonus => {
-                          const recipe = (map[bonus.recipeId] as APIRecipe);
-                          if (!recipe.bonusIds) {
-                            recipe.bonusIds = [];
-                          }
-                          recipe.bonusIds.push(bonus.bonusId);
-                        });
-                        resolve(recipes);
-                      })
-                      .catch(reject);
+                  db.query(`
+										SELECT
+											bonusId,
+											recipeId
+										FROM recipesBonusId;
+                  `)
+                    .then((bonusIds: { bonusId, recipeId }[]) => {
+                      bonusIds.forEach(bonus => {
+                        const recipe = (map[bonus.recipeId] as APIRecipe);
+                        if (!recipe.bonusIds) {
+                          recipe.bonusIds = [];
+                        }
+                        recipe.bonusIds.push(bonus.bonusId);
+                      });
+                      resolve(recipes);
+                    })
+                    .catch(reject);
                 })
                 .catch(reject);
             })
@@ -122,11 +129,12 @@ export class RecipeRepository extends Repository<APIRecipe> {
         .then((recipes: APIRecipe[]) => {
           if (recipes.length) {
             db.query(`
-                        SELECT itemId as id,
-                               quantity,
-                               isOptional
-                        FROM reagents
-                        WHERE recipeId = ${id}`)
+							SELECT
+								itemId AS id,
+								quantity,
+								isOptional
+							FROM reagents
+							WHERE recipeId = ${id}`)
               .then(reagents => {
                 resolve({
                   ...recipes[0],
@@ -148,85 +156,96 @@ export class RecipeRepository extends Repository<APIRecipe> {
   insertData(recipe: Recipev2, db: DatabaseUtil): Promise<void> {
     // this.getIcon(recipe.id)
     return new Promise(async (resolve, reject) => {
-          const queries = [
-            new RDSQueryUtil('recipesName', false).insertOrUpdate({
-              id: recipe.id,
-              ...recipe.name
-            })
-          ];
+      const queries = [
+        new RDSQueryUtil('recipesName', false).insertOrUpdate({
+          id: recipe.id,
+          ...recipe.name
+        })
+      ];
 
-          if (recipe.reagents) {
-            queries.push(`DELETE FROM \`wah\`.\`reagents\`
-                            WHERE recipeId = ${recipe.id};`);
-            recipe.reagents.map(r => queries.push(format(`
-                INSERT INTO reagents
-                VALUES (?, ?, ?, ?);
-            `, [
-              recipe.id,
-              r.reagent.id,
-              r.quantity,
-              0
-            ])));
+      if (recipe.reagents) {
+        queries.push(`DELETE
+											FROM \`wah\`.\`reagents\`
+											WHERE recipeId = ${recipe.id};`);
+        recipe.reagents.map(r => queries.push(format(`
+					INSERT INTO reagents
+					VALUES (?, ?, ?, ?);
+        `, [
+          recipe.id,
+          r.reagent.id,
+          r.quantity,
+          0
+        ])));
+      }
+
+      if (recipe.description && recipe.description.en_GB) {
+        queries.push(new RDSQueryUtil('recipesDescription', false).insertOrUpdate({
+          id: recipe.id,
+          ...recipe.description
+        }));
+      }
+
+      this.getModifiedCraftingSlotQueries(recipe, queries);
+      const insertRecipes = new RDSQueryUtil('recipes', true).insertOrUpdate({
+        id: recipe.id,
+        icon: recipe.media ? recipe.media.icon : null,
+        rank: recipe.rank || 0,
+        craftedItemId: recipe.crafted_item ? recipe.crafted_item.id : undefined,
+        hordeCraftedItemId: recipe.horde_crafted_item ? recipe.horde_crafted_item.id : undefined,
+        allianceCraftedItemId: recipe.alliance_crafted_item ? recipe.alliance_crafted_item.id : undefined,
+        minCount: recipe.crafted_quantity ? recipe.crafted_quantity.minimum || recipe.crafted_quantity.value : 1,
+        maxCount: recipe.crafted_quantity ? recipe.crafted_quantity.maximum || recipe.crafted_quantity.value : 1,
+        procRate: 1,
+        professionSkillTierId: null // This and type is defined from another call
+      });
+      await db.query(insertRecipes)
+        .then(async () => {
+          for (const query of queries) {
+            await db.query(query).catch(error => {
+              console.error(error);
+              console.error('For query: ' + query);
+            });
           }
-
-          if (recipe.description && recipe.description.en_GB) {
-            queries.push(new RDSQueryUtil('recipesDescription', false).insertOrUpdate({
-              id: recipe.id,
-              ...recipe.description
-            }));
-          }
-
-          this.getModifiedCraftingSlotQueries(recipe, queries);
-          const insertRecipes = `INSERT INTO recipes(
-                        id,
-                        icon,
-                        \`rank\`,
-                        craftedItemId,
-                        hordeCraftedItemId,
-                        allianceCraftedItemId,
-                        minCount,
-                        maxCount,
-                        procRate,
-                        timestamp,
-                        professionSkillTierId
-            )
-            VALUES (
-                    ${recipe.id},
-										${recipe.media ? `"${recipe.media.icon}"` : null},
-                    ${recipe.rank || 0},
-                    ${recipe.crafted_item ? recipe.crafted_item.id : null},
-                    ${recipe.horde_crafted_item ? recipe.horde_crafted_item.id : null},
-                    ${recipe.alliance_crafted_item ? recipe.alliance_crafted_item.id : null},
-                    ${recipe.crafted_quantity ? recipe.crafted_quantity.minimum || recipe.crafted_quantity.value : 0},
-                    ${recipe.crafted_quantity ? recipe.crafted_quantity.maximum || recipe.crafted_quantity.value : 0},
-                    1,
-                    CURRENT_TIMESTAMP,
-                    null)
-            ON DUPLICATE KEY UPDATE
-                minCount = ${recipe.crafted_quantity ? recipe.crafted_quantity.minimum || recipe.crafted_quantity.value : 0},
-                maxCount = ${recipe.crafted_quantity ? recipe.crafted_quantity.maximum || recipe.crafted_quantity.value : 0},
-                timestamp = CURRENT_TIMESTAMP;
-              `;
-          await db.query(insertRecipes)
-            .then(() =>
-              Promise.all(
-                queries.map(q =>
-                  db.query(q).catch(console.error)))
-                .then(() => resolve())
-                .catch(reject))
-            .catch(reject);
-        });
+          resolve();
+        })
+        .catch(reject);
+    });
   }
 
   getModifiedCraftingSlotQueries(recipe: Recipev2, queries: string[]) {
     if (recipe.modified_crafting_slots) {
-      recipe.modified_crafting_slots.forEach(slot => queries.push(
-        new RDSQueryUtil('recipesModifiedCraftingSlot', false).insertOrUpdate({
-          id: slot.slot_type.id,
-          recipeId: recipe.id,
-          sortOrder: slot.display_order,
-        })
-      ));
+      recipe.modified_crafting_slots.forEach(slot => {
+        queries.push(
+          new RDSQueryUtil('recipesModifiedCraftingSlot', false).insertOrUpdate({
+            id: slot.slot_type.id,
+            recipeId: recipe.id,
+            sortOrder: slot.display_order,
+          })
+        );
+        queries.push(
+          `INSERT INTO modifiedCraftingSlotType(id)
+					 VALUES (${slot.slot_type.id})
+					 ON DUPLICATE KEY UPDATE id = id`);
+        queries.push(
+          new RDSQueryUtil('modifiedCraftingSlotTypeName', false)
+            .insertOrUpdate({id: slot.slot_type.id, ...slot.slot_type.name}));
+        queries.push(
+          new RDSQueryUtil('modifiedCraftingSlotTypeDescription', false)
+            .insertOrUpdate({id: slot.slot_type.id, ...slot.slot_type.description}));
+
+        (slot?.slot_type?.compatible_categories || []).forEach(category => {
+          queries.push(
+            `INSERT INTO modifiedCraftingCompatibleCategory(id)
+					 VALUES (${category.id})
+					 ON DUPLICATE KEY UPDATE id = id`);
+          queries.push(
+            new RDSQueryUtil('modifiedCraftingCompatibleCategoryName', false)
+              .insertOrUpdate({id: category.id, ...category.name}));
+          queries.push(
+            new RDSQueryUtil('modifiedCraftingSlotTypeCompatibleCategory', false)
+              .insertOrUpdate({compatibleCategoryId: category.id, slotTypeId: slot.slot_type.id}));
+        });
+      });
     }
   }
 
