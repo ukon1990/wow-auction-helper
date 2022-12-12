@@ -87,11 +87,15 @@ export const updateLastRequested = middyfy(async (event: CloudTrailS3Event): Pro
 
   const key = event.detail.requestParameters.key;
   const statusRegex = /status\/[a-z]{1,4}\/[0-9\-]{1,128}.json.gz/gi;
+  const isAuctionFile = key.indexOf('auctions') > -1;
+  const isStatusFile = statusRegex.exec(key) && key.indexOf('status') === 0;
+  const isCommodity = key.indexOf('auctions/commodity/') > -1;
 
-  if (key.indexOf('auctions') === -1 && statusRegex.exec(key) && key.indexOf('status') === 0) {
+  if (!isAuctionFile && isStatusFile || isCommodity) {
     console.log('File event triggered for', key);
-    const splitted = key.split('/');
-    const [_, __, id] = splitted;
+    const path = key.split('/');
+    const id = isCommodity ? path[3] : path[2];
+
     console.log('Updating last requested for AH', id);
     await new RealmService().updateLastRequested(
       +id.replace('.json.gz', '')
