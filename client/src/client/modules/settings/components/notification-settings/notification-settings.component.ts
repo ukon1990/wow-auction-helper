@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {SharedService} from '../../../../services/shared.service';
 import {Notifications, NotificationSettings} from '../../../../models/user/notification';
@@ -13,14 +13,14 @@ import {UserUtil} from '../../../../utils/user/user.util';
 })
 export class NotificationSettingsComponent implements OnInit, OnDestroy {
   isHttps = location.protocol === 'https:' || TextUtil.contains(location.href, 'localhost');
-  notificationsForm: FormControl;
+  notificationsForm: UntypedFormControl;
   formChanges: Subscription;
 
   constructor() {
     console.log('SharedService.user.notifications', SharedService.user.notifications);
     const notifications = SharedService.user?.notifications?.getString() || 'disableNotifications';
 
-    this.notificationsForm = new FormControl(notifications);
+    this.notificationsForm = new UntypedFormControl(notifications);
   }
 
   ngOnInit(): void {

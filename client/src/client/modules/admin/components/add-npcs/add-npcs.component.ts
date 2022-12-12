@@ -3,7 +3,7 @@ import {NpcService} from '../../../npc/services/npc.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SharedService} from '../../../../services/shared.service';
 import {ItemExtract} from '../../../../utils/item-extract.util';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {ColumnDescription} from '@shared/models';
 import {GameBuild} from '@shared/utils';
 import {NPC} from '../../../npc/models/npc.model';
@@ -21,9 +21,9 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
   sm = new SubscriptionManager();
   storageName = 'admin-add-npcs-map';
   addedNpcs = [];
-  form: FormGroup = new FormGroup({
-    index: new FormControl(0),
-    ids: new FormControl('')
+  form: UntypedFormGroup = new UntypedFormGroup({
+    index: new UntypedFormControl(0),
+    ids: new UntypedFormControl('')
   });
   columns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'string'},

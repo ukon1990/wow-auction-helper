@@ -172,6 +172,7 @@ export class BackgroundDownloadService {
         await Promise.all(promises)
           .then(() => {
             this.npcService.initCalculationAndMapping();
+            this.craftingService.handleModifiedCrafting();
           })
           .catch(console.error);
         console.log('Loaded basic app data in ' + DateUtil.getDifferenceInSeconds(start, +new Date()));

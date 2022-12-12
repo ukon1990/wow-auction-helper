@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormControl} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl} from '@angular/forms';
 import {SharedService} from '../../../../../services/shared.service';
 import {ColumnDescription} from '@shared/models';
 import {CraftingUtil} from '../../../../crafting/utils/crafting.util';
@@ -20,13 +20,13 @@ import {AuctionsService} from '../../../../../services/auctions.service';
 export class CustomProcComponent implements OnInit, OnDestroy {
   @Input() itemID: number;
 
-  itemSearchForm: FormControl = new FormControl();
+  itemSearchForm: UntypedFormControl = new UntypedFormControl();
   filteredItems: any[];
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
   customProcs: CustomProc[] = [];
   sm = new SubscriptionManager();
 
-  constructor(private _formBuilder: FormBuilder, private auctionService: AuctionsService) {
+  constructor(private _formBuilder: UntypedFormBuilder, private auctionService: AuctionsService) {
 
     this.sm.add(this.itemSearchForm.valueChanges, (name) => {
       this.filteredItems = this.filter(name);

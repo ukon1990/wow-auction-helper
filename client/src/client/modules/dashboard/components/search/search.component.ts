@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {Dashboard} from '@shared/models';
 import {DashboardService} from '../../services/dashboard.service';
 import {TextUtil} from '@ukon1990/js-utilities';
@@ -22,7 +22,7 @@ import {DashboardMinimal} from "@shared/models";
 export class SearchComponent implements OnInit, OnDestroy {
   faEye = faEye;
   faImport = faFileImport;
-  searchField: FormControl = new FormControl();
+  searchField: UntypedFormControl = new UntypedFormControl();
   boards: DashboardMinimal[] = [];
   filteredBoards: DashboardMinimal[] = [];
   isLoading: boolean;

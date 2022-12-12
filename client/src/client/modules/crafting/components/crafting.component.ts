@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Recipe} from '../models/recipe';
 import {GameBuild} from '@shared/utils';
@@ -39,7 +39,7 @@ interface FormModel {
 export class CraftingComponent implements OnInit, OnDestroy {
   isClassic = false;
   theme = ThemeUtil.current;
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   filtered: Recipe[] = [];
   subs = new SubscriptionManager();
   itemClasses: ItemClass[] = ItemClassService.classes.value;
@@ -92,7 +92,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
     }
   ];
 
-  constructor(private _formBuilder: FormBuilder,
+  constructor(private _formBuilder: UntypedFormBuilder,
               private service: AuctionsService,
               private realmService: RealmService,
               private settingsService: SettingsService,

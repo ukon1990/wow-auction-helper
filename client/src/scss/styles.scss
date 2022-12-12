@@ -33,7 +33,7 @@
 	}
 }
 
-.mat-tooltip {
+.mat-mdc-tooltip {
 	white-space: pre-wrap;
 }
 
@@ -51,4 +51,8 @@ body {
 .sub-text-small {
 	margin-top: -2em;
 	display: block;
+}
+
+.text-white {
+	color: white;
 }

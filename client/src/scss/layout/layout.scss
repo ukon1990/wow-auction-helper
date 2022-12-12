@@ -1,14 +1,16 @@
 @import 'mobile';
 
-.mat-dialog-container {
+.mat-mdc-dialog-container {
   position: relative !important;
 }
 
+/*TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.
+ */
 .mat-tab-body-wrapper {
   padding-top: 1em;
 }
 
-.mat-tab-nav-bar.mat-primary {
+.mat-mdc-tab-nav-bar.mat-primary {
   margin-bottom: 1em;
 }
 
@@ -99,15 +101,15 @@ This is placed here, as the wowhead content is not a component, but HTML that is
   width: 98%;
   position: fixed !important;
 
-  .mat-card-content .mat-tab-body {
+  .mat-card-content .mat-mdc-tab-body {
     overflow-y: scroll;
   }
 
-  & .dropped-by .mat-list {
+  & .dropped-by .mat-mdc-list {
     overflow-y: auto;
     max-height: 25em;
 
-    .mat-list-item {
+    .mat-mdc-list-item {
       height: 45px !important;
     }
   }
@@ -179,8 +181,8 @@ mat-spinner {
 
 td {
 
-  a.mat-icon-button,
-  button.mat-icon-button {
+  a.mat-mdc-icon-button,
+  button.mat-mdc-icon-button {
     height: auto !important;
     line-height: unset !important;
   }
@@ -205,7 +207,7 @@ td {
 
 wah-character {
   mat-card,
-  .mat-list-item {
+  .mat-mdc-list-item {
     color: white !important;
   }
 
@@ -252,7 +254,7 @@ wah-materials,
     max-height: 18em;
     overflow-y: scroll;
   }
-  .mat-menu-panel {
+  .mat-mdc-menu-panel {
     max-width: 100% !important;;
     width: 100% !important;;
 
@@ -274,12 +276,12 @@ wah-materials,
   flex-direction: column;
   flex-flow: wrap;
 
-  .mat-list-item,
+  .mat-mdc-list-item,
   div {
     height: auto !important;
     flex: 1 1;
 
-    .mat-line:nth-child(1) {
+    .matListItemLine:nth-child(1) {
       font-weight: bold !important;
     }
   }
@@ -299,6 +301,8 @@ wah-search .description-line {
 }
 
 form {
+  /*TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version.
+ */
   mat-checkbox {
     padding-top: 1rem;
   }

@@ -1,0 +1,19 @@
+@mixin mdc-overrides {
+	.bg-transparent {
+		/**
+			Making the background of the form-field-wrapper transparent
+		 */
+		.mat-mdc-text-field-wrapper {
+			background-color: transparent;
+		}
+	}
+
+	/**
+	Only using !important because here you are supposed to force it.
+	 */
+	.short-form-field .mat-mdc-form-field-infix {
+		padding-top: 0.9rem !important;
+		padding-bottom: 0.5rem !important;
+		min-height: 1rem !important;
+	}
+}

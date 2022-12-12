@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';
 import {SharedService} from '../../../../services/shared.service';
 import {ColumnDescription} from '@shared/models';
@@ -23,7 +23,7 @@ import {columnConfig} from "../../../dashboard/data/columns.data";
   styleUrls: ['./market-reset.component.scss']
 })
 export class MarketResetComponent implements OnInit {
-  form: FormGroup;
+  form: UntypedFormGroup;
   formDefaults = {
     name: '',
     timeToSell: 10, // Dependent on TSM
@@ -59,26 +59,26 @@ export class MarketResetComponent implements OnInit {
   private lastCalculationTime: number;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private auctionService: AuctionsService,
     private realmService: RealmService
   ) {
     SharedService.events.title.next('Market resetter');
     const query = this.getQuery();
     this.form = this.formBuilder.group({
-      name: new FormControl(
+      name: new UntypedFormControl(
         query.name || this.formDefaults.name),
-      timeToSell: new FormControl(query.timeToSell),
-      breakPointPercent: new FormControl(query.breakPointPercent),
-      expansion: new FormControl(query.expansion),
-      itemClass: new FormControl(query.itemClass),
-      itemSubClass: new FormControl(query.itemSubClass),
-      mktPriceUpperThreshold: new FormControl(query.mktPriceUpperThreshold),
-      minROI: new FormControl(query.minROI),
-      minROIPercent: new FormControl(query.minROIPercent),
-      maxTotalBuyoutPerItem: new FormControl(query.maxTotalBuyoutPerItem),
-      useHighestROIResult: new FormControl(query.useHighestROIResult),
-      newVsCurrentBuyoutPriceLimit: new FormControl(query.newVsCurrentBuyoutPriceLimit)
+      timeToSell: new UntypedFormControl(query.timeToSell),
+      breakPointPercent: new UntypedFormControl(query.breakPointPercent),
+      expansion: new UntypedFormControl(query.expansion),
+      itemClass: new UntypedFormControl(query.itemClass),
+      itemSubClass: new UntypedFormControl(query.itemSubClass),
+      mktPriceUpperThreshold: new UntypedFormControl(query.mktPriceUpperThreshold),
+      minROI: new UntypedFormControl(query.minROI),
+      minROIPercent: new UntypedFormControl(query.minROIPercent),
+      maxTotalBuyoutPerItem: new UntypedFormControl(query.maxTotalBuyoutPerItem),
+      useHighestROIResult: new UntypedFormControl(query.useHighestROIResult),
+      newVsCurrentBuyoutPriceLimit: new UntypedFormControl(query.newVsCurrentBuyoutPriceLimit)
     });
 
     this.sm.add(this.form.valueChanges,

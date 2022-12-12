@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {AuthService} from '../../../services/auth.service';
-import {FormControl, Validators} from '@angular/forms';
+import {UntypedFormControl, Validators} from '@angular/forms';
 
 @Component({
   selector: 'wah-configure-mfa',
@@ -9,7 +9,7 @@ import {FormControl, Validators} from '@angular/forms';
 export class ConfigureMfaComponent implements OnInit {
   userHasMFA: boolean;
   url: string;
-  verificationCode = new FormControl(null, [Validators.minLength(6)]);
+  verificationCode = new UntypedFormControl(null, [Validators.minLength(6)]);
   status: string;
   isLoading: boolean;
 

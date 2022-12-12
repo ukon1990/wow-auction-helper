@@ -1,4 +1,5 @@
 import {AuctionsService} from '../services/auctions.service';
+import {FormGroup} from '@angular/forms';
 
 export class Key {
   constructor(
@@ -65,20 +66,23 @@ export class Sorter {
   }
 
   getItemToSort(key: Key, item: any): any {
+    const isFormControl = item instanceof FormGroup;
+    const value = isFormControl ? item.getRawValue()[key.key] : item[key.key];
+
     if (key.key === 'timeLeft') {
       return this.auctionDuration[item[key.key]];
     } else if (key.byPercent) {
-      return item[key.key] ?
-        item[key.key] : this.getAuctionItem(item) ?
+      return value ?
+        value : this.getAuctionItem(item) ?
           this.getAuctionItem(item)[key.key] / this.getAuctionItem(item)[key.percentOf] : false;
     } else {
       if (key.divideByQuantity) {
-        return item[key.key] ?
-          item[key.key] / item.quantity : this.getAuctionItem(item) ?
+        return value ?
+          value / item.quantity : this.getAuctionItem(item) ?
             this.getAuctionItem(item)[key.key] / this.getAuctionItem(item).quantity : false;
       } else {
-        return item[key.key] ?
-          item[key.key] : this.getAuctionItem(item) ?
+        return value ?
+          value : this.getAuctionItem(item) ?
             this.getAuctionItem(item)[key.key] : false;
       }
     }

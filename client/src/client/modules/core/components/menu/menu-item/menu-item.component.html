@@ -2,12 +2,16 @@
   mat-stroked-button
   [routerLink]="item.routerLink"
   routerLinkActive="mat-accent">
+  <span class="button-color">
   {{ item.text }} {{item.onlyInDevelop ? '(Dev)' : ''}}
+  </span>
 </a>
 <ng-template #dropdownTemplate>
   <wah-menu-dropdown
     [parentPath]="item.routerLink"
     [items]="item.children">
-    {{ item.text }} {{item.onlyInDevelop ? '(Dev)' : ''}}
+    <span class="button-color">
+      {{ item.text }} {{item.onlyInDevelop ? '(Dev)' : ''}}
+    </span>
   </wah-menu-dropdown>
 </ng-template>

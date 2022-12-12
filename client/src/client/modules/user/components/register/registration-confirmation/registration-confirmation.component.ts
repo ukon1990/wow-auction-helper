@@ -1,7 +1,7 @@
 import {Component, Inject} from '@angular/core';
 import {AuthService} from '../../../services/auth.service';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
@@ -11,9 +11,9 @@ import {HttpErrorResponse} from '@angular/common/http';
 export class RegistrationConfirmationComponent {
   error: HttpErrorResponse;
   confirmationCodeError: string;
-  signupConfirmation = new FormGroup({
-    user: new FormControl(),
-    code: new FormControl(),
+  signupConfirmation = new UntypedFormGroup({
+    user: new UntypedFormControl(),
+    code: new UntypedFormControl(),
   });
   destination: string;
 

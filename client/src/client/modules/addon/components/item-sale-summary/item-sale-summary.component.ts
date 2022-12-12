@@ -1,7 +1,7 @@
 import {AfterContentInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output} from '@angular/core';
 import {ColumnDescription} from '@shared/models';
 import {SharedService} from '../../../../services/shared.service';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {SummaryCard} from '../../../../models/summary-card.model';
 import {Report} from '../../../../utils/report.util';
 import {ErrorReport} from '../../../../utils/error-report.util';
@@ -40,7 +40,7 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy, On
     {key: 'past90Days', title: 'Past 90 days'},
     {key: 'total', title: 'All'}
   ];
-  field = new FormControl(this.getFormFieldValueFromStorage());
+  field = new UntypedFormControl(this.getFormFieldValueFromStorage());
   subscriptions = new SubscriptionManager();
   allData = SharedService.tsmAddonData;
   chartData: {

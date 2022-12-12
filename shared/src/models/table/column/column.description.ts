@@ -1,8 +1,9 @@
-import {RowAction} from '../../../models';
+import {RowAction, TableRowClickEvent} from '../../../models';
+import {ColumnTypeEnum} from '../../../enum';
 
 export interface ColumnDescription {
   title: string;
-  dataType: string;
+  dataType: ColumnTypeEnum | string;
   key?: string;
   actions?: string[] | RowAction[];
   hideOnMobile?: boolean;
@@ -15,5 +16,10 @@ export interface ColumnDescription {
     tooltip?: string;
     tooltipType?: string;
     onModelChange?: Function;
+    useIdColumn?: boolean;
+    data?: any[];
+    key?: string;
+    onClick?: (event: TableRowClickEvent) => void;
+    disabled?: boolean;
   };
 }

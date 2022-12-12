@@ -1,3 +1,11 @@
 :host {
   font-size: 14px;
 }
+
+::ng-deep {
+  .realm-quick-select {
+    .mat-mdc-select-value, label {
+      color: white !important;
+    }
+  }
+}

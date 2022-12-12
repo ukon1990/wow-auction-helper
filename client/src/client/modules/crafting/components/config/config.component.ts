@@ -3,7 +3,7 @@ import {BaseCraftingUtil} from '../../utils/base-crafting.util';
 import {SharedService} from '../../../../services/shared.service';
 import {CraftingUtil} from '../../utils/crafting.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {Report} from '../../../../utils/report.util';
 import {ThemeUtil} from '../../../core/utils/theme.util';
 import {UserUtil} from '../../../../utils/user/user.util';
@@ -21,12 +21,12 @@ export class ConfigComponent implements OnDestroy {
   @Output() changed: EventEmitter<void> = new EventEmitter();
   strategies = BaseCraftingUtil.STRATEGY_LIST;
   sm = new SubscriptionManager();
-  form: FormGroup;
+  form: UntypedFormGroup;
   theme = ThemeUtil.current;
   isClassic = false;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private dashboardService: DashboardService,
     private realmService: RealmService,
     private auctionService: AuctionsService

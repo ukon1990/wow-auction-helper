@@ -22,8 +22,10 @@ describe('RDSQueryUtil', () => {
         new Date()
       );
       expect(util.insert(obj))
-        .toBe('INSERT INTO test_table(id,name,isTrue,list,date,timestamp) ' +
-          'VALUES(0,\"Testing\",0,\"[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]\",' + +obj.date + ',CURRENT_TIMESTAMP);');
+        .toBe(
+          'INSERT INTO test_table(id,name,isTrue,list,date,timestamp) ' +
+          'VALUES(0,\'Testing\',0,\'[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]\',' + +obj.date + ',CURRENT_TIMESTAMP);'
+        );
     });
 
     it('insert with true bool', () => {
@@ -36,7 +38,7 @@ describe('RDSQueryUtil', () => {
       );
       expect(util.insert(obj))
         .toBe('INSERT INTO test_table(id,name,isTrue,list,date,timestamp) ' +
-          'VALUES(0,\"Testing\",1,\"[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]\",' + +obj.date + ',CURRENT_TIMESTAMP);');
+          `VALUES(0,'Testing',1,'[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]',${+obj.date},CURRENT_TIMESTAMP);`);
     });
 
     it('insert with undefined', () => {
@@ -49,7 +51,7 @@ describe('RDSQueryUtil', () => {
       );
       expect(util.insert(obj))
         .toBe('INSERT INTO test_table(id,name,isTrue,list,date,timestamp) ' +
-          'VALUES(0,\"Testing\",1,\"[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]\",null,CURRENT_TIMESTAMP);');
+          `VALUES(0,'Testing',1,'[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]',NULL,CURRENT_TIMESTAMP);`);
     });
 
     it('insert with object', () => {
@@ -62,7 +64,28 @@ describe('RDSQueryUtil', () => {
       );
       expect(util.insert(obj))
         .toBe('INSERT INTO test_table(id,name,isTrue,list,date,timestamp) ' +
-          'VALUES(0,\"Testing\",1,\"[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]\",\"{\\\"name\\\":\\\"test\\\"}\",CURRENT_TIMESTAMP);');
+          `VALUES(0,'Testing',1,'[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]','{\\\"name\\\":\\\"test\\\"}',CURRENT_TIMESTAMP);`);
+    });
+
+    it('Can handle string arrays and date', () => {
+      const list = [
+        {
+          ahId: 111,
+          bonusIds: '1698,6652',
+          ahTypeId: 0,
+          petSpeciesId: -1,
+          itemId: 199023,
+          date: '2022-12-4',
+          quantity17: 1,
+          price17: 700000
+        }
+      ];
+      const rdsUtil = new RDSQueryUtil('itemPriceHistoryPerHour');
+      expect(rdsUtil.multiInsert(list)).toBe(
+        'INSERT INTO itemPriceHistoryPerHour' +
+        '(ahId,bonusIds,ahTypeId,petSpeciesId,itemId,date,quantity17,price17) ' +
+        `VALUES(111,'1698,6652',0,-1,199023,'2022-12-4',1,700000);`
+      );
     });
   });
 
@@ -78,9 +101,9 @@ describe('RDSQueryUtil', () => {
       expect(util.update(obj.id, obj))
         .toBe('UPDATE test_table ' +
           'SET id = 0,' +
-          'name = "Testing",' +
+          'name = \'Testing\',' +
           'isTrue = 0,' +
-          'list = \"[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]\",' +
+          'list = \'[\\\"Stuff\\\",\\\"is\\\",\\\"good\\\"]\',' +
           'date = ' + +obj.date + ',' +
           'timestamp = CURRENT_TIMESTAMP ' +
           'WHERE id = 0;');

@@ -6,23 +6,25 @@
         matBadgePosition="after"
         matBadgeDescription="The number of items in your shopping cart"
 >
-  <button mat-stroked-button
-          (click)="toggleDialog()"
-          matTooltip="Shopping cart"
-          matBadge="{{recipes?.length | number}}"
-          [matBadgeHidden]="!recipes?.length"
-          matBadgeColor="primary"
-          matBadgePosition="before"
-          matBadgeDescription="The number of recipes in your shopping cart"
-  >
-  <span>
-    <span class="float-left mr-1">
-      <i class="fas fa-shopping-cart"></i>
-    </span>
-    Shopping cart
-  </span>
-    <small class="sub-text-small">
-      {{ cart?.profit | gold }}
-    </small>
-  </button>
+    <button mat-stroked-button
+            (click)="toggleDialog()"
+            matTooltip="Shopping cart"
+            matBadge="{{recipes?.length | number}}"
+            [matBadgeHidden]="!recipes?.length"
+            matBadgeColor="primary"
+            matBadgePosition="before"
+            matBadgeDescription="The number of recipes in your shopping cart"
+    >
+        <span class="shopping-cart-menu-item">
+        <span class="text-white ">
+            <span class="float-left mr-1">
+              <i class="fas fa-shopping-cart"></i>
+            </span>
+            Shopping cart
+        </span>
+        <small class="text-white">
+            {{ cart?.profit | gold }}
+        </small>
+        </span>
+    </button>
 </div>

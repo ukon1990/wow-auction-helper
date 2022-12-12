@@ -20,7 +20,7 @@ import {ThemeUtil} from '../../../core/utils/theme.util';
 import {Theme} from '../../../core/models/theme.model';
 import {RealmService} from '../../../../services/realm.service';
 import {Recipe} from '../../../crafting/models/recipe';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {PriceHistoryComponentUtil} from '../../utils/price-history.util';
 import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util';
@@ -45,11 +45,11 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
   @Input() isActiveTab = true;
   @Input() dialogId: string;
   theme: Theme = ThemeUtil.current;
-  form: FormGroup = new FormGroup({
-    recipe: new FormControl(),
-    period: new FormGroup({
-      start: new FormControl(new TimeUtil().getDateAtNDaysSinceNow(30, true)),
-      end: new FormControl(new TimeUtil().getDateAtNDaysSinceNow(-1, true))
+  form: UntypedFormGroup = new UntypedFormGroup({
+    recipe: new UntypedFormControl(),
+    period: new UntypedFormGroup({
+      start: new UntypedFormControl(new TimeUtil().getDateAtNDaysSinceNow(30, true)),
+      end: new UntypedFormControl(new TimeUtil().getDateAtNDaysSinceNow(-1, true))
     })
   });
   stats: ItemStats;

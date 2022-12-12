@@ -1,6 +1,21 @@
 import {ItemLocale} from './item-locale';
+import {Key} from "../character";
+
+
+export interface ModifiedCraftingCategory {
+  key: Key;
+  name: ItemLocale;
+  id: number;
+}
+
+export interface ModifiedCrafting {
+  id: number;
+  category: ModifiedCraftingCategory;
+  description: ItemLocale;
+}
 
 export interface ItemGameData {
+  modified_crafting: ModifiedCrafting;
   _links: Links;
   id: number;
   name: ItemLocale;

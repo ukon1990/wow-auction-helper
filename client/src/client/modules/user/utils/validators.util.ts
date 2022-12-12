@@ -1,4 +1,4 @@
-import {AbstractControl, FormGroup, ValidationErrors} from '@angular/forms';
+import {AbstractControl, UntypedFormGroup, ValidationErrors} from '@angular/forms';
 
 export class ValidatorsUtil {
   static password(control: AbstractControl): ValidationErrors {
@@ -9,7 +9,7 @@ export class ValidatorsUtil {
     return null;
   }
 
-  static confirmPassword(control: AbstractControl, form: FormGroup): ValidationErrors {
+  static confirmPassword(control: AbstractControl, form: UntypedFormGroup): ValidationErrors {
     if (control.value && control.value !== form.getRawValue().password) {
       return {'passwordEqualityInvalid': true};
     }

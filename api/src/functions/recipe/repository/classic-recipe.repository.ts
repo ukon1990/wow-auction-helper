@@ -39,7 +39,7 @@ export class ClassicRecipeRepository extends Repository<APIRecipe> {
           AND name.en_GB NOT LIKE '%UNUSED%'`;
   }
 
-  delete(id: number): Promise<APIRecipe> {
+  delete(_id: number): Promise<APIRecipe> {
     return Promise.resolve(undefined);
   }
 
@@ -186,11 +186,11 @@ export class ClassicRecipeRepository extends Repository<APIRecipe> {
     });
   }
 
-  update(data: APIRecipe): Promise<APIRecipe> {
+  update(_data: APIRecipe): Promise<APIRecipe> {
     return Promise.resolve(undefined);
   }
 
-  insert(data: APIRecipe): Promise<any> {
+  insert(_data: APIRecipe): Promise<any> {
     return Promise.resolve(undefined);
   }
 

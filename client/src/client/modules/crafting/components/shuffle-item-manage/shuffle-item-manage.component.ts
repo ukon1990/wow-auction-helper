@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {map, startWith} from 'rxjs/operators';
 import {Observable} from 'rxjs';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util';
 import {SharedService} from '../../../../services/shared.service';
 import {ColumnDescription, Item, Remains, RemainsSource} from '@shared/models';
@@ -18,7 +18,7 @@ export class ShuffleItemManageComponent implements OnInit {
   @Input() newRemains: Remains;
   @Output() close: EventEmitter<any> = new EventEmitter<any>();
   filteredItems: Observable<Array<Item>>;
-  itemSearchForm: FormControl = new FormControl();
+  itemSearchForm: UntypedFormControl = new UntypedFormControl();
   itemSourceColumns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'count', title: 'Count', dataType: 'input-number'},

@@ -13,7 +13,7 @@ import {EmptyUtil, TextUtil} from '@ukon1990/js-utilities';
 import {DatabaseService} from '../../../services/database.service';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {RoutingUtil} from '../../core/utils/routing.util';
-import {MatSnackBar} from "@angular/material/snack-bar";
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'

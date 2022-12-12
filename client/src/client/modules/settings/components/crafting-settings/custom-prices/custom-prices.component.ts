@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 
 import {SharedService} from '../../../../../services/shared.service';
 import {ColumnDescription, Item} from '@shared/models';
@@ -16,7 +16,7 @@ import {AuctionsService} from '../../../../../services/auctions.service';
   styleUrls: ['./custom-prices.component.scss']
 })
 export class CustomPricesComponent implements OnInit, OnDestroy {
-  itemSearchForm: FormControl = new FormControl();
+  itemSearchForm: UntypedFormControl = new UntypedFormControl();
   filteredItems: Item[];
   columns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},

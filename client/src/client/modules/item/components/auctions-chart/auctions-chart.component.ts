@@ -2,7 +2,7 @@ import {AfterContentInit, Component, Input, OnChanges, OnDestroy} from '@angular
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {Auction} from '@shared/models';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {SeriesOptionsType, XAxisOptions} from 'highcharts';
 import {ThemeUtil} from '../../../core/utils/theme.util';
 
@@ -17,7 +17,7 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
 
   private theme = ThemeUtil.current;
   sm = new SubscriptionManager();
-  medianPercentLimit: FormControl;
+  medianPercentLimit: UntypedFormControl;
   medianPrice: number;
   localStorageName = 'wah-auctions-chart-median-percent';
   xAxis: XAxisOptions[] = [

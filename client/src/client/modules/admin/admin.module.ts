@@ -22,10 +22,11 @@ import {UserModule} from '../user/user.module';
 import {UsersComponent} from './components/users/users.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {RealmComponent} from './components/realm/realm.component';
-import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatCheckboxModule} from '@angular/material/checkbox';
 import {RecipeComponent} from './components/recipe/recipe.component';
-import {MatExpansionModule} from "@angular/material/expansion";
-import {MatGridListModule} from "@angular/material/grid-list";
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 
 @NgModule({
@@ -57,9 +58,12 @@ import {MatGridListModule} from "@angular/material/grid-list";
     MatProgressSpinnerModule,
     MatCheckboxModule,
     MatExpansionModule,
-    MatGridListModule
+    MatGridListModule,
+    MatDatepickerModule
   ],
-  providers: [AdminService]
+  providers: [
+    AdminService
+  ]
 })
 export class AdminModule {
 }

@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Rule} from "@shared/models";
 
@@ -9,14 +9,14 @@ import {Rule} from "@shared/models";
   styleUrls: ['./rules.component.scss']
 })
 export class RulesComponent implements OnInit, OnDestroy, OnChanges {
-  @Input() form: FormGroup;
+  @Input() form: UntypedFormGroup;
   @Input() rules: Rule[];
   @Input() displayHeader: boolean;
 
   sm = new SubscriptionManager();
 
-  get formArray(): FormArray {
-    return this.form.get('rules') as FormArray;
+  get formArray(): UntypedFormArray {
+    return this.form.get('rules') as UntypedFormArray;
   }
 
   ngOnInit(): void {
@@ -39,19 +39,19 @@ export class RulesComponent implements OnInit, OnDestroy, OnChanges {
     this.sm.unsubscribe();
   }
 
-  addRule(formArray: FormArray = this.formArray, rule?: Rule): void {
-    const form = new FormGroup({
-      condition: new FormControl(rule ? rule.condition : null, Validators.required),
-      targetValueType: new FormControl(rule ? rule.targetValueType : null, Validators.required),
-      field: new FormControl(rule ? rule.field : null, Validators.required),
-      toField: new FormControl(rule ? rule.toField : null),
-      toValue: new FormControl(rule ? rule.toValue : null),
-      or: new FormArray([]),
+  addRule(formArray: UntypedFormArray = this.formArray, rule?: Rule): void {
+    const form = new UntypedFormGroup({
+      condition: new UntypedFormControl(rule ? rule.condition : null, Validators.required),
+      targetValueType: new UntypedFormControl(rule ? rule.targetValueType : null, Validators.required),
+      field: new UntypedFormControl(rule ? rule.field : null, Validators.required),
+      toField: new UntypedFormControl(rule ? rule.toField : null),
+      toValue: new UntypedFormControl(rule ? rule.toValue : null),
+      or: new UntypedFormArray([]),
     });
 
     if (rule && rule.or) {
       rule.or.forEach(orRule =>
-        this.addRule(form.controls.or as FormArray, orRule));
+        this.addRule(form.controls.or as UntypedFormArray, orRule));
     }
     formArray.push(form);
   }

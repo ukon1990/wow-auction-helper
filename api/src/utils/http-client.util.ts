@@ -15,8 +15,8 @@ export class HttpClientUtil {
     this.timeout = timeout;
   }
 
-  get<T = any>(url: string, expectJSON: boolean = true, headers?: Headers): Promise<T> {
-    return new Promise<any>((resolve, reject) => {
+  get<T = any>(url: string, expectJSON: boolean = true, headers?: Headers): Promise<HttpResponse<T>> {
+    return new Promise<HttpResponse<T>>((resolve, reject) => {
       // timeout: this.timeout || undefined,
       fetch(url, {
         headers: headers || {
@@ -76,7 +76,23 @@ export class HttpClientUtil {
     });
   }
 
+  /**
+   * Handles a HTTP response, and will throw errors if is any issue etc
+   * @param expectJSON
+   * @param response
+   * @param resolve
+   * @param reject
+   * @private
+   */
   private handleResponse(expectJSON: boolean, response: Response, resolve: (value: any) => void, reject: (reason?: any) => void) {
+    if (response?.status && response.status >= 400) {
+      reject({
+        status: response.status,
+        statusText: response.statusText,
+      });
+      return;
+    }
+
     (expectJSON ? response.json() : response.text())
       .then(body => {
         resolve({

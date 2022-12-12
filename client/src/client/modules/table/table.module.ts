@@ -5,13 +5,9 @@ import {MaterialsComponent} from './components/columns/materials/materials.compo
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatInputModule} from '@angular/material/input';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatTooltipModule} from '@angular/material/tooltip';
-import {
-  FormsModule,
-  ReactiveFormsModule
-} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SortIconComponent} from './components/sort-icon/sort-icon.component';
 import {IconModule} from '../icon/icon.module';
 import {UtilModule} from '../util/util.module';
@@ -25,7 +21,13 @@ import {BaseActionsComponent} from './components/columns/base-actions.component'
 import {GoldComponent} from './components/columns/gold/gold.component';
 import {NameComponent} from './components/columns/name/name.component';
 import {BaseComponent} from './components/columns/base.component';
-import { CartCountComponent } from './components/columns/cart-count/cart-count.component';
+import {CartCountComponent} from './components/columns/cart-count/cart-count.component';
+import {
+  FormControllerColumnComponent
+} from './components/columns/form-controller-column/form-controller-column.component';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatInputModule} from '@angular/material/input';
+import {MatSelectModule} from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -41,6 +43,7 @@ import { CartCountComponent } from './components/columns/cart-count/cart-count.c
     NameComponent,
     BaseComponent,
     CartCountComponent,
+    FormControllerColumnComponent,
   ],
   imports: [
     CommonModule,
@@ -55,7 +58,10 @@ import { CartCountComponent } from './components/columns/cart-count/cart-count.c
     MatCardModule,
     UtilModule,
     RouterModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatSelectModule
   ],
   exports: [
     DataTableComponent,

@@ -1,6 +1,6 @@
 import {Component, ElementRef, Input, ViewChild} from '@angular/core';
 import {MatAutocomplete, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
-import {FormArray, FormControl} from '@angular/forms';
+import {FormArray, UntypedFormControl} from '@angular/forms';
 import {map, startWith} from 'rxjs/operators';
 import { MatChipInputEvent } from '@angular/material/chips';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
@@ -14,8 +14,8 @@ import {TextUtil} from '@ukon1990/js-utilities';
   styleUrls: ['./tags.component.scss']
 })
 export class TagsComponent {
-  @Input() inputField: FormControl;
-  tagInputControl = new FormControl('');
+  @Input() inputField: UntypedFormControl;
+  tagInputControl = new UntypedFormControl('');
   visible = true;
   selectable = true;
   removable = true;

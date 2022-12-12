@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {BaseComponent} from '../base.component';
-import {Profession} from '@shared/models';
+import {Item, Pet, Profession} from '@shared/models';
 import {Recipe} from '../../../../crafting/models/recipe';
 import {CraftingService} from '../../../../../services/crafting.service';
 import {SharedService} from '../../../../../services/shared.service';
@@ -9,9 +9,9 @@ import {Report} from '../../../../../utils/report.util';
 import {AuctionPet} from '../../../../auction/models/auction-pet.model';
 import {TableUtil} from '../../../utils/table.util';
 import {AuctionsService} from '../../../../../services/auctions.service';
-import {Item, Pet} from '@shared/models';
 import {PetsService} from '../../../../../services/pets.service';
 import {Router} from '@angular/router';
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'wah-name',
@@ -24,6 +24,16 @@ export class NameComponent extends BaseComponent implements OnInit {
   @Input() linkType: string;
   @Input() iconSize: number;
   @Input() useAuctionItemForName: boolean;
+
+  get rowValue() {
+    return this.row && this.row.getRawValue ?
+      this.row.getRawValue() : this.row;
+  }
+
+  get columnValue() {
+    return this.column && (this.column as any as FormControl)?.getRawValue ?
+      (this.column as any as FormControl)?.getRawValue() : this.column;
+  }
 
   itemId: number;
   creatureId: number;
@@ -44,7 +54,11 @@ export class NameComponent extends BaseComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.itemId = TableUtil.getItemID(this.row, this.column, this.idName);
+    this.itemId = TableUtil.getItemID(
+      this.rowValue,
+      this.columnValue,
+      this.idName
+    );
     this.setName();
     this.setSubNameOrNameIfMissing();
     this.setCreatureId();
@@ -82,6 +96,7 @@ export class NameComponent extends BaseComponent implements OnInit {
       const item: Item = ItemService.mapped.value.get(+this.itemId);
       this.name = item ? item.name : '';
     }
+
   }
 
   getSource(recipe: Recipe): number {

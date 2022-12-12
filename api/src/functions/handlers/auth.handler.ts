@@ -1,5 +1,4 @@
-import { BLIZZARD, AWS_DETAILS } from '../../secrets';
-import { APIGatewayEvent } from 'aws-lambda';
+import {BLIZZARD} from '../../secrets';
 import {HttpClientUtil} from '../../utils/http-client.util';
 
 export class AuthHandler {
@@ -21,14 +20,5 @@ export class AuthHandler {
         resolve(BLIZZARD.ACCESS_TOKEN);
       }
     });
-  }
-
-  public static isAuthorizedIdentity(event: APIGatewayEvent): boolean {
-    const requestIp = event.requestContext.identity.sourceIp,
-      localIp = '127.0.0.1';
-    const requestDomain = event.requestContext['domainName'],
-      allowedDomain = AWS_DETAILS.ALLOWED_DOMAIN;
-
-    return true;
   }
 }

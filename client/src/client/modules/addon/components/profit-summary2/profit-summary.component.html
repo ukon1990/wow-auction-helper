@@ -13,26 +13,27 @@
     <form [formGroup]="form" class="row">
       <mat-form-field
               color="accent"
-              class="col"
+             
       >
+        <mat-label>Realm</mat-label>
         <mat-select placeholder="Realm" formControlName="realm">
           <mat-option *ngFor="let realm of realms" [value]="realm">
             {{ realm }}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field class="col">
+      <mat-form-field>
         <mat-label>Period start</mat-label>
         <input matInput
                [matDatepicker]="startPicker"
                formControlName="startDate"
         >
         <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-
         <mat-datepicker #startPicker></mat-datepicker>
       </mat-form-field>
 
-      <mat-form-field class="col">
+      <mat-form-field>
+        <mat-label>Period</mat-label>
         <mat-select placeholder="Period" [formControl]="periodInput">
           <mat-option [value]="null">No period selected</mat-option>
           <mat-option [value]="1">Past 24 hours</mat-option>
@@ -46,7 +47,7 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field class="col">
+      <mat-form-field>
         <mat-label>Period end</mat-label>
         <input matInput
                [matDatepicker]="endPicker"
@@ -69,34 +70,34 @@
 
     <mat-list dense class="horizontal-item-list">
       <mat-list-item>
-        <div mat-line [style]="{color: theme.accentColorCode}">
+        <div matListItemLine [style]="{color: theme.accentColorCode}">
           Expenses
         </div>
-        <div mat-line>
+        <div matListItemLine>
           {{ data?.sumCost | gold }}
         </div>
       </mat-list-item>
       <mat-list-item>
-        <div mat-line [style]="{color: theme.accentColorCode}">
+        <div matListItemLine [style]="{color: theme.accentColorCode}">
           Income
         </div>
-        <div mat-line>
+        <div matListItemLine>
           {{ data?.sumIncome | gold }}
         </div>
       </mat-list-item>
       <mat-list-item>
-        <div mat-line [style]="{color: theme.accentColorCode}">
+        <div matListItemLine [style]="{color: theme.accentColorCode}">
           Profit
         </div>
-        <div mat-line>
+        <div matListItemLine>
           {{ data?.sumProfit | gold }}
         </div>
       </mat-list-item>
       <mat-list-item>
-        <div mat-line [style]="{color: theme.accentColorCode}">
+        <div matListItemLine [style]="{color: theme.accentColorCode}">
           Profit per day
         </div>
-        <div mat-line>
+        <div matListItemLine>
           {{ data?.avgPerDay | gold }}
         </div>
       </mat-list-item>

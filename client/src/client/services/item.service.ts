@@ -31,6 +31,7 @@ export class ItemService {
   static itemSelection: EventEmitter<number> = new EventEmitter<number>();
   static list: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
   static mapped: BehaviorSubject<Map<number, Item>> = new BehaviorSubject<Map<number, Item>>(new Map<number, Item>());
+  static modifiedCraftingReagent: BehaviorSubject<Map<number, Item>> = new BehaviorSubject<Map<number, Item>>(new Map<number, Item>());
   private historyMap: BehaviorSubject<Map<number, Map<string, ItemPriceEntryResponse>>> = new BehaviorSubject(new Map());
   private priceCompareMap: BehaviorSubject<Map<string, ItemPriceCompareEntry[]>> = new BehaviorSubject(new Map());
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_items';
@@ -38,10 +39,11 @@ export class ItemService {
   lastModified: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   lastModifiedClassic: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
-  constructor(private _http: HttpClient,
-              private dbService: DatabaseService,
-              public snackBar: MatSnackBar,
-              public platform: Platform) {
+  constructor(
+    private _http: HttpClient,
+    private dbService: DatabaseService,
+    public snackBar: MatSnackBar,
+    public platform: Platform) {
   }
 
   private getLatestTime(isClassic: boolean) {
@@ -55,7 +57,7 @@ export class ItemService {
   }
 
   addToSelectionHistory(newValue: any): void {
-    this.selectionHistory.next( [newValue, ...this.selectionHistory.value]);
+    this.selectionHistory.next([newValue, ...this.selectionHistory.value]);
   }
 
   async loadItems(latestTimestamp: Date, isClassic = SharedService.user.gameVersion > 0) {
@@ -154,7 +156,7 @@ export class ItemService {
     SharedService.downloading.items = false;
     const list: Item[] = [];
     const mapped = new Map<number, Item>();
-
+    const modifiedReagents = new Map<number, Item>();
 
 
     if (shouldSave && this.platform !== null && !this.platform.WEBKIT) {
@@ -202,6 +204,9 @@ export class ItemService {
         item.itemSource.prospectedFrom.forEach(i =>
           this.setLocaleForSourceItems(i, missingItems));
       }
+      if (item.modifiedCraftingId) {
+        modifiedReagents.set(item.modifiedCraftingId, item);
+      }
 
       this.addItemToBoughtFromVendorList(item);
     });
@@ -209,6 +214,7 @@ export class ItemService {
     if (missingItems.length > 0) {
       // TODO: when I have time -> this.addItems(missingItems);
     }
+    ItemService.modifiedCraftingReagent.next(modifiedReagents);
     SharedService.events.items.emit(true);
     ItemService.mapped.next(mapped);
     ItemService.list.next(list);
@@ -240,7 +246,12 @@ export class ItemService {
     let realmMap = this.historyMap.value;
     const result: Map<string, any> = new Map<string, any>();
     const missing: AhStatsRequest[] = [];
-    const getStoreId = ({itemId, petSpeciesId, bonusIds, ahTypeId: typeId}: AhStatsRequest | ItemPriceEntry | ItemDailyPriceEntry) =>
+    const getStoreId = ({
+                          itemId,
+                          petSpeciesId,
+                          bonusIds,
+                          ahTypeId: typeId
+                        }: AhStatsRequest | ItemPriceEntry | ItemDailyPriceEntry) =>
       `${itemId}-${petSpeciesId}-${
         typeof bonusIds === 'string' ?
           bonusIds : AuctionItemStat.bonusIdRaw(bonusIds)}-${typeId}`;
