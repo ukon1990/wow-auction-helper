@@ -890,7 +890,7 @@ export class StatsService {
     item.tsm = {
       // TSM API Data
       avgSalePrice: tsmData?.avgSalePrice || 0,
-      salePct: tsmData?.salePct ? tsmData?.salePct / 100 : 0,
+      salePct: tsmData?.salePct ? tsmData?.salePct / 1000 : 0,
       soldPerDay: tsmData?.soldPerDay || 0,
       historical: tsmData?.historical || 0,
     };
