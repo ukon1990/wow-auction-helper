@@ -1,13 +1,12 @@
 <div
-    class="mr-3"
-    matBadge="{{items?.length | number}}"
-    [matBadgeHidden]="!items?.length"
-    matBadgeColor="accent"
-    matBadgePosition="after"
-    matBadgeDescription="The number of items in your shopping cart"
+        class="mr-3"
+        matBadge="{{items?.length | number}}"
+        [matBadgeHidden]="!items?.length"
+        matBadgeColor="accent"
+        matBadgePosition="after"
+        matBadgeDescription="The number of items in your shopping cart"
 >
     <button mat-stroked-button
-            class="shopping-cart-menu-item"
             (click)="toggleDialog()"
             matTooltip="Shopping cart"
             matBadge="{{recipes?.length | number}}"
@@ -16,14 +15,16 @@
             matBadgePosition="before"
             matBadgeDescription="The number of recipes in your shopping cart"
     >
-        <span class="cart-title">
+        <span class="shopping-cart-menu-item">
+        <span class="text-white ">
             <span class="float-left mr-1">
               <i class="fas fa-shopping-cart"></i>
             </span>
             Shopping cart
         </span>
-        <small class="sub-text-small">
+        <small class="text-white">
             {{ cart?.profit | gold }}
         </small>
+        </span>
     </button>
 </div>

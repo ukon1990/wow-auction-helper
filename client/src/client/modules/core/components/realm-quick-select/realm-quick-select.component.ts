@@ -12,7 +12,6 @@ import {RealmStatus} from '@shared/models';
 import {AuctionHouseStatus} from '../../../auction/models/auction-house-status.model';
 import {CraftingService} from '../../../../services/crafting.service';
 import {ErrorReport} from '../../../../utils/error-report.util';
-import {faUserPlus} from '@fortawesome/free-solid-svg-icons/faUserPlus';
 import {SettingsService} from '../../../user/services/settings/settings.service';
 import {UserSettings} from '../../../user/models/settings.model';
 
