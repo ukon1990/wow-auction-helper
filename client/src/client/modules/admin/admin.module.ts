@@ -27,6 +27,8 @@ import {RecipeComponent} from './components/recipe/recipe.component';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatDatepickerModule} from '@angular/material/datepicker';
+import { RecipeDialogComponent } from './components/recipe/recipe-dialog/recipe-dialog.component';
+import {MatDialogModule} from "@angular/material/dialog";
 
 
 @NgModule({
@@ -39,6 +41,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
     UsersComponent,
     RealmComponent,
     RecipeComponent,
+    RecipeDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -59,7 +62,8 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
     MatCheckboxModule,
     MatExpansionModule,
     MatGridListModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    MatDialogModule
   ],
   providers: [
     AdminService

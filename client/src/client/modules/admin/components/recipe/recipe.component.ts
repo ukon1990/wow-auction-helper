@@ -8,6 +8,7 @@ import {ItemService} from '../../../../services/item.service';
 import {ProfessionService} from '../../../crafting/services/profession.service';
 import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {AdminRecipeUtil} from "./admin-recipe.util";
 
 @Component({
   selector: 'wah-recipe',
@@ -71,11 +72,22 @@ export class RecipeComponent implements OnDestroy {
     {key: 'timestamp', title: 'Updated', dataType: ColumnTypeEnum.FormControlText, options: {disabled: true}},
     {
       key: '',
-      title: 'Actions',
+      title: 'Edit',
+      dataType: ColumnTypeEnum.RowActions,
+      actions: [{
+        icon: 'fa fa-edit',
+        text: '',
+        tooltip: 'Edit',
+        callback: (group: FormGroup) => this.editRecipe(group),
+      }]
+    },
+    {
+      key: '',
+      title: 'Save',
       dataType: ColumnTypeEnum.RowActions,
       actions: [{
         icon: 'fa fa-save',
-        text: 'Save',
+        text: '',
         tooltip: 'Save',
         callback: (group: FormGroup) => this.updateRecipe(group),
       }]
@@ -84,7 +96,6 @@ export class RecipeComponent implements OnDestroy {
   recipes: APIRecipe[] = [];
   recipesMap: Map<number, APIRecipe> = new Map();
   recipeForm = new FormArray([]);
-  recipesMissingCraftedId: FormArray = new FormArray([]);
   filteredRecipes: FormGroup[] = [];
   comparison = new BehaviorSubject<{ db: any, api: any }>(undefined);
   comparisonError = new BehaviorSubject<any>(undefined);
@@ -127,42 +138,6 @@ export class RecipeComponent implements OnDestroy {
     this.subs.unsubscribe();
   }
 
-  addMissingValue(group: FormGroup) {
-    const {name, minCount, maxCount} = group.getRawValue();
-    const recipe = group.getRawValue() as APIRecipe;
-    if (
-      !recipe.craftedItemId && !recipe.allianceCraftedItemId && !recipe.hordeCraftedItemId ||
-      !recipe.minCount || !recipe.maxCount
-    ) {
-      const isNotRecipe = (text: string) =>
-        !TextUtil.contains(text, 'Pattern') &&
-        !TextUtil.contains(text, 'Design') &&
-        !TextUtil.contains(text, 'Formula') &&
-        !TextUtil.contains(text, 'Schematic') &&
-        !TextUtil.contains(text, 'Plans');
-      const itemsWithMatchingNames = ItemService.list.value
-        .filter(item =>
-          isNotRecipe(item.name) && TextUtil.contains(item.name, name)
-        )
-        // Having the smallest item id first (as this will likely be a quality 1 version over 2 or 3
-        .sort((a, b) => a.id - b.id);
-      if (itemsWithMatchingNames.length) {
-        const firstItem = itemsWithMatchingNames[0];
-        group.controls.itemName.setValue(firstItem.name);
-        group.controls.craftedItemId.setValue(firstItem.id);
-        group.controls.craftedItemId.markAsDirty();
-      }
-
-      if (!minCount || !maxCount) {
-        group.controls.minCount.setValue(1);
-        group.controls.minCount.markAsDirty();
-        group.controls.maxCount.setValue(1);
-        group.controls.maxCount.markAsDirty();
-      }
-
-    }
-  }
-
   getComparison(): void {
     this.comparisonError.next(undefined);
     this.service.getCompareRecipeAPI(this.form.value.recipeId)
@@ -173,37 +148,11 @@ export class RecipeComponent implements OnDestroy {
   getRecipes(): void {
     this.isLoadingRecipes = true;
     this.recipes = [];
-    const formArray = new FormArray([]);
-    const withMissingIds = new FormArray([]);
-    this.recipesMap = new Map();
 
     this.service.getAllRecipes()
       .then(({recipes}) => {
         this.recipes = recipes;
-        recipes.forEach(recipe => {
-          this.recipesMap.set(recipe.id, recipe);
-
-          const formGroup = new FormGroup({
-            id: new FormControl<number>({value: recipe.id, disabled: true}),
-            type: new FormControl<string>({value: recipe.type, disabled: true}),
-            name: new FormControl<string>({value: recipe.name, disabled: true}),
-            itemName: new FormControl<string>(null),
-            rank: new FormControl<number>({value: recipe.rank, disabled: true}),
-            craftedItemId: new FormControl<number>(recipe.craftedItemId),
-            hordeCraftedItemId: new FormControl<number>(recipe.hordeCraftedItemId),
-            allianceCraftedItemId: new FormControl<number>(recipe.allianceCraftedItemId),
-            procRate: new FormControl<number>(recipe.procRate),
-            minCount: new FormControl<number>(recipe.minCount),
-            maxCount: new FormControl<number>(recipe.maxCount),
-            professionId: new FormControl<number>({value: recipe.professionId, disabled: true}),
-            timestamp: new FormControl<string>({value: new Date(recipe.timestamp).toJSON(), disabled: true}),
-          });
-          formArray.push(formGroup);
-          this.addMissingValue(formGroup);
-        });
-
-        this.recipeForm = formArray;
-        this.recipesMissingCraftedId = withMissingIds;
+        this.recipeForm = AdminRecipeUtil.getRecipeFormArray(recipes, this.recipesMap);
         this.filterRecipes();
       })
       .finally(() => this.isLoadingRecipes = false);
@@ -211,22 +160,12 @@ export class RecipeComponent implements OnDestroy {
 
   private updateRecipe(recipe: FormGroup) {
     const storedRecipe = this.recipesMap.get(recipe.value.id);
-    const changes = {
-      id: recipe.getRawValue().id,
-    } as APIRecipe;
-    Object.keys(recipe.controls)
-      .forEach(key => {
-        if (key === 'itemName') {
-          return;
-        }
-
-        const control = recipe.controls[key] as FormControl;
-        // We only want to update changed fields
-        if ((control.dirty && control.enabled)) {
-          changes[key] = control.value;
-        }
-      });
+    const changes = AdminRecipeUtil.getUpdatedValues(recipe);
     console.log('Changed fields', recipe, changes, storedRecipe);
+    if (recipe.invalid) {
+      this.snackBar.open('The recipe is not valid');
+      return;
+    }
     if (Object.keys(changes).length <= 1) {
       this.snackBar.open('There is nothing to update');
       return;
@@ -276,5 +215,9 @@ export class RecipeComponent implements OnDestroy {
 
       return !(hasAutoAddedItemId && !itemName);
     }) as FormGroup[];
+  }
+
+  private editRecipe(group: FormGroup) {
+    return undefined;
   }
 }
