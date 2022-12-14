@@ -20,7 +20,7 @@ export class AdminRecipeUtil {
     return new FormArray(
       reagents.map(reagent => new FormGroup({
         id: new FormControl<number>({value: reagent.id, disabled: true}),
-        quantity: new FormControl<number>({value: reagent.id, disabled: true}),
+        quantity: new FormControl<number>( reagent.quantity),
       }))
     );
   }
@@ -36,7 +36,7 @@ export class AdminRecipeUtil {
     return new FormArray(bonusIds.map(id => new FormControl(id)));
   }
 
-  private static getFormGroupFromRecipe(recipe: APIRecipe) {
+  static getFormGroupFromRecipe(recipe: APIRecipe) {
     return new FormGroup({
       id: new FormControl<number>({value: recipe.id, disabled: true}),
       type: new FormControl<string>({value: recipe.type, disabled: true}),
@@ -53,6 +53,7 @@ export class AdminRecipeUtil {
       minCount: new FormControl<number>(recipe.minCount),
       maxCount: new FormControl<number>(recipe.maxCount),
       professionId: new FormControl<number>({value: recipe.professionId, disabled: true}),
+      skillTierId: new FormControl<number>({value: recipe.skillTierId, disabled: true}),
       timestamp: new FormControl<string>({value: new Date(recipe.timestamp).toJSON(), disabled: true}),
     });
   }

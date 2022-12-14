@@ -36,6 +36,9 @@ export class CraftingService {
   constructor(private _http: HttpClient,
               private dbService: DatabaseService,
               public platform: Platform) {
+    ItemService.tieredItemMap.subscribe(map => {
+      CraftingService.list.next(this.appendTieredRecipes([...CraftingService.list.value], map));
+    });
   }
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_recipes';
 
@@ -159,17 +162,40 @@ export class CraftingService {
 
   handleRecipes(recipes: Recipe[]): void {
     SharedService.downloading.recipes = false;
-    const list = recipes,
+    const list = CraftingService.getRecipesForFaction(this.appendTieredRecipes([...recipes])),
       map = new Map<number, Recipe>();
+    CraftingService.list.next(list);
 
-    CraftingService.list.next(CraftingService.getRecipesForFaction(list));
-
-    this.setItemRecipeMapPerKnown(map);
+    this.setItemRecipeMapPerKnown(map, list);
 
     CraftingService.map.next(map);
     CraftingService.fullList.next(list);
     SharedService.events.recipes.emit(true);
     console.log('Recipe download is completed');
+  }
+
+  appendTieredRecipes(recipes: Recipe[], tierItemMap: Map<number, Item[]> = ItemService.tieredItemMap.value): Recipe[] {
+    const list: Recipe[] = [];
+    recipes.forEach(recipe => {
+      // Initial implementation of Dragonflight recipe handling
+      if (ItemService.tieredItemMap.value.get(recipe.itemID)?.length) {
+        for (const item of tierItemMap.get(recipe.itemID)) {
+          if (item.id !== recipe.itemID && !CraftingService.itemRecipeMap.value.has(item.id)) {
+            const copyRecipe: Recipe = {
+              ...recipe,
+              itemID: item.id,
+              craftedItemId: item.id,
+              rank: item.tier,
+            };
+            list.push(copyRecipe);
+          } else if (recipe.rank !== item.tier) {
+            recipe.rank = item.tier;
+          }
+        }
+      }
+      list.push(recipe);
+    });
+    return list;
   }
 
   setItemRecipeMapPerKnown(map: Map<number, Recipe> = CraftingService.map.value, list: Recipe[] = CraftingService.list.value): void {

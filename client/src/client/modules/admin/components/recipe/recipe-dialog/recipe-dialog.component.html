@@ -1,13 +1,55 @@
 <wah-close-btn (close)="close()"></wah-close-btn>
 
 <h1 mat-dialog-title>
-    Login or register
+    <wah-icon [id]="form.getRawValue().id"></wah-icon>
+    {{form.getRawValue().name}}
 </h1>
 
 <mat-dialog-content>
-    Test
+    <form [formGroup]="form">
+        <div>
+            <mat-form-field>
+                <mat-label>Profession</mat-label>
+                <input matInput formControlName="professionId"/>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Profession</mat-label>
+                <input matInput formControlName="skillTierId"/>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Min count</mat-label>
+                <input matInput formControlName="minCount"/>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Max count</mat-label>
+                <input matInput formControlName="maxCount"/>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Proc rate</mat-label>
+                <input matInput formControlName="maxCount"/>
+            </mat-form-field>
+        </div>
+        <mat-accordion>
+            <mat-expansion-panel *ngIf="reagents" [expanded]="true">
+                <mat-expansion-panel-header>Reagents</mat-expansion-panel-header>
+                <wah-data-table
+                    [columns]="reagentColumns"
+                    [data]="reagents.controls"
+                ></wah-data-table>
+            </mat-expansion-panel>
+            <mat-expansion-panel *ngIf="modifiedSlots" [expanded]="true">
+                <mat-expansion-panel-header>Modified slots</mat-expansion-panel-header>
+                <wah-data-table
+                    [columns]="modifiedSlotColumns"
+                    [data]="modifiedSlots.controls"
+                ></wah-data-table>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </form>
 </mat-dialog-content>
 
 <mat-dialog-actions>
-    <button (click)="save()">Save</button>
+    <button (click)="save()" mat-stroked-button [disabled]="form.invalid || form.pristine">
+        Save
+    </button>
 </mat-dialog-actions>

@@ -17,6 +17,10 @@ import {ItemClass} from '../../item/models/item-class.model';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SettingsService} from '../../user/services/settings/settings.service';
 import {RealmService} from '../../../services/realm.service';
+import {AuthService} from "../../user/services/auth.service";
+import {ColumnTypeEnum} from "@shared/enum";
+import {MatDialog} from "@angular/material/dialog";
+import {RecipeDialogComponent} from "../../admin/components/recipe/recipe-dialog/recipe-dialog.component";
 
 interface FormModel {
   searchQuery: string;
@@ -51,6 +55,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
     {key: 'name', title: 'Name', dataType: 'name'/*, options: {
         tooltipType: 'recipe',
       }*/},
+    {key: 'rank', title: 'Rank', dataType: ColumnTypeEnum.Number, hideOnMobile: true},
     {key: 'reagents', title: 'Materials (min vs avg price)', dataType: 'materials', hideOnMobile: true, canNotSort: true},
     {key: 'cost', title: 'Cost', dataType: 'gold', hideOnMobile: true},
     {key: 'buyout', title: 'Buyout', dataType: 'gold'},
@@ -96,6 +101,8 @@ export class CraftingComponent implements OnInit, OnDestroy {
               private service: AuctionsService,
               private realmService: RealmService,
               private settingsService: SettingsService,
+              private authService: AuthService,
+              private dialog: MatDialog,
               private professionService: ProfessionService) {
     SharedService.events.title.next('Crafting');
     this.isClassic = realmService.isClassic;
@@ -124,6 +131,20 @@ export class CraftingComponent implements OnInit, OnDestroy {
         this.isClassic && query.expansion < GameBuild.latestClassicExpansion ? 0 : query.expansion
       ) : null
     });
+
+    if (authService.isAdmin()) {
+      this.columns.push({
+          key: '',
+          title: 'Edit',
+          dataType: ColumnTypeEnum.RowActions,
+          actions: [{
+            icon: 'fa fa-edit',
+            text: '',
+            tooltip: 'Edit',
+            callback: (group: Recipe) => dialog.open(RecipeDialogComponent, {data: group}),
+          }]
+        });
+    }
   }
 
   ngOnInit() {

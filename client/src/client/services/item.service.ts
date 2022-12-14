@@ -31,6 +31,7 @@ export class ItemService {
   static itemSelection: EventEmitter<number> = new EventEmitter<number>();
   static list: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
   static mapped: BehaviorSubject<Map<number, Item>> = new BehaviorSubject<Map<number, Item>>(new Map<number, Item>());
+  static tieredItemMap: BehaviorSubject<Map<number, Item[]>> = new BehaviorSubject<Map<number, Item[]>>(new Map<number, Item[]>());
   static modifiedCraftingReagent: BehaviorSubject<Map<number, Item>> = new BehaviorSubject<Map<number, Item>>(new Map<number, Item>());
   private historyMap: BehaviorSubject<Map<number, Map<string, ItemPriceEntryResponse>>> = new BehaviorSubject(new Map());
   private priceCompareMap: BehaviorSubject<Map<string, ItemPriceCompareEntry[]>> = new BehaviorSubject(new Map());
@@ -168,15 +169,20 @@ export class ItemService {
       console.log('item not initated', isClassic, SharedService.user.gameVersion);
       return;
     }*/
-
+    const tierNameMap = new Map<string, {[key: number]: Item, list: Item[]}>();
+    const tierMap = new Map<number, Item[]>();
     items.items.forEach((item: Item) => {
-      // Removing non current items from classic
-      /*if (
-        isClassic &&
-        item.classicPhase <= GameBuild.latestClassicPhase
-      ) {
-        return;
-      }*/
+      // Mapping items by tier
+      if (item.tier) {
+        if (!tierNameMap.has(item.name)) {
+          tierNameMap.set(item.name, {list: []});
+        }
+        tierNameMap.get(item.name)[item.tier] = item;
+        tierNameMap.get(item.name).list.push(item);
+        if (item.tier === 1) {
+          tierMap.set(item.id, tierNameMap.get(item.name).list);
+        }
+      }
       // Making sure that the tradevendor item names are updated in case of locale change
       if (SharedService.tradeVendorMap[item.id]) {
         SharedService.tradeVendorMap[item.id].name = item.name;
@@ -210,6 +216,8 @@ export class ItemService {
 
       this.addItemToBoughtFromVendorList(item);
     });
+    ItemService.tieredItemMap.next(tierMap);
+    Report.debug('Tiered items', {tierNameMap, tierMap});
 
     if (missingItems.length > 0) {
       // TODO: when I have time -> this.addItems(missingItems);

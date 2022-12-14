@@ -9,6 +9,8 @@ import {ProfessionService} from '../../../crafting/services/profession.service';
 import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {AdminRecipeUtil} from "./admin-recipe.util";
+import {MatDialog} from "@angular/material/dialog";
+import {RecipeDialogComponent} from "./recipe-dialog/recipe-dialog.component";
 
 @Component({
   selector: 'wah-recipe',
@@ -50,7 +52,7 @@ export class RecipeComponent implements OnDestroy {
     {key: 'id', title: 'ID', dataType: ColumnTypeEnum.FormControlNumber, options: {disabled: true}},
     {key: 'type', title: 'Type', dataType: ColumnTypeEnum.FormControlText, options: {disabled: true}},
     {key: 'name', title: 'Name', dataType: ColumnTypeEnum.FormControlText, options: {disabled: true}},
-    {key: 'itemName', title: 'ItemName', dataType: ColumnTypeEnum.Name},
+    {key: 'itemName', title: 'ItemName', dataType: ColumnTypeEnum.Name, options: {idName: 'craftedItemId'}},
     {key: 'rank', title: 'Rank', dataType: ColumnTypeEnum.FormControlNumber, cssClass: 'column-xs'},
     {key: 'craftedItemId', title: 'Item Id', dataType: ColumnTypeEnum.FormControlNumber, cssClass: 'column-s'},
     {
@@ -107,6 +109,7 @@ export class RecipeComponent implements OnDestroy {
     private itemService: ItemService,
     private snackBar: MatSnackBar,
     private professionService: ProfessionService,
+    private dialog: MatDialog,
   ) {
     this.getRecipes();
 
@@ -217,7 +220,7 @@ export class RecipeComponent implements OnDestroy {
     }) as FormGroup[];
   }
 
-  private editRecipe(group: FormGroup) {
-    return undefined;
+  private editRecipe(group: FormGroup): void {
+    this.dialog.open(RecipeDialogComponent, {data: group});
   }
 }

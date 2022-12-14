@@ -29,6 +29,7 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { RecipeDialogComponent } from './components/recipe/recipe-dialog/recipe-dialog.component';
 import {MatDialogModule} from "@angular/material/dialog";
+import {IconModule} from "../icon/icon.module";
 
 
 @NgModule({
@@ -63,7 +64,8 @@ import {MatDialogModule} from "@angular/material/dialog";
     MatExpansionModule,
     MatGridListModule,
     MatDatepickerModule,
-    MatDialogModule
+    MatDialogModule,
+    IconModule
   ],
   providers: [
     AdminService
