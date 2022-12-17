@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
+import {FormControl, FormGroup, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Recipe} from '../models/recipe';
 import {GameBuild} from '@shared/utils';
@@ -17,23 +17,11 @@ import {ItemClass} from '../../item/models/item-class.model';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SettingsService} from '../../user/services/settings/settings.service';
 import {RealmService} from '../../../services/realm.service';
-import {AuthService} from "../../user/services/auth.service";
-import {ColumnTypeEnum} from "@shared/enum";
-import {MatDialog} from "@angular/material/dialog";
-import {RecipeDialogComponent} from "../../admin/components/recipe/recipe-dialog/recipe-dialog.component";
-
-interface FormModel {
-  searchQuery: string;
-  onlyKnownRecipes: boolean;
-  professionId: number;
-  profit: number;
-  demand: number;
-  personalSaleRate: number;
-  minSold: number;
-  itemClass: number;
-  itemSubClass: number;
-  expansion: number;
-}
+import {AuthService} from '../../user/services/auth.service';
+import {ColumnTypeEnum} from '@shared/enum';
+import {MatDialog} from '@angular/material/dialog';
+import {RecipeDialogComponent} from '../../admin/components/recipe/recipe-dialog/recipe-dialog.component';
+import {CraftingFormFilterModel} from '../models/crafting-form-filter.model';
 
 @Component({
   selector: 'wah-crafting',
@@ -52,11 +40,19 @@ export class CraftingComponent implements OnInit, OnDestroy {
   private lastCalculationTime: number;
 
   columns: ColumnDescription[] = [
-    {key: 'name', title: 'Name', dataType: 'name'/*, options: {
+    {
+      key: 'name', title: 'Name', dataType: 'name'/*, options: {
         tooltipType: 'recipe',
-      }*/},
+      }*/
+    },
     {key: 'rank', title: 'Rank', dataType: ColumnTypeEnum.Number, hideOnMobile: true},
-    {key: 'reagents', title: 'Materials (min vs avg price)', dataType: 'materials', hideOnMobile: true, canNotSort: true},
+    {
+      key: 'reagents',
+      title: 'Materials (min vs avg price)',
+      dataType: 'materials',
+      hideOnMobile: true,
+      canNotSort: true
+    },
     {key: 'cost', title: 'Cost', dataType: 'gold', hideOnMobile: true},
     {key: 'buyout', title: 'Buyout', dataType: 'gold'},
     {key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true},
@@ -107,43 +103,46 @@ export class CraftingComponent implements OnInit, OnDestroy {
     SharedService.events.title.next('Crafting');
     this.isClassic = realmService.isClassic;
 
-    const query = localStorage.getItem('query_crafting') === null ?
+    const query: CraftingFormFilterModel = localStorage.getItem('query_crafting') === null ?
       undefined : JSON.parse(localStorage.getItem('query_crafting'));
 
     this.subs.add(ItemClassService.classes, classes => this.itemClasses = classes);
 
-    this.searchForm = this._formBuilder.group({
-      searchQuery: query && query.searchQuery !== undefined ? query.searchQuery : '',
-      onlyKnownRecipes: this.isClassic ?
-        false : (query && query.onlyKnownRecipes !== undefined ? query.onlyKnownRecipes : true),
-      professionId: query && query.professionId ? query.professionId : 0,
-      profit: query && query.profit !== null ? parseFloat(query.profit) : null,
-      demand: query && query.demand !== null ? parseFloat(query.demand) : null,
-      personalSaleRate: query && query.personalSaleRate !== null ? parseFloat(query.personalSaleRate) : null,
-      minSold: query && query.minSold !== null ? parseFloat(query.minSold) : null,
-      itemClass: query ? query.itemClass : '-1',
-      itemSubClass: query ? query.itemSubClass : '-1',
-
+    this.searchForm = new FormGroup({
+      searchQuery: new FormControl<string>(query && query.searchQuery !== undefined ? query.searchQuery : ''),
+      onlyKnownRecipes: new FormControl<boolean>(this.isClassic ?
+        false : (query && query.onlyKnownRecipes !== undefined ? query.onlyKnownRecipes : true)),
+      professionId: new FormControl<number>(query && query.professionId ? query.professionId : 0),
+      rank: new FormControl<number>(query && query.rank ? query.rank : 0),
+      profit: new FormControl<number>(query && query.profit !== null ? +query.profit : null),
+      demand: new FormControl<number>(query && query.demand !== null ? +query.demand : null),
+      personalSaleRate: new FormControl<number>(query && query.personalSaleRate !== null ? query.personalSaleRate : null),
+      minSold: new FormControl<number>(query && query.minSold !== null ? +query.minSold : null),
+      itemClass: new FormControl<number>(query ? query.itemClass : -1),
+      itemSubClass: new FormControl<number>(query ? query.itemSubClass : -1),
+/*
       // Disenchanting
-      selectedDEMaterial: query && query.selectedDisenchanting ? query.selectedDisenchanting : 0,
-      DEOnlyProfitable: query && query.onlyProfitable ? query.onlyProfitable : false,
-      expansion: query && query.expansion ? (
-        this.isClassic && query.expansion < GameBuild.latestClassicExpansion ? 0 : query.expansion
-      ) : null
+      selectedDEMaterial: new FormControl<number>(query && query.selectedDisenchanting ? query.selectedDisenchanting : 0),
+      DEOnlyProfitable: new FormControl<boolean>(query && query.onlyProfitable ? query.onlyProfitable : false),*/
+      expansion: new FormControl<number>(
+        query && query.expansion ? (
+          this.isClassic && query.expansion < GameBuild.latestClassicExpansion ? 0 : query.expansion
+        ) : null
+      )
     });
 
     if (authService.isAdmin()) {
       this.columns.push({
-          key: '',
-          title: 'Edit',
-          dataType: ColumnTypeEnum.RowActions,
-          actions: [{
-            icon: 'fa fa-edit',
-            text: '',
-            tooltip: 'Edit',
-            callback: (group: Recipe) => dialog.open(RecipeDialogComponent, {data: group}),
-          }]
-        });
+        key: '',
+        title: 'Edit',
+        dataType: ColumnTypeEnum.RowActions,
+        actions: [{
+          icon: 'fa fa-edit',
+          text: '',
+          tooltip: 'Edit',
+          callback: (group: Recipe) => dialog.open(RecipeDialogComponent, {data: group}),
+        }]
+      });
     }
   }
 
@@ -199,7 +198,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
     });
   }
 
-  filter(changes: FormModel = this.searchForm.value): void {
+  filter(changes: CraftingFormFilterModel = this.searchForm.value): void {
     /**
      * Setting the expansion here in case a user changes between retail and classic while
      * on the recipes page
@@ -214,6 +213,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
             && Filters.isProfitMatch(recipe, undefined, changes.profit)
             && Filters.isPersonalSaleRateMatch(recipe.itemID, changes.demand, false)
             && Filters.isXSmallerThanOrEqualToY(changes.demand, recipe.regionSaleRate)
+            && Filters.isXSmallerThanOrEqualToY(changes.rank, recipe.rank)
             && Filters.isDailySoldMatch(recipe.itemID, changes.minSold, false)
             && Filters.recipeIsProfessionMatch(recipe.id, changes.professionId)
             && Filters.isItemClassMatch(recipe.itemID, changes.itemClass, changes.itemSubClass)
