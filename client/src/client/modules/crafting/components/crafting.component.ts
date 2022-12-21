@@ -3,18 +3,13 @@ import {FormControl, FormGroup, UntypedFormBuilder, UntypedFormGroup} from '@ang
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Recipe} from '../models/recipe';
 import {GameBuild} from '@shared/utils';
-import {ColumnDescription, ItemStats} from '@shared/models';
+import {ColumnDescription} from '@shared/models';
 import {SharedService} from '../../../services/shared.service';
-import {Filters} from '../../../utils/filtering';
-import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
-import {TextUtil} from '@ukon1990/js-utilities';
 import {AuctionsService} from '../../../services/auctions.service';
 import {ThemeUtil} from '../../core/utils/theme.util';
-import {CraftingService} from '../../../services/crafting.service';
 import {ProfessionService} from '../services/profession.service';
 import {ItemClassService} from '../../item/service/item-class.service';
 import {ItemClass} from '../../item/models/item-class.model';
-import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SettingsService} from '../../user/services/settings/settings.service';
 import {RealmService} from '../../../services/realm.service';
 import {AuthService} from '../../user/services/auth.service';
@@ -22,6 +17,8 @@ import {ColumnTypeEnum} from '@shared/enum';
 import {MatDialog} from '@angular/material/dialog';
 import {RecipeDialogComponent} from '../../admin/components/recipe/recipe-dialog/recipe-dialog.component';
 import {CraftingFormFilterModel} from '../models/crafting-form-filter.model';
+import {CraftingFilterUtil} from '../utils/crafting-filter.util';
+import {debounceTime} from 'rxjs';
 
 @Component({
   selector: 'wah-crafting',
@@ -38,6 +35,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
   professions = [];
   expansions = [];
   private lastCalculationTime: number;
+  private craftingFilterUtil: CraftingFilterUtil;
 
   columns: ColumnDescription[] = [
     {
@@ -101,34 +99,26 @@ export class CraftingComponent implements OnInit, OnDestroy {
               private dialog: MatDialog,
               private professionService: ProfessionService) {
     SharedService.events.title.next('Crafting');
+    this.craftingFilterUtil = new CraftingFilterUtil(service, realmService, settingsService);
     this.isClassic = realmService.isClassic;
 
-    const query: CraftingFormFilterModel = localStorage.getItem('query_crafting') === null ?
-      undefined : JSON.parse(localStorage.getItem('query_crafting'));
+    const query: CraftingFormFilterModel = new CraftingFormFilterModel();
 
     this.subs.add(ItemClassService.classes, classes => this.itemClasses = classes);
 
     this.searchForm = new FormGroup({
-      searchQuery: new FormControl<string>(query && query.searchQuery !== undefined ? query.searchQuery : ''),
-      onlyKnownRecipes: new FormControl<boolean>(this.isClassic ?
-        false : (query && query.onlyKnownRecipes !== undefined ? query.onlyKnownRecipes : true)),
-      professionId: new FormControl<number>(query && query.professionId ? query.professionId : 0),
-      rank: new FormControl<number>(query && query.rank ? query.rank : 0),
-      profit: new FormControl<number>(query && query.profit !== null ? +query.profit : null),
-      demand: new FormControl<number>(query && query.demand !== null ? +query.demand : null),
-      personalSaleRate: new FormControl<number>(query && query.personalSaleRate !== null ? query.personalSaleRate : null),
-      minSold: new FormControl<number>(query && query.minSold !== null ? +query.minSold : null),
-      itemClass: new FormControl<number>(query ? query.itemClass : -1),
-      itemSubClass: new FormControl<number>(query ? query.itemSubClass : -1),
-/*
-      // Disenchanting
-      selectedDEMaterial: new FormControl<number>(query && query.selectedDisenchanting ? query.selectedDisenchanting : 0),
-      DEOnlyProfitable: new FormControl<boolean>(query && query.onlyProfitable ? query.onlyProfitable : false),*/
+      searchQuery: new FormControl<string>(query.searchQuery),
+      onlyKnownRecipes: new FormControl<boolean>(this.isClassic ? false : query.onlyKnownRecipes),
+      professionId: new FormControl<number>(query.professionId),
+      rank: new FormControl<number>(query.rank),
+      profit: new FormControl<number>(query.profit),
+      demand: new FormControl<number>(query.demand),
+      personalSaleRate: new FormControl<number>(query.personalSaleRate),
+      minSold: new FormControl<number>(query.minSold),
+      itemClass: new FormControl<number>(query.itemClass),
+      itemSubClass: new FormControl<number>(query.itemSubClass),
       expansion: new FormControl<number>(
-        query && query.expansion ? (
-          this.isClassic && query.expansion < GameBuild.latestClassicExpansion ? 0 : query.expansion
-        ) : null
-      )
+        this.isClassic && query.expansion < GameBuild.latestClassicExpansion ? 0 : query.expansion)
     });
 
     if (authService.isAdmin()) {
@@ -147,28 +137,25 @@ export class CraftingComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.filter();
+    // this.filter();
+    this.subs.add(
+      this.realmService.events.realmChanged,
+      () => this.expansions = this.craftingFilterUtil.setExpansions()
+    );
 
     this.subs.add(this.searchForm.controls.itemClass.valueChanges,
       () => this.searchForm.controls.itemSubClass.setValue('-1'));
-
     this.subs.add(
-      this.searchForm.valueChanges,
+      this.searchForm.valueChanges.pipe(debounceTime(1_000)),
       ((changes) => {
         localStorage['query_crafting'] = JSON.stringify(this.searchForm.value);
-        this.lastCalculationTime = +new Date();
-        setTimeout(async () => {
-          const timeDiff = +new Date() - this.lastCalculationTime;
-          if (timeDiff >= 1000) {
-            this.filter(changes);
-          }
-        }, 1000);
+        this.filter(changes);
       }));
 
     this.subs.add(
       this.service.mapped,
-      () =>
-        this.filter());
+      () => this.filter()
+    );
 
     this.subs.add(this.professionService.listWithRecipes, (professions) => {
       this.professions = [
@@ -189,90 +176,8 @@ export class CraftingComponent implements OnInit, OnDestroy {
     this.subs.unsubscribe();
   }
 
-  setExpansions(): void {
-    this.expansions = GameBuild.expansionMap.filter((v, index) => {
-      if (this.isClassic) {
-        return index <= GameBuild.latestClassicExpansion;
-      }
-      return true;
-    });
-  }
-
   filter(changes: CraftingFormFilterModel = this.searchForm.value): void {
-    /**
-     * Setting the expansion here in case a user changes between retail and classic while
-     * on the recipes page
-     */
-    this.isClassic = this.realmService.isClassic;
-    this.setExpansions();
-    this.filtered = CraftingService.list.value
-      .filter(recipe => {
-        if (!EmptyUtil.isNullOrUndefined(recipe)) {
-          return this.isKnownRecipe(recipe)
-            && this.isNameMatch(recipe, changes.searchQuery)
-            && Filters.isProfitMatch(recipe, undefined, changes.profit)
-            && Filters.isPersonalSaleRateMatch(recipe.itemID, changes.demand, false)
-            && Filters.isXSmallerThanOrEqualToY(changes.demand, recipe.regionSaleRate)
-            && Filters.isXSmallerThanOrEqualToY(changes.rank, recipe.rank)
-            && Filters.isDailySoldMatch(recipe.itemID, changes.minSold, false)
-            && Filters.recipeIsProfessionMatch(recipe.id, changes.professionId)
-            && Filters.isItemClassMatch(recipe.itemID, changes.itemClass, changes.itemSubClass)
-            && Filters.isExpansionMatch(recipe.itemID, changes.expansion, this.isClassic);
-        }
-        return false;
-      })
-      .map((recipe: Recipe) => {
-        const item: AuctionItem[] = this.service.mappedVariations.value.get(recipe.craftedItemId);
-        if (!item) {
-          return recipe;
-        }
-        const stats: ItemStats[] = this.service.statsVariations.value.get(recipe.craftedItemId);
-        const faction = this.settingsService.settings.value.faction || 0;
-        const stat = this.getStatsForItem(item, stats);
-        const past60DaysSaleRate = this.getPersonalSaleRateForitem(item);
-        const inventoryQuantity = this.getInventoryQuantityForItemAndFaction(item, faction);
-
-        return {
-          ...recipe,
-          priceAvg24: stat ? stat.past24Hours.price.avg : 0,
-          priceTrend: stat ? stat.past7Days.price.trend : 0,
-          regionSaleRate: stat && stat.tsm?.salePct ? stat.tsm?.salePct : 0,
-          past60DaysSaleRate,
-          inventoryQuantity,
-        };
-      });
-  }
-
-  private getStatsForItem(item: AuctionItem[], stats: ItemStats[]) {
-    return (item[0] && item[0].stats) || (stats && stats[0]) ?
-      item[0].stats || stats[0] : undefined;
-  }
-
-  private getPersonalSaleRateForitem(item: AuctionItem[]) {
-    return item[0] && item[0].past60DaysSaleRate ? item[0].past60DaysSaleRate : 0.001;
-  }
-
-  private getInventoryQuantityForItemAndFaction(item: AuctionItem[], faction: number) {
-    return item[0] && item[0].item && item[0].item.inventory ?
-      item[0].item.inventory[faction] ? item[0].item.inventory[faction].quantity : 0
-      : 0;
-  }
-
-  isKnownRecipe(recipe: Recipe): boolean {
-    return !this.searchForm.value.onlyKnownRecipes ||
-      CraftingService.recipesForUser.value.has(recipe.id)
-      || !recipe.professionId;
-  }
-
-  isNameMatch(recipe: Recipe, name: string): boolean {
-    if (EmptyUtil.isNullOrUndefined(name)) {
-      return true;
-    }
-    if (TextUtil.contains(recipe.name, name)) {
-      return true;
-    }
-    const item = SharedService.items[recipe.itemID];
-    return item && TextUtil.contains(item.name, name);
+    this.filtered = this.craftingFilterUtil.getFilteredRecipes(changes);
   }
 
   resetForm() {
