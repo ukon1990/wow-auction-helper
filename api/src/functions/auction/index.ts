@@ -11,7 +11,7 @@ export default {
   },
   auctionsDownloadAndSave: {
     handler: `${handlerPath(__dirname)}/controller.auctionsDownloadAndSave`,
-    memorySize: 320,
+    memorySize: 400,
     timeout: 30,
     tags: {
       Function: 'Wah-auctionsDownloadAndSave',
