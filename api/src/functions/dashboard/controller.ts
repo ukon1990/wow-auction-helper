@@ -9,9 +9,7 @@ export const getAll = middyfy(async (event): Promise<ValidatedEventAPIGatewayPro
   let response;
 
   await service.getAll()
-    .then((boards) => response = formatJSONResponse(
-      boards.filter(board => board.rules.length || board.itemRules.length) as any)
-    )
+    .then((boards) => response = formatJSONResponse(boards as any))
     .catch(err => response = formatErrorResponse(err.code, err.message, err));
 
   return response;
