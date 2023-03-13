@@ -18,11 +18,11 @@
 
   <ng-template #contentTemplate>
     <mat-list class="mb-2">
-      <mat-list-item *ngFor="let board of filteredBoards" class="mat-elevation-z5 mt-1 mb-1">
-        <h3 matListItemLine>
+      <mat-list-item *ngFor="let board of filteredBoards" lines="3" class="mat-elevation-z5 mt-1 mb-1">
+        <h3 matListItemTitle>
           {{board.title}} ({{board.lastModified | date: 'dd.MMM yyyy HH:mm'}})
         </h3>
-        <div matListItemLine>
+        <div *ngIf="board.description" matListItemLine>
           {{board.description}}
         </div>
         <div matListItemLine>
