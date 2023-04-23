@@ -1,4 +1,20 @@
 <mat-list dense class="horizontal-item-list">
+  <mat-list-item *ngIf="baseItem?.id">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
+      Item ID
+    </div>
+    <div matListItemLine>
+      {{ baseItem?.id }}
+    </div>
+  </mat-list-item>
+  <mat-list-item *ngIf="item?.petSpeciesId">
+    <div matListItemLine [style]="{color: theme.accentColorCode}">
+      Pet species ID
+    </div>
+    <div matListItemLine>
+      {{ item.petSpeciesId }}
+    </div>
+  </mat-list-item>
   <mat-list-item *ngIf="baseItem">
     <div matListItemLine [style]="{color: theme.accentColorCode}">
       Expansion
