@@ -17,63 +17,62 @@
   <wah-loading *ngIf="isLoading; else contentTemplate" message="Loading…"></wah-loading>
 
   <ng-template #contentTemplate>
+
     <mat-list class="mb-2">
-      <mat-list-item *ngFor="let board of filteredBoards" lines="3" class="mat-elevation-z5 mt-1 mb-1">
+      <mat-list-item *ngFor="let board of filteredBoards" lines="5" class="mat-elevation-z5 mt-1 mb-1">
         <h3 matListItemTitle>
           {{board.title}} ({{board.lastModified | date: 'dd.MMM yyyy HH:mm'}})
         </h3>
         <div *ngIf="board.description" matListItemLine>
           {{board.description}}
         </div>
-        <div matListItemLine>
-          <div class="row pt-1">
-            <div class="col">
-              <strong>Created by:</strong> {{ board.createdBy }}
-            </div>
-            <mat-chip-listbox class="col d-none d-xl-block" aria-label="Board tags">
-              Tags:
-              <mat-chip-option *ngFor="let tag of board.tags" color="primary">
-                {{ tag }}
-              </mat-chip-option>
-            </mat-chip-listbox>
-            <div *ngIf="!myDashboards.has(board.id)" class="col-md-4">
-              <button
-                      [disabled]="myCopiedDashboards.has(board.id) &&
-                        myCopiedDashboards.get(board.id).lastModified <= board.lastModified"
-                      type="button"
-                      class="float-right"
-                      mat-raised-button
-                      color="accent"
-                      matTooltip="Import/update a copy of this board into your library"
-                      (click)="import(board)"
-              >
-                <fa-icon *ngIf="!board.isImporting; else loadingImportTemplate"
-                         [icon]="myCopiedDashboards.has(board.id) ? faUpdate : faImport"></fa-icon>
-                {{myCopiedDashboards.has(board.id) ? 'Update' : 'Copy'}}
-              </button>
-              <button type="button"
-                      class="float-right mr-2"
-                      mat-raised-button
-                      color="primary"
-                      matTooltip="Import a copy of this board into you library"
-                      (click)="preview(board)"
-              >
-                <fa-icon *ngIf="!board.isLoading; else loadingPreviewTemplate"
-                         [icon]="faEye"></fa-icon>
-                Preview
-              </button>
-
-              <ng-template #loadingPreviewTemplate>
-                <mat-spinner color="accent" class="float-left ml-2"></mat-spinner>
-              </ng-template>
-
-              <ng-template #loadingImportTemplate>
-                <mat-spinner color="primary" class="float-left ml-2"></mat-spinner>
-              </ng-template>
-            </div>
-          </div>
+        <div >
+          <mat-chip-listbox class="d-none d-xl-block" aria-label="Board tags">
+            Tags:
+            <mat-chip-option *ngFor="let tag of board.tags" color="primary">
+              {{ tag }}
+            </mat-chip-option>
+          </mat-chip-listbox>
         </div>
+
+        <button *ngIf="!myDashboards.has(board.id)"
+                [disabled]="myCopiedDashboards.has(board.id) &&
+                        myCopiedDashboards.get(board.id).lastModified <= board.lastModified"
+                type="button"
+                mat-raised-button
+                matListItemMeta
+                color="accent"
+                matTooltip="Import/update a copy of this board into your library"
+                (click)="import(board)"
+        >
+          <fa-icon *ngIf="!board.isImporting; else loadingImportTemplate"
+                   [icon]="myCopiedDashboards.has(board.id) ? faUpdate : faImport"></fa-icon>
+          {{myCopiedDashboards.has(board.id) ? 'Update' : 'Copy'}}
+        </button>
+        <button *ngIf="!myDashboards.has(board.id)"
+                type="button"
+                mat-raised-button
+                matListItemMeta
+                color="primary"
+                matTooltip="Import a copy of this board into you library"
+                (click)="preview(board)"
+        >
+          <fa-icon *ngIf="!board.isLoading; else loadingPreviewTemplate"
+                   [icon]="faEye"></fa-icon>
+          Preview
+        </button>
+        <small matListItemMeta>
+          <strong>Created by:</strong> {{ board.createdBy }}
+        </small>
       </mat-list-item>
     </mat-list>
   </ng-template>
 </mat-dialog-content>
+
+<ng-template #loadingPreviewTemplate>
+  <mat-spinner color="accent" class="float-left ml-2"></mat-spinner>
+</ng-template>
+
+<ng-template #loadingImportTemplate>
+  <mat-spinner color="primary" class="float-left ml-2"></mat-spinner>
+</ng-template>

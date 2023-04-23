@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {UntypedFormControl} from '@angular/forms';
-import {Dashboard} from '@shared/models';
+import {Dashboard, DashboardMinimal} from '@shared/models';
 import {DashboardService} from '../../services/dashboard.service';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
@@ -12,7 +12,6 @@ import {faEye} from '@fortawesome/free-solid-svg-icons/faEye';
 import {faFileImport} from '@fortawesome/free-solid-svg-icons/faFileImport';
 import {faSyncAlt} from '@fortawesome/free-solid-svg-icons/faSyncAlt';
 import {Report} from '../../../../utils/report.util';
-import {DashboardMinimal} from "@shared/models";
 
 @Component({
   selector: 'wah-search',
@@ -91,6 +90,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   preview(board: DashboardMinimal) {
+    console.log('preview', board);
     Report.send('DashboardSearchComponent.preview', 'Previewed dashboard');
     board.isLoading = true;
     this.service.getCopyById(board.id)

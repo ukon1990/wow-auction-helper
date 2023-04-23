@@ -3,11 +3,11 @@ import {handlerPath} from '@libs/handler-resolver';
 export default {
   getAllRecipesAfter: {
     handler: `${handlerPath(__dirname)}/controller.getAfter`,
-    memorySize: 300,
-    timeout: 30,
+    memorySize: 128,
     tags: {
       Function: 'Wah-getAllRecipesAfter',
       Project: 'WAH',
+      Test: 'asd'
     },
     events: [{
       http: {
@@ -21,8 +21,7 @@ export default {
   },
   updateRecipeJSONFilesRetail: {
     handler: `${handlerPath(__dirname)}/controller.updateJSONFilesRetail`,
-    memorySize: 350,
-    timeout: 60,
+    memorySize: 128,
     tags: {
       Function: 'Wah-updateRecipeJSONFilesRetail',
       Project: 'WAH',
@@ -39,8 +38,7 @@ export default {
   },
   updateRecipe: {
     handler: `${handlerPath(__dirname)}/controller.updateRecipe`,
-    memorySize: 256,
-    timeout: 30,
+    memorySize: 128,
     tags: {
       Function: 'Wah-updateRecipe',
       Project: 'WAH',
@@ -57,8 +55,7 @@ export default {
   },
   getRecipeById: {
     handler: `${handlerPath(__dirname)}/controller.getById`,
-    memorySize: 256,
-    timeout: 30,
+    memorySize: 128,
     tags: {
       Function: 'Wah-getRecipeById',
       Project: 'WAH',
@@ -67,7 +64,6 @@ export default {
   updateRecipes: {
     handler: `${handlerPath(__dirname)}/controller.updateRecipes`,
     memorySize: 256,
-    timeout: 30,
     tags: {
       Function: 'Wah-updateRecipes',
       Project: 'WAH',
@@ -84,8 +80,7 @@ export default {
   },
   getOnUseRecipes: {
     handler: `${handlerPath(__dirname)}/controller.updateOnUse`,
-    memorySize: 256,
-    timeout: 30,
+    memorySize: 128,
     tags: {
       Function: 'Wah-updateOnUse',
       Project: 'WAH',
@@ -102,8 +97,7 @@ export default {
   },
   compareRecipeAPI: {
     handler: `${handlerPath(__dirname)}/controller.compareRecipeAPI`,
-    memorySize: 256,
-    timeout: 30,
+    memorySize: 128,
     tags: {
       Function: 'Wah-updateOnUse',
       Project: 'WAH',
