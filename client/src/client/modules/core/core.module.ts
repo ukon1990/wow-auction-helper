@@ -5,7 +5,9 @@ import {DownloadComponent} from './components/navbar/download/download.component
 import {TradeVendorsComponent} from './components/trade-vendors/trade-vendors.component';
 import {FooterComponent} from './components/footer/footer.component';
 import {ReputationsComponent} from './components/reputations/reputations.component';
-import {CharacterReputationComponent} from './components/reputations/character-reputation/character-reputation.component';
+import {
+  CharacterReputationComponent
+} from './components/reputations/character-reputation/character-reputation.component';
 import {AppUpdateComponent} from './components/app-update/app-update.component';
 import {MaterialModule} from '../material.module';
 import {TableModule} from '../table/table.module';
@@ -32,7 +34,8 @@ import {MenuDropdownComponent} from './components/menu/menu-dropdown/menu-dropdo
 import {MatDialogModule} from '@angular/material/dialog';
 import {DownloadDialogComponent} from './components/navbar/download/dialog/dialog.component';
 import {UserModule} from '../user/user.module';
-import { TooltipComponent } from './components/tooltip/tooltip.component';
+import {TooltipComponent} from './components/tooltip/tooltip.component';
+import {MatIconModule} from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -70,9 +73,18 @@ import { TooltipComponent } from './components/tooltip/tooltip.component';
     FontAwesomeModule,
     MarketResetModule,
     MatDialogModule,
-    UserModule
+    UserModule,
+    MatIconModule
   ],
-  exports: [NavbarComponent, FooterComponent, AppUpdateComponent, MenuComponent, ThemeSelectComponent, DownloadComponent, TooltipComponent]
+  exports: [
+    NavbarComponent,
+    FooterComponent,
+    AppUpdateComponent,
+    MenuComponent,
+    ThemeSelectComponent,
+    DownloadComponent,
+    TooltipComponent
+  ]
 })
 export class CoreModule {
   constructor() {

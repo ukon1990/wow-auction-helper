@@ -3,88 +3,99 @@
 <wah-menu></wah-menu>
 
 <div id="main" class="mt-6 container-fluid">
-  <mat-card>
-    <mat-card-header *ngIf="pageTitle">
-      <mat-card-title>
-        {{ pageTitle }}
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <ng-container *ngIf="!isLoading || initialLoadWasSetup || isInNonAppDataPage; else loadingTemplate">
-        <router-outlet></router-outlet>
-      </ng-container>
-    </mat-card-content>
-  </mat-card>
-  <wah-footer></wah-footer>
+    <mat-card>
+        <mat-card-header *ngIf="pageTitle">
+            <mat-card-title>
+                {{ pageTitle }}
+            </mat-card-title>
+            <mat-card-subtitle>
+                End of service: {{endOfServiceDate | date }}
+            </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <ng-container *ngIf="!isLoading || initialLoadWasSetup || isInNonAppDataPage; else loadingTemplate">
+                <router-outlet></router-outlet>
+            </ng-container>
+        </mat-card-content>
+    </mat-card>
+    <wah-footer></wah-footer>
 </div>
 
 <ng-template #loadingTemplate>
-  App data is loading, this might take a while the first time depending on your internet speed, computer and browser…
-  <table class="table table-hover table-bordered table-striped table-sm {{theme.tableColorClass}}">
-    <tbody>
-    <tr *ngIf="useAppSync">
-      <td>
-        <mat-spinner *ngIf="settingsSync.isLoading.value" class="float-left mr-2"></mat-spinner>
-      </td>
-      <td>
-        Settings
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <mat-spinner *ngIf="getDownloading().items" class="float-left mr-2"></mat-spinner>
-      </td>
-      <td>
-        Items
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <mat-spinner *ngIf="getDownloading().recipes" class="float-left mr-2"></mat-spinner>
-      </td>
-      <td>
-        Recipes
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <mat-spinner *ngIf="getDownloading().pets" class="float-left mr-2"></mat-spinner>
-      </td>
-      <td>Pets</td>
-    </tr>
-    <tr>
-      <td>
-        <mat-spinner *ngIf="getDownloading().professions" class="float-left mr-2"></mat-spinner>
-      </td>
-      <td>Professions</td>
-    </tr>
-    <tr>
-      <td>
-        <mat-spinner *ngIf="getDownloading().npc" class="float-left mr-2"></mat-spinner>
-      </td>
-      <td matTooltip="The compressed file is ~24 MB, but the total size is actually ~130 MB">
-        NPCs
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <mat-spinner *ngIf="getDownloading().zone" class="float-left mr-2"></mat-spinner>
-      </td>
-      <td>Zones</td>
-    </tr>
-    <tr>
-      <td>
-        <mat-spinner *ngIf="getDownloading().auctions" class="float-left mr-2"></mat-spinner>
-      </td>
-      <td>Auctions</td>
-    </tr>
+    <div id="main-eol" class="mt-6 container-fluid" *ngIf="isAfterEndOfService; else loading">
+        <wah-end-of-life></wah-end-of-life>
+    </div>
 
-    <tr>
-      <td>
-        <mat-spinner *ngIf="getDownloading().tsmAuctions" class="float-left mr-2"></mat-spinner>
-      </td>
-      <td>TSM</td>
-    </tr>
-    </tbody>
-  </table>
+    <ng-template #loading>
+
+        App data is loading, this might take a while the first time depending on your internet speed, computer and
+        browser…
+        <table class="table table-hover table-bordered table-striped table-sm {{theme.tableColorClass}}">
+            <tbody>
+            <tr *ngIf="useAppSync">
+                <td>
+                    <mat-spinner *ngIf="settingsSync.isLoading.value" class="float-left mr-2"></mat-spinner>
+                </td>
+                <td>
+                    Settings
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <mat-spinner *ngIf="getDownloading().items" class="float-left mr-2"></mat-spinner>
+                </td>
+                <td>
+                    Items
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <mat-spinner *ngIf="getDownloading().recipes" class="float-left mr-2"></mat-spinner>
+                </td>
+                <td>
+                    Recipes
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <mat-spinner *ngIf="getDownloading().pets" class="float-left mr-2"></mat-spinner>
+                </td>
+                <td>Pets</td>
+            </tr>
+            <tr>
+                <td>
+                    <mat-spinner *ngIf="getDownloading().professions" class="float-left mr-2"></mat-spinner>
+                </td>
+                <td>Professions</td>
+            </tr>
+            <tr>
+                <td>
+                    <mat-spinner *ngIf="getDownloading().npc" class="float-left mr-2"></mat-spinner>
+                </td>
+                <td matTooltip="The compressed file is ~24 MB, but the total size is actually ~130 MB">
+                    NPCs
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <mat-spinner *ngIf="getDownloading().zone" class="float-left mr-2"></mat-spinner>
+                </td>
+                <td>Zones</td>
+            </tr>
+            <tr>
+                <td>
+                    <mat-spinner *ngIf="getDownloading().auctions" class="float-left mr-2"></mat-spinner>
+                </td>
+                <td>Auctions</td>
+            </tr>
+
+            <tr>
+                <td>
+                    <mat-spinner *ngIf="getDownloading().tsmAuctions" class="float-left mr-2"></mat-spinner>
+                </td>
+                <td>TSM</td>
+            </tr>
+            </tbody>
+        </table>
+    </ng-template>
 </ng-template>

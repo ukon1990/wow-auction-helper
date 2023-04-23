@@ -1,0 +1,163 @@
+<p>
+    Hi, I m sorry to announce it, but I have decided not to maintain or host this project anymore.
+    It's wistful, but I just do not feel like I have the time and energy to maintain the project.
+    So as of <strong>{{endOfService | date: 'medium'}}</strong>, the project will be shut down.
+</p>
+
+<p>
+    A contributing factor is also the lack of documentation and data provided by the Blizzard
+    <i matTooltip="Application programming Interface">API</i>. Especially in regards
+    to Recipes.
+    Also in periods it’s a lot of work in addition to my daytime job + family and all that.
+    For example, there is no information about what items belongs to the new recipes (that I've found), so I have to
+    manually connect them. And that makes me insecure about the validity of the data. And makes it harder to make the project
+    live by itself. In addition to that, there is no API for the classic recipes. No official documentation of item level curves or pricing curves.
+</p>
+
+<p>
+    If anyone wishes to take up the mantle, feel free to fork the code base, and base something off it. If you manage to
+    make it better, great! But if you do, I'd appreciate it if you do not use ads(especially not the sketchy ones), and keep it open source.
+</p>
+
+<p>
+    I'd like to thank everyone who has used the app, throughout the past 8 years.
+</p>
+
+<mat-accordion>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Hosting and development
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <p>
+            The app is hosted on AWS, with S3, Lambda, DynamoDB, RDS (not in AWS).
+            The code base does contain code from when I was a student, but I don’t think that should be an issue.
+        </p>
+
+        <p>
+            You can find the the code and documentation <a href="https://github.com/ukon1990/wow-auction-helper#front-and-back-end-documentation" target="_blank">here</a>.
+        </p>
+
+        <p>
+            If you’ve got some AWS knowledge you should be able to get it up and running. Everything you need should be
+            documented, but would require AWS knowledge. But it should also be possible to convert it to.a regular nodes
+            app
+            with cron jobs.
+        </p>
+
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Monthly expenses
+            </mat-panel-title>
+            <mat-panel-description>
+                Avg the past 12 months: {{97.33 | currency:'USD':true:'1.2-2'}}
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-list dense class="horizontal-item">
+            <mat-list-item>
+                <div matListItemLine [style]="{color: theme.accentColorCode}">
+                    Sum total for all expenses
+                </div>
+                <div matListItemMeta>
+                    {{97.33 | currency:'USD':true:'1.2-2'}}
+                </div>
+            </mat-list-item>
+            <mat-list-item>
+                <div matListItemLine [style]="{color: theme.accentColorCode}">
+                    Tax
+                </div>
+                <div matListItemMeta>
+                    {{21.5 | currency:'USD':true:'1.2-2'}}
+                </div>
+            </mat-list-item>
+            <mat-list-item>
+                <div matListItemLine [style]="{color: theme.accentColorCode}">
+                    AWS Lambda
+                </div>
+                <div matListItemMeta>
+                    {{30 | currency:'USD':true:'1.2-2'}}
+                </div>
+                <small class="list-item-line-break" matListItemLine>
+                    These functions are hosted in all relevant regions,
+                    to make it the function execution to take less time.
+                </small>
+            </mat-list-item>
+            <mat-list-item>
+                <div matListItemLine [style]="{color: theme.accentColorCode}">
+                    AWS S3(Simple Storage Service)
+                </div>
+                <div matListItemMeta>
+                    {{ 17 | currency:'USD':true:'1.2-2'}}
+                </div>
+                <small class="list-item-line-break" matListItemLine>
+                    Used for storage for everything the client downloads. Auctions, items, recipes, etc.
+                    This made sense to me, as it is pretty static data for the most part. And there is no reason, to
+                    serve this over an API, and probably pay even more.
+                </small>
+                <small class="list-item-line-break" matListItemLine>
+                    At the moment of writing this, it's about 17GB of compressed data. Uncompressed it would be about 170GB.
+                </small>
+            </mat-list-item>
+            <mat-list-item>
+                <div matListItemLine [style]="{color: theme.accentColorCode}">
+                    AWS DynamoDB
+                </div>
+                <div matListItemMeta>
+                    {{11.5 | currency:'USD':true:'1.2-2'}}
+                </div>
+                <small class="list-item-line-break" matListItemLine>
+                    The database is distributed across 4 regions. It would be cheaper to host it in just one.
+                    But that would make it take longer time for the users to get the data.
+                </small>
+            </mat-list-item>
+            <mat-list-item>
+                <div matListItemLine [style]="{color: theme.accentColorCode}">
+                    AWS RDS (the first 4 months of the year)
+                </div>
+                <div matListItemMeta>
+                    ~{{40 | currency: 'USD':true:'1.2-2'}}
+                </div>
+                <small class="list-item-line-break" matListItemLine>
+                    This was with 6 months of auction statistics. The data ended up taking up 300+ GB.
+                    But if I used innodb_file_per_table, it would have been a lot cheaper, since I periodically delete
+                    data.
+                </small>
+            </mat-list-item>
+            <mat-list-item>
+                <div matListItemLine [style]="{color: theme.accentColorCode}">
+                    MariaDB external (the latter 8 months of the year)
+                </div>
+                <div matListItemMeta>
+                    ~{{8 | currency: 'USD':true:'1.2-2'}}
+                </div>
+                <small class="list-item-line-break" matListItemLine>
+                    This was with 3 months of auction statistics. The data ended up taking up less than 50 GB.
+                    It used innodb_file_per_table.
+                </small>
+            </mat-list-item>
+            <mat-list-item>
+                <div matListItemLine [style]="{color: theme.accentColorCode}">
+                    AWS CloudWatch
+                </div>
+                <div matListItemMeta>
+                    {{5 | currency: 'USD':true:'1.2-2'}}
+                </div>
+                <small matListItemLine>
+                    Logs and monitoring.
+                </small>
+            </mat-list-item>
+        </mat-list>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Export all user data
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        Go to the user <a routerLink="settings/general">settings page</a>, and click the export button.
+    </mat-expansion-panel>
+</mat-accordion>

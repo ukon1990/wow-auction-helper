@@ -16,6 +16,8 @@ import {ZoneService} from '../../../zone/service/zone.service';
 import {NpcService} from '../../../npc/services/npc.service';
 import {UserUtil} from '../../../../utils/user/user.util';
 import {SettingsService} from '../../../user/services/settings/settings.service';
+import {FileService} from "../../../../services/file.service";
+import {TextUtil} from "@ukon1990/js-utilities";
 
 @Component({
   selector: 'wah-general-settings',
@@ -31,7 +33,7 @@ export class GeneralSettingsComponent implements OnDestroy {
 
   constructor(private _formBuilder: UntypedFormBuilder,
               private _realmService: RealmService,
-              private dbServie: DatabaseService,
+              private dbService: DatabaseService,
               private itemService: ItemService,
               private craftingService: CraftingService,
               private zoneService: ZoneService,
@@ -39,7 +41,9 @@ export class GeneralSettingsComponent implements OnDestroy {
               private npcService: NpcService,
               private settingsSync: SettingsService,
               private professionService: ProfessionService,
-              private _auctionService: AuctionsService) {
+              private _auctionService: AuctionsService,
+              private settingService: SettingsService,
+  ) {
     this.form = this._formBuilder.group({
       region: [SharedService.user.region, Validators.required],
       realm: [SharedService.user.realm, Validators.required],
@@ -77,11 +81,6 @@ export class GeneralSettingsComponent implements OnDestroy {
       differenceMap.set('realm', realm);
     }
     return differenceMap;
-  }
-
-  isWithinSupported3RDPartyAPIRegion(): boolean {
-    return this.form.getRawValue().region === 'eu' ||
-      this.form.getRawValue().region === 'us';
   }
 
   hasRealmChanges(): boolean {
@@ -137,23 +136,28 @@ export class GeneralSettingsComponent implements OnDestroy {
   isValid(): boolean {
     return this.form.status === 'VALID';
   }
-/*
-  exportData(): void {
-    this.form.controls['exportString']
-      .setValue(
-        JSON.stringify(UserUtil.getSettings(true)));
-    Report.send('Exported settings to string',
-      'General settings');
-  }
 
   exportAsFile(): void {
-    FileService.saveJSONToFile(UserUtil.getSettings(true), `wah-settings-${SharedService.user.realm}.json`);
+    const localSettings = {};
+    Object.keys(UserUtil.getSettings(true)).forEach(key => {
+      if (!TextUtil.contains(key, 'Cognito') && !TextUtil.contains(key, 'amplify')) {
+        localSettings[key] = UserUtil.getSettings(true)[key];
+      }
+    });
+    const externallyStoredSettings = {
+      ...this.settingService.settings.value,
+      id: undefined,
+    };
+    FileService.saveJSONToFile(localSettings, `wah-settings-local-user-config.json`);
+    FileService.saveJSONToFile(externallyStoredSettings, `wah-settings-registered-user-config.json`);
+
+    Report.send('Exported settings', 'General settings');
 
     Report.send(
       'Exported settings to file',
       'General settings');
   }
-*/
+
   importUser(): void {
     if (this.isImportStringNotEmpty()) {
       UserUtil.import(this.form.value.importString);
@@ -165,18 +169,22 @@ export class GeneralSettingsComponent implements OnDestroy {
     }
   }
 
-  importFromFile(fileEvent): void {
+  importFromFile(fileEvent, isLocalConfig: boolean): void {
     const files = fileEvent.target.files;
     const reader = new FileReader();
     reader.onload = () => {
-      this.onFileLoaded(reader);
+      this.onFileLoaded(reader, isLocalConfig);
     };
     reader.readAsText(files[0]);
   }
 
-  private onFileLoaded(reader) {
+  private onFileLoaded(reader, isLocalConfig: boolean) {
     try {
-      UserUtil.import(reader.result.toString());
+      if (isLocalConfig) {
+        UserUtil.import(reader.result.toString());
+      } else {
+        this.settingService.updateSettings(JSON.parse(reader.result.toString()));
+      }
 
       Report.send('Imported existing setup from file', 'General settings');
 
@@ -193,7 +201,7 @@ export class GeneralSettingsComponent implements OnDestroy {
 
   deleteUser(): void {
     localStorage.clear();
-    this.dbServie.deleteDB()
+    this.dbService.deleteDB()
       .then(() => location.reload());
   }
 

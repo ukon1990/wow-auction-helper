@@ -48,6 +48,7 @@ import {AppSyncService} from './modules/user/services/app-sync.service';
 import {Amplify} from 'aws-amplify';
 import {APP_SYNC} from './secrets';
 import {ItemClassService} from './modules/item/service/item-class.service';
+import {EndOfLifeModule} from "./modules/end-of-life/end-of-life.module";
 
 Amplify.configure(APP_SYNC);
 
@@ -80,6 +81,7 @@ Amplify.configure(APP_SYNC);
     NpcModule,
     MatProgressSpinnerModule,
     MatNativeDateModule,
+    EndOfLifeModule,
   ],
   providers: [
     RealmService,

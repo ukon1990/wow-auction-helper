@@ -11,19 +11,20 @@ import {AboutPrivacyComponent} from './components/about-privacy/about-privacy.co
 import {AboutDataComponent} from './components/about-data/about-data.component';
 import {AboutCraftingComponent} from './components/about-crafting/about-crafting.component';
 import {GithubService} from './services/github.service';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatListModule } from '@angular/material/list';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import {MatButtonModule} from '@angular/material/button';
+import {MatCardModule} from '@angular/material/card';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatListModule} from '@angular/material/list';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import {RouterModule} from '@angular/router';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {UtilModule} from '../util/util.module';
+import {EndOfLifeModule} from "../end-of-life/end-of-life.module";
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import {UtilModule} from '../util/util.module';
     FontAwesomeModule,
     MatDialogModule,
     MatProgressSpinnerModule,
-    UtilModule
+    UtilModule,
+    EndOfLifeModule
   ],
   exports: [
     AboutWhatIsComponent,

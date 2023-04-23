@@ -21,6 +21,7 @@ import {LogRocketUtil} from '../../../utils/log-rocket.util';
 import {SettingsService} from '../../user/services/settings/settings.service';
 import {UserUtil} from '../../../utils/user/user.util';
 import {ItemClassService} from '../../item/service/item-class.service';
+import {environment} from "../../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -92,6 +93,13 @@ export class BackgroundDownloadService {
 
     if (!useAppSync) {
       UserUtil.restore();
+    }
+    const isAfterEndOfService = +new Date() >= environment.endOfService;
+    if (isAfterEndOfService) {
+      // TODO: If you have forked, you can remove this.
+      console.log('Not downloading due to End of service');
+      this.isLoading.next(true);
+      return;
     }
     if (this.dbIsReady && (useAppSync && this.settingsAreReady || !useAppSync)) {
       await this.init();

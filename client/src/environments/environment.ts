@@ -6,6 +6,7 @@
 import {Environment} from './environment.model';
 
 export const environment: Environment = {
+  endOfService: 1683064800000, // May 3rd 2023 CET
   production: false,
   test: false,
   endpoints: {

@@ -1,10 +1,11 @@
 <wah-close-btn (close)="close()"></wah-close-btn>
 
 <h1 mat-dialog-title>
-  Welcome back! There has been a new version installed, since your last visit.
+  Welcome back!<!-- There has been a new version installed, since your last visit.-->
 </h1>
 
 <mat-dialog-content>
+  <!--
   <em>
     If you find any bugs or wish to give feedback
     on the app, please do so on
@@ -13,8 +14,12 @@
       <i class="fab fa-github"></i> Github
     </a> or via PM to me on Reddit or Discord (Ukon1990). As always, any feedback is appreciated!
   </em>
+  -->
+  <wah-end-of-life></wah-end-of-life>
 
+  <!--
   <wah-changelog [changeLogs]="changelog"></wah-changelog>
+  -->
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">

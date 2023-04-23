@@ -35,6 +35,7 @@ import {CharacterService} from './modules/character/services/character.service';
 import {SettingsService} from './modules/user/services/settings/settings.service';
 import {LoginComponent} from './modules/user/components/login/login.component';
 import {SetupComponent} from './modules/settings/components/setup/setup.component';
+import {environment} from '../environments/environment';
 
 @Component({
   selector: 'wah-root',
@@ -42,6 +43,8 @@ import {SetupComponent} from './modules/settings/components/setup/setup.componen
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
+  isAfterEndOfService = +new Date() >= environment.endOfService;
+  endOfServiceDate = environment.endOfService;
   subs = new SubscriptionManager();
   theme = ThemeUtil.current;
   shouldAskForConcent = false;
