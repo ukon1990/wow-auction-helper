@@ -9,11 +9,4 @@ export const environment: Environment = {
   endOfService: 1683064800000, // May 3rd 2023 CET
   production: false,
   test: false,
-  endpoints: {
-    s3: 'https://s3-eu-west-1.amazonaws.com/wah-data/',
-    lambdas: {
-      eu: 'https://6cv84igqbc.execute-api.eu-west-1.amazonaws.com/dev/',
-      us: 'https://4m6c7drle0.execute-api.us-west-2.amazonaws.com/dev/'
-    }
-  }
 };
